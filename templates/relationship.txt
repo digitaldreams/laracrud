@@ -1,0 +1,3 @@
+ public function @@methodName@@() {
+        return $this->@@relationShip@@('\@@namespace@@\@@modelName@@'@@params@@);
+    }

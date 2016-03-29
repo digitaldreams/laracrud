@@ -1,0 +1,95 @@
+<?php
+namespace App\Http\Controllers;
+
+use App\Http\Requests;
+use Illuminate\Http\Request;
+
+/**
+ * Description of @@controllerName@@
+ *
+ * @author Tuhin
+ */
+class @@controllerName@@Controller {
+
+    //put your code here
+    protected $model;
+
+    public function __construct() {
+       $this->model=new @@modelName@@;
+    }
+
+    public function index() {
+        try {
+            $data = $this->model->paginate(10);
+            return view('@@viewPath@@.index', [
+                'data' => $data
+            ]);
+        } catch (\Exception $ex) {
+            echo $ex->getMessage();
+        }
+    }
+
+    public function create() {
+
+        return view('@@viewPath@@.form', [
+            'data' => $this->model
+        ]);
+    }
+
+    public function edit($id) {
+        try {
+            $foundModel = $this->model->find($id);
+
+            if (!$foundModel) {
+                session()->flash('app_error', 'No data found to edit');
+                return redirect()->back();
+            }
+
+            return view('@@viewPath@@.form', [
+                'model' => $foundModel
+            ]);
+        } catch (\Exception $ex) {
+            session()->flash('app_error', $ex->getMessage());
+            return redirect()->back();
+        }
+    }
+
+
+    public function store(Request $request) {
+        try {
+            $id = $request->get('id');
+            $foundModel = $this->model->find($id);
+
+            if ($foundModel) {
+                $this->model = $foundModel;
+            }
+
+            $this->model->fill($request->all());
+
+            if ($this->model->save()) {
+                session()->flash('app_message', 'Data successfully saved');
+            } else {
+                session()->flash('app_message', 'Something is wrong while saving data');
+            }
+        } catch (\Exception $ex) {
+            session()->flash('app_message', $ex->getMessage());
+        }
+        return redirect()->back();
+    }
+
+    public function delete($id) {
+        try {
+            $model = $this->model->find($id);
+
+            if ($model && $model->delete()) {
+                session()->flash('app_message', 'Record successfully deleted');
+            } else {
+                session()->flash('app_error', 'Error occured while deleteing');
+            }
+        } catch (\Exception $ex) {
+            session()->flash('app_error', $ex->getMessage());
+        }
+        return redirect()->back();
+    }
+
+}
