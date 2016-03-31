@@ -9,8 +9,14 @@ class @@modelName@@ extends Model {
     @@constants@@
     protected $table = '@@tableName@@';
     protected $guarded = ['id'];
+/**
+  protected $fillable =[@@fillable@@];
+ */
+    protected $guarded = ['id'];
+/**
+  protected $casts  =[@@casts@@];
+ */
     @@dateColumns@@
-
     @@relationShips@@
 
     @@attributeMethods@@

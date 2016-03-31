@@ -158,6 +158,13 @@ class ModelCrud extends LaraCrud {
             $attributeMethods = $this->attributeGenerator($tableName);
             $modelContent = str_replace("@@attributeMethods@@", $attributeMethods, $modelContent);
 
+            $fillableContent = $this->generateFillable($tableName);
+            $modelContent = str_replace("@@fillable@@", $fillableContent, $modelContent);
+
+            $castsContent = $this->generateCast($tableName);
+            $modelContent = str_replace("@@casts@@", $castsContent, $modelContent);
+
+
             return $modelContent;
         } catch (\Exception $ex) {
             $this->errors[] = $ex->getMessage();
@@ -241,6 +248,50 @@ class ModelCrud extends LaraCrud {
             throw new Exception($ex->getMessage(), $ex->getCode(), $ex);
         }
         return false;
+    }
+
+    public function generateFillable($table) {
+        $fillable = '';
+        $columns = $this->columnsDataType;
+
+        if (isset($columns[$table])) {
+            $keys = array_keys($columns[$table]);
+            foreach ($keys as $key) {
+                if ($key == 'id') {
+                    continue;
+                }
+                if (!in_array($key, $this->systemColumns)) {
+                    $fillable.="'" . $key . "',";
+                }
+            }
+        }
+        return $fillable;
+    }
+
+    public function generateCast($table) {
+        $cast = '';
+        $columns = $this->columnsDataType;
+        $converTypes = [
+            'varchar' => 'string',
+            'boolean' => 'bool',
+            'enum' => 'string',
+            'int' => 'int',
+            'double' => 'double',
+            'bigint' => 'int',
+            'tinyint' => 'int'
+        ];
+        if (isset($columns[$table])) {
+            $keys = array_keys($columns[$table]);
+            foreach ($columns[$table] as $key => $type) {
+                if ($key == 'id') {
+                    continue;
+                }
+                if (isset($converTypes[$type])) {
+                    $cast.="'" . $key . "'=>'" . $converTypes[$type] . "',";
+                }
+            }
+        }
+        return $cast;
     }
 
     //public function make()
