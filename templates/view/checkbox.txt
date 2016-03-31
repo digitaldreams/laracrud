@@ -1,0 +1,8 @@
+<div class="col-md-6">
+<div class="checkbox">
+  <label>
+    <input type="checkbox" name="@@name@@" id="@@name@@">
+    @@label@@
+  </label>
+</div>
+</div>

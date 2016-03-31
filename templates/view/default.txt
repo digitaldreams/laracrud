@@ -1,0 +1,6 @@
+<div class="col-md-6">
+  <div class="form-group">
+    <label for="@@name@@">@@label@@</label>
+    <input type="@@type@@" class="form-control" name="@@name@@" id="@@name@@" placeholder="" @@properties@@>
+  </div>
+</div>

@@ -1,0 +1,3 @@
+  public function get@@columnLabel@@Attribute($value){
+        return  \Carbon\Carbon::parse($value)->format('@@format@@');
+    }

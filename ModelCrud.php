@@ -24,6 +24,7 @@ class ModelCrud extends LaraCrud {
             $this->getTableList();
         }
         $this->loadDetails();
+        $this->columnDataTypes();
         $this->prepareRelation();
     }
 
@@ -96,7 +97,7 @@ class ModelCrud extends LaraCrud {
 
             $retVals = $this->extractRulesFromType($type);
 
-            if (in_array($column->Type, ['time', 'date', 'datetime', 'timestamp'])) {
+            if (in_array($column->Type, ['time', 'date', 'datetime', 'timestamp']) && !in_array($column->Field, $this->systemColumns)) {
                 $this->dateColumns[$tableName][] = $column->Field;
             }
 
@@ -154,12 +155,52 @@ class ModelCrud extends LaraCrud {
             $modelContent = str_replace("@@scopeMethods@@", $scopePlaceholders, $modelContent);
 
             $modelContent = str_replace("@@propertyDefiner@@", $this->propertyDefiner, $modelContent);
+            $attributeMethods = $this->attributeGenerator($tableName);
+            $modelContent = str_replace("@@attributeMethods@@", $attributeMethods, $modelContent);
 
             return $modelContent;
         } catch (\Exception $ex) {
             $this->errors[] = $ex->getMessage();
         }
         return false;
+    }
+
+    public function attributeGenerator($tableName) {
+        $retCode = '';
+        if (isset($this->columnsDataType[$tableName])) {
+            foreach ($this->columnsDataType[$tableName] as $columnName => $type) {
+
+                if (in_array($columnName, $this->systemColumns)) {
+                    continue;
+                }
+                $temp = '';
+                $label = str_replace(" ", "", ucwords(str_replace("_", " ", $columnName)));
+
+                if (in_array($type, ['time', 'date', 'datetime', 'timestamp'])) {
+
+                    $setDateFormat = isset($this->setDateFormat[$type]) ? $this->setDateFormat[$type] : "Y-m-d";
+                    $getDateFormat = isset($this->getDateFormat[$type]) ? $this->getDateFormat[$type] : "Y-m-d";
+
+                    $tempSetDate = $this->getTempFile('setAttributeDate.txt');
+                    $tempSetDate = str_replace("@@format@@", $setDateFormat, $tempSetDate);
+                    $tempSetDate = str_replace("@@columnLabel@@", $label, $tempSetDate);
+                    $tempSetDate = str_replace("@@column@@", $columnName, $tempSetDate);
+                    $retCode.=$tempSetDate;
+
+                    $tempGetDate = $this->getTempFile('getAttributeDate.txt');
+                    $tempGetDate = str_replace("@@format@@", $getDateFormat, $tempGetDate);
+                    $tempGetDate = str_replace("@@columnLabel@@", $label, $tempGetDate);
+                    $retCode.=$tempGetDate;
+                } elseif (in_array($type, ['varchar', 'text', 'tinytext', 'bigtext'])) {
+
+                    $tempSetText = $this->getTempFile('setAttributeText.txt');
+                    $tempSetText = str_replace("@@column@@", $columnName, $tempSetText);
+                    $tempSetText = str_replace("@@columnLabel@@", $label, $tempSetText);
+                    $retCode.=$tempSetText;
+                }
+            }
+        }
+        return $retCode;
     }
 
     /**

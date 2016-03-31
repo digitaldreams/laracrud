@@ -48,6 +48,20 @@ class LaraCrud {
      * @var array 
      */
     public $tableColumns = [];
+    public $systemColumns = ['created_at', 'updated_at', 'deleted_at'];
+    public $columnsDataType = [];
+    public $getDateFormat = [
+        'time' => 'h:i A',
+        'date' => 'm/d/Y',
+        'datetime' => 'm/d/Y h:i A',
+        'timestamp' => 'm/d/Y h:i A'
+    ];
+    public $setDateFormat = [
+        'time' => 'H:i:s',
+        'date' => 'Y-m-d',
+        'datetime' => 'Y-m-d H:i:s',
+        'timestamp' => 'Y-m-d H:i:s'
+    ];
 
     /**
      * List of indexes
@@ -241,6 +255,7 @@ class LaraCrud {
      */
     public function getSingular($words) {
         $retSingular = '';
+        return $words;
         $pluralWordSyntex = ['s', 'x', 'z', 'ch', 'sh'];
         if (strripos($words, "es")) {
             $singularWord = substr($words, 0, strripos($words, "es"));
@@ -257,12 +272,15 @@ class LaraCrud {
                 $retSingular = substr($words, 0, strripos($words, "s"));
             }
         } elseif (strripos($words, "s")) {
-            $lastCharacter = substr($words, -1);
-            if ($lastCharacter == 's') {
-                $retSingular = substr($words, 0, strripos($words, "s"));
-            } else {
-                $retSingular = $words;
-            }
+            /*
+              $lastCharacter = substr($words, -1);
+              if ($lastCharacter == 's') {
+              $retSingular = substr($words, 0, strripos($words, "s"));
+              } else {
+              $retSingular = $words;
+              }
+             * 
+             */
         } else {
             
         }
@@ -286,6 +304,31 @@ class LaraCrud {
     public function getModelName($name) {
         $name = $this->getSingular($name);
         return ucfirst(camel_case($name));
+    }
+
+    public function getTempFile($file) {
+        try {
+
+            $path = __DIR__ . "/templates/$file";
+            if (file_exists($path)) {
+                return file_get_contents($path);
+            }
+            return '';
+        } catch (\Exception $ex) {
+            return '';
+        }
+    }
+
+    public function columnDataTypes() {
+        foreach ($this->tableColumns as $tname => $tableColumns) {
+            foreach ($tableColumns as $column) {
+                $type = $column->Type;
+                if (strpos($type, "(")) {
+                    $type = substr($type, 0, strpos($type, "("));
+                }
+                $this->columnsDataType[$tname][$column->Field] = $type;
+            }
+        }
     }
 
 }

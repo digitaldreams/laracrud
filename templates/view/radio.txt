@@ -1,0 +1,8 @@
+<div class="col-md-6">
+<div class="radio">
+  <label>
+    <input type="radio" name="@@name@@" id="@@name@@">
+    @@label@@
+  </label>
+</div>
+</div>
