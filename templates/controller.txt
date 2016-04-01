@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
  *
  * @author Tuhin
  */
-class @@controllerName@@Controller {
+class @@controllerName@@Controller extends Controller{
 
     //put your code here
     protected $model;
@@ -55,7 +55,7 @@ class @@controllerName@@Controller {
     }
 
 
-    public function store(Request $request) {
+    public function postStore(Request $request) {
         try {
             $id = $request->get('id');
             $foundModel = $this->model->find($id);

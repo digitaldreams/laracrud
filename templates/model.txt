@@ -12,7 +12,7 @@ class @@modelName@@ extends Model {
 /**
   protected $fillable =[@@fillable@@];
  */
-    protected $guarded = ['id'];
+  
 /**
   protected $casts  =[@@casts@@];
  */

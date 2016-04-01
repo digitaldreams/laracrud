@@ -37,7 +37,7 @@ class ControllerCrud extends LaraCrud {
     public function generateContent() {
         $contents = '';
 
-        $contents = file_get_contents(__DIR__ . '/templates/controller.txt');
+        $contents = $this->getTempFile('controller.txt');
         $contents = str_replace("@@controllerName@@", $this->controllerName, $contents);
         $contents = str_replace("@@modelName@@", $this->modelName, $contents);
         $contents = str_replace("@@viewPath@@", $this->viewPath, $contents);
@@ -52,7 +52,7 @@ class ControllerCrud extends LaraCrud {
 
             if (!file_exists($fullPath)) {
                 $modelContent = $this->generateContent();
-                file_put_contents($fullPath, $modelContent);
+                $this->saveFile($fullPath, $modelContent);
                 return true;
             }
         } catch (\Exception $ex) {

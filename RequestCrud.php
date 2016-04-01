@@ -31,7 +31,7 @@ class RequestCrud extends LaraCrud {
      * @return type
      */
     private function generateContent($tableName) {
-        $requestContent = file_get_contents(__DIR__ . '/templates/request.txt');
+        $requestContent = $this->getTempFile('request.txt');
         $requestContent = str_replace("@@requestClassName@@", $this->getModelName($tableName) . "Request", $requestContent);
 
         $rulesText = '';
@@ -112,7 +112,7 @@ class RequestCrud extends LaraCrud {
 
             if (!file_exists($fullPath)) {
                 $requestContent = $this->generateContent($table);
-                file_put_contents($fullPath, $requestContent);
+                $this->saveFile($fullPath, $requestContent);
                 return true;
             }
             return false;

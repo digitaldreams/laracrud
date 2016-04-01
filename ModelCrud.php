@@ -45,7 +45,7 @@ class ModelCrud extends LaraCrud {
                     $type = substr($column->Type, 0, strpos($column->Type, "("));
                 }
                 $propertyDefiner.='@property ' . $type . ' $' . $column->Field . ' ' . str_replace("_", " ", $column->Field) . "\n";
-                $scopeTemplateStr = file_get_contents(__DIR__ . '/templates/scope.txt');
+                $scopeTemplateStr = $this->getTempFile('scope.txt');
                 $scopeMethodName = ucfirst(camel_case($column->Field));
                 $scopeTemplateStr = str_replace("@@methodName@@", $scopeMethodName, $scopeTemplateStr);
                 $scopeTemplateStr = str_replace("@@fielName@@", $column->Field, $scopeTemplateStr);
@@ -66,7 +66,7 @@ class ModelCrud extends LaraCrud {
                 if (empty($rls['model'])) {
                     continue;
                 }
-                $newCloneRelation = file_get_contents(__DIR__ . '/templates/relationship.txt');
+                $newCloneRelation = $this->getTempFile('relationship.txt');
                 $paramsNt = '';
                 $newCloneRelation = str_replace("@@methodName@@", lcfirst($rls['model']), $newCloneRelation);
                 $newCloneRelation = str_replace("@@modelName@@", $rls['model'], $newCloneRelation);
@@ -126,7 +126,7 @@ class ModelCrud extends LaraCrud {
      */
     private function generateContent($tableName) {
         try {
-            $modelContent = file_get_contents(__DIR__ . '/templates/model.txt');
+            $modelContent = $this->getTempFile('model.txt');
             $modelContent = str_replace("@@namespace@@", $this->namespace, $modelContent);
             $modelContent = str_replace("@@modelName@@", $this->getModelName($tableName), $modelContent);
             $modelContent = str_replace("@@tableName@@", $tableName, $modelContent);
@@ -241,7 +241,7 @@ class ModelCrud extends LaraCrud {
 
             if (!file_exists($fullPath)) {
                 $modelContent = $this->generateContent($table);
-                file_put_contents($fullPath, $modelContent);
+                $this->saveFile($fullPath, $modelContent);
                 return true;
             }
         } catch (\Exception $ex) {

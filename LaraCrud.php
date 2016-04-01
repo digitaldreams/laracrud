@@ -331,4 +331,14 @@ class LaraCrud {
         }
     }
 
+    public function saveFile($filePath, $contents) {
+        try {
+            $fileObject = new \SplFileObject($filePath, 'w+');
+            $fileObject->fwrite($contents);
+            return true;
+        } catch (\Exception $ex) {
+            throw new Exception($ex->getMessage(), $ex->getCode(), $ex);
+        }
+    }
+
 }
