@@ -1,10 +1,15 @@
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            @@tableHeader@@
-        </tr>
-    </thead>
-    <tbody>
-        @@tableBody@@
-    </tbody>
-</table>
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                @@tableHeader@@
+            </tr>
+        </thead>
+        <tbody>
+            @@tableBody@@
+        </tbody>
+    </table>
+</div>

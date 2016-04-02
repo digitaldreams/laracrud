@@ -12,7 +12,7 @@ class View extends Command {
      *
      * @var string
      */
-    protected $signature = 'tb:view {table} {type=form} {style=table}';
+    protected $signature = 'tb:view {table} {page?} {type?}';
 
     /**
      * The console command description.
@@ -39,10 +39,10 @@ class View extends Command {
         try {
             $table = $this->argument('table');
             $type = $this->argument('type');
-            $style = $this->argument('style');
+            $page = $this->argument('page');
 
-            $modelCrud = new \App\Libs\ViewCrud($table);
-            print_r($modelCrud->make());
+            $modelCrud = new \App\Libs\ViewCrud($table, $page, $type);
+            $modelCrud->make();
             $this->info('View created successfully');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());

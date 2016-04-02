@@ -1,0 +1,17 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <form action="<?php echo route('@@table@@.store') ?>" method="POST">
+        <input type="hidden" name="_token" value="<?php echo csrf_token();?>"/>
+        
+        @@formContent@@
+        
+        <div class="form-group">
+            <input type="reset" value="Clear"/>
+            <input type="submit" value="Save"/>
+
+        </div>
+    </form>
+
+</div>

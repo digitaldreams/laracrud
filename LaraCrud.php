@@ -337,7 +337,7 @@ class LaraCrud {
             $fileObject->fwrite($contents);
             return true;
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode(), $ex);
+            throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
         }
     }
 
