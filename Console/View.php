@@ -45,7 +45,7 @@ class View extends Command {
             $modelCrud->make();
             $this->info('View created successfully');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage());
+            $this->error($ex->getMessage().' on '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 

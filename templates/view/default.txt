@@ -1,6 +1,7 @@
 <div class="col-md-6">
-  <div class="form-group">
+  <div class="form-group @@hasErrorClass@@">
     <label for="@@name@@">@@label@@</label>
     <input type="@@type@@" class="form-control" name="@@name@@" id="@@name@@" placeholder="" @@properties@@>
-  </div>
+      @@showErrorText@@ 
+ </div>
 </div>

@@ -6,10 +6,10 @@
         <input type="hidden" name="_token" value="<?php echo csrf_token();?>"/>
         <input type="hidden" name="id" value="<?php // echo $model->id; ?>"/>
         @@formContent@@
-        
+
         <div class="form-group">
-            <input type="reset" value="Clear"/>
-            <input type="submit" value="Save"/>
+            <input type="reset" class="btn btn-default" value="Clear"/>
+            <input type="submit" class="btn btn-primary" value="Save"/>
 
         </div>
     </form>

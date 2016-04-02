@@ -1,8 +1,9 @@
 <div class="col-md-6">
-<div class="checkbox">
+<div class="checkbox @@hasErrorClass@@">
   <label>
     <input type="checkbox" name="@@name@@" id="@@name@@">
     @@label@@
   </label>
+ @@showErrorText@@
 </div>
 </div>

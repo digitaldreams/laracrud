@@ -167,7 +167,7 @@ class ViewCrud extends LaraCrud {
         return $panelmodalTemp;
     }
 
-    protected function generateContent($table) {
+    protected function generateContent($table, $error_block = FALSE) {
         $retHtml = '';
         foreach ($this->viewRules[$table] as $column) {
 
@@ -191,9 +191,16 @@ class ViewCrud extends LaraCrud {
             } else {
                 $templateContent = $this->getTempFile('view/default.txt');
             }
+
             $templateContent = str_replace('@@name@@', $column['name'], $templateContent);
             $templateContent = str_replace('@@label@@', ucwords(str_replace("_", " ", $column['name'])), $templateContent);
             $templateContent = str_replace('@@type@@', $column['type'], $templateContent);
+
+            $hasErrorBlockText = $this->hasErrorClass($column['name'], $error_block);
+            $templateContent = str_replace('@@hasErrorClass@@', $hasErrorBlockText, $templateContent);
+
+            $showErrorText = $this->showErrorText($column['name'], $error_block);
+            $templateContent = str_replace('@@showErrorText@@', $showErrorText, $templateContent);
 
             $propertiesText = '';
             if (is_array($column['properties'])) {
@@ -209,7 +216,7 @@ class ViewCrud extends LaraCrud {
     }
 
     protected function generateForm($table) {
-        $formContent = $this->generateContent($table);
+        $formContent = $this->generateContent($table,TRUE);
         $formTemplate = $this->getTempFile('view/form.html');
         $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
         $formTemplate = str_replace('@@table@@', $table, $formTemplate);
@@ -278,6 +285,24 @@ class ViewCrud extends LaraCrud {
 
     private function getViewPath($table) {
         return base_path('resources/views/' . $table);
+    }
+
+    public function hasErrorClass($column, $required) {
+        $content = '';
+        if ($required) {
+            $temp = $this->getTempFile('view/hasErrorClass.txt');
+            $content = str_replace('@@column@@', $column, $temp);
+        }
+        return $content;
+    }
+
+    public function showErrorText($column, $required) {
+        $content = '';
+        if ($required) {
+            $temp = $this->getTempFile('view/showErrorText.txt');
+            $content = str_replace('@@column@@', $column, $temp);
+        }
+        return $content;
     }
 
 }
