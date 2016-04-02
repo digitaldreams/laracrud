@@ -4,7 +4,7 @@
 <div class="container">
     <form action="<?php echo route('@@table@@.poststore') ?>" method="POST">
         <input type="hidden" name="_token" value="<?php echo csrf_token();?>"/>
-        
+        <input type="hidden" name="id" value="<?php // echo $model->id; ?>"/>
         @@formContent@@
         
         <div class="form-group">
@@ -15,3 +15,4 @@
     </form>
 
 </div>
+@endSection

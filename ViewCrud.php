@@ -137,7 +137,7 @@ class ViewCrud extends LaraCrud {
     public function generateIndexPanel($table = '') {
         $retHtml = '<?php foreach($records as $record): ?>' . "\n";
         $dataOption = '';
-        $bodyHtml='';
+        $bodyHtml = '';
         $tableName = !empty($table) ? $table : $this->mainTable;
 
 
@@ -153,12 +153,18 @@ class ViewCrud extends LaraCrud {
         $indexPageTemp = str_replace('@@modalName@@', $tableName . 'Modal', $indexPageTemp);
         $indexPageTemp = str_replace('@@dataOptions@@', $dataOption, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $table, $indexPageTemp);
         $retHtml.=$indexPageTemp;
         $retHtml.='<?php endforeach; ?>';
 
         $retHtml.="\n\n\n";
-        $retHtml.=$this->generateModal($table);
-        return $retHtml;
+
+        $modalHtml = $this->generateModal($table);
+        $panelmodalTemp = $this->getTempFile('view/index_panel_modal.html');
+        $panelmodalTemp = str_replace("@@indexHtml@@", $retHtml, $panelmodalTemp);
+        $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml, $panelmodalTemp);
+
+        return $panelmodalTemp;
     }
 
     protected function generateContent($table) {
@@ -218,7 +224,9 @@ class ViewCrud extends LaraCrud {
             $modalInputFill.='jq("#' . $column . '").val(btn.attr(\'data-' . $column . '\'));' . "\n";
             $modalInputClean.='jq("#' . $column . '").val(\'\');' . "\n";
         }
-        
+        $modalInputFill.='jq("#id").val(btn.attr(\'data-id\'));' . "\n";
+        $modalInputClean.='jq("#id").val(\'\');' . "\n";
+
         $formHtml = $this->generateContent($table);
         $modalTemp = $this->getTempFile('view/modal.html');
         $modalTemp = str_replace('@@modalName@@', $table . 'Modal', $modalTemp);
@@ -227,7 +235,7 @@ class ViewCrud extends LaraCrud {
 
         $modalTemp = str_replace('@@modalInputFillUp@@', $modalInputFill, $modalTemp);
         $modalTemp = str_replace('@@modalInputCleanUp@@', $modalInputClean, $modalTemp);
-        
+
         return $modalTemp;
     }
 
@@ -242,10 +250,10 @@ class ViewCrud extends LaraCrud {
             if ($this->page == static::PAGE_INDEX) {
                 if ($this->type == static::TYPE_PANEL) {
                     $idnexPanelContent = $this->generateIndexPanel($table);
-                    $this->saveFile($pathToSave . '/index_panel.blade.php', $idnexPanelContent);
+                    $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
                 } else {
                     $idnexTableContent = $this->generateIndex($table);
-                    $this->saveFile($pathToSave . '/index_table.blade.php', $idnexTableContent);
+                    $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
                 }
             } elseif ($this->page == static::PAGE_FORM) {
                 $formContent = $this->generateForm($table);
@@ -254,10 +262,10 @@ class ViewCrud extends LaraCrud {
             } else {
                 if ($this->type == static::TYPE_PANEL) {
                     $idnexPanelContent = $this->generateIndexPanel($table);
-                    $this->saveFile($pathToSave . '/index_panel.blade.php', $idnexPanelContent);
+                    $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
                 } else {
                     $idnexTableContent = $this->generateIndex($table);
-                    $this->saveFile($pathToSave . '/index_table.blade.php', $idnexTableContent);
+                    $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
                 }
                 $formContent = $this->generateForm($table);
                 $this->saveFile($pathToSave . '/form.blade.php', $formContent);
