@@ -16,6 +16,8 @@ namespace App\Libs;
 class ModelCrud extends LaraCrud {
 
     public $propertyDefiner = '';
+    public $namespace = 'App\Models';
+    public $path = 'app\Models';
 
     public function __construct($table = '') {
         if (!empty($table)) {
@@ -292,6 +294,11 @@ class ModelCrud extends LaraCrud {
             }
         }
         return $cast;
+    }
+
+    public function getFullModelName($table) {
+        $modelName = $this->getModelName($table);
+        return '\\' . $this->namespace . '\\' . $modelName;
     }
 
     //public function make()

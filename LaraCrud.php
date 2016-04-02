@@ -23,13 +23,13 @@ class LaraCrud {
      * Parent Namespace of Model
      * @var type 
      */
-    public $namespace = 'App\Models';
+    public $namespace = '';
 
     /**
      * Folder path of the Model
      * @var type 
      */
-    public $path = 'app\Models';
+    public $path = '';
 
     /**
      * Pivot Table that are used for maintaining Relationships only

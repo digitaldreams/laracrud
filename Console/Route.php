@@ -38,7 +38,7 @@ class Route extends Command {
     public function handle() {
         try {
             $controller = $this->argument('controller');
-            
+
             if (!stripos("App\Http\Controllers\\", $controller)) {
                 $controller = 'App\Http\Controllers\\' . $controller;
             }

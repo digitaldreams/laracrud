@@ -25,7 +25,7 @@ class RouteCrud extends LaraCrud {
 
     public function __construct($controller = '') {
         if (!is_array($controller)) {
-            $this->controllers[] = $controller;
+            $this->controllers[] =$controller;
         } else {
             $this->controllers = $controller;
         }
@@ -106,11 +106,11 @@ class RouteCrud extends LaraCrud {
             foreach ($newRouteMethods as $newMethod) {
                 $controllerRoutes.=$this->generateRoute($ctr['shortName'], $newMethod, $controllerName);
             }
-            if(empty($controllerRoutes)){
+            if (empty($controllerRoutes)) {
                 continue;
             }
             $controllerShortName = strtolower(str_replace("Controller", "", $ctr['shortName']));
-            
+
             $routeGroupTemp = $this->getTempFile('route_group.txt');
             $routeGroupTemp = str_replace('@@routes@@', $controllerRoutes, $routeGroupTemp);
             $routeGroupTemp = str_replace('@@prefix@@', $controllerShortName, $routeGroupTemp);
@@ -157,5 +157,7 @@ class RouteCrud extends LaraCrud {
         }
         return $params;
     }
+
+
 
 }

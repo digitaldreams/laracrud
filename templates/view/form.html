@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <form action="<?php echo route('@@table@@.store') ?>" method="POST">
+    <form action="<?php echo route('@@table@@.poststore') ?>" method="POST">
         <input type="hidden" name="_token" value="<?php echo csrf_token();?>"/>
         
         @@formContent@@
