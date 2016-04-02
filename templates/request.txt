@@ -12,7 +12,7 @@ class @@requestClassName@@ extends Request {
      * @return bool
      */
     public function authorize() {
-            return false;
+            return true;
     }
 
     /**
@@ -26,5 +26,28 @@ class @@requestClassName@@ extends Request {
         @@rules@@
         ];
     }
-
+/**
+ * Get the error messages for the defined validation rules.
+ *
+ * @return array
+ */
+public function messages()
+{
+/**
+*return[
+@@validationMessage@@
+]
+*/
+    return [
+     
+    ];
+}
+/**
+ *
+ 
+protected function formatErrors(Validator $validator)
+{
+    return $validator->errors()->all();
+}
+*/
 }

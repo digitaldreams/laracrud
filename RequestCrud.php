@@ -15,6 +15,8 @@ namespace App\Libs;
  */
 class RequestCrud extends LaraCrud {
 
+    protected $validateionMsg = '';
+
     public function __construct($table) {
         if (!empty($table)) {
             $this->tables[] = $table;
@@ -33,6 +35,7 @@ class RequestCrud extends LaraCrud {
     private function generateContent($tableName) {
         $requestContent = $this->getTempFile('request.txt');
         $requestContent = str_replace("@@requestClassName@@", $this->getModelName($tableName) . "Request", $requestContent);
+        $requestContent = str_replace("@@validationMessage@@", $this->validateionMsg, $requestContent);
 
         $rulesText = '';
 
@@ -72,6 +75,7 @@ class RequestCrud extends LaraCrud {
             if (in_array($column->Field, $reservedColumns)) {
                 continue;
             }
+
             $type = $column->Type;
             //If it contains '( )' symbol then it must hold length or string seperated by comma for enum data type
             if (strpos($type, "(")) {
@@ -80,23 +84,30 @@ class RequestCrud extends LaraCrud {
 
                 if ($dataType == 'enum') {
                     $validationRules .= 'in:' . $retVals . '|';
+                    $this->validateionMsg.="'$column->Field.in'=>''" . "\n";
                 } elseif ($dataType == 'varchar') {
                     $validationRules .="max:" . $retVals . '|';
+                    $this->validateionMsg.="'$column->Field.max'=>''" . "\n";
                 }
+            } else {
+                
             }
             if (isset($this->foreignKeys[$tname])) {
                 if (in_array($column->Field, $this->foreignKeys[$tname]['keys']) && isset($this->foreignKeys[$tname]['rel'][$column->Field])) {
                     $tableName = $this->foreignKeys[$tname]['rel'][$column->Field]->REFERENCED_TABLE_NAME;
                     $tableColumn = $this->foreignKeys[$tname]['rel'][$column->Field]->REFERENCED_COLUMN_NAME;
                     $validationRules.='exists:' . $tableName . ',' . $tableColumn;
+                    $this->validateionMsg.="'$column->Field.exists'=>''" . "\n";
                 }
             } else {
 
                 if ($column->Null == 'NO' && $column->Default == "") {
                     $validationRules.='required|';
+                    $this->validateionMsg.="'$column->Field.required'=>''" . "\n";
                 }
                 if ($column->Key == 'UNI') {
                     $validationRules.='unique:' . $tname . ',' . $column->Field;
+                    $this->validateionMsg.="'$column->Field.unique'=>''" . "\n";
                 }
             }
             if (!empty($validationRules)) {
