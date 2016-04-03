@@ -126,6 +126,11 @@ class ViewCrud extends LaraCrud {
             $headerHtml.='<th>' . ucwords(str_replace("_", " ", $column)) . '</th>' . "\n";
             $bodyHtml.='<td><?php echo $record->' . $column . '; ?></td>' . "\n";
         }
+        $headerHtml.='<th>&nbsp;</th>' . "\n";
+        $headerHtml.='<th>&nbsp;</th>' . "\n";
+
+        $bodyHtml.='<td><a href="<?php echo route(\'' . $table . '.edit\',$record->id); ?>"><span class="glyphicon glyphicon-pencil"></span></a></td>' . "\n";
+        $bodyHtml.='<td><a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\'' . $table . '.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a></td>' . "\n";
 
         $bodyHtml.= '</tr><?php endforeach; ?>';
         $indexPageTemp = $this->getTempFile('view/index.html');
@@ -201,6 +206,12 @@ class ViewCrud extends LaraCrud {
 
             $showErrorText = $this->showErrorText($column['name'], $error_block);
             $templateContent = str_replace('@@showErrorText@@', $showErrorText, $templateContent);
+            $showColumnValue = '';
+            
+            if ($error_block) {
+                $showColumnValue = '<?php echo $model->' . $column['name'] . '?>';
+            }
+            $templateContent = str_replace('@@columnValue@@', $showColumnValue, $templateContent);
 
             $propertiesText = '';
             if (is_array($column['properties'])) {
@@ -216,7 +227,7 @@ class ViewCrud extends LaraCrud {
     }
 
     protected function generateForm($table) {
-        $formContent = $this->generateContent($table,TRUE);
+        $formContent = $this->generateContent($table, TRUE);
         $formTemplate = $this->getTempFile('view/form.html');
         $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
         $formTemplate = str_replace('@@table@@', $table, $formTemplate);

@@ -41,6 +41,21 @@ class ControllerCrud extends LaraCrud {
         $contents = str_replace("@@controllerName@@", $this->controllerName, $contents);
         $contents = str_replace("@@modelName@@", $this->modelName, $contents);
         $contents = str_replace("@@viewPath@@", $this->viewPath, $contents);
+        //@@requestClass@@ @@table@@
+        $requestClass = 'Request';
+        $table = '';
+        if (class_exists($this->modelName)) {
+            $model = new $this->modelName;
+            $table = $model->getTable();
+
+            $requestName = $this->getModelName($table);
+            $fullName = '\App\Http\Requests\\' . $requestName . 'Request';
+            if (class_exists($fullName)) {
+                $requestClass = $fullName;
+            }
+        }
+        $contents = str_replace("@@requestClass@@",$requestClass, $contents);
+        $contents = str_replace("@@table@@",$table, $contents);
 
         return $contents;
     }
