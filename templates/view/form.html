@@ -1,13 +1,30 @@
-@extends('layouts.app')
+@extends('layouts.master')
 
 @section('content')
 <div class="container ">
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>
+                <?php echo!empty($model->id) ? 'Edit ' . $model->id : 'Create @@table@@'; ?>
+            </h4>
+        </div>
+        <div class="col-sm-4 text-right">
+            <?php
+            if (!empty($model->id)) {
+            echo '<a href="' . route('@@table@@.create') . '"><span class="glyphicon glyphicon-plus"></span> @@table@@</a>';
+            } else {
+            echo '<a href="' . route('@@table@@.index') . '"><span class="glyphicon glyphicon-list"> @@table@@</a>';
+            }
+            ?>
+
+        </div>
+    </div>
     <form action="<?php echo route('@@table@@.poststore') ?>" method="POST">
         <input type="hidden" name="_token" value="<?php echo csrf_token();?>"/>
-        <input type="hidden" name="id" value="<?php // echo $model->id; ?>"/>
+        <input type="hidden" name="id" value="<?php  echo $model->id; ?>"/>
         @@formContent@@
 
-        <div class="form-group">
+        <div class="form-group ">
             <input type="reset" class="btn btn-default" value="Clear"/>
             <input type="submit" class="btn btn-primary" value="Save"/>
 

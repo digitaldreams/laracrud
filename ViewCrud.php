@@ -136,6 +136,7 @@ class ViewCrud extends LaraCrud {
         $indexPageTemp = $this->getTempFile('view/index.html');
         $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $table, $indexPageTemp);
         return $indexPageTemp;
     }
 
@@ -168,6 +169,7 @@ class ViewCrud extends LaraCrud {
         $panelmodalTemp = $this->getTempFile('view/index_panel_modal.html');
         $panelmodalTemp = str_replace("@@indexHtml@@", $retHtml, $panelmodalTemp);
         $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml, $panelmodalTemp);
+        $panelmodalTemp = str_replace("@@table@@", $table, $panelmodalTemp);
 
         return $panelmodalTemp;
     }
