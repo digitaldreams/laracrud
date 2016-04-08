@@ -19,6 +19,7 @@ class ViewCrud extends LaraCrud {
     const TYPE_TABLE = 'table';
     const PAGE_INDEX = 'index';
     const PAGE_FORM = 'form';
+    const PAGE_DETAILS = 'details';
 
     protected $mainTable = '';
     protected $protectedColumns = ['id', 'created_at', 'updated_at', 'deleted_at'];
@@ -142,25 +143,10 @@ class ViewCrud extends LaraCrud {
 
     public function generateIndexPanel($table = '') {
         $retHtml = '<?php foreach($records as $record): ?>' . "\n";
-        $dataOption = '';
-        $bodyHtml = '';
+
         $tableName = !empty($table) ? $table : $this->mainTable;
 
-
-
-        foreach ($this->columns[$tableName] as $column) {
-            $dataOption.='data-' . $column . '="<?php echo $record->' . $column . ';?>"' . "\n";
-            $bodyHtml.='<tr><th>' . ucwords(str_replace("_", " ", $column)) . '</th>' . "\n";
-            $bodyHtml.='<td><?php echo $record->' . $column . '; ?></td></tr>' . "\n";
-        }
-        $headline = '<?php echo $record->id; ?>';
-        $indexPageTemp = $this->getTempFile('view/index_panel.html');
-        $indexPageTemp = str_replace(' @@headline@@', $headline, $indexPageTemp);
-        $indexPageTemp = str_replace('@@modalName@@', $tableName . 'Modal', $indexPageTemp);
-        $indexPageTemp = str_replace('@@dataOptions@@', $dataOption, $indexPageTemp);
-        $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
-        $indexPageTemp = str_replace('@@table@@', $table, $indexPageTemp);
-        $retHtml.=$indexPageTemp;
+        $retHtml.=$this->panelBox($tableName);
         $retHtml.='<?php endforeach; ?>';
 
         $retHtml.="\n\n\n";
@@ -172,6 +158,24 @@ class ViewCrud extends LaraCrud {
         $panelmodalTemp = str_replace("@@table@@", $table, $panelmodalTemp);
 
         return $panelmodalTemp;
+    }
+
+    protected function panelBox($tableName) {
+        $dataOption = '';
+        $bodyHtml = '';
+        foreach ($this->columns[$tableName] as $column) {
+            $dataOption.='data-' . $column . '="<?php echo $record->' . $column . ';?>"' . "\n";
+            $bodyHtml.='<tr><th>' . ucwords(str_replace("_", " ", $column)) . '</th>' . "\n";
+            $bodyHtml.='<td><?php echo $record->' . $column . '; ?></td></tr>' . "\n";
+        }
+        $headline = '<?php echo $record->id; ?>';
+        $indexPageTemp = $this->getTempFile('view/index_panel.html');
+        $indexPageTemp = str_replace(' @@headline@@', $headline, $indexPageTemp);
+        $indexPageTemp = str_replace('@@modalName@@', $tableName . 'Modal', $indexPageTemp);
+        $indexPageTemp = str_replace('@@dataOptions@@', $dataOption, $indexPageTemp);
+        $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
+        return $indexPageTemp;
     }
 
     protected function generateContent($table, $error_block = FALSE) {
@@ -209,7 +213,7 @@ class ViewCrud extends LaraCrud {
             $showErrorText = $this->showErrorText($column['name'], $error_block);
             $templateContent = str_replace('@@showErrorText@@', $showErrorText, $templateContent);
             $showColumnValue = '';
-            
+
             if ($error_block) {
                 $showColumnValue = '<?php echo $model->' . $column['name'] . '?>';
             }
@@ -279,6 +283,9 @@ class ViewCrud extends LaraCrud {
                 $formContent = $this->generateForm($table);
 
                 $this->saveFile($pathToSave . '/form.blade.php', $formContent);
+            } elseif ($this->page == static::PAGE_DETAILS) {
+                $detailsHtml = $this->generateDetails($table);
+                $this->saveFile($pathToSave . '/details.blade.php', $detailsHtml);
             } else {
                 if ($this->type == static::TYPE_PANEL) {
                     $idnexPanelContent = $this->generateIndexPanel($table);
@@ -289,6 +296,9 @@ class ViewCrud extends LaraCrud {
                 }
                 $formContent = $this->generateForm($table);
                 $this->saveFile($pathToSave . '/form.blade.php', $formContent);
+
+                $detailsHtml = $this->generateDetails($table);
+                $this->saveFile($pathToSave . '/details.blade.php', $detailsHtml);
             }
 
             //  $retHtml.=$this->generateContent($table);
@@ -316,6 +326,17 @@ class ViewCrud extends LaraCrud {
             $content = str_replace('@@column@@', $column, $temp);
         }
         return $content;
+    }
+
+    public function generateDetails($table) {
+        $temp = $this->getTempFile('view/details.html');
+        $modelHtml = $this->panelBox($table);
+        
+        $modalHtml=  $this->generateModal($table);
+        $temp = str_replace('@@panelHtmlBox@@', $modelHtml, $temp);
+        $temp = str_replace('@@modalHtmlBox@@', $modalHtml, $temp);
+        $temp = str_replace('@@table@@', $table, $temp);
+        return $temp;
     }
 
 }

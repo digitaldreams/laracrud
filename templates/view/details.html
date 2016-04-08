@@ -1,0 +1,23 @@
+@extends('layouts.master')
+
+@section('content')
+<div class="container ">
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>
+                <?php echo $record->id; ?>
+            </h4>
+        </div>
+        <div class="col-sm-4 text-right">
+            <div class="btn-group btn-group-sm">
+                <a class="btn btn-default btn-sm" href="<?php echo route('@@table@@.create'); ?>"><span class="glyphicon glyphicon-plus"></span>&nbsp;</a>
+                <a class="btn btn-default btn-sm" href="<?php echo route('@@table@@.index');?>"><span class="glyphicon glyphicon-list"></span>&nbsp;</a>
+            </div>
+       </div>
+    </div>
+    @@panelHtmlBox@@
+
+
+</div>
+@@modalHtmlBox@@
+@endSection
