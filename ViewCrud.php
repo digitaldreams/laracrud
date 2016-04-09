@@ -42,6 +42,7 @@ class ViewCrud extends LaraCrud {
     public $type;
     public $page;
     public $columns = [];
+    protected $foreginColumns = [];
 
     public function __construct($table = '', $page = '', $type = 'panel') {
         if (!empty($table)) {
@@ -57,6 +58,7 @@ class ViewCrud extends LaraCrud {
         $this->loadDetails();
         $this->prepareRelation();
         $this->makeRules();
+        
     }
 
     /**
@@ -64,6 +66,7 @@ class ViewCrud extends LaraCrud {
      */
     protected function makeRules() {
         foreach ($this->tableColumns as $tname => $tableColumns) {
+            $this->checkForeignKeys($tname);
             foreach ($tableColumns as $column) {
 
                 if (in_array($column->Field, $this->protectedColumns)) {
@@ -186,12 +189,19 @@ class ViewCrud extends LaraCrud {
             if ($column['type'] == 'select') {
                 $templateContent = $this->getTempFile('view/select.txt');
                 $options = '';
-                if (isset($column['options']) && is_array($column['options'])) {
-                    foreach ($column['options'] as $opt) {
-                        $label = ucwords(str_replace("_", " ", $opt));
-                        $options.='<option value="' . $opt . '">' . $label . '</option>';
+                if (in_array($column['name'], array_keys($this->foreginColumns))) {
+                    $selectOptions = $this->getTempFile('view/select-rel.txt');
+                    $selectOptions = str_replace('@@modelVar@@', strtolower($this->foreginColumns[$column['name']]), $selectOptions);
+                    $options = str_replace('@@name@@',$column['name'], $selectOptions);
+                } else {
+                    if (isset($column['options']) && is_array($column['options'])) {
+                        foreach ($column['options'] as $opt) {
+                            $label = ucwords(str_replace("_", " ", $opt));
+                            $options.='<option value="' . $opt . '">' . $label . '</option>';
+                        }
                     }
                 }
+
                 $templateContent = str_replace('@@options@@', $options, $templateContent);
             } elseif ($column['type'] == 'checkbox') {
                 $templateContent = $this->getTempFile('view/checkbox.txt');
@@ -331,12 +341,24 @@ class ViewCrud extends LaraCrud {
     public function generateDetails($table) {
         $temp = $this->getTempFile('view/details.html');
         $modelHtml = $this->panelBox($table);
-        
-        $modalHtml=  $this->generateModal($table);
+
+        $modalHtml = $this->generateModal($table);
         $temp = str_replace('@@panelHtmlBox@@', $modelHtml, $temp);
         $temp = str_replace('@@modalHtmlBox@@', $modalHtml, $temp);
         $temp = str_replace('@@table@@', $table, $temp);
         return $temp;
+    }
+
+    protected function checkForeignKeys($table) {
+
+        if (isset($this->finalRelationShips[$table])) {
+            foreach ($this->finalRelationShips[$table] as $rel) {
+
+                if ($rel['name'] == static::RELATION_BELONGS_TO) {
+                    $this->foreginColumns[$rel['foreign_key']] = $rel['model'];
+                }
+            }
+        }
     }
 
 }

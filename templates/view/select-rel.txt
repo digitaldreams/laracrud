@@ -1,0 +1,6 @@
+<?php
+    foreach ($@@modelVar@@ as $data) {
+        $selected = $data->id == $model->@@name@@ ? 'selected' : '';
+        echo '<option value="' . $data->id . '" '.$selected.'>' . $data->id . '</a>';
+         }
+?>

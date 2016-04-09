@@ -18,15 +18,20 @@ class ControllerCrud extends LaraCrud {
     protected $controllerName;
     protected $modelName;
     protected $viewPath;
+    protected $modelNameSpace='\App\Models';
 
     public function __construct($modelName = '') {
         $this->modelName = $modelName;
         $this->init();
+        $this->getTableList();
+        $this->loadDetails();
+        $this->prepareRelation();
     }
 
     public function init() {
         if (!empty($this->modelName)) {
             $arr = explode('\\', $this->modelName);
+            
             if (count($arr)) {
                 $this->controllerName = array_pop($arr);
                 $this->viewPath = strtolower($this->controllerName);
@@ -54,8 +59,9 @@ class ControllerCrud extends LaraCrud {
                 $requestClass = $fullName;
             }
         }
-        $contents = str_replace("@@requestClass@@",$requestClass, $contents);
-        $contents = str_replace("@@table@@",$table, $contents);
+        $contents = str_replace("@@requestClass@@", $requestClass, $contents);
+        $contents = str_replace("@@table@@", $table, $contents);
+        $contents = $this->checkRelation($table, $contents);
 
         return $contents;
     }
@@ -74,6 +80,22 @@ class ControllerCrud extends LaraCrud {
             throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
         }
         return false;
+    }
+
+    public function checkRelation($table, $contents) {
+        $initialization = '';
+        $variablePass = '';
+        if (isset($this->finalRelationShips[$table])) {
+            foreach ($this->finalRelationShips[$table] as $rel) {
+                if ($rel['name'] == static::RELATION_BELONGS_TO) {
+                    $initialization .= '$' . strtolower($rel['model']) . '=' . $rel['model'] . "::select(['id'])->get();" . "\n";
+                    $variablePass.='"' . strtolower($rel['model']) . '"=>' . '$' . strtolower($rel['model']) . ',' . "\n";
+                }
+            }
+        }
+        $contents = str_replace("@@belongsToRelation@@", $initialization, $contents);
+        $contents = str_replace("@@belongsToRelationVars@@", $variablePass, $contents);
+        return $contents;
     }
 
 }

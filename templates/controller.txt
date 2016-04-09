@@ -30,9 +30,10 @@ class @@controllerName@@Controller extends Controller{
     }
 
     public function create() {
-
+         @@belongsToRelation@@
         return view('@@viewPath@@.form', [
-            'model' => $this->model
+            'model' => $this->model,
+            @@belongsToRelationVars@@
         ]);
     }
 
@@ -44,9 +45,10 @@ class @@controllerName@@Controller extends Controller{
                 session()->flash('app_error', 'No data found to edit');
                 return redirect()->back();
             }
-
+              @@belongsToRelation@@
             return view('@@viewPath@@.form', [
-                'model' => $foundModel
+                'model' => $foundModel,
+                @@belongsToRelationVars@@
             ]);
         } catch (\Exception $ex) {
             session()->flash('app_error', $ex->getMessage());

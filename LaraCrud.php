@@ -19,6 +19,11 @@ use Illuminate\Support\Facades\DB;
 
 class LaraCrud {
 
+    const RELATION_BELONGS_TO = 'belongsTo';
+    const RELATION_HAS_MANY = 'hasMany';
+    const RELATION_HAS_ONE = 'hasOne';
+    const RELATION_BELONGS_TO_MANY = 'belongsToMany';
+
     /**
      * Parent Namespace of Model
      * @var type 
@@ -224,7 +229,7 @@ class LaraCrud {
 
                 $modelName = str_replace([$singularReferenceTableName, "_"], "", $relation->TABLE_NAME);
                 $this->finalRelationShips[$relation->REFERENCED_TABLE_NAME][] = [
-                    'name' => 'belongsToMany',
+                    'name' => static::RELATION_BELONGS_TO_MANY,
                     'foreign_key' => $relation->COLUMN_NAME,
                     'model' => $this->getModelName($modelName),
                     'other_key' => $relation->REFERENCED_COLUMN_NAME,
@@ -232,13 +237,13 @@ class LaraCrud {
                 ];
             } else {
                 $this->finalRelationShips[$relation->TABLE_NAME][] = [
-                    'name' => 'belongsTo',
+                    'name' => static::RELATION_BELONGS_TO,
                     'foreign_key' => $relation->COLUMN_NAME,
                     'model' => $this->getModelName($relation->REFERENCED_TABLE_NAME),
                     'other_key' => $relation->REFERENCED_COLUMN_NAME
                 ];
                 $this->finalRelationShips[$relation->REFERENCED_TABLE_NAME][] = [
-                    'name' => 'hasMany',
+                    'name' => static::RELATION_HAS_MANY,
                     'foreign_key' => $relation->COLUMN_NAME,
                     'model' => $this->getModelName($relation->TABLE_NAME),
                     'other_key' => $relation->REFERENCED_COLUMN_NAME
