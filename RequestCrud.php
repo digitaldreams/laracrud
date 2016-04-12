@@ -24,6 +24,7 @@ class RequestCrud extends LaraCrud {
             $this->getTableList();
         }
         $this->loadDetails();
+         $this->findPivotTables();
         $this->prepareRelation();
     }
 

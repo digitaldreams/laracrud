@@ -21,6 +21,11 @@ class ViewCrud extends LaraCrud {
     const PAGE_FORM = 'form';
     const PAGE_DETAILS = 'details';
 
+    /**
+     * This is the third parameter of details page
+     */
+    const TYPE_RELATION = 'relation';
+
     protected $mainTable = '';
     protected $protectedColumns = ['id', 'created_at', 'updated_at', 'deleted_at'];
     protected $viewRules = [];
@@ -58,7 +63,6 @@ class ViewCrud extends LaraCrud {
         $this->loadDetails();
         $this->prepareRelation();
         $this->makeRules();
-        
     }
 
     /**
@@ -192,7 +196,7 @@ class ViewCrud extends LaraCrud {
                 if (in_array($column['name'], array_keys($this->foreginColumns))) {
                     $selectOptions = $this->getTempFile('view/select-rel.txt');
                     $selectOptions = str_replace('@@modelVar@@', strtolower($this->foreginColumns[$column['name']]), $selectOptions);
-                    $options = str_replace('@@name@@',$column['name'], $selectOptions);
+                    $options = str_replace('@@name@@', $column['name'], $selectOptions);
                 } else {
                     if (isset($column['options']) && is_array($column['options'])) {
                         foreach ($column['options'] as $opt) {
@@ -273,46 +277,54 @@ class ViewCrud extends LaraCrud {
         return $modalTemp;
     }
 
+    protected function prepareMake($table) {
+        $pathToSave = $this->getViewPath($table);
+        if (!file_exists($pathToSave)) {
+            mkdir($pathToSave);
+        }
+        if ($this->page == static::PAGE_INDEX) {
+            if ($this->type == static::TYPE_PANEL) {
+                $idnexPanelContent = $this->generateIndexPanel($table);
+                $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
+            } else {
+                $idnexTableContent = $this->generateIndex($table);
+                $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
+            }
+        } elseif ($this->page == static::PAGE_FORM) {
+            $formContent = $this->generateForm($table);
+
+            $this->saveFile($pathToSave . '/form.blade.php', $formContent);
+        } elseif ($this->page == static::PAGE_DETAILS) {
+            $detailsHtml = $this->generateDetails($table);
+            $this->saveFile($pathToSave . '/details.blade.php', $detailsHtml);
+        } else {
+            if ($this->type == static::TYPE_PANEL) {
+                $idnexPanelContent = $this->generateIndexPanel($table);
+                $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
+            } else {
+                $idnexTableContent = $this->generateIndex($table);
+                $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
+            }
+            $formContent = $this->generateForm($table);
+            $this->saveFile($pathToSave . '/form.blade.php', $formContent);
+
+            $detailsHtml = $this->generateDetails($table);
+            $this->saveFile($pathToSave . '/details.blade.php', $detailsHtml);
+        }
+    }
+
     public function make() {
         $retHtml = '';
 
-        foreach ($this->tables as $table) {
-            $pathToSave = $this->getViewPath($table);
-            if (!file_exists($pathToSave)) {
-                mkdir($pathToSave);
+        if (!empty($this->mainTable)) {
+            $this->prepareMake($this->mainTable);
+        } else {
+            foreach ($this->tables as $table) {
+                $this->prepareMake($table);
+                //  $retHtml.=$this->generateContent($table);
             }
-            if ($this->page == static::PAGE_INDEX) {
-                if ($this->type == static::TYPE_PANEL) {
-                    $idnexPanelContent = $this->generateIndexPanel($table);
-                    $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
-                } else {
-                    $idnexTableContent = $this->generateIndex($table);
-                    $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
-                }
-            } elseif ($this->page == static::PAGE_FORM) {
-                $formContent = $this->generateForm($table);
-
-                $this->saveFile($pathToSave . '/form.blade.php', $formContent);
-            } elseif ($this->page == static::PAGE_DETAILS) {
-                $detailsHtml = $this->generateDetails($table);
-                $this->saveFile($pathToSave . '/details.blade.php', $detailsHtml);
-            } else {
-                if ($this->type == static::TYPE_PANEL) {
-                    $idnexPanelContent = $this->generateIndexPanel($table);
-                    $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
-                } else {
-                    $idnexTableContent = $this->generateIndex($table);
-                    $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
-                }
-                $formContent = $this->generateForm($table);
-                $this->saveFile($pathToSave . '/form.blade.php', $formContent);
-
-                $detailsHtml = $this->generateDetails($table);
-                $this->saveFile($pathToSave . '/details.blade.php', $detailsHtml);
-            }
-
-            //  $retHtml.=$this->generateContent($table);
         }
+
         return $retHtml;
     }
 
@@ -342,8 +354,25 @@ class ViewCrud extends LaraCrud {
         $temp = $this->getTempFile('view/details.html');
         $modelHtml = $this->panelBox($table);
 
+        $relationHtml = '';
+
+        if ($this->type == static::TYPE_RELATION) {
+
+            if (isset($this->finalRelationShips[$table])) {
+                foreach ($this->finalRelationShips[$table] as $rel) {
+                    if (in_array($rel['model'], ['belongsToMany', 'hasMany'])) {
+                        $tableName = lcfirst(snake_case($rel['model']));
+
+                        if (isset($this->tableColumns[$tableName])) {
+                            
+                        }
+                    }
+                }
+            }
+        }
         $modalHtml = $this->generateModal($table);
         $temp = str_replace('@@panelHtmlBox@@', $modelHtml, $temp);
+        $temp = str_replace('@@relationshipData@@', $relationHtml, $temp);
         $temp = str_replace('@@modalHtmlBox@@', $modalHtml, $temp);
         $temp = str_replace('@@table@@', $table, $temp);
         return $temp;

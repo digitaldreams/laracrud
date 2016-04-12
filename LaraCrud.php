@@ -40,7 +40,7 @@ class LaraCrud {
      * Pivot Table that are used for maintaining Relationships only
      * @var array
      */
-    public $pivotTables = ['consumer_business', 'migrations'];
+    public $pivotTables = ['migrations'];
 
     /**
      * List of the Table name
@@ -344,6 +344,29 @@ class LaraCrud {
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
         }
+    }
+
+    /**
+     * Find out pivot table for better relationship logic
+     */
+    public function findPivotTables() {
+        $tablesWithoutPrimaryKey = [];
+      //  $lc=new static;
+       // $lc->getTableList();
+       // $lc->loadDetails();
+        foreach ($this->tableColumns as $tableName => $columns) {
+            $primaryKey = [];
+            foreach ($columns as $column) {
+
+                if ($column->Key == 'PRI') {
+                    $primaryKey[] = $column->Field;
+                }
+            }
+            if (empty($primaryKey)) {
+                $tablesWithoutPrimaryKey[] = $tableName;
+            }
+        }
+        $this->pivotTables = $tablesWithoutPrimaryKey;
     }
 
 }

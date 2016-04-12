@@ -39,6 +39,7 @@ class Model extends Command {
         try {
             $table = $this->argument('table');
             $modelCrud = new \App\Libs\ModelCrud($table);
+            print_r($modelCrud->pivotTables);
             $modelCrud->make();
             $this->info('Model class successfully created');
         } catch (\Exception $ex) {

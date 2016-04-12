@@ -27,6 +27,7 @@ class ModelCrud extends LaraCrud {
         }
         $this->loadDetails();
         $this->columnDataTypes();
+        $this->findPivotTables();
         $this->prepareRelation();
     }
 
