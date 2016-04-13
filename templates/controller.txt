@@ -112,4 +112,10 @@ class @@controllerName@@Controller extends Controller{
         return redirect()->back();
     }
 
+     protected function filterRequest($request){
+          $model=$this->model;
+            @@requestFiltetr@@
+            return $model;
+     }
+
 }

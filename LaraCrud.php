@@ -54,6 +54,7 @@ class LaraCrud {
      */
     public $tableColumns = [];
     public $systemColumns = ['created_at', 'updated_at', 'deleted_at'];
+    protected $protectedColumns = ['id', 'created_at', 'updated_at', 'deleted_at'];
     public $columnsDataType = [];
     public $getDateFormat = [
         'time' => 'h:i A',
@@ -351,9 +352,9 @@ class LaraCrud {
      */
     public function findPivotTables() {
         $tablesWithoutPrimaryKey = [];
-      //  $lc=new static;
-       // $lc->getTableList();
-       // $lc->loadDetails();
+        //  $lc=new static;
+        // $lc->getTableList();
+        // $lc->loadDetails();
         foreach ($this->tableColumns as $tableName => $columns) {
             $primaryKey = [];
             foreach ($columns as $column) {

@@ -18,23 +18,35 @@ class ControllerCrud extends LaraCrud {
     protected $controllerName;
     protected $modelName;
     protected $viewPath;
-    protected $modelNameSpace='\App\Models';
+    protected $modelNameSpace = '\App\Models';
+    protected $requestClass = 'Request';
+    protected $table;
 
     public function __construct($modelName = '') {
         $this->modelName = $modelName;
-        $this->init();
         $this->getTableList();
         $this->loadDetails();
+        $this->init();
         $this->prepareRelation();
     }
 
     public function init() {
         if (!empty($this->modelName)) {
             $arr = explode('\\', $this->modelName);
-            
+
             if (count($arr)) {
                 $this->controllerName = array_pop($arr);
                 $this->viewPath = strtolower($this->controllerName);
+            }
+            if (class_exists($this->modelName)) {
+                $model = new $this->modelName;
+                $this->table = $table = $model->getTable();
+
+                $requestName = $this->getModelName($table);
+                $fullName = '\App\Http\Requests\\' . $requestName . 'Request';
+                if (class_exists($fullName)) {
+                    $this->requestClass = $fullName;
+                }
             }
         }
     }
@@ -46,22 +58,15 @@ class ControllerCrud extends LaraCrud {
         $contents = str_replace("@@controllerName@@", $this->controllerName, $contents);
         $contents = str_replace("@@modelName@@", $this->modelName, $contents);
         $contents = str_replace("@@viewPath@@", $this->viewPath, $contents);
-        //@@requestClass@@ @@table@@
-        $requestClass = 'Request';
-        $table = '';
-        if (class_exists($this->modelName)) {
-            $model = new $this->modelName;
-            $table = $model->getTable();
 
-            $requestName = $this->getModelName($table);
-            $fullName = '\App\Http\Requests\\' . $requestName . 'Request';
-            if (class_exists($fullName)) {
-                $requestClass = $fullName;
-            }
-        }
-        $contents = str_replace("@@requestClass@@", $requestClass, $contents);
-        $contents = str_replace("@@table@@", $table, $contents);
-        $contents = $this->checkRelation($table, $contents);
+
+        $contents = str_replace("@@requestClass@@", $this->requestClass, $contents);
+        $contents = str_replace("@@table@@", $this->table, $contents);
+
+        $filterCode = $this->generateFilter();
+        $contents = str_replace("@@requestFiltetr@@", $filterCode, $contents);
+
+        $contents = $this->checkRelation($this->table, $contents);
 
         return $contents;
     }
@@ -96,6 +101,23 @@ class ControllerCrud extends LaraCrud {
         $contents = str_replace("@@belongsToRelation@@", $initialization, $contents);
         $contents = str_replace("@@belongsToRelationVars@@", $variablePass, $contents);
         return $contents;
+    }
+
+    protected function generateFilter() {
+        $retCode = '';
+        if (isset($this->tableColumns[$this->table])) {
+            foreach ($this->tableColumns[$this->table] as $column) {
+                 $temp = $this->getTempFile('view/controller-filter.txt');
+                if (in_array($column->Field, $this->protectedColumns)) {
+                    continue;
+                }
+
+                $temp = str_replace('@@columnName@@', $column->Field, $temp);
+                $temp = str_replace('@@scopeName@@', camel_case($column->Field), $temp);
+                $retCode.=$temp;
+            }
+        }
+        return $retCode;
     }
 
 }
