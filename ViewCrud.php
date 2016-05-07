@@ -17,6 +17,7 @@ class ViewCrud extends LaraCrud {
 
     const TYPE_PANEL = 'panel';
     const TYPE_TABLE = 'table';
+    const TYPE_TABLE_PANEL = 'tabpan';
     const PAGE_INDEX = 'index';
     const PAGE_FORM = 'form';
     const PAGE_DETAILS = 'details';
@@ -184,6 +185,38 @@ class ViewCrud extends LaraCrud {
         return $indexPageTemp;
     }
 
+    protected function tabPanel($tableName) {
+        $dataOption = '';
+        $bodyHtml = '';
+   
+
+        $headerHtml = '';
+        $tableName = !empty($table) ? $table : $this->mainTable;
+        $bodyHtml = '<?php foreach($records as $record): ?><tr>' . "\n";
+
+        foreach ($this->columns[$tableName] as $column) {
+            $dataOption.='data-' . $column . '="<?php echo $record->' . $column . ';?>"' . "\n";
+
+            $headerHtml.='<th>' . ucwords(str_replace("_", " ", $column)) . '</th>' . "\n";
+            $bodyHtml.='<td><?php echo $record->' . $column . '; ?></td>' . "\n";
+        }
+        $headerHtml.='<th>&nbsp;</th>' . "\n";
+        $headerHtml.='<th>&nbsp;</th>' . "\n";
+
+        $bodyHtml.='<td><a  data-toggle="modal" data-target="#' . $tableName . 'Modal"' . $dataOption . ' ><span class="glyphicon glyphicon-pencil"></span></a></td>' . "\n";
+        $bodyHtml.='<td><a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\'' . $tableName . '.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a></td>' . "\n";
+
+        $bodyHtml.= '</tr><?php endforeach; ?>';
+        
+        $indexPageTemp = $this->getTempFile('view/panel_table.html');
+        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
+        $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
+        $modalHtml=  $this->generateModal($tableName);
+        $indexPageTemp = str_replace('@@modalHtml@@', $modalHtml, $indexPageTemp);
+        return $indexPageTemp;
+    }
+
     protected function generateContent($table, $error_block = FALSE) {
         $retHtml = '';
         foreach ($this->viewRules[$table] as $column) {
@@ -285,6 +318,10 @@ class ViewCrud extends LaraCrud {
             if ($this->type == static::TYPE_PANEL) {
                 $idnexPanelContent = $this->generateIndexPanel($table);
                 $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
+            }elseif($this->type==static::TYPE_TABLE_PANEL){
+                $idnexPanelContent = $this->tabPanel($table);
+                $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
+       
             } else {
                 $idnexTableContent = $this->generateIndex($table);
                 $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
