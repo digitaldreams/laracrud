@@ -21,6 +21,7 @@ class ViewCrud extends LaraCrud {
     const PAGE_INDEX = 'index';
     const PAGE_FORM = 'form';
     const PAGE_DETAILS = 'details';
+    const PAGE_MODAL = 'modal';
 
     /**
      * This is the third parameter of details page
@@ -188,7 +189,7 @@ class ViewCrud extends LaraCrud {
     protected function tabPanel($tableName) {
         $dataOption = '';
         $bodyHtml = '';
-   
+
 
         $headerHtml = '';
         $tableName = !empty($table) ? $table : $this->mainTable;
@@ -207,12 +208,12 @@ class ViewCrud extends LaraCrud {
         $bodyHtml.='<td><a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\'' . $tableName . '.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a></td>' . "\n";
 
         $bodyHtml.= '</tr><?php endforeach; ?>';
-        
+
         $indexPageTemp = $this->getTempFile('view/panel_table.html');
         $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
-        $modalHtml=  $this->generateModal($tableName);
+        $modalHtml = $this->generateModal($tableName);
         $indexPageTemp = str_replace('@@modalHtml@@', $modalHtml, $indexPageTemp);
         return $indexPageTemp;
     }
@@ -233,7 +234,7 @@ class ViewCrud extends LaraCrud {
                     if (isset($column['options']) && is_array($column['options'])) {
                         foreach ($column['options'] as $opt) {
                             $label = ucwords(str_replace("_", " ", $opt));
-                            $options.='<option value="' . $opt . '">' . $label . '</option>';
+                            $options.='<option value="' . $opt . '" <?php echo old(\''.$column['name'].'\',$model->'.$column['name'].')==\''.$opt.'\'?"selected":"" ?>>' . $label . '</option>'."\n";
                         }
                     }
                 }
@@ -261,7 +262,7 @@ class ViewCrud extends LaraCrud {
             $showColumnValue = '';
 
             if ($error_block) {
-                $showColumnValue = '<?php echo $model->' . $column['name'] . '?>';
+                $showColumnValue = '<?php echo old(\'' . $column['name'] . '\',$model->' . $column['name'] . ')?>';
             }
             $templateContent = str_replace('@@columnValue@@', $showColumnValue, $templateContent);
 
@@ -316,13 +317,15 @@ class ViewCrud extends LaraCrud {
         }
         if ($this->page == static::PAGE_INDEX) {
             if ($this->type == static::TYPE_PANEL) {
+
                 $idnexPanelContent = $this->generateIndexPanel($table);
                 $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
-            }elseif($this->type==static::TYPE_TABLE_PANEL){
+            } elseif ($this->type == static::TYPE_TABLE_PANEL) {
+
                 $idnexPanelContent = $this->tabPanel($table);
                 $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
-       
             } else {
+
                 $idnexTableContent = $this->generateIndex($table);
                 $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
             }
@@ -331,13 +334,20 @@ class ViewCrud extends LaraCrud {
 
             $this->saveFile($pathToSave . '/form.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_DETAILS) {
+
             $detailsHtml = $this->generateDetails($table);
             $this->saveFile($pathToSave . '/details.blade.php', $detailsHtml);
+        } elseif ($this->page == static::PAGE_MODAL) {
+
+            $modalHtml = $this->generateModal($table);
+            $this->saveFile($pathToSave . '/_modal.blade.php', $modalHtml);
         } else {
             if ($this->type == static::TYPE_PANEL) {
+
                 $idnexPanelContent = $this->generateIndexPanel($table);
                 $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
             } else {
+
                 $idnexTableContent = $this->generateIndex($table);
                 $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
             }
