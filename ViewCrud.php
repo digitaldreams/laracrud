@@ -28,7 +28,6 @@ class ViewCrud extends LaraCrud {
      */
     const TYPE_RELATION = 'relation';
 
- 
     protected $viewRules = [];
     public $inputType = [
         'text' => 'textarea',
@@ -53,7 +52,11 @@ class ViewCrud extends LaraCrud {
     public function __construct($table = '', $page = '', $type = 'panel') {
         if (!empty($table)) {
             $this->mainTable = $table;
-            $this->tables[] = $table;
+            if (is_array($table)) {
+                $this->tables = $table;
+            } else {
+                $this->tables[] = $table;
+            }
         } else {
             $this->getTableList();
         }
@@ -351,7 +354,7 @@ class ViewCrud extends LaraCrud {
     public function make() {
         $retHtml = '';
 
-        if (!empty($this->mainTable)) {
+        if (!empty($this->mainTable) && !is_array($this->mainTable)) {
             $this->prepareMake($this->mainTable);
         } else {
             foreach ($this->tables as $table) {
@@ -408,7 +411,7 @@ class ViewCrud extends LaraCrud {
         if ($required) {
             $selectTmp = '<?php echo old("' . $column['name'] . '",$model->' . $column['name'] . ')==""?"checked":"" ?>';
         }
-        return str_replace('@@checked@@', $selectTmp,  $templateContent);
+        return str_replace('@@checked@@', $selectTmp, $templateContent);
     }
 
     public function generateDetails($table) {

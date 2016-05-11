@@ -40,12 +40,16 @@ class View extends Command {
             $table = $this->argument('table');
             $type = $this->argument('type');
             $page = $this->argument('page');
-
+            
+            if (strripos($table, ",")) {
+                $table = explode(",", $table);
+            }
+            
             $modelCrud = new \App\Libs\ViewCrud($table, $page, $type);
             $modelCrud->make();
             $this->info('View created successfully');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 

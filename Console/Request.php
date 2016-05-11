@@ -42,6 +42,9 @@ class Request extends Command {
             if ($table == 'all') {
                 $modelCrud = new \App\Libs\RequestCrud();
             } else {
+                if (strripos($table, ",")) {
+                    $table = explode(",", $table);
+                }
                 $modelCrud = new \App\Libs\RequestCrud($table);
             }
 

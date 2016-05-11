@@ -41,6 +41,9 @@ class Model extends Command {
             if ($table == 'all') {
                 $modelCrud = new \App\Libs\ModelCrud();
             } else {
+                if (strripos($table, ",")) {
+                    $table = explode(",", $table);
+                }
                 $modelCrud = new \App\Libs\ModelCrud($table);
             }
 

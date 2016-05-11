@@ -19,7 +19,11 @@ class RequestCrud extends LaraCrud {
 
     public function __construct($table) {
         if (!empty($table)) {
-            $this->tables[] = $table;
+            if (is_array($table)) {
+                $this->tables = $table;
+            } else {
+                $this->tables[] = $table;
+            }
         } else {
             $this->getTableList();
         }
