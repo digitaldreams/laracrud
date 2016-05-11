@@ -24,7 +24,7 @@ class RequestCrud extends LaraCrud {
             $this->getTableList();
         }
         $this->loadDetails();
-         $this->findPivotTables();
+        $this->findPivotTables();
         $this->prepareRelation();
     }
 
@@ -89,14 +89,37 @@ class RequestCrud extends LaraCrud {
                 } elseif ($dataType == 'varchar') {
                     $validationRules .="max:" . $retVals . '|';
                     $this->validateionMsg.="'$column->Field.max'=>''" . "\n";
+                } elseif ($dataType == 'tinyint') {
+                    if ($retVals == 1) {
+                        $validationRules .="boolean|";
+                    }
+                } elseif (in_array($dataType, ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float', 'double'])) {
+                    $validationRules .="numeric|";
                 }
             } else {
-                
+                if (in_array($type, ["timestamp", 'date', 'datetime'])) {
+
+                    $validationRules .="date|";
+                    $this->validateionMsg.="'$column->Field.date'=>''" . "\n";
+                } elseif ($type == 'time') {
+
+                    $validationRules .="regex:/^([0-9]|0[0-9]|[1,2][0-3]):[0-5][0-9]?\s?(AM|PM|am|pm)?$/";
+                    $this->validateionMsg.="'$column->Field.date'=>'Invalid time'" . "\n";
+                } elseif ($type == 'double') {
+
+                    $validationRules .="numeric|";
+                } elseif (in_array($type, ['text', 'tinytext', 'mediumtext', 'longtext'])) {
+
+                    $validationRules .="string|";
+                }
             }
             if (isset($this->foreignKeys[$tname])) {
+
                 if (in_array($column->Field, $this->foreignKeys[$tname]['keys']) && isset($this->foreignKeys[$tname]['rel'][$column->Field])) {
+
                     $tableName = $this->foreignKeys[$tname]['rel'][$column->Field]->REFERENCED_TABLE_NAME;
                     $tableColumn = $this->foreignKeys[$tname]['rel'][$column->Field]->REFERENCED_COLUMN_NAME;
+
                     $validationRules.='exists:' . $tableName . ',' . $tableColumn;
                     $this->validateionMsg.="'$column->Field.exists'=>''" . "\n";
                 }
