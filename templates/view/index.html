@@ -19,6 +19,13 @@
         <tbody>
             @@tableBody@@
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">
+                    <?php echo $records->render(); ?>
+                </td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 @endSection

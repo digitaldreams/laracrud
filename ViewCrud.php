@@ -224,24 +224,10 @@ class ViewCrud extends LaraCrud {
 
             $templateContent = '';
             if ($column['type'] == 'select') {
-                $templateContent = $this->getTempFile('view/select.txt');
-                $options = '';
-                if (in_array($column['name'], array_keys($this->foreginColumns))) {
-                    $selectOptions = $this->getTempFile('view/select-rel.txt');
-                    $selectOptions = str_replace('@@modelVar@@', strtolower($this->foreginColumns[$column['name']]), $selectOptions);
-                    $options = str_replace('@@name@@', $column['name'], $selectOptions);
-                } else {
-                    if (isset($column['options']) && is_array($column['options'])) {
-                        foreach ($column['options'] as $opt) {
-                            $label = ucwords(str_replace("_", " ", $opt));
-                            $options.='<option value="' . $opt . '" <?php echo old(\''.$column['name'].'\',$model->'.$column['name'].')==\''.$opt.'\'?"selected":"" ?>>' . $label . '</option>'."\n";
-                        }
-                    }
-                }
 
-                $templateContent = str_replace('@@options@@', $options, $templateContent);
+                $templateContent = $this->getSelectContent($column, $error_block);
             } elseif ($column['type'] == 'checkbox') {
-                $templateContent = $this->getTempFile('view/checkbox.txt');
+                $templateContent = $this->getCheckBoxContent($column, $error_block);
             } elseif ($column['type'] == 'radio') {
                 $templateContent = $this->getTempFile('view/radio.txt');
             } elseif ($column['type'] == 'textarea') {
@@ -290,11 +276,13 @@ class ViewCrud extends LaraCrud {
     public function generateModal($table) {
         $modalInputFill = '';
         $modalInputClean = '';
-
+        $modalShowOnError = '';
         foreach ($this->columns[$table] as $column) {
+            $modalShowOnError.=' $errors->has("' . $column . '") ||';
             $modalInputFill.='jq("#' . $column . '").val(btn.attr(\'data-' . $column . '\'));' . "\n";
             $modalInputClean.='jq("#' . $column . '").val(\'\');' . "\n";
         }
+        $modalShowOnError = rtrim($modalShowOnError, "||");
         $modalInputFill.='jq("#id").val(btn.attr(\'data-id\'));' . "\n";
         $modalInputClean.='jq("#id").val(\'\');' . "\n";
 
@@ -304,6 +292,7 @@ class ViewCrud extends LaraCrud {
         $modalTemp = str_replace('@@form@@', $formHtml, $modalTemp);
         $modalTemp = str_replace('@@table@@', $table, $modalTemp);
 
+        $modalTemp = str_replace('@@showModalOnError@@', $modalShowOnError, $modalTemp);
         $modalTemp = str_replace('@@modalInputFillUp@@', $modalInputFill, $modalTemp);
         $modalTemp = str_replace('@@modalInputCleanUp@@', $modalInputClean, $modalTemp);
 
@@ -380,20 +369,46 @@ class ViewCrud extends LaraCrud {
 
     public function hasErrorClass($column, $required) {
         $content = '';
-        if ($required) {
-            $temp = $this->getTempFile('view/hasErrorClass.txt');
-            $content = str_replace('@@column@@', $column, $temp);
-        }
+        $temp = $this->getTempFile('view/hasErrorClass.txt');
+        $content = str_replace('@@column@@', $column, $temp);
         return $content;
     }
 
     public function showErrorText($column, $required) {
         $content = '';
-        if ($required) {
-            $temp = $this->getTempFile('view/showErrorText.txt');
-            $content = str_replace('@@column@@', $column, $temp);
-        }
+        $temp = $this->getTempFile('view/showErrorText.txt');
+        $content = str_replace('@@column@@', $column, $temp);
         return $content;
+    }
+
+    public function getSelectContent($column, $required) {
+        $templateContent = $this->getTempFile('view/select.txt');
+        $options = '';
+        if (in_array($column['name'], array_keys($this->foreginColumns))) {
+            $selectOptions = $this->getTempFile('view/select-rel.txt');
+            $selectOptions = str_replace('@@modelVar@@', strtolower($this->foreginColumns[$column['name']]), $selectOptions);
+            $options = str_replace('@@name@@', $column['name'], $selectOptions);
+        } else {
+            if (isset($column['options']) && is_array($column['options'])) {
+                foreach ($column['options'] as $opt) {
+                    $selectedText = $required == true ? '<?php echo old(\'' . $column['name'] . '\',$model->' . $column['name'] . ')==\'' . $opt . '\'?"selected":"" ?>' : '';
+                    $label = ucwords(str_replace("_", " ", $opt));
+                    $options.='<option value="' . $opt . '" ' . $selectedText . ' >' . $label . '</option>' . "\n";
+                }
+            }
+        }
+
+        $templateContent = str_replace('@@options@@', $options, $templateContent);
+        return $templateContent;
+    }
+
+    public function getCheckBoxContent($column, $required) {
+        $templateContent = $this->getTempFile('view/checkbox.txt');
+        $selectTmp = '';
+        if ($required) {
+            $selectTmp = '<?php echo old("' . $column['name'] . '",$model->' . $column['name'] . ')==""?"checked":"" ?>';
+        }
+        return str_replace('@@checked@@', $selectTmp,  $templateContent);
     }
 
     public function generateDetails($table) {
