@@ -29,6 +29,10 @@ class ModelCrud extends LaraCrud {
         $this->columnDataTypes();
         $this->findPivotTables();
         $this->prepareRelation();
+        
+        if (!file_exists(base_path($this->path))) {
+            mkdir(base_path($this->path));
+        }
     }
 
     /**

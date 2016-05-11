@@ -50,7 +50,7 @@ class Mvc extends Command {
 
             $viewCrud = new \App\Libs\ViewCrud($table);
             $viewCrud->make();
-            $this->info('View created successfully');
+            $this->info('Model, View, Request and Controlleer successfully created ');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
         }

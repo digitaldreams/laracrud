@@ -22,7 +22,7 @@ class @@controllerName@@Controller extends Controller{
         try {
             $data = $this->model->paginate(10);
             return view('@@viewPath@@.index', [
-                'records' => $data
+                'records' => $data,
             ]);
         } catch (\Exception $ex) {
             echo $ex->getMessage();
@@ -86,6 +86,7 @@ class @@controllerName@@Controller extends Controller{
             $this->model->fill($request->all());
 
             if ($this->model->save()) {
+                 @@belongsToManyRelationSync@@
                 session()->flash('app_message', 'Data successfully saved');
                 return redirect()->route('@@table@@.index');
             } else {

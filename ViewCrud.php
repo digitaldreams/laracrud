@@ -28,7 +28,7 @@ class ViewCrud extends LaraCrud {
      */
     const TYPE_RELATION = 'relation';
 
-    protected $mainTable = '';
+ 
     protected $viewRules = [];
     public $inputType = [
         'text' => 'textarea',

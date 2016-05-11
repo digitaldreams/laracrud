@@ -12,7 +12,7 @@ class Model extends Command {
      *
      * @var string
      */
-    protected $signature = 'tb:model {table}';
+    protected $signature = "tb:model {table}";
 
     /**
      * The console command description.
@@ -38,8 +38,12 @@ class Model extends Command {
     public function handle() {
         try {
             $table = $this->argument('table');
-            $modelCrud = new \App\Libs\ModelCrud($table);
-            print_r($modelCrud->pivotTables);
+            if ($table == 'all') {
+                $modelCrud = new \App\Libs\ModelCrud();
+            } else {
+                $modelCrud = new \App\Libs\ModelCrud($table);
+            }
+
             $modelCrud->make();
             $this->info('Model class successfully created');
         } catch (\Exception $ex) {

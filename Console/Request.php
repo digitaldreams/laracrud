@@ -38,7 +38,13 @@ class Request extends Command {
     public function handle() {
         try {
             $table = $this->argument('table');
-            $modelCrud = new \App\Libs\RequestCrud($table);
+
+            if ($table == 'all') {
+                $modelCrud = new \App\Libs\RequestCrud();
+            } else {
+                $modelCrud = new \App\Libs\RequestCrud($table);
+            }
+
             $modelCrud->make();
             $this->info('Request class successfully created');
         } catch (\Exception $ex) {

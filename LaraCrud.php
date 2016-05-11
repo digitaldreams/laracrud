@@ -40,13 +40,24 @@ class LaraCrud {
      * Pivot Table that are used for maintaining Relationships only
      * @var array
      */
-    public $pivotTables = ['migrations'];
+    public $pivotTables = ['migrations',
+        'role_user','role_permission',
+        'field_has_data_stores',
+        'data_store_has_template',
+        'data_store_contact_group',
+        ];
 
     /**
      * List of the Table name
      * @var array
      */
     protected $tables = [];
+
+    /**
+     * Main table which will be created as Model, View etc
+     * @var type 
+     */
+    protected $mainTable = '';
 
     /**
      * Table Column Details
@@ -141,6 +152,11 @@ class LaraCrud {
      * @return array 
      */
     public function getTableList() {
+
+        $this->tables = $this->getTablesName();
+    }
+
+    protected function getTablesName() {
         $tableNames = [];
         $result = DB::select('SHOW TABLES');
         foreach ($result as $tb) {
@@ -148,7 +164,7 @@ class LaraCrud {
             $tableName = array_values($tb);
             $tableNames[] = array_shift($tableName);
         }
-        $this->tables = $tableNames;
+        return $tableNames;
     }
 
     /**
@@ -160,7 +176,6 @@ class LaraCrud {
             foreach ($this->tables as $tableName) {
                 $tableDetails = DB::select("EXPLAIN " . $tableName);
                 $indexes = DB::select('SHOW INDEXES FROM ' . $tableName);
-                $relationShips = $this->getRelationShip($tableName);
 
                 if (!empty($tableDetails)) {
                     $this->tableColumns[$tableName] = $tableDetails;
@@ -169,13 +184,8 @@ class LaraCrud {
                 if (!empty($indexes)) {
                     $this->indexes[$tableName] = $indexes;
                 }
-
-                $filteredRelationship = array_filter($relationShips, array($this, 'filterIndex'));
-
-                if (!empty($filteredRelationship)) {
-                    $this->relationships = array_merge($this->relationships, $filteredRelationship);
-                }
             }
+            $this->relationships = $this->getRelationShip();
             return true;
         } catch (\Exception $ex) {
             $this->errors[] = $ex->getMessage() . $ex->getLine() . $ex->getFile();
@@ -201,10 +211,27 @@ class LaraCrud {
      * 
      * @param string $tableName Get all foreign relation for a table
      */
-    public function getRelationShip($tableName) {
-        $relationShips = DB::select("SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
+    public function getRelationShip($tableName = '') {
+        $tableName = !empty($tableName) ? $tableName : $this->getTablesName();
+        $dbName = env('DB_DATABASE');
+
+        $sql = "SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
                                     FROM  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-                                    WHERE  TABLE_NAME ='$tableName'");
+                                    WHERE TABLE_SCHEMA='$dbName' ";
+        if (is_array($tableName)) {
+            $makeOptions = '';
+            foreach ($tableName as $tb) {
+                $makeOptions.="'" . $tb . "',";
+            }
+            $makeOptions = rtrim($makeOptions, ",");
+            $sql.= " AND TABLE_NAME IN ($makeOptions)";
+        } else {
+            $sql.= " AND TABLE_NAME ='$tableName'";
+        }
+
+        $sql.=" AND REFERENCED_TABLE_NAME IS NOT NULL";
+
+        $relationShips = DB::select($sql);
         return $relationShips;
     }
 
@@ -261,36 +288,7 @@ class LaraCrud {
      */
     public function getSingular($words) {
         $retSingular = '';
-        return $words;
-        $pluralWordSyntex = ['s', 'x', 'z', 'ch', 'sh'];
-        if (strripos($words, "es")) {
-            $singularWord = substr($words, 0, strripos($words, "es"));
-            $singularWordLastWord = substr($singularWord, -1);
-
-            $singularWordLastTwoWord = substr($singularWord, -2);
-
-            if (in_array($singularWordLastWord, $pluralWordSyntex) || in_array($singularWordLastTwoWord, $pluralWordSyntex)) {
-                $retSingular = $singularWord;
-            } elseif ($singularWordLastWord == 'i') {
-                $withoutY = substr($singularWord, 0, strripos($words, "i"));
-                $retSingular = $withoutY . "y";
-            } else {
-                $retSingular = substr($words, 0, strripos($words, "s"));
-            }
-        } elseif (strripos($words, "s")) {
-            /*
-              $lastCharacter = substr($words, -1);
-              if ($lastCharacter == 's') {
-              $retSingular = substr($words, 0, strripos($words, "s"));
-              } else {
-              $retSingular = $words;
-              }
-             * 
-             */
-        } else {
-            
-        }
-        return $retSingular;
+        return str_singular($words);
     }
 
     protected function extractRulesFromType($type) {
@@ -351,7 +349,7 @@ class LaraCrud {
      * Find out pivot table for better relationship logic
      */
     public function findPivotTables() {
-        $tablesWithoutPrimaryKey = [];
+        $tablesWithoutPrimaryKey = $this->pivotTables;
         //  $lc=new static;
         // $lc->getTableList();
         // $lc->loadDetails();
@@ -367,7 +365,7 @@ class LaraCrud {
                 $tablesWithoutPrimaryKey[] = $tableName;
             }
         }
-        $this->pivotTables = $tablesWithoutPrimaryKey;
+        $this->pivotTables = array_unique($tablesWithoutPrimaryKey);
     }
 
 }

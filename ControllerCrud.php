@@ -20,27 +20,27 @@ class ControllerCrud extends LaraCrud {
     protected $viewPath;
     protected $modelNameSpace = '\App\Models';
     protected $requestClass = 'Request';
-    protected $table;
+    public $table;
 
     public function __construct($modelName = '') {
         $this->modelName = $modelName;
-        $this->getTableList();
-        $this->loadDetails();
+        // $this->getTableList();
+        //$this->loadDetails();
         $this->init();
         $this->prepareRelation();
     }
 
     public function init() {
         if (!empty($this->modelName)) {
-            $arr = explode('\\', $this->modelName);
 
-            if (count($arr)) {
-                $this->controllerName = array_pop($arr);
-                $this->viewPath = strtolower($this->controllerName);
-            }
+            $this->parseModelName();
+
             if (class_exists($this->modelName)) {
                 $model = new $this->modelName;
                 $this->table = $table = $model->getTable();
+
+                $this->tables[] = $this->table;
+                $this->loadDetails();
 
                 $requestName = $this->getModelName($table);
                 $fullName = '\App\Http\Requests\\' . $requestName . 'Request';
@@ -49,6 +49,13 @@ class ControllerCrud extends LaraCrud {
                 }
             }
         }
+    }
+
+    protected function parseModelName() {
+        $class = new \ReflectionClass($this->modelName);
+        $this->modelNameSpace = $class->getNamespaceName();
+        $this->viewPath = strtolower($class->getShortName());
+        $this->controllerName = $class->getShortName();
     }
 
     public function generateContent() {
@@ -90,16 +97,23 @@ class ControllerCrud extends LaraCrud {
     public function checkRelation($table, $contents) {
         $initialization = '';
         $variablePass = '';
+        $bmanySync = '/**';
         if (isset($this->finalRelationShips[$table])) {
             foreach ($this->finalRelationShips[$table] as $rel) {
-                if ($rel['name'] == static::RELATION_BELONGS_TO) {
-                    $initialization .= '$' . strtolower($rel['model']) . '=' . $rel['model'] . "::select(['id'])->get();" . "\n";
+                if ($rel['name'] == static::RELATION_BELONGS_TO || $rel['name'] == static::RELATION_BELONGS_TO_MANY) {
+                    $initialization .= '$' . strtolower($rel['model']) . '=' . '\\' . $this->modelNameSpace . '\\' . $rel['model'] . "::select(['id'])->get();" . "\n";
                     $variablePass.='"' . strtolower($rel['model']) . '"=>' . '$' . strtolower($rel['model']) . ',' . "\n";
+                }
+                if ($rel['name'] == static::RELATION_BELONGS_TO_MANY) {
+                    $methodName = lcfirst($rel['model']);
+                    $bmanySync.='$this->model->' . $methodName . '()->sync($request->get(\'' . $rel['other_key'] . '\',[]);' . "\n";
                 }
             }
         }
+        $bmanySync.='*/';
         $contents = str_replace("@@belongsToRelation@@", $initialization, $contents);
         $contents = str_replace("@@belongsToRelationVars@@", $variablePass, $contents);
+        $contents = str_replace("@@belongsToManyRelationSync@@", $bmanySync, $contents);
         return $contents;
     }
 
@@ -107,7 +121,7 @@ class ControllerCrud extends LaraCrud {
         $retCode = '';
         if (isset($this->tableColumns[$this->table])) {
             foreach ($this->tableColumns[$this->table] as $column) {
-                 $temp = $this->getTempFile('view/controller-filter.txt');
+                $temp = $this->getTempFile('view/controller-filter.txt');
                 if (in_array($column->Field, $this->protectedColumns)) {
                     continue;
                 }

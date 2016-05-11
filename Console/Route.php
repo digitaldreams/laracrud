@@ -43,6 +43,7 @@ class Route extends Command {
                 $controller = 'App\Http\Controllers\\' . $controller;
             }
 
+
             $modelCrud = new \App\Libs\RouteCrud($controller);
             $modelCrud->make();
             $this->info('Routes created successfully');
