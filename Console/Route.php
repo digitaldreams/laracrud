@@ -37,15 +37,31 @@ class Route extends Command {
      */
     public function handle() {
         try {
+            $controllers = [];
             $controller = $this->argument('controller');
+            if ($controller == 'all') {
 
-            if (!stripos("App\Http\Controllers\\", $controller)) {
-                $controller = 'App\Http\Controllers\\' . $controller;
+                $dirIt = new \RecursiveDirectoryIterator(app_path('Http/Controllers'));
+                $rit = new \RecursiveIteratorIterator($dirIt);
+
+                while ($rit->valid()) {
+
+                    if (!$rit->isDot()) {
+                        $controllers[] = "App\Http\Controllers\\" . str_replace(".php","", $rit->getSubPathName());
+                    }
+                    $rit->next();
+                }
+                $routeCrud = new \App\Libs\RouteCrud($controllers);
+            } else {
+                if (!stripos("App\Http\Controllers\\", $controller)) {
+                    $controller = 'App\Http\Controllers\\' . $controller;
+                }
+
+
+                $routeCrud = new \App\Libs\RouteCrud($controller);
             }
 
-
-            $modelCrud = new \App\Libs\RouteCrud($controller);
-            $modelCrud->make();
+            $routeCrud->make();
             $this->info('Routes created successfully');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
