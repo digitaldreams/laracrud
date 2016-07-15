@@ -132,6 +132,8 @@ class ViewCrud extends LaraCrud {
     public function generateIndex($table = '') {
         $headerHtml = '';
         $tableName = !empty($table) ? $table : $this->mainTable;
+        $modelName = strtolower($this->getModelName($tableName));
+
         $bodyHtml = '<?php foreach($records as $record): ?><tr>' . "\n";
 
         foreach ($this->columns[$tableName] as $column) {
@@ -148,7 +150,7 @@ class ViewCrud extends LaraCrud {
         $indexPageTemp = $this->getTempFile('view/index.html');
         $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
-        $indexPageTemp = str_replace('@@table@@', $table, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
         return $indexPageTemp;
     }
 
@@ -156,6 +158,7 @@ class ViewCrud extends LaraCrud {
         $retHtml = '<?php foreach($records as $record): ?>' . "\n";
 
         $tableName = !empty($table) ? $table : $this->mainTable;
+        $modelName = strtolower($this->getModelName($tableName));
 
         $retHtml.=$this->panelBox($tableName);
         $retHtml.='<?php endforeach; ?>';
@@ -166,7 +169,7 @@ class ViewCrud extends LaraCrud {
         $panelmodalTemp = $this->getTempFile('view/index_panel_modal.html');
         $panelmodalTemp = str_replace("@@indexHtml@@", $retHtml, $panelmodalTemp);
         $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml, $panelmodalTemp);
-        $panelmodalTemp = str_replace("@@table@@", $table, $panelmodalTemp);
+        $panelmodalTemp = str_replace("@@table@@", $modelName, $panelmodalTemp);
 
         return $panelmodalTemp;
     }
@@ -174,6 +177,8 @@ class ViewCrud extends LaraCrud {
     protected function panelBox($tableName) {
         $dataOption = '';
         $bodyHtml = '';
+        $modelName = strtolower($this->getModelName($tableName));
+
         foreach ($this->columns[$tableName] as $column) {
             $dataOption.='data-' . $column . '="<?php echo $record->' . $column . ';?>"' . "\n";
             $bodyHtml.='<tr><th>' . ucwords(str_replace("_", " ", $column)) . '</th>' . "\n";
@@ -185,7 +190,7 @@ class ViewCrud extends LaraCrud {
         $indexPageTemp = str_replace('@@modalName@@', $tableName . 'Modal', $indexPageTemp);
         $indexPageTemp = str_replace('@@dataOptions@@', $dataOption, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
-        $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
         return $indexPageTemp;
     }
 
@@ -196,6 +201,7 @@ class ViewCrud extends LaraCrud {
 
         $headerHtml = '';
         $tableName = !empty($table) ? $table : $this->mainTable;
+        $modelName = strtolower($this->getModelName($tableName));
         $bodyHtml = '<?php foreach($records as $record): ?><tr>' . "\n";
 
         foreach ($this->columns[$tableName] as $column) {
@@ -215,7 +221,7 @@ class ViewCrud extends LaraCrud {
         $indexPageTemp = $this->getTempFile('view/panel_table.html');
         $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
-        $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
         $modalHtml = $this->generateModal($tableName);
         $indexPageTemp = str_replace('@@modalHtml@@', $modalHtml, $indexPageTemp);
         return $indexPageTemp;
@@ -269,10 +275,12 @@ class ViewCrud extends LaraCrud {
     }
 
     protected function generateForm($table) {
+        $modelName = strtolower($this->getModelName($table));
+
         $formContent = $this->generateContent($table, TRUE);
         $formTemplate = $this->getTempFile('view/form.html');
         $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
-        $formTemplate = str_replace('@@table@@', $table, $formTemplate);
+        $formTemplate = str_replace('@@table@@', $modelName, $formTemplate);
         return $formTemplate;
     }
 
@@ -435,10 +443,11 @@ class ViewCrud extends LaraCrud {
             }
         }
         $modalHtml = $this->generateModal($table);
+        $modelName = strtolower($this->getModelName($table));
         $temp = str_replace('@@panelHtmlBox@@', $modelHtml, $temp);
         $temp = str_replace('@@relationshipData@@', $relationHtml, $temp);
         $temp = str_replace('@@modalHtmlBox@@', $modalHtml, $temp);
-        $temp = str_replace('@@table@@', $table, $temp);
+        $temp = str_replace('@@table@@', $modelName, $temp);
         return $temp;
     }
 

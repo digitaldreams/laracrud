@@ -309,6 +309,6 @@ class ModelCrud extends LaraCrud {
         $modelName = $this->getModelName($table);
         return '\\' . $this->namespace . '\\' . $modelName;
     }
-
+    
     //public function make()
 }
