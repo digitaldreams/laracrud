@@ -17,7 +17,7 @@ class ModelCrud extends LaraCrud {
 
     public $propertyDefiner = '';
     public $namespace = 'App\Models';
-    public $path = 'app\Models';
+    public $path = 'app/Models';
 
     public function __construct($table = '') {
         if (!empty($table)) {

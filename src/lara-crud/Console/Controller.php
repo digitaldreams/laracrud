@@ -12,7 +12,7 @@ class Controller extends Command {
      *
      * @var string
      */
-    protected $signature = 'tb:controller {model}';
+    protected $signature = 'laracrud:controller {model}';
 
     /**
      * The console command description.

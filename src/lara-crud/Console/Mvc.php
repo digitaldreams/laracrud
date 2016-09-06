@@ -12,7 +12,7 @@ class Mvc extends Command {
      *
      * @var string
      */
-    protected $signature = 'tb:mvc {table}';
+    protected $signature = 'laracrud:mvc {table}';
 
     /**
      * The console command description.

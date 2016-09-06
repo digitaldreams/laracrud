@@ -12,7 +12,7 @@ class View extends Command {
      *
      * @var string
      */
-    protected $signature = 'tb:view {table} {page?} {type?}';
+    protected $signature = 'laracrud:view {table} {page?} {type?}';
 
     /**
      * The console command description.

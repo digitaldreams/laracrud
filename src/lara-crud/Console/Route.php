@@ -12,7 +12,7 @@ class Route extends Command {
      *
      * @var string
      */
-    protected $signature = 'tb:route {controller}';
+    protected $signature = 'laracrud:route {controller}';
 
     /**
      * The console command description.

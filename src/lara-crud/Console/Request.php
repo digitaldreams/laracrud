@@ -12,7 +12,7 @@ class Request extends Command {
      *
      * @var string
      */
-    protected $signature = 'tb:request {table}';
+    protected $signature = 'laracrud:request {table}';
 
     /**
      * The console command description.
