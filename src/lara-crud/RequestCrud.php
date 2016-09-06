@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Libs;
+namespace LaraCrud;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

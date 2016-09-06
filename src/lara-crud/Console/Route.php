@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Libs\Console;
+namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;

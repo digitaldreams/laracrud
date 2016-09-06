@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Libs\Console;
+namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
-class Request extends Command {
+class Controller extends Command {
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'tb:request {table}';
+    protected $signature = 'tb:controller {model}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a request class based on table';
+    protected $description = 'Create a Controller class based on Model';
 
     /**
      * Create a new command instance.
@@ -37,19 +37,10 @@ class Request extends Command {
      */
     public function handle() {
         try {
-            $table = $this->argument('table');
-
-            if ($table == 'all') {
-                $modelCrud = new \App\Libs\RequestCrud();
-            } else {
-                if (strripos($table, ",")) {
-                    $table = explode(",", $table);
-                }
-                $modelCrud = new \App\Libs\RequestCrud($table);
-            }
-
+            $table = $this->argument('model');
+            $modelCrud = new \App\Libs\ControllerCrud($table);
             $modelCrud->make();
-            $this->info('Request class successfully created');
+            $this->info('Controller class created successfully');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
         }

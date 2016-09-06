@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Libs;
+namespace LaraCrud;
 
 use Illuminate\Support\Facades\DB;
 

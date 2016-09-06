@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Libs\Console;
+namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
-class Mvc extends Command {
+class View extends Command {
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'tb:mvc {table}';
+    protected $signature = 'tb:view {table} {page?} {type?}';
 
     /**
      * The console command description.
@@ -38,21 +38,18 @@ class Mvc extends Command {
     public function handle() {
         try {
             $table = $this->argument('table');
-            $modelCrud = new \App\Libs\ModelCrud($table);
+            $type = $this->argument('type');
+            $page = $this->argument('page');
+            
+            if (strripos($table, ",")) {
+                $table = explode(",", $table);
+            }
+            
+            $modelCrud = new \App\Libs\ViewCrud($table, $page, $type);
             $modelCrud->make();
-
-            $requestCrud = new \App\Libs\RequestCrud($table);
-            $requestCrud->make();
-
-            $modelName = $modelCrud->getFullModelName($table);
-            $controllerCrud = new \App\Libs\ControllerCrud($modelName);
-            $controllerCrud->make();
-
-            $viewCrud = new \App\Libs\ViewCrud($table);
-            $viewCrud->make();
-            $this->info('Model, View, Request and Controlleer successfully created ');
+            $this->info('View created successfully');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage());
+            $this->error($ex->getMessage() . ' on ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 

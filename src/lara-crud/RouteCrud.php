@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace App\Libs;
+namespace LaraCrud;
 
 use Illuminate\Support\Facades\Route;
 
