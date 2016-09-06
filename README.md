@@ -7,12 +7,12 @@ CRUD means CREATE, READ, UPDATE AND DELTE are common work in almost every web ap
 Install this library into App/Libs folder.
 
 Then add following line to Kernel::commands in console/kernal.php
-         \App\Libs\Console\Request::class,
-        \App\Libs\Console\Model::class,
-        \App\Libs\Console\Controller::class,
-        \App\Libs\Console\Route::class,
-        \App\Libs\Console\View::class,
-        \App\Libs\Console\Mvc::class,
+        \LaraCrud\Console\Request::class,
+        \LaraCrud\Console\Model::class,
+        \LaraCrud\Console\Controller::class,
+        \LaraCrud\Console\Route::class,
+        \LaraCrud\Console\View::class,
+        \LaraCrud\Console\Mvc::class,
 Then you can see new commands by running 'php artisan'
 
 * tb:model {tableName} (create model based on table)
