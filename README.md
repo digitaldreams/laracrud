@@ -10,13 +10,16 @@ CRUD means CREATE, READ, UPDATE AND DELTE are common work in almost every web ap
 }
 
 
-Then add following line to Kernel::commands in console/kernal.php
-      \LaraCrud\Console\Request::class,
-      \LaraCrud\Console\Model::class,
-      \LaraCrud\Console\Controller::class,
-      \LaraCrud\Console\Route::class,
-      \LaraCrud\Console\View::class,
-      \LaraCrud\Console\Mvc::class,
+Then add following line  in console/kernal.php
+
+     protected $commands = [
+        \LaraCrud\Console\Request::class,
+        \LaraCrud\Console\Model::class,
+        \LaraCrud\Console\Controller::class,
+        \LaraCrud\Console\Route::class,
+        \LaraCrud\Console\View::class,
+        \LaraCrud\Console\Mvc::class
+    ];
 Then you can see new commands by running 'php artisan'
 
 * laracrud:model {tableName} (create model based on table)
