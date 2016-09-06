@@ -38,17 +38,17 @@ class Mvc extends Command {
     public function handle() {
         try {
             $table = $this->argument('table');
-            $modelCrud = new \App\Libs\ModelCrud($table);
+            $modelCrud = new \LaraCrud\ModelCrud($table);
             $modelCrud->make();
 
-            $requestCrud = new \App\Libs\RequestCrud($table);
+            $requestCrud = new \LaraCrud\RequestCrud($table);
             $requestCrud->make();
 
             $modelName = $modelCrud->getFullModelName($table);
-            $controllerCrud = new \App\Libs\ControllerCrud($modelName);
+            $controllerCrud = new \LaraCrud\ControllerCrud($modelName);
             $controllerCrud->make();
 
-            $viewCrud = new \App\Libs\ViewCrud($table);
+            $viewCrud = new \LaraCrud\ViewCrud($table);
             $viewCrud->make();
             $this->info('Model, View, Request and Controlleer successfully created ');
         } catch (\Exception $ex) {

@@ -38,7 +38,7 @@ class Controller extends Command {
     public function handle() {
         try {
             $table = $this->argument('model');
-            $modelCrud = new \App\Libs\ControllerCrud($table);
+            $modelCrud = new \LaraCrud\ControllerCrud($table);
             $modelCrud->make();
             $this->info('Controller class created successfully');
         } catch (\Exception $ex) {

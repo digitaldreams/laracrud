@@ -39,12 +39,12 @@ class Model extends Command {
         try {
             $table = $this->argument('table');
             if ($table == 'all') {
-                $modelCrud = new \App\Libs\ModelCrud();
+                $modelCrud = new \LaraCrud\ModelCrud();
             } else {
                 if (strripos($table, ",")) {
                     $table = explode(",", $table);
                 }
-                $modelCrud = new \App\Libs\ModelCrud($table);
+                $modelCrud = new \LaraCrud\ModelCrud($table);
             }
 
             $modelCrud->make();

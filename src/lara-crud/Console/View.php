@@ -45,7 +45,7 @@ class View extends Command {
                 $table = explode(",", $table);
             }
             
-            $modelCrud = new \App\Libs\ViewCrud($table, $page, $type);
+            $modelCrud = new \LaraCrud\ViewCrud($table, $page, $type);
             $modelCrud->make();
             $this->info('View created successfully');
         } catch (\Exception $ex) {

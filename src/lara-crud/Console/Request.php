@@ -40,12 +40,12 @@ class Request extends Command {
             $table = $this->argument('table');
 
             if ($table == 'all') {
-                $modelCrud = new \App\Libs\RequestCrud();
+                $modelCrud = new \LaraCrud\RequestCrud();
             } else {
                 if (strripos($table, ",")) {
                     $table = explode(",", $table);
                 }
-                $modelCrud = new \App\Libs\RequestCrud($table);
+                $modelCrud = new \LaraCrud\RequestCrud($table);
             }
 
             $modelCrud->make();
