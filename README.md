@@ -5,10 +5,10 @@ CRUD means CREATE, READ, UPDATE AND DELTE are common work in almost every web ap
 ### Installation ###
   "require-dev": {
   
-     "digitaldream/laracrud": "dev-master"
+     "digitaldream/laracrud": "1.0.0"
         
 }
-
+Version 1.x is for laravel 5.2
 
 Then add following line  in console/kernal.php
 
@@ -28,3 +28,5 @@ Then you can see new commands by running 'php artisan'
 * laracrud:mvc {table} (run above commands into one place)
 * laracrud:route {controller} (create routes based on controller method)
 * laracrud:view {table} {page(index|form|details)} {type(table|panel|tabpan)}
+* 
+NB: only for mysql database
