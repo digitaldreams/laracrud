@@ -13,19 +13,23 @@ namespace LaraCrud;
  *
  * @author Tuhin
  */
-class ModelCrud extends LaraCrud {
-
+class ModelCrud extends LaraCrud
+{
     public $propertyDefiner = '';
-    public $namespace = 'App\Models';
-    public $path = 'app/Models';
+    public $namespace       = 'App\Models';
+    public $path            = 'app/Models';
 
-    public function __construct($table = '') {
+    public function __construct($table = '')
+    {
         if (!empty($table)) {
-            if (is_array($table)) {
-                $this->tables = $table;
-            } else {
-                $this->tables[] = $table;
+            $insertAbleTable = $table;
+            
+            if (!is_array($table)) {
+                $insertAbleTable = [$table];
             }
+            
+          
+            $this->tables = $insertAbleTable;
         } else {
             $this->getTableList();
         }
@@ -42,10 +46,11 @@ class ModelCrud extends LaraCrud {
     /**
      * Generate scopeMethods for a Model
      */
-    protected function prepareScopes($tableName) {
+    protected function prepareScopes($tableName)
+    {
 
         $scopePlaceholders = '';
-        $propertyDefiner = '';
+        $propertyDefiner   = '';
         if (isset($this->tableColumns[$tableName])) {
             foreach ($this->tableColumns[$tableName] as $column) {
                 $type = $column->Type;
@@ -55,19 +60,23 @@ class ModelCrud extends LaraCrud {
                 if (strpos($type, "(")) {
                     $type = substr($column->Type, 0, strpos($column->Type, "("));
                 }
-                $propertyDefiner.='@property ' . $type . ' $' . $column->Field . ' ' . str_replace("_", " ", $column->Field) . "\n";
+                $propertyDefiner.='@property '.$type.' $'.$column->Field.' '.str_replace("_",
+                        " ", $column->Field)."\n";
                 $scopeTemplateStr = $this->getTempFile('scope.txt');
-                $scopeMethodName = ucfirst(camel_case($column->Field));
-                $scopeTemplateStr = str_replace("@@methodName@@", $scopeMethodName, $scopeTemplateStr);
-                $scopeTemplateStr = str_replace("@@fielName@@", $column->Field, $scopeTemplateStr);
-                $scopePlaceholders.=$scopeTemplateStr . "\n\n";
+                $scopeMethodName  = ucfirst(camel_case($column->Field));
+                $scopeTemplateStr = str_replace("@@methodName@@",
+                    $scopeMethodName, $scopeTemplateStr);
+                $scopeTemplateStr = str_replace("@@fielName@@", $column->Field,
+                    $scopeTemplateStr);
+                $scopePlaceholders.=$scopeTemplateStr."\n\n";
             }
         }
         $this->propertyDefiner = $propertyDefiner;
         return $scopePlaceholders;
     }
 
-    protected function prepareRelationShip($tableName) {
+    protected function prepareRelationShip($tableName)
+    {
         $relationShipsStr = '';
 
         if (isset($this->finalRelationShips[$tableName]) && !empty($this->finalRelationShips[$tableName])) {
@@ -78,27 +87,33 @@ class ModelCrud extends LaraCrud {
                     continue;
                 }
                 $newCloneRelation = $this->getTempFile('relationship.txt');
-                $paramsNt = '';
-                $newCloneRelation = str_replace("@@methodName@@", lcfirst($rls['model']), $newCloneRelation);
-                $newCloneRelation = str_replace("@@modelName@@", $rls['model'], $newCloneRelation);
-                $newCloneRelation = str_replace("@@relationShip@@", $rls['name'], $newCloneRelation);
-                $newCloneRelation = str_replace("@@namespace@@", $this->namespace, $newCloneRelation);
+                $paramsNt         = '';
+                $newCloneRelation = str_replace("@@methodName@@",
+                    lcfirst($rls['model']), $newCloneRelation);
+                $newCloneRelation = str_replace("@@modelName@@", $rls['model'],
+                    $newCloneRelation);
+                $newCloneRelation = str_replace("@@relationShip@@",
+                    $rls['name'], $newCloneRelation);
+                $newCloneRelation = str_replace("@@namespace@@",
+                    $this->namespace, $newCloneRelation);
 
                 if (isset($rls['pivotTable']) && $rls['name'] = 'belongsToMany') {
-                    $paramsNt = "," . "'" . $rls['pivotTable'] . "'";
+                    $paramsNt = ","."'".$rls['pivotTable']."'";
                 } else {
-                    $paramsNt = "," . "'" . $rls['foreign_key'] . "'";
+                    $paramsNt = ","."'".$rls['foreign_key']."'";
                 }
 
-                $newCloneRelation = str_replace("@@params@@", $paramsNt, $newCloneRelation);
+                $newCloneRelation = str_replace("@@params@@", $paramsNt,
+                    $newCloneRelation);
 
-                $relationShipsStr.=$newCloneRelation . "\n\n";
+                $relationShipsStr.=$newCloneRelation."\n\n";
             }
         }
         return $relationShipsStr;
     }
 
-    protected function prepareConstant($tableName) {
+    protected function prepareConstant($tableName)
+    {
         $constantsStr = '';
 
         foreach ($this->tableColumns[$tableName] as $column) {
@@ -108,7 +123,9 @@ class ModelCrud extends LaraCrud {
 
             $retVals = $this->extractRulesFromType($type);
 
-            if (in_array($column->Type, ['time', 'date', 'datetime', 'timestamp']) && !in_array($column->Field, $this->systemColumns)) {
+            if (in_array($column->Type,
+                    ['time', 'date', 'datetime', 'timestamp']) && !in_array($column->Field,
+                    $this->systemColumns)) {
                 $this->dateColumns[$tableName][] = $column->Field;
             }
 
@@ -116,13 +133,14 @@ class ModelCrud extends LaraCrud {
                 $valuesForStatus = explode(",", $retVals);
 
                 foreach ($valuesForStatus as $sts) {
-                    $stName = strtoupper($column->Field . '_' . str_replace([" ", "-", "\"", "/"], "_", $sts));
+                    $stName                               = strtoupper($column->Field.'_'.str_replace([" ",
+                            "-", "\"", "/"], "_", $sts));
                     $this->constants[$tableName][$stName] = $sts;
 
                     if (is_string($sts)) {
-                        $constantsStr.= 'const ' . $stName . '=' . "'$sts'" . ";" . "\n";
+                        $constantsStr.= 'const '.$stName.'='."'$sts'".";"."\n";
                     } else {
-                        $constantsStr.= 'const ' . $stName . '=' . "$sts" . ";" . "\n";
+                        $constantsStr.= 'const '.$stName.'='."$sts".";"."\n";
                     }
                 }
             }
@@ -135,16 +153,21 @@ class ModelCrud extends LaraCrud {
      * @param type $tableName
      * @return type
      */
-    private function generateContent($tableName) {
+    private function generateContent($tableName)
+    {
         try {
             $modelContent = $this->getTempFile('model.txt');
-            $modelContent = str_replace("@@namespace@@", $this->namespace, $modelContent);
-            $modelContent = str_replace("@@modelName@@", $this->getModelName($tableName), $modelContent);
-            $modelContent = str_replace("@@tableName@@", $tableName, $modelContent);
+            $modelContent = str_replace("@@namespace@@", $this->namespace,
+                $modelContent);
+            $modelContent = str_replace("@@modelName@@",
+                $this->getModelName($tableName), $modelContent);
+            $modelContent = str_replace("@@tableName@@", $tableName,
+                $modelContent);
 
             $constantsStr = $this->prepareConstant($tableName);
 
-            $modelContent = str_replace("@@constants@@", $constantsStr, $modelContent);
+            $modelContent = str_replace("@@constants@@", $constantsStr,
+                $modelContent);
 
             $dateColumns = '';
             if (isset($this->dateColumns[$tableName]) && !empty($this->dateColumns[$tableName])) {
@@ -153,27 +176,34 @@ class ModelCrud extends LaraCrud {
                     $dateColumns.="'$dtsClm',";
                 }
                 $dateColumns = rtrim($dateColumns, ",");
-                $dateColumns.='];' . "\n";
+                $dateColumns.='];'."\n";
             }
 
-            $modelContent = str_replace("@@dateColumns@@", $dateColumns, $modelContent);
+            $modelContent = str_replace("@@dateColumns@@", $dateColumns,
+                $modelContent);
 
             $relationShipsStr = $this->prepareRelationShip($tableName);
-            $modelContent = str_replace("@@relationShips@@", $relationShipsStr, $modelContent);
+            $modelContent     = str_replace("@@relationShips@@",
+                $relationShipsStr, $modelContent);
 
             $scopePlaceholders = $this->prepareScopes($tableName);
 
-            $modelContent = str_replace("@@scopeMethods@@", $scopePlaceholders, $modelContent);
+            $modelContent = str_replace("@@scopeMethods@@", $scopePlaceholders,
+                $modelContent);
 
-            $modelContent = str_replace("@@propertyDefiner@@", $this->propertyDefiner, $modelContent);
+            $modelContent     = str_replace("@@propertyDefiner@@",
+                $this->propertyDefiner, $modelContent);
             $attributeMethods = $this->attributeGenerator($tableName);
-            $modelContent = str_replace("@@attributeMethods@@", $attributeMethods, $modelContent);
+            $modelContent     = str_replace("@@attributeMethods@@",
+                $attributeMethods, $modelContent);
 
             $fillableContent = $this->generateFillable($tableName);
-            $modelContent = str_replace("@@fillable@@", $fillableContent, $modelContent);
+            $modelContent    = str_replace("@@fillable@@", $fillableContent,
+                $modelContent);
 
             $castsContent = $this->generateCast($tableName);
-            $modelContent = str_replace("@@casts@@", $castsContent, $modelContent);
+            $modelContent = str_replace("@@casts@@", $castsContent,
+                $modelContent);
 
 
             return $modelContent;
@@ -183,7 +213,8 @@ class ModelCrud extends LaraCrud {
         return false;
     }
 
-    public function attributeGenerator($tableName) {
+    public function attributeGenerator($tableName)
+    {
         $retCode = '';
         if (isset($this->columnsDataType[$tableName])) {
             foreach ($this->columnsDataType[$tableName] as $columnName => $type) {
@@ -191,29 +222,40 @@ class ModelCrud extends LaraCrud {
                 if (in_array($columnName, $this->systemColumns)) {
                     continue;
                 }
-                $temp = '';
-                $label = str_replace(" ", "", ucwords(str_replace("_", " ", $columnName)));
+                $temp  = '';
+                $label = str_replace(" ", "",
+                    ucwords(str_replace("_", " ", $columnName)));
 
                 if (in_array($type, ['time', 'date', 'datetime', 'timestamp'])) {
 
-                    $setDateFormat = isset($this->setDateFormat[$type]) ? $this->setDateFormat[$type] : "Y-m-d";
-                    $getDateFormat = isset($this->getDateFormat[$type]) ? $this->getDateFormat[$type] : "Y-m-d";
+                    $setDateFormat = isset($this->setDateFormat[$type]) ? $this->setDateFormat[$type]
+                            : "Y-m-d";
+                    $getDateFormat = isset($this->getDateFormat[$type]) ? $this->getDateFormat[$type]
+                            : "Y-m-d";
 
                     $tempSetDate = $this->getTempFile('setAttributeDate.txt');
-                    $tempSetDate = str_replace("@@format@@", $setDateFormat, $tempSetDate);
-                    $tempSetDate = str_replace("@@columnLabel@@", $label, $tempSetDate);
-                    $tempSetDate = str_replace("@@column@@", $columnName, $tempSetDate);
+                    $tempSetDate = str_replace("@@format@@", $setDateFormat,
+                        $tempSetDate);
+                    $tempSetDate = str_replace("@@columnLabel@@", $label,
+                        $tempSetDate);
+                    $tempSetDate = str_replace("@@column@@", $columnName,
+                        $tempSetDate);
                     $retCode.=$tempSetDate;
 
                     $tempGetDate = $this->getTempFile('getAttributeDate.txt');
-                    $tempGetDate = str_replace("@@format@@", $getDateFormat, $tempGetDate);
-                    $tempGetDate = str_replace("@@columnLabel@@", $label, $tempGetDate);
+                    $tempGetDate = str_replace("@@format@@", $getDateFormat,
+                        $tempGetDate);
+                    $tempGetDate = str_replace("@@columnLabel@@", $label,
+                        $tempGetDate);
                     $retCode.=$tempGetDate;
-                } elseif (in_array($type, ['varchar', 'text', 'tinytext', 'bigtext'])) {
+                } elseif (in_array($type,
+                        ['varchar', 'text', 'tinytext', 'bigtext'])) {
 
                     $tempSetText = $this->getTempFile('setAttributeText.txt');
-                    $tempSetText = str_replace("@@column@@", $columnName, $tempSetText);
-                    $tempSetText = str_replace("@@columnLabel@@", $label, $tempSetText);
+                    $tempSetText = str_replace("@@column@@", $columnName,
+                        $tempSetText);
+                    $tempSetText = str_replace("@@columnLabel@@", $label,
+                        $tempSetText);
                     $retCode.=$tempSetText;
                 }
             }
@@ -225,7 +267,8 @@ class ModelCrud extends LaraCrud {
      * 
      * After complete necessary action its time to create Model class file
      */
-    public function make() {
+    public function make()
+    {
         try {
             foreach ($this->tables as $table) {
 
@@ -235,7 +278,7 @@ class ModelCrud extends LaraCrud {
                 $this->create($table);
             }
         } catch (\Exception $ex) {
-            $this->errors[] = $ex->getMessage() . ' on ' . $ex->getLine() . ' in' . $ex->getFile();
+            $this->errors[] = $ex->getMessage().' on '.$ex->getLine().' in'.$ex->getFile();
         }
     }
 
@@ -245,10 +288,11 @@ class ModelCrud extends LaraCrud {
      * @return boolean
      * @throws Exception
      */
-    public function create($table) {
+    public function create($table)
+    {
         try {
             $signularTable = $this->getModelName($table);
-            $fullPath = base_path($this->path) . '/' . $signularTable . '.php';
+            $fullPath      = base_path($this->path).'/'.$signularTable.'.php';
 
             if (!file_exists($fullPath)) {
                 $modelContent = $this->generateContent($table);
@@ -261,9 +305,10 @@ class ModelCrud extends LaraCrud {
         return false;
     }
 
-    public function generateFillable($table) {
+    public function generateFillable($table)
+    {
         $fillable = '';
-        $columns = $this->columnsDataType;
+        $columns  = $this->columnsDataType;
 
         if (isset($columns[$table])) {
             $keys = array_keys($columns[$table]);
@@ -272,16 +317,17 @@ class ModelCrud extends LaraCrud {
                     continue;
                 }
                 if (!in_array($key, $this->systemColumns)) {
-                    $fillable.="'" . $key . "',";
+                    $fillable.="'".$key."',";
                 }
             }
         }
         return $fillable;
     }
 
-    public function generateCast($table) {
-        $cast = '';
-        $columns = $this->columnsDataType;
+    public function generateCast($table)
+    {
+        $cast        = '';
+        $columns     = $this->columnsDataType;
         $converTypes = [
             'varchar' => 'string',
             'boolean' => 'bool',
@@ -298,17 +344,17 @@ class ModelCrud extends LaraCrud {
                     continue;
                 }
                 if (isset($converTypes[$type])) {
-                    $cast.="'" . $key . "'=>'" . $converTypes[$type] . "',";
+                    $cast.="'".$key."'=>'".$converTypes[$type]."',";
                 }
             }
         }
         return $cast;
     }
 
-    public function getFullModelName($table) {
+    public function getFullModelName($table)
+    {
         $modelName = $this->getModelName($table);
-        return '\\' . $this->namespace . '\\' . $modelName;
+        return '\\'.$this->namespace.'\\'.$modelName;
     }
-    
     //public function make()
 }

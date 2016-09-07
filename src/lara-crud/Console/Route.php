@@ -5,8 +5,8 @@ namespace LaraCrud\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
-class Route extends Command {
-
+class Route extends Command
+{
     /**
      * The name and signature of the console command.
      *
@@ -26,7 +26,8 @@ class Route extends Command {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -35,26 +36,28 @@ class Route extends Command {
      *
      * @return mixed
      */
-    public function handle() {
+    public function handle()
+    {
         try {
             $controllers = [];
-            $controller = $this->argument('controller');
+            $controller  = $this->argument('controller');
             if ($controller == 'all') {
 
                 $dirIt = new \RecursiveDirectoryIterator(app_path('Http/Controllers'));
-                $rit = new \RecursiveIteratorIterator($dirIt);
+                $rit   = new \RecursiveIteratorIterator($dirIt);
 
                 while ($rit->valid()) {
 
                     if (!$rit->isDot()) {
-                        $controllers[] = "App\Http\Controllers\\" . str_replace(".php","", $rit->getSubPathName());
+                        $controllers[] = "App\Http\Controllers\\".str_replace(".php",
+                                "", $rit->getSubPathName());
                     }
                     $rit->next();
                 }
                 $routeCrud = new \App\Libs\RouteCrud($controllers);
             } else {
                 if (!stripos("App\Http\Controllers\\", $controller)) {
-                    $controller = 'App\Http\Controllers\\' . $controller;
+                    $controller = 'App\Http\Controllers\\'.$controller;
                 }
 
 
@@ -67,5 +70,4 @@ class Route extends Command {
             $this->error($ex->getMessage());
         }
     }
-
 }

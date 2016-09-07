@@ -17,11 +17,11 @@ use Illuminate\Support\Facades\DB;
  * @author Tuhin
  */
 
-class LaraCrud {
-
-    const RELATION_BELONGS_TO = 'belongsTo';
-    const RELATION_HAS_MANY = 'hasMany';
-    const RELATION_HAS_ONE = 'hasOne';
+class LaraCrud
+{
+    const RELATION_BELONGS_TO      = 'belongsTo';
+    const RELATION_HAS_MANY        = 'hasMany';
+    const RELATION_HAS_ONE         = 'hasOne';
     const RELATION_BELONGS_TO_MANY = 'belongsToMany';
 
     /**
@@ -41,11 +41,11 @@ class LaraCrud {
      * @var array
      */
     public $pivotTables = ['migrations',
-        'role_user','role_permission',
+        'role_user', 'role_permission',
         'field_has_data_stores',
         'data_store_has_template',
         'data_store_contact_group',
-        ];
+    ];
 
     /**
      * List of the Table name
@@ -63,17 +63,17 @@ class LaraCrud {
      * Table Column Details
      * @var array 
      */
-    public $tableColumns = [];
-    public $systemColumns = ['created_at', 'updated_at', 'deleted_at'];
+    public $tableColumns        = [];
+    public $systemColumns       = ['created_at', 'updated_at', 'deleted_at'];
     protected $protectedColumns = ['id', 'created_at', 'updated_at', 'deleted_at'];
-    public $columnsDataType = [];
-    public $getDateFormat = [
+    public $columnsDataType     = [];
+    public $getDateFormat       = [
         'time' => 'h:i A',
         'date' => 'm/d/Y',
         'datetime' => 'm/d/Y h:i A',
         'timestamp' => 'm/d/Y h:i A'
     ];
-    public $setDateFormat = [
+    public $setDateFormat       = [
         'time' => 'H:i:s',
         'date' => 'Y-m-d',
         'datetime' => 'Y-m-d H:i:s',
@@ -151,17 +151,20 @@ class LaraCrud {
      * Get list of table name from current database
      * @return array 
      */
-    public function getTableList() {
+    public function getTableList()
+    {
 
-        $this->tables = $this->getTablesName();
+        $this->tables = static::getTablesName();
+        return $this->tables;
     }
 
-    protected function getTablesName() {
+    protected static function getTablesName()
+    {
         $tableNames = [];
-        $result = DB::select('SHOW TABLES');
+        $result     = DB::select('SHOW TABLES');
         foreach ($result as $tb) {
-            $tb = (array) $tb;
-            $tableName = array_values($tb);
+            $tb           = (array) $tb;
+            $tableName    = array_values($tb);
             $tableNames[] = array_shift($tableName);
         }
         return $tableNames;
@@ -171,11 +174,12 @@ class LaraCrud {
      * Get columns and its property of a table
      * @return boolean
      */
-    public function loadDetails() {
+    public function loadDetails()
+    {
         try {
             foreach ($this->tables as $tableName) {
-                $tableDetails = DB::select("EXPLAIN " . $tableName);
-                $indexes = DB::select('SHOW INDEXES FROM ' . $tableName);
+                $tableDetails = DB::select("EXPLAIN ".$tableName);
+                $indexes      = DB::select('SHOW INDEXES FROM '.$tableName);
 
                 if (!empty($tableDetails)) {
                     $this->tableColumns[$tableName] = $tableDetails;
@@ -188,7 +192,7 @@ class LaraCrud {
             $this->relationships = $this->getRelationShip();
             return true;
         } catch (\Exception $ex) {
-            $this->errors[] = $ex->getMessage() . $ex->getLine() . $ex->getFile();
+            $this->errors[] = $ex->getMessage().$ex->getLine().$ex->getFile();
         }
     }
 
@@ -197,7 +201,8 @@ class LaraCrud {
      * @param type $index
      * @return boolean
      */
-    public function filterIndex($index) {
+    public function filterIndex($index)
+    {
         if (isset($index->REFERENCED_TABLE_NAME) && !empty($index->REFERENCED_TABLE_NAME)) {
             return $index;
         } else {
@@ -211,9 +216,10 @@ class LaraCrud {
      * 
      * @param string $tableName Get all foreign relation for a table
      */
-    public function getRelationShip($tableName = '') {
+    public function getRelationShip($tableName = '')
+    {
         $tableName = !empty($tableName) ? $tableName : $this->getTablesName();
-        $dbName = env('DB_DATABASE');
+        $dbName    = env('DB_DATABASE');
 
         $sql = "SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
                                     FROM  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
@@ -221,7 +227,7 @@ class LaraCrud {
         if (is_array($tableName)) {
             $makeOptions = '';
             foreach ($tableName as $tb) {
-                $makeOptions.="'" . $tb . "',";
+                $makeOptions.="'".$tb."',";
             }
             $makeOptions = rtrim($makeOptions, ",");
             $sql.= " AND TABLE_NAME IN ($makeOptions)";
@@ -238,24 +244,27 @@ class LaraCrud {
     /**
      * Fill up final Relationship based on logic
      */
-    public function prepareRelation() {
+    public function prepareRelation()
+    {
         $uniqueRelationShips = [];
-        $relationShipsArr = $this->relationships;
+        $relationShipsArr    = $this->relationships;
         foreach ($relationShipsArr as $rel) {
             $uniqueRelationShips[$rel->CONSTRAINT_NAME] = $rel;
         }
         $this->relationships = $uniqueRelationShips;
 
         foreach ($uniqueRelationShips as $relation) {
-            $this->foreignKeys[$relation->TABLE_NAME]['keys'][] = $relation->COLUMN_NAME;
-            $this->foreignKeys[$relation->TABLE_NAME]['rel'][$relation->COLUMN_NAME] = $relation;
+            $this->foreignKeys[$relation->TABLE_NAME]['keys'][]                      = $relation->COLUMN_NAME;
+            $this->foreignKeys[$relation->TABLE_NAME]['rel'][$relation->COLUMN_NAME]
+                = $relation;
 
             //If current table is a pivot table then it holds many to many relationship
             if (in_array($relation->TABLE_NAME, $this->pivotTables)) {
-                $modelName = $relation->TABLE_NAME;
+                $modelName                  = $relation->TABLE_NAME;
                 $singularReferenceTableName = $this->getSingular($relation->REFERENCED_TABLE_NAME);
 
-                $modelName = str_replace([$singularReferenceTableName, "_"], "", $relation->TABLE_NAME);
+                $modelName                                                    = str_replace([$singularReferenceTableName,
+                    "_"], "", $relation->TABLE_NAME);
                 $this->finalRelationShips[$relation->REFERENCED_TABLE_NAME][] = [
                     'name' => static::RELATION_BELONGS_TO_MANY,
                     'foreign_key' => $relation->COLUMN_NAME,
@@ -264,7 +273,7 @@ class LaraCrud {
                     'pivotTable' => $relation->TABLE_NAME
                 ];
             } else {
-                $this->finalRelationShips[$relation->TABLE_NAME][] = [
+                $this->finalRelationShips[$relation->TABLE_NAME][]            = [
                     'name' => static::RELATION_BELONGS_TO,
                     'foreign_key' => $relation->COLUMN_NAME,
                     'model' => $this->getModelName($relation->REFERENCED_TABLE_NAME),
@@ -286,15 +295,17 @@ class LaraCrud {
      * @param string $words
      * @return string
      */
-    public function getSingular($words) {
+    public function getSingular($words)
+    {
         $retSingular = '';
         return str_singular($words);
     }
 
-    protected function extractRulesFromType($type) {
-        $retType = '';
-        $dataType = substr($type, 0, strpos($type, "("));
-        $values = substr($type, strpos($type, "("), strrpos($type, ")"));
+    protected function extractRulesFromType($type)
+    {
+        $retType     = '';
+        $dataType    = substr($type, 0, strpos($type, "("));
+        $values      = substr($type, strpos($type, "("), strrpos($type, ")"));
         $cleanvalues = str_replace(["(", ")", "'"], "", $values);
 
         if (trim($dataType) == 'enum') {
@@ -305,15 +316,17 @@ class LaraCrud {
         return $retType;
     }
 
-    public function getModelName($name) {
+    public function getModelName($name)
+    {
         $name = $this->getSingular($name);
         return ucfirst(camel_case($name));
     }
 
-    public function getTempFile($file) {
+    public function getTempFile($file)
+    {
         try {
 
-            $path = __DIR__ . "/templates/$file";
+            $path = __DIR__."/templates/$file";
             if (file_exists($path)) {
                 return file_get_contents($path);
             }
@@ -323,7 +336,8 @@ class LaraCrud {
         }
     }
 
-    public function columnDataTypes() {
+    public function columnDataTypes()
+    {
         foreach ($this->tableColumns as $tname => $tableColumns) {
             foreach ($tableColumns as $column) {
                 $type = $column->Type;
@@ -335,7 +349,8 @@ class LaraCrud {
         }
     }
 
-    public function saveFile($filePath, $contents) {
+    public function saveFile($filePath, $contents)
+    {
         try {
             $fileObject = new \SplFileObject($filePath, 'w+');
             $fileObject->fwrite($contents);
@@ -348,7 +363,8 @@ class LaraCrud {
     /**
      * Find out pivot table for better relationship logic
      */
-    public function findPivotTables() {
+    public function findPivotTables()
+    {
         $tablesWithoutPrimaryKey = $this->pivotTables;
         //  $lc=new static;
         // $lc->getTableList();
@@ -368,4 +384,24 @@ class LaraCrud {
         $this->pivotTables = array_unique($tablesWithoutPrimaryKey);
     }
 
+    public static function checkMissingTable($table)
+    {
+        try {
+            if (!is_array($table)) {
+                $insertAbleTable = [$table];
+            }
+            
+            $availableTables = static::getTablesName();
+            $missingTable    = array_diff($insertAbleTable, $availableTables);
+
+            if (!empty($missingTable)) {
+                $message = implode(",", $missingTable).' tables not found in '.implode("\n",
+                        $availableTables);
+                throw new \Exception($message);
+            }
+            return true;
+        } catch (\Exception $ex) {
+            throw new \Exception($ex->getMessage());
+        }
+    }
 }

@@ -13,16 +13,17 @@ namespace LaraCrud;
  *
  * @author Tuhin
  */
-class ControllerCrud extends LaraCrud {
-
+class ControllerCrud extends LaraCrud
+{
     protected $controllerName;
     protected $modelName;
     protected $viewPath;
     protected $modelNameSpace = '\App\Models';
-    protected $requestClass = 'Request';
+    protected $requestClass   = 'Request';
     public $table;
 
-    public function __construct($modelName = '') {
+    public function __construct($modelName = '')
+    {
         $this->modelName = $modelName;
         // $this->getTableList();
         //$this->loadDetails();
@@ -30,20 +31,21 @@ class ControllerCrud extends LaraCrud {
         $this->prepareRelation();
     }
 
-    public function init() {
+    public function init()
+    {
         if (!empty($this->modelName)) {
 
             $this->parseModelName();
 
             if (class_exists($this->modelName)) {
-                $model = new $this->modelName;
-                $this->table = $table = $model->getTable();
+                $model       = new $this->modelName;
+                $this->table = $table       = $model->getTable();
 
                 $this->tables[] = $this->table;
                 $this->loadDetails();
 
                 $requestName = $this->getModelName($table);
-                $fullName = '\App\Http\Requests\\' . $requestName . 'Request';
+                $fullName    = '\App\Http\Requests\\'.$requestName.'Request';
                 if (class_exists($fullName)) {
                     $this->requestClass = $fullName;
                 }
@@ -51,37 +53,42 @@ class ControllerCrud extends LaraCrud {
         }
     }
 
-    protected function parseModelName() {
-        $class = new \ReflectionClass($this->modelName);
+    protected function parseModelName()
+    {
+        $class                = new \ReflectionClass($this->modelName);
         $this->modelNameSpace = $class->getNamespaceName();
-        $this->viewPath = strtolower($class->getShortName());
+        $this->viewPath       = strtolower($class->getShortName());
         $this->controllerName = $class->getShortName();
     }
 
-    public function generateContent() {
+    public function generateContent()
+    {
         $contents = '';
 
         $contents = $this->getTempFile('controller.txt');
-        $contents = str_replace("@@controllerName@@", $this->controllerName, $contents);
+        $contents = str_replace("@@controllerName@@", $this->controllerName,
+            $contents);
         $contents = str_replace("@@modelName@@", $this->modelName, $contents);
         $contents = str_replace("@@viewPath@@", $this->viewPath, $contents);
 
 
-        $contents = str_replace("@@requestClass@@", $this->requestClass, $contents);
+        $contents = str_replace("@@requestClass@@", $this->requestClass,
+            $contents);
         $contents = str_replace("@@table@@", $this->table, $contents);
 
         $filterCode = $this->generateFilter();
-        $contents = str_replace("@@requestFiltetr@@", $filterCode, $contents);
+        $contents   = str_replace("@@requestFiltetr@@", $filterCode, $contents);
 
         $contents = $this->checkRelation($this->table, $contents);
 
         return $contents;
     }
 
-    public function make() {
+    public function make()
+    {
         try {
-            $controllerFileName = $this->controllerName . 'Controller.php';
-            $fullPath = app_path('Http/Controllers/') . $controllerFileName;
+            $controllerFileName = $this->controllerName.'Controller.php';
+            $fullPath           = app_path('Http/Controllers/').$controllerFileName;
 
             if (!file_exists($fullPath)) {
                 $modelContent = $this->generateContent();
@@ -94,30 +101,35 @@ class ControllerCrud extends LaraCrud {
         return false;
     }
 
-    public function checkRelation($table, $contents) {
+    public function checkRelation($table, $contents)
+    {
         $initialization = '';
-        $variablePass = '';
-        $bmanySync = '/**';
+        $variablePass   = '';
+        $bmanySync      = '/**';
         if (isset($this->finalRelationShips[$table])) {
             foreach ($this->finalRelationShips[$table] as $rel) {
                 if ($rel['name'] == static::RELATION_BELONGS_TO || $rel['name'] == static::RELATION_BELONGS_TO_MANY) {
-                    $initialization .= '$' . strtolower($rel['model']) . '=' . '\\' . $this->modelNameSpace . '\\' . $rel['model'] . "::select(['id'])->get();" . "\n";
-                    $variablePass.='"' . strtolower($rel['model']) . '"=>' . '$' . strtolower($rel['model']) . ',' . "\n";
+                    $initialization .= '$'.strtolower($rel['model']).'='.'\\'.$this->modelNameSpace.'\\'.$rel['model']."::select(['id'])->get();"."\n";
+                    $variablePass.='"'.strtolower($rel['model']).'"=>'.'$'.strtolower($rel['model']).','."\n";
                 }
                 if ($rel['name'] == static::RELATION_BELONGS_TO_MANY) {
                     $methodName = lcfirst($rel['model']);
-                    $bmanySync.='$this->model->' . $methodName . '()->sync($request->get(\'' . $rel['other_key'] . '\',[]);' . "\n";
+                    $bmanySync.='$this->model->'.$methodName.'()->sync($request->get(\''.$rel['other_key'].'\',[]);'."\n";
                 }
             }
         }
         $bmanySync.='*/';
-        $contents = str_replace("@@belongsToRelation@@", $initialization, $contents);
-        $contents = str_replace("@@belongsToRelationVars@@", $variablePass, $contents);
-        $contents = str_replace("@@belongsToManyRelationSync@@", $bmanySync, $contents);
+        $contents = str_replace("@@belongsToRelation@@", $initialization,
+            $contents);
+        $contents = str_replace("@@belongsToRelationVars@@", $variablePass,
+            $contents);
+        $contents = str_replace("@@belongsToManyRelationSync@@", $bmanySync,
+            $contents);
         return $contents;
     }
 
-    protected function generateFilter() {
+    protected function generateFilter()
+    {
         $retCode = '';
         if (isset($this->tableColumns[$this->table])) {
             foreach ($this->tableColumns[$this->table] as $column) {
@@ -127,11 +139,11 @@ class ControllerCrud extends LaraCrud {
                 }
 
                 $temp = str_replace('@@columnName@@', $column->Field, $temp);
-                $temp = str_replace('@@scopeName@@', camel_case($column->Field), $temp);
+                $temp = str_replace('@@scopeName@@', camel_case($column->Field),
+                    $temp);
                 $retCode.=$temp;
             }
         }
         return $retCode;
     }
-
 }

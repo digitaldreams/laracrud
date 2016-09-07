@@ -5,8 +5,8 @@ namespace LaraCrud\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
-class Request extends Command {
-
+class Request extends Command
+{
     /**
      * The name and signature of the console command.
      *
@@ -26,7 +26,8 @@ class Request extends Command {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -35,7 +36,8 @@ class Request extends Command {
      *
      * @return mixed
      */
-    public function handle() {
+    public function handle()
+    {
         try {
             $table = $this->argument('table');
 
@@ -45,6 +47,7 @@ class Request extends Command {
                 if (strripos($table, ",")) {
                     $table = explode(",", $table);
                 }
+                \LaraCrud\LaraCrud::checkMissingTable($table);
                 $modelCrud = new \LaraCrud\RequestCrud($table);
             }
 
@@ -54,5 +57,4 @@ class Request extends Command {
             $this->error($ex->getMessage());
         }
     }
-
 }

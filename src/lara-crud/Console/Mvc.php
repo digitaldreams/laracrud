@@ -5,8 +5,8 @@ namespace LaraCrud\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
-class Mvc extends Command {
-
+class Mvc extends Command
+{
     /**
      * The name and signature of the console command.
      *
@@ -26,7 +26,8 @@ class Mvc extends Command {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -35,16 +36,18 @@ class Mvc extends Command {
      *
      * @return mixed
      */
-    public function handle() {
+    public function handle()
+    {
         try {
-            $table = $this->argument('table');
+            $table     = $this->argument('table');
+            \LaraCrud\LaraCrud::checkMissingTable($table);
             $modelCrud = new \LaraCrud\ModelCrud($table);
             $modelCrud->make();
 
             $requestCrud = new \LaraCrud\RequestCrud($table);
             $requestCrud->make();
 
-            $modelName = $modelCrud->getFullModelName($table);
+            $modelName      = $modelCrud->getFullModelName($table);
             $controllerCrud = new \LaraCrud\ControllerCrud($modelName);
             $controllerCrud->make();
 
@@ -55,5 +58,4 @@ class Mvc extends Command {
             $this->error($ex->getMessage());
         }
     }
-
 }

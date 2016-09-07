@@ -13,23 +13,23 @@ namespace LaraCrud;
  *
  * @author Tuhin
  */
-class ViewCrud extends LaraCrud {
-
-    const TYPE_PANEL = 'panel';
-    const TYPE_TABLE = 'table';
+class ViewCrud extends LaraCrud
+{
+    const TYPE_PANEL       = 'panel';
+    const TYPE_TABLE       = 'table';
     const TYPE_TABLE_PANEL = 'tabpan';
-    const PAGE_INDEX = 'index';
-    const PAGE_FORM = 'form';
-    const PAGE_DETAILS = 'details';
-    const PAGE_MODAL = 'modal';
+    const PAGE_INDEX       = 'index';
+    const PAGE_FORM        = 'form';
+    const PAGE_DETAILS     = 'details';
+    const PAGE_MODAL       = 'modal';
 
     /**
      * This is the third parameter of details page
      */
     const TYPE_RELATION = 'relation';
 
-    protected $viewRules = [];
-    public $inputType = [
+    protected $viewRules      = [];
+    public $inputType         = [
         'text' => 'textarea',
         'enum' => 'select',
         'int' => 'number',
@@ -42,14 +42,15 @@ class ViewCrud extends LaraCrud {
         'enum' => 'select',
         'tinyint' => 'checkbox',
     ];
-    public $path = '';
-    public $modelName = '';
+    public $path              = '';
+    public $modelName         = '';
     public $type;
     public $page;
-    public $columns = [];
+    public $columns           = [];
     protected $foreginColumns = [];
 
-    public function __construct($table = '', $page = '', $type = 'panel') {
+    public function __construct($table = '', $page = '', $type = 'panel')
+    {
         if (!empty($table)) {
             $this->mainTable = $table;
             if (is_array($table)) {
@@ -72,7 +73,8 @@ class ViewCrud extends LaraCrud {
     /**
      * 
      */
-    protected function makeRules() {
+    protected function makeRules()
+    {
         foreach ($this->tableColumns as $tname => $tableColumns) {
             $this->checkForeignKeys($tname);
             foreach ($tableColumns as $column) {
@@ -82,7 +84,8 @@ class ViewCrud extends LaraCrud {
                 }
                 $this->columns[$tname][] = $column->Field;
 
-                $this->viewRules[$tname][] = $this->processColumn($column, $tname);
+                $this->viewRules[$tname][] = $this->processColumn($column,
+                    $tname);
             }
         }
     }
@@ -99,14 +102,16 @@ class ViewCrud extends LaraCrud {
      * 
      * ]
      */
-    protected function processColumn($column, $tableName) {
-        $options = [
+    protected function processColumn($column, $tableName)
+    {
+        $options               = [
         ];
-        $type = $column->Type;
+        $type                  = $column->Type;
         $options['properties'] = [];
 
         if (strpos($type, "(")) {
-            $type = substr($column->Type, 0, strpos($column->Type, "("));
+            $type            = substr($column->Type, 0,
+                strpos($column->Type, "("));
             $possibleOptions = $this->extractRulesFromType($column->Type);
             if (stripos($possibleOptions, ",")) {
                 $options['options'] = explode(",", $possibleOptions);
@@ -119,43 +124,48 @@ class ViewCrud extends LaraCrud {
             $options['properties']['required'] = 'required';
         }
 
-        if (isset($this->foreignKeys[$tableName]) && in_array($column->Field, $this->foreignKeys[$tableName]['keys'])) {
+        if (isset($this->foreignKeys[$tableName]) && in_array($column->Field,
+                $this->foreignKeys[$tableName]['keys'])) {
             $options['type'] = 'select';
         } else {
-            $options['type'] = isset($this->inputType[$type]) ? $this->inputType[$type] : 'text';
+            $options['type'] = isset($this->inputType[$type]) ? $this->inputType[$type]
+                    : 'text';
         }
         // $options['type'] = isset($this->inputType[$type]) ? $this->inputType[$type] : 'text';
         $options['name'] = $column->Field;
         return $options;
     }
 
-    public function generateIndex($table = '') {
+    public function generateIndex($table = '')
+    {
         $headerHtml = '';
-        $tableName = !empty($table) ? $table : $this->mainTable;
-        $modelName = strtolower($this->getModelName($tableName));
+        $tableName  = !empty($table) ? $table : $this->mainTable;
+        $modelName  = strtolower($this->getModelName($tableName));
 
-        $bodyHtml = '<?php foreach($records as $record): ?><tr>' . "\n";
+        $bodyHtml = '<?php foreach($records as $record): ?><tr>'."\n";
 
         foreach ($this->columns[$tableName] as $column) {
-            $headerHtml.='<th>' . ucwords(str_replace("_", " ", $column)) . '</th>' . "\n";
-            $bodyHtml.='<td><?php echo $record->' . $column . '; ?></td>' . "\n";
+            $headerHtml.='<th>'.ucwords(str_replace("_", " ", $column)).'</th>'."\n";
+            $bodyHtml.='<td><?php echo $record->'.$column.'; ?></td>'."\n";
         }
-        $headerHtml.='<th>&nbsp;</th>' . "\n";
-        $headerHtml.='<th>&nbsp;</th>' . "\n";
+        $headerHtml.='<th>&nbsp;</th>'."\n";
+        $headerHtml.='<th>&nbsp;</th>'."\n";
 
-        $bodyHtml.='<td><a href="<?php echo route(\'' . $table . '.edit\',$record->id); ?>"><span class="glyphicon glyphicon-pencil"></span></a></td>' . "\n";
-        $bodyHtml.='<td><a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\'' . $table . '.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a></td>' . "\n";
+        $bodyHtml.='<td><a href="<?php echo route(\''.$table.'.edit\',$record->id); ?>"><span class="glyphicon glyphicon-pencil"></span></a></td>'."\n";
+        $bodyHtml.='<td><a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\''.$table.'.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a></td>'."\n";
 
         $bodyHtml.= '</tr><?php endforeach; ?>';
         $indexPageTemp = $this->getTempFile('view/index.html');
-        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
+        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml,
+            $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
         return $indexPageTemp;
     }
 
-    public function generateIndexPanel($table = '') {
-        $retHtml = '<?php foreach($records as $record): ?>' . "\n";
+    public function generateIndexPanel($table = '')
+    {
+        $retHtml = '<?php foreach($records as $record): ?>'."\n";
 
         $tableName = !empty($table) ? $table : $this->mainTable;
         $modelName = strtolower($this->getModelName($tableName));
@@ -165,69 +175,76 @@ class ViewCrud extends LaraCrud {
 
         $retHtml.="\n\n\n";
 
-        $modalHtml = $this->generateModal($table);
+        $modalHtml      = $this->generateModal($table);
         $panelmodalTemp = $this->getTempFile('view/index_panel_modal.html');
         $panelmodalTemp = str_replace("@@indexHtml@@", $retHtml, $panelmodalTemp);
-        $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml, $panelmodalTemp);
+        $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml,
+            $panelmodalTemp);
         $panelmodalTemp = str_replace("@@table@@", $modelName, $panelmodalTemp);
 
         return $panelmodalTemp;
     }
 
-    protected function panelBox($tableName) {
+    protected function panelBox($tableName)
+    {
         $dataOption = '';
-        $bodyHtml = '';
-        $modelName = strtolower($this->getModelName($tableName));
+        $bodyHtml   = '';
+        $modelName  = strtolower($this->getModelName($tableName));
 
         foreach ($this->columns[$tableName] as $column) {
-            $dataOption.='data-' . $column . '="<?php echo $record->' . $column . ';?>"' . "\n";
-            $bodyHtml.='<tr><th>' . ucwords(str_replace("_", " ", $column)) . '</th>' . "\n";
-            $bodyHtml.='<td><?php echo $record->' . $column . '; ?></td></tr>' . "\n";
+            $dataOption.='data-'.$column.'="<?php echo $record->'.$column.';?>"'."\n";
+            $bodyHtml.='<tr><th>'.ucwords(str_replace("_", " ", $column)).'</th>'."\n";
+            $bodyHtml.='<td><?php echo $record->'.$column.'; ?></td></tr>'."\n";
         }
-        $headline = '<?php echo $record->id; ?>';
+        $headline      = '<?php echo $record->id; ?>';
         $indexPageTemp = $this->getTempFile('view/index_panel.html');
         $indexPageTemp = str_replace(' @@headline@@', $headline, $indexPageTemp);
-        $indexPageTemp = str_replace('@@modalName@@', $tableName . 'Modal', $indexPageTemp);
-        $indexPageTemp = str_replace('@@dataOptions@@', $dataOption, $indexPageTemp);
+        $indexPageTemp = str_replace('@@modalName@@', $tableName.'Modal',
+            $indexPageTemp);
+        $indexPageTemp = str_replace('@@dataOptions@@', $dataOption,
+            $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
         return $indexPageTemp;
     }
 
-    protected function tabPanel($tableName) {
+    protected function tabPanel($tableName)
+    {
         $dataOption = '';
-        $bodyHtml = '';
+        $bodyHtml   = '';
 
 
         $headerHtml = '';
-        $tableName = !empty($table) ? $table : $this->mainTable;
-        $modelName = strtolower($this->getModelName($tableName));
-        $bodyHtml = '<?php foreach($records as $record): ?><tr>' . "\n";
+        $tableName  = !empty($table) ? $table : $this->mainTable;
+        $modelName  = strtolower($this->getModelName($tableName));
+        $bodyHtml   = '<?php foreach($records as $record): ?><tr>'."\n";
 
         foreach ($this->columns[$tableName] as $column) {
-            $dataOption.='data-' . $column . '="<?php echo $record->' . $column . ';?>"' . "\n";
+            $dataOption.='data-'.$column.'="<?php echo $record->'.$column.';?>"'."\n";
 
-            $headerHtml.='<th>' . ucwords(str_replace("_", " ", $column)) . '</th>' . "\n";
-            $bodyHtml.='<td><?php echo $record->' . $column . '; ?></td>' . "\n";
+            $headerHtml.='<th>'.ucwords(str_replace("_", " ", $column)).'</th>'."\n";
+            $bodyHtml.='<td><?php echo $record->'.$column.'; ?></td>'."\n";
         }
-        $headerHtml.='<th>&nbsp;</th>' . "\n";
-        $headerHtml.='<th>&nbsp;</th>' . "\n";
+        $headerHtml.='<th>&nbsp;</th>'."\n";
+        $headerHtml.='<th>&nbsp;</th>'."\n";
 
-        $bodyHtml.='<td><a  data-toggle="modal" data-target="#' . $tableName . 'Modal"' . $dataOption . ' ><span class="glyphicon glyphicon-pencil"></span></a></td>' . "\n";
-        $bodyHtml.='<td><a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\'' . $tableName . '.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a></td>' . "\n";
+        $bodyHtml.='<td><a  data-toggle="modal" data-target="#'.$tableName.'Modal"'.$dataOption.' ><span class="glyphicon glyphicon-pencil"></span></a></td>'."\n";
+        $bodyHtml.='<td><a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\''.$tableName.'.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a></td>'."\n";
 
         $bodyHtml.= '</tr><?php endforeach; ?>';
 
         $indexPageTemp = $this->getTempFile('view/panel_table.html');
-        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
+        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml,
+            $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
-        $modalHtml = $this->generateModal($tableName);
+        $modalHtml     = $this->generateModal($tableName);
         $indexPageTemp = str_replace('@@modalHtml@@', $modalHtml, $indexPageTemp);
         return $indexPageTemp;
     }
 
-    protected function generateContent($table, $error_block = FALSE) {
+    protected function generateContent($table, $error_block = FALSE)
+    {
         $retHtml = '';
         foreach ($this->viewRules[$table] as $column) {
 
@@ -236,7 +253,8 @@ class ViewCrud extends LaraCrud {
 
                 $templateContent = $this->getSelectContent($column, $error_block);
             } elseif ($column['type'] == 'checkbox') {
-                $templateContent = $this->getCheckBoxContent($column, $error_block);
+                $templateContent = $this->getCheckBoxContent($column,
+                    $error_block);
             } elseif ($column['type'] == 'radio') {
                 $templateContent = $this->getTempFile('view/radio.txt');
             } elseif ($column['type'] == 'textarea') {
@@ -245,72 +263,89 @@ class ViewCrud extends LaraCrud {
                 $templateContent = $this->getTempFile('view/default.txt');
             }
 
-            $templateContent = str_replace('@@name@@', $column['name'], $templateContent);
-            $templateContent = str_replace('@@label@@', ucwords(str_replace("_", " ", $column['name'])), $templateContent);
-            $templateContent = str_replace('@@type@@', $column['type'], $templateContent);
+            $templateContent = str_replace('@@name@@', $column['name'],
+                $templateContent);
+            $templateContent = str_replace('@@label@@',
+                ucwords(str_replace("_", " ", $column['name'])),
+                $templateContent);
+            $templateContent = str_replace('@@type@@', $column['type'],
+                $templateContent);
 
-            $hasErrorBlockText = $this->hasErrorClass($column['name'], $error_block);
-            $templateContent = str_replace('@@hasErrorClass@@', $hasErrorBlockText, $templateContent);
+            $hasErrorBlockText = $this->hasErrorClass($column['name'],
+                $error_block);
+            $templateContent   = str_replace('@@hasErrorClass@@',
+                $hasErrorBlockText, $templateContent);
 
-            $showErrorText = $this->showErrorText($column['name'], $error_block);
-            $templateContent = str_replace('@@showErrorText@@', $showErrorText, $templateContent);
+            $showErrorText   = $this->showErrorText($column['name'],
+                $error_block);
+            $templateContent = str_replace('@@showErrorText@@', $showErrorText,
+                $templateContent);
             $showColumnValue = '';
 
             if ($error_block) {
-                $showColumnValue = '<?php echo old(\'' . $column['name'] . '\',$model->' . $column['name'] . ')?>';
+                $showColumnValue = '<?php echo old(\''.$column['name'].'\',$model->'.$column['name'].')?>';
             }
-            $templateContent = str_replace('@@columnValue@@', $showColumnValue, $templateContent);
+            $templateContent = str_replace('@@columnValue@@', $showColumnValue,
+                $templateContent);
 
             $propertiesText = '';
             if (is_array($column['properties'])) {
                 foreach ($column['properties'] as $name => $value) {
-                    $propertiesText.=$name . '="' . $value . '" ';
+                    $propertiesText.=$name.'="'.$value.'" ';
                 }
             }
-            $templateContent = str_replace('@@properties@@', $propertiesText, $templateContent);
+            $templateContent = str_replace('@@properties@@', $propertiesText,
+                $templateContent);
             $retHtml.=$templateContent;
 //@@properties@@
         }
         return $retHtml;
     }
 
-    protected function generateForm($table) {
+    protected function generateForm($table)
+    {
         $modelName = strtolower($this->getModelName($table));
 
-        $formContent = $this->generateContent($table, TRUE);
+        $formContent  = $this->generateContent($table, TRUE);
         $formTemplate = $this->getTempFile('view/form.html');
-        $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
+        $formTemplate = str_replace('@@formContent@@', $formContent,
+            $formTemplate);
         $formTemplate = str_replace('@@table@@', $modelName, $formTemplate);
         return $formTemplate;
     }
 
-    public function generateModal($table) {
-        $modalInputFill = '';
-        $modalInputClean = '';
+    public function generateModal($table)
+    {
+        $modalInputFill   = '';
+        $modalInputClean  = '';
         $modalShowOnError = '';
         foreach ($this->columns[$table] as $column) {
-            $modalShowOnError.=' $errors->has("' . $column . '") ||';
-            $modalInputFill.='jq("#' . $column . '").val(btn.attr(\'data-' . $column . '\'));' . "\n";
-            $modalInputClean.='jq("#' . $column . '").val(\'\');' . "\n";
+            $modalShowOnError.=' $errors->has("'.$column.'") ||';
+            $modalInputFill.='jq("#'.$column.'").val(btn.attr(\'data-'.$column.'\'));'."\n";
+            $modalInputClean.='jq("#'.$column.'").val(\'\');'."\n";
         }
         $modalShowOnError = rtrim($modalShowOnError, "||");
-        $modalInputFill.='jq("#id").val(btn.attr(\'data-id\'));' . "\n";
-        $modalInputClean.='jq("#id").val(\'\');' . "\n";
+        $modalInputFill.='jq("#id").val(btn.attr(\'data-id\'));'."\n";
+        $modalInputClean.='jq("#id").val(\'\');'."\n";
 
-        $formHtml = $this->generateContent($table);
+        $formHtml  = $this->generateContent($table);
         $modalTemp = $this->getTempFile('view/modal.html');
-        $modalTemp = str_replace('@@modalName@@', $table . 'Modal', $modalTemp);
+        $modalTemp = str_replace('@@modalName@@', $table.'Modal', $modalTemp);
         $modalTemp = str_replace('@@form@@', $formHtml, $modalTemp);
         $modalTemp = str_replace('@@table@@', $table, $modalTemp);
 
-        $modalTemp = str_replace('@@showModalOnError@@', $modalShowOnError, $modalTemp);
-        $modalTemp = str_replace('@@modalInputFillUp@@', $modalInputFill, $modalTemp);
-        $modalTemp = str_replace('@@modalInputCleanUp@@', $modalInputClean, $modalTemp);
+        $modalTemp = str_replace('@@showModalOnError@@', $modalShowOnError,
+            $modalTemp);
+        $modalTemp = str_replace('@@modalInputFillUp@@', $modalInputFill,
+            $modalTemp);
+        $modalTemp = str_replace('@@modalInputCleanUp@@', $modalInputClean,
+            $modalTemp);
 
         return $modalTemp;
     }
 
-    protected function prepareMake($table) {
+    protected function prepareMake($table)
+    {
         $pathToSave = $this->getViewPath($table);
         if (!file_exists($pathToSave)) {
             mkdir($pathToSave);
@@ -319,47 +354,53 @@ class ViewCrud extends LaraCrud {
             if ($this->type == static::TYPE_PANEL) {
 
                 $idnexPanelContent = $this->generateIndexPanel($table);
-                $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
+                $this->saveFile($pathToSave.'/index.blade.php',
+                    $idnexPanelContent);
             } elseif ($this->type == static::TYPE_TABLE_PANEL) {
 
                 $idnexPanelContent = $this->tabPanel($table);
-                $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
+                $this->saveFile($pathToSave.'/index.blade.php',
+                    $idnexPanelContent);
             } else {
 
                 $idnexTableContent = $this->generateIndex($table);
-                $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
+                $this->saveFile($pathToSave.'/index.blade.php',
+                    $idnexTableContent);
             }
         } elseif ($this->page == static::PAGE_FORM) {
             $formContent = $this->generateForm($table);
 
-            $this->saveFile($pathToSave . '/form.blade.php', $formContent);
+            $this->saveFile($pathToSave.'/form.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_DETAILS) {
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave . '/details.blade.php', $detailsHtml);
+            $this->saveFile($pathToSave.'/details.blade.php', $detailsHtml);
         } elseif ($this->page == static::PAGE_MODAL) {
 
             $modalHtml = $this->generateModal($table);
-            $this->saveFile($pathToSave . '/_modal.blade.php', $modalHtml);
+            $this->saveFile($pathToSave.'/_modal.blade.php', $modalHtml);
         } else {
             if ($this->type == static::TYPE_PANEL) {
 
                 $idnexPanelContent = $this->generateIndexPanel($table);
-                $this->saveFile($pathToSave . '/index.blade.php', $idnexPanelContent);
+                $this->saveFile($pathToSave.'/index.blade.php',
+                    $idnexPanelContent);
             } else {
 
                 $idnexTableContent = $this->generateIndex($table);
-                $this->saveFile($pathToSave . '/index.blade.php', $idnexTableContent);
+                $this->saveFile($pathToSave.'/index.blade.php',
+                    $idnexTableContent);
             }
             $formContent = $this->generateForm($table);
-            $this->saveFile($pathToSave . '/form.blade.php', $formContent);
+            $this->saveFile($pathToSave.'/form.blade.php', $formContent);
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave . '/details.blade.php', $detailsHtml);
+            $this->saveFile($pathToSave.'/details.blade.php', $detailsHtml);
         }
     }
 
-    public function make() {
+    public function make()
+    {
         $retHtml = '';
 
         if (!empty($this->mainTable) && !is_array($this->mainTable)) {
@@ -374,37 +415,45 @@ class ViewCrud extends LaraCrud {
         return $retHtml;
     }
 
-    private function getViewPath($table) {
-        return base_path('resources/views/' . $table);
+    private function getViewPath($table)
+    {
+        return base_path('resources/views/'.$table);
     }
 
-    public function hasErrorClass($column, $required) {
+    public function hasErrorClass($column, $required)
+    {
         $content = '';
-        $temp = $this->getTempFile('view/hasErrorClass.txt');
+        $temp    = $this->getTempFile('view/hasErrorClass.txt');
         $content = str_replace('@@column@@', $column, $temp);
         return $content;
     }
 
-    public function showErrorText($column, $required) {
+    public function showErrorText($column, $required)
+    {
         $content = '';
-        $temp = $this->getTempFile('view/showErrorText.txt');
+        $temp    = $this->getTempFile('view/showErrorText.txt');
         $content = str_replace('@@column@@', $column, $temp);
         return $content;
     }
 
-    public function getSelectContent($column, $required) {
+    public function getSelectContent($column, $required)
+    {
         $templateContent = $this->getTempFile('view/select.txt');
-        $options = '';
+        $options         = '';
         if (in_array($column['name'], array_keys($this->foreginColumns))) {
             $selectOptions = $this->getTempFile('view/select-rel.txt');
-            $selectOptions = str_replace('@@modelVar@@', strtolower($this->foreginColumns[$column['name']]), $selectOptions);
-            $options = str_replace('@@name@@', $column['name'], $selectOptions);
+            $selectOptions = str_replace('@@modelVar@@',
+                strtolower($this->foreginColumns[$column['name']]),
+                $selectOptions);
+            $options       = str_replace('@@name@@', $column['name'],
+                $selectOptions);
         } else {
             if (isset($column['options']) && is_array($column['options'])) {
                 foreach ($column['options'] as $opt) {
-                    $selectedText = $required == true ? '<?php echo old(\'' . $column['name'] . '\',$model->' . $column['name'] . ')==\'' . $opt . '\'?"selected":"" ?>' : '';
-                    $label = ucwords(str_replace("_", " ", $opt));
-                    $options.='<option value="' . $opt . '" ' . $selectedText . ' >' . $label . '</option>' . "\n";
+                    $selectedText = $required == true ? '<?php echo old(\''.$column['name'].'\',$model->'.$column['name'].')==\''.$opt.'\'?"selected":"" ?>'
+                            : '';
+                    $label        = ucwords(str_replace("_", " ", $opt));
+                    $options.='<option value="'.$opt.'" '.$selectedText.' >'.$label.'</option>'."\n";
                 }
             }
         }
@@ -413,17 +462,19 @@ class ViewCrud extends LaraCrud {
         return $templateContent;
     }
 
-    public function getCheckBoxContent($column, $required) {
+    public function getCheckBoxContent($column, $required)
+    {
         $templateContent = $this->getTempFile('view/checkbox.txt');
-        $selectTmp = '';
+        $selectTmp       = '';
         if ($required) {
-            $selectTmp = '<?php echo old("' . $column['name'] . '",$model->' . $column['name'] . ')==""?"checked":"" ?>';
+            $selectTmp = '<?php echo old("'.$column['name'].'",$model->'.$column['name'].')==""?"checked":"" ?>';
         }
         return str_replace('@@checked@@', $selectTmp, $templateContent);
     }
 
-    public function generateDetails($table) {
-        $temp = $this->getTempFile('view/details.html');
+    public function generateDetails($table)
+    {
+        $temp      = $this->getTempFile('view/details.html');
         $modelHtml = $this->panelBox($table);
 
         $relationHtml = '';
@@ -444,14 +495,15 @@ class ViewCrud extends LaraCrud {
         }
         $modalHtml = $this->generateModal($table);
         $modelName = strtolower($this->getModelName($table));
-        $temp = str_replace('@@panelHtmlBox@@', $modelHtml, $temp);
-        $temp = str_replace('@@relationshipData@@', $relationHtml, $temp);
-        $temp = str_replace('@@modalHtmlBox@@', $modalHtml, $temp);
-        $temp = str_replace('@@table@@', $modelName, $temp);
+        $temp      = str_replace('@@panelHtmlBox@@', $modelHtml, $temp);
+        $temp      = str_replace('@@relationshipData@@', $relationHtml, $temp);
+        $temp      = str_replace('@@modalHtmlBox@@', $modalHtml, $temp);
+        $temp      = str_replace('@@table@@', $modelName, $temp);
         return $temp;
     }
 
-    protected function checkForeignKeys($table) {
+    protected function checkForeignKeys($table)
+    {
 
         if (isset($this->finalRelationShips[$table])) {
             foreach ($this->finalRelationShips[$table] as $rel) {
@@ -462,5 +514,4 @@ class ViewCrud extends LaraCrud {
             }
         }
     }
-
 }
