@@ -3,7 +3,7 @@
     "type": "library",
     "description": "CRUD means CREATE, READ, UPDATE AND DELTE are common work in almost every web application. Laravel has also CRUD. We use Model, View, Controller, Request, Route's for CRUD. A well structured database are the blueprint of a web application. So We can create Model, View, Controller, Request from a database table",
     "keywords": ["Laravel","CRUD"],
-    "homepage": "https://github.com/digitaldreams/data-converter",
+    "homepage": "https://github.com/digitaldreams/laracrud",
     "license": "MIT",
     "authors": [
         {
@@ -14,8 +14,7 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0"
-        
+        "laravel/framework": "5.2.*
     },
     "require-dev":{
         
