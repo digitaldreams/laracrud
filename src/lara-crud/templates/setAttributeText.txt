@@ -1,3 +1,5 @@
-    public function set@@columnLabel@@Attribute($value){
-        $this->attributes['@@column@@'] = htmlspecialchars($value);
-    }
+
+public function set@@columnLabel@@Attribute($value)
+{
+    $this->attributes['@@column@@'] = htmlspecialchars($value);
+}

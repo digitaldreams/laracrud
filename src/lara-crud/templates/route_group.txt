@@ -1,3 +1,4 @@
+
 Route::group(['middleware' => ['web'],'prefix'=>'@@prefix@@'@@namespace@@], function () {
     @@routes@@
 });

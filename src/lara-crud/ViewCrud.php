@@ -146,13 +146,13 @@ class ViewCrud extends LaraCrud
 
         foreach ($this->columns[$tableName] as $column) {
             $headerHtml.='<th>'.ucwords(str_replace("_", " ", $column)).'</th>'."\n";
-            $bodyHtml.='<td><?php echo $record->'.$column.'; ?></td>'."\n";
+            $bodyHtml.='<td>'."\n".'<?php echo $record->'.$column.'; ?>'."\n".'</td>'."\n";
         }
         $headerHtml.='<th>&nbsp;</th>'."\n";
         $headerHtml.='<th>&nbsp;</th>'."\n";
 
-        $bodyHtml.='<td><a href="<?php echo route(\''.$table.'.edit\',$record->id); ?>"><span class="glyphicon glyphicon-pencil"></span></a></td>'."\n";
-        $bodyHtml.='<td><a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\''.$table.'.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a></td>'."\n";
+        $bodyHtml.='<td>'."\n".'<a href="<?php echo route(\''.$modelName.'.edit\',$record->id); ?>"><span class="glyphicon glyphicon-pencil"></span></a>'."\n".'</td>'."\n";
+        $bodyHtml.='<td>'."\n".'<a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\''.$modelName.'.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a>'."\n".'</td>'."\n";
 
         $bodyHtml.= '</tr><?php endforeach; ?>';
         $indexPageTemp = $this->getTempFile('view/index.html');
@@ -193,8 +193,8 @@ class ViewCrud extends LaraCrud
 
         foreach ($this->columns[$tableName] as $column) {
             $dataOption.='data-'.$column.'="<?php echo $record->'.$column.';?>"'."\n";
-            $bodyHtml.='<tr><th>'.ucwords(str_replace("_", " ", $column)).'</th>'."\n";
-            $bodyHtml.='<td><?php echo $record->'.$column.'; ?></td></tr>'."\n";
+            $bodyHtml.='<tr>'."\n".'<th>'.ucwords(str_replace("_", " ", $column))."\n".'</th>'."\n";
+            $bodyHtml.='<td>'."\n".'<?php echo $record->'.$column.'; ?>'."\n".'</td></tr>'."\n";
         }
         $headline      = '<?php echo $record->id; ?>';
         $indexPageTemp = $this->getTempFile('view/index_panel.html');
@@ -222,16 +222,16 @@ class ViewCrud extends LaraCrud
         foreach ($this->columns[$tableName] as $column) {
             $dataOption.='data-'.$column.'="<?php echo $record->'.$column.';?>"'."\n";
 
-            $headerHtml.='<th>'.ucwords(str_replace("_", " ", $column)).'</th>'."\n";
-            $bodyHtml.='<td><?php echo $record->'.$column.'; ?></td>'."\n";
+            $headerHtml.='<th>'."\n".''.ucwords(str_replace("_", " ", $column)).''."\n".'</th>'."\n";
+            $bodyHtml.='<td>'."\n".'<?php echo $record->'.$column.'; ?>'."\n".'</td>'."\n";
         }
         $headerHtml.='<th>&nbsp;</th>'."\n";
         $headerHtml.='<th>&nbsp;</th>'."\n";
 
-        $bodyHtml.='<td><a  data-toggle="modal" data-target="#'.$tableName.'Modal"'.$dataOption.' ><span class="glyphicon glyphicon-pencil"></span></a></td>'."\n";
-        $bodyHtml.='<td><a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\''.$tableName.'.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a></td>'."\n";
+        $bodyHtml.='<td>'."\n".'<a  data-toggle="modal" data-target="#'.$tableName.'Modal"'.$dataOption.' >'."\n".'<span class="glyphicon glyphicon-pencil"></span>'."\n".'</a>'."\n".'</td>'."\n";
+        $bodyHtml.='<td>'."\n".'<a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\''.$tableName.'.delete\',$record->id); ?>">'."\n".'<span class="glyphicon glyphicon-remove"></span>'."\n".'</a>'."\n".'</td>'."\n";
 
-        $bodyHtml.= '</tr><?php endforeach; ?>';
+        $bodyHtml.= '</tr><?php endforeach; ?>'."\n".'';
 
         $indexPageTemp = $this->getTempFile('view/panel_table.html');
         $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml,
@@ -417,7 +417,7 @@ class ViewCrud extends LaraCrud
 
     private function getViewPath($table)
     {
-        return base_path('resources/views/'.$table);
+        return base_path('resources/views/'.strtolower($this->getModelName($table)));
     }
 
     public function hasErrorClass($column, $required)

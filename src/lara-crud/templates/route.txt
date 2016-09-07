@@ -1,4 +1,5 @@
-    Route::@method@('@@path@@', [
+
+Route::@method@('@@path@@', [
         'as' => '@@routeName@@',
         'uses' => '@@action@@'
-    ]);
+]);

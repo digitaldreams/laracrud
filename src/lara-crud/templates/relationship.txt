@@ -1,3 +1,5 @@
- public function @@methodName@@() {
-        return $this->@@relationShip@@('\@@namespace@@\@@modelName@@'@@params@@);
-    }
+
+public function @@methodName@@() 
+{
+    return $this->@@relationShip@@('\@@namespace@@\@@modelName@@'@@params@@);
+}

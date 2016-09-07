@@ -16,10 +16,11 @@ class @@modelName@@ extends Model {
 /**
   protected $casts  =[@@casts@@];
  */
-    @@dateColumns@@
-    @@relationShips@@
+@@dateColumns@@
 
-    @@attributeMethods@@
+@@relationShips@@
 
-    @@scopeMethods@@
+@@attributeMethods@@
+
+@@scopeMethods@@
 }

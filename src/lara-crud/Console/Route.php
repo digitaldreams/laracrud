@@ -54,14 +54,14 @@ class Route extends Command
                     }
                     $rit->next();
                 }
-                $routeCrud = new \App\Libs\RouteCrud($controllers);
+                $routeCrud = new \LaraCrud\RouteCrud($controllers);
             } else {
                 if (!stripos("App\Http\Controllers\\", $controller)) {
                     $controller = 'App\Http\Controllers\\'.$controller;
                 }
 
 
-                $routeCrud = new \App\Libs\RouteCrud($controller);
+                $routeCrud = new \LaraCrud\RouteCrud($controller);
             }
 
             $routeCrud->make();

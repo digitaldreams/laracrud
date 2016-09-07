@@ -24,7 +24,7 @@ class ControllerCrud extends LaraCrud
 
     public function __construct($modelName = '')
     {
-        $this->modelName = $modelName;
+        $this->modelName = $this->modelNameSpace.'\\'.$modelName;
         // $this->getTableList();
         //$this->loadDetails();
         $this->init();

@@ -21,16 +21,19 @@ class @@controllerName@@Controller extends Controller{
     public function index() {
         try {
             $data = $this->model->paginate(10);
+
             return view('@@viewPath@@.index', [
                 'records' => $data,
             ]);
         } catch (\Exception $ex) {
-            echo $ex->getMessage();
+              session()->flash('app_error', $ex->getMessage());
+             return redirect()->back();
         }
     }
 
     public function create() {
          @@belongsToRelation@@
+
         return view('@@viewPath@@.form', [
             'model' => $this->model,
             @@belongsToRelationVars@@
@@ -46,6 +49,7 @@ class @@controllerName@@Controller extends Controller{
                 return redirect()->back();
             }
               @@belongsToRelation@@
+
             return view('@@viewPath@@.form', [
                 'model' => $foundModel,
                 @@belongsToRelationVars@@
