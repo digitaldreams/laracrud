@@ -3,11 +3,12 @@
 CRUD means CREATE, READ, UPDATE AND DELTE are common work in almost every web application. Laravel has also CRUD. We use Model, View, Controller, Request, Route's for CRUD.  A well structured database are the blueprint of a web application. So We can create Model, View, Controller, Request from a database table.
 
 ### Installation ###
-  "require-dev": {
+  "require": {
   
-     "digitaldream/laracrud": "1.0.0"
+     "digitaldream/laracrud": "1.0.*"
         
 }
+
 Version 1.x is for laravel 5.2
 
 Then add following line  in console/kernal.php
