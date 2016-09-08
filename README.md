@@ -89,7 +89,7 @@ It will create routes for which does not define yet.
 
 If we need all of the command to then just to
 
-    php artisan laracrud:mvc <tableName>
+    php artisan laracrud:mvc users
 
 It will create Model, Request, Controller, View.
 Then you just need to run route command to create routes.
