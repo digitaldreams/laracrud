@@ -1,27 +1,64 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 namespace LaraCrud;
 
 use Illuminate\Support\Facades\Route;
 
 /**
- * Description of RouteCrud
+ * Create Routes based on controller method and its parameters
+ * We will use ReflectionClass to inspect Controller and its method to generate routes based on it
  *
  * @author Tuhin
  */
 class RouteCrud extends LaraCrud
 {
-    public $routesName        = [];
-    public $methodNames       = [];
-    public $routes            = [];
-    public $controllers       = [];
+    /**
+     * Save all register routes name. To avoid name conficts for new routes
+     * @var array
+     */
+    public $routesName = [];
+
+    /**
+     * Save all methods name group by controller name which have route defined.
+     * 
+     * @var array
+     */
+    public $methodNames = [];
+
+    /**
+     * All registerd Laravel Routes will be stored here.
+     * 
+     * @var array
+     * here is a single route example
+     * [
+     * 'name'=>'get.user.profile',
+     * 'path'=>'',
+     * 'controller'=>UserController,
+     * 'action'=>'profile',
+     * 'method'=>'GET'
+     * ]
+     */
+    public $routes = [];
+
+    /**
+     * List of available controllers 
+     * @var array
+     */
+    public $controllers = [];
+
+    /**
+     * Save all methods name group by controller name
+     * To check which method have no route defined yet by comparing to $methodNames
+     * 
+     * @var array
+     */
     public $controllerMethods = [];
-    public $subNameSpace      = '';
+
+    /**
+     * It is possible to have Controller under Admin folder with the namespae of Admin.
+     * @var string
+     */
+    public $subNameSpace = '';
 
     const PARENT_NAMESPACE = 'App\Http\Controllers\\';
 
@@ -64,6 +101,9 @@ class RouteCrud extends LaraCrud
         }
     }
 
+    /**
+     * Get all controller methods which is public
+     */
     public function fetchControllerMethods()
     {
         foreach ($this->controllers as $controller) {
@@ -79,6 +119,13 @@ class RouteCrud extends LaraCrud
         }
     }
 
+    /**
+     * Child class all the method of its parent. But we will accept only child class method.
+     * 
+     * @param string $controllerName
+     * @param string $reflectionMethods
+     * @return array
+     */
     protected function filterMethod($controllerName, $reflectionMethods)
     {
         $retMethods = [];
@@ -97,6 +144,10 @@ class RouteCrud extends LaraCrud
         $this->appendRoutes($routesCode);
     }
 
+    /**
+     * Append route to routes.php file
+     * @param string $routesCode
+     */
     public function appendRoutes($routesCode)
     {
         $routePath = base_path('/app/Http/routes.php');
@@ -106,6 +157,10 @@ class RouteCrud extends LaraCrud
         }
     }
 
+    /**
+     * Generate route string
+     * @return string
+     */
     public function generateContent()
     {
         $retRoutes = '';
@@ -151,6 +206,16 @@ class RouteCrud extends LaraCrud
         return $retRoutes;
     }
 
+    /**
+     * Generate an idividual routes
+     * 
+     * @param string $controllerName e.g. UserController
+     * @param string $method    e.g. GET,PUT,POST,DELETE based on the prefix of method name.
+     * If a controller method name is postSave then its method will be post
+     * @param string $fullClassName
+     * @param string $subNameSpace
+     * @return string
+     */
     public function generateRoute($controllerName, $method, $fullClassName = '',
                                   $subNameSpace = '')
     {
@@ -188,6 +253,14 @@ class RouteCrud extends LaraCrud
         return $template;
     }
 
+    /**
+     * One method may have several params are some may have default values and some may not have.
+     * we will inspect this params and define in routes respectively
+     * 
+     * @param string $controller
+     * @param string $method
+     * @return string
+     */
     public function addParams($controller, $method)
     {
         $params           = '';

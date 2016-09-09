@@ -2,12 +2,6 @@
 
 namespace LaraCrud;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of ViewCrud
  *
@@ -28,8 +22,8 @@ class ViewCrud extends LaraCrud
      */
     const TYPE_RELATION = 'relation';
 
-    protected $viewRules      = [];
-    public $inputType         = [
+    protected $viewRules = [];
+    public $inputType    = [
         'text' => 'textarea',
         'enum' => 'select',
         'int' => 'number',
@@ -42,11 +36,39 @@ class ViewCrud extends LaraCrud
         'enum' => 'select',
         'tinyint' => 'checkbox',
     ];
-    public $path              = '';
-    public $modelName         = '';
+    /*     * *
+     * Viwe path
+     */
+    public $path         = '';
+
+    /**
+     * Name of the model
+     * @var type
+     */
+    public $modelName = '';
+
+    /**
+     * Page Type
+     * @var string
+     */
     public $type;
+
+    /**
+     * Page Name
+     * @var string
+     */
     public $page;
-    public $columns           = [];
+
+    /**
+     *
+     * @var array
+     */
+    public $columns = [];
+
+    /**
+     * Foreign Columns
+     * @var array
+     */
     protected $foreginColumns = [];
 
     public function __construct($table = '', $page = '', $type = 'panel')

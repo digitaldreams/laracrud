@@ -2,14 +2,9 @@
 
 namespace LaraCrud;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- * Description of RequestCRUD
+ * By this class we will convert all possible table rules to laravel native validation rules.
+ * it will have time to wrtie rules
  *
  * @author Tuhin
  */
@@ -76,8 +71,14 @@ class RequestCrud extends LaraCrud
         }
     }
 
+    /**
+     *
+     * @param string $tname Table Name
+     */
     public function rules($tname)
     {
+        //Reserved columns that should be out the the rules
+
         $reservedColumns = ['id', 'created_at', 'updated_at'];
 
         foreach ($this->tableColumns[$tname] as $column) {
@@ -92,7 +93,7 @@ class RequestCrud extends LaraCrud
             if (strpos($type, "(")) {
                 $dataType = substr($type, 0, strpos($type, "("));
                 $retVals  = $this->extractRulesFromType($type);
-
+                //for enum data type we will use in validator.
                 if ($dataType == 'enum') {
                     $validationRules .= 'in:'.$retVals.'|';
                     $this->validateionMsg.="'$column->Field.in'=>''"."\n";
@@ -126,6 +127,7 @@ class RequestCrud extends LaraCrud
                     $validationRules .="string|";
                 }
             }
+            //we there have any foreign keys in this table column then we will use exists validator
             if (isset($this->foreignKeys[$tname])) {
 
                 if (in_array($column->Field, $this->foreignKeys[$tname]['keys'])
@@ -138,7 +140,7 @@ class RequestCrud extends LaraCrud
                     $this->validateionMsg.="'$column->Field.exists'=>''"."\n";
                 }
             } else {
-
+                //IF column is not nullable and no default then it is required
                 if ($column->Null == 'NO' && $column->Default == "") {
                     $validationRules.='required|';
                     $this->validateionMsg.="'$column->Field.required'=>''"."\n";
@@ -148,6 +150,7 @@ class RequestCrud extends LaraCrud
                     $this->validateionMsg.="'$column->Field.unique'=>''"."\n";
                 }
             }
+            //At the end it needs to remove extra | symbol 
             if (!empty($validationRules)) {
                 $this->rules[$tname][$column->Field] = rtrim($validationRules,
                     "|");
