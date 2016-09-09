@@ -29,5 +29,69 @@ Then you can see new commands by running 'php artisan'
 * laracrud:mvc {table} (run above commands into one place)
 * laracrud:route {controller} (create routes based on controller method)
 * laracrud:view {table} {page(index|form|details)} {type(table|panel|tabpan)}
-* 
+
+
+###How to Use###
+
+Do you have a well structed database and you want to make a Laravel Application on top of it.
+Then you are right place.
+There are lots of Laravel Crud generator. But they does usual things.
+Here we are going to do something amazing.
+Lets start.
+
+##Create a Model##
+
+Theare are some good practice for model in Laravel. Use scope to define query, define fillable, dates, casts etc.
+ALso define relation, set*Attribute and get*Attribute for doing work before and after model save and fetch.
+
+We are going to create this thing automatically by reading table structure and its relation to others table.
+
+  php artisan laracrud:model users
+  
+##Create Request##
+
+ An well structured table validate everything before inserting . You can not insert a illegal date in a birth_date column if its data type set to date.So if we have this logic set on table why we should write it on Request again. Lets use this table logic to create a request class in laravel.
+ 
+    php artisan laracrud:request users
+
+
+##Create View 
+
+A typical form represent a database table. 
+E.g. for a Registration form it has all the input field which is necessary for users table. Most of the time we use 
+Bootstrap to generate a form . It has error field highlighting if validation fails. Also display value. This all can be done by
+  
+    php artisan laracrud:view users form
+    php artisan laracrud:view users index //There are three type of layout for index page panel,table and tabpan
+    php artisan laracrud:view users details
+
+This will create a complete users crud view. 
+
+##Create Controller##
+ 
+    php artisan laracrud:controller User
+
+This will create a controller which have create, edit, save and delete method with codes .
+It also handle your relation syncronization
+
+##Create Route##
+
+Routes are the most vital part of a laravel application.
+WE create routes by its public methods and parameter. 
+Lets do this work to rotue command.
+
+    php artisan laracrud:controller UserController
+
+If you have some routes already redine for <controllerName> then do not worry.
+It will create routes for which does not define yet.
+
+##Create everything at once##
+
+If we need all of the command to then just to
+
+    php artisan laracrud:mvc users
+
+It will create Model, Request, Controller, View.
+Then you just need to run route command to create routes.
+
 NB: only for mysql database
