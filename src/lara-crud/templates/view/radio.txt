@@ -1,9 +1,10 @@
+
 <div class="col-md-6">
-<div class="radio @@hasErrorClass@@">
-  <label>
-    <input type="radio" name="@@name@@" id="@@name@@">
-    @@label@@
-  </label>
- @@showErrorText@@
-</div>
+    <div class="radio @@hasErrorClass@@">
+        <label>
+            <input type="radio" name="@@name@@" id="@@name@@">
+        @@label@@
+        </label>
+        @@showErrorText@@
+    </div>
 </div>
