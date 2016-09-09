@@ -59,7 +59,8 @@ class @@controllerName@@Controller extends Controller{
             return redirect()->back();
         }
     }
- public function details($id) {
+
+    public function details($id) {
         try {
             $foundModel = $this->model->find($id);
 

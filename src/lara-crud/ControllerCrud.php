@@ -74,7 +74,7 @@ class ControllerCrud extends LaraCrud
 
         $contents = str_replace("@@requestClass@@", $this->requestClass,
             $contents);
-        $contents = str_replace("@@table@@", strtolower($this->modelName), $contents);
+        $contents = str_replace("@@table@@", strtolower($this->getModelName($this->table)), $contents);
 
         $filterCode = $this->generateFilter();
         $contents   = str_replace("@@requestFiltetr@@", $filterCode, $contents);
