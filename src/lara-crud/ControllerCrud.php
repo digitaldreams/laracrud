@@ -18,7 +18,7 @@ class ControllerCrud extends LaraCrud
     protected $controllerName;
     protected $modelName;
     protected $viewPath;
-    protected $modelNameSpace = '\App\Models';
+    protected $modelNameSpace = '\App';
     protected $requestClass   = 'Request';
     public $table;
 
