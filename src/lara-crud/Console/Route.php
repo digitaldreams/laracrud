@@ -56,6 +56,7 @@ class Route extends Command
                 }
                 $routeCrud = new \LaraCrud\RouteCrud($controllers);
             } else {
+                $controller = str_replace("/", "\\", $controller);
                 if (!stripos("App\Http\Controllers\\", $controller)) {
                     $controller = 'App\Http\Controllers\\'.$controller;
                 }

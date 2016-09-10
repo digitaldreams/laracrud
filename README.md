@@ -80,7 +80,11 @@ Lets do this work to rotue command.
     php artisan laracrud:controller UserController
 
 If you have some routes already redine for <controllerName> then do not worry.
-It will create routes for which does not define yet.
+It will create routes for which does not define yet. 
+Please use forward slash(/) for sub namespace. For example,
+
+    php artisan laracrud:controller Auth/AuthController
+
 
 ##Create everything at once##
 

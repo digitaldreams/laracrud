@@ -5,8 +5,8 @@ namespace LaraCrud\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
-class Controller extends Command {
-
+class Controller extends Command
+{
     /**
      * The name and signature of the console command.
      *
@@ -26,7 +26,8 @@ class Controller extends Command {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -35,9 +36,12 @@ class Controller extends Command {
      *
      * @return mixed
      */
-    public function handle() {
+    public function handle()
+    {
         try {
             $table = $this->argument('model');
+            $table = str_replace("/", "\\", $table);
+
             $modelCrud = new \LaraCrud\ControllerCrud($table);
             $modelCrud->make();
             $this->info('Controller class created successfully');
@@ -45,5 +49,4 @@ class Controller extends Command {
             $this->error($ex->getMessage());
         }
     }
-
 }
