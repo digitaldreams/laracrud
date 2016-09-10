@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "digitaldream/social-media": "1.0.*"
+        "laravel/laravel": ">=5.1.1"
         
     },
     "require-dev":{
