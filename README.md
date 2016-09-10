@@ -1,6 +1,7 @@
 # LARAVEL CRUD #
 
-CRUD means CREATE, READ, UPDATE AND DELTE are common work in almost every web application. Laravel has also CRUD. We use Model, View, Controller, Request, Route's for CRUD.  A well structured database are the blueprint of a web application. So We can create Model, View, Controller, Request from a database table.
+Do you have a well structed database and you want to make a Laravel Application on top of it.
+By using this tools you can generate Models which have necessary methods and property, Request class with rules, generate route from controllers method and its parameter and full features form with validation error message and more with a single line of command. So lets start.
 
 ### Installation ###
   "require": {
@@ -33,11 +34,7 @@ Then you can see new commands by running 'php artisan'
 
 ###How to Use###
 
-Do you have a well structed database and you want to make a Laravel Application on top of it.
-Then you are right place.
-There are lots of Laravel Crud generator. But they does usual things.
-Here we are going to do something amazing.
-Lets start.
+
 
 ##Create a Model##
 
