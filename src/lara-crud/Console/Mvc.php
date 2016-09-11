@@ -47,7 +47,7 @@ class Mvc extends Command
             $requestCrud = new \LaraCrud\RequestCrud($table);
             $requestCrud->make();
 
-            $modelName      = $modelCrud->getFullModelName($table);
+            $modelName      = $modelCrud->getModelName($table);
             $controllerCrud = new \LaraCrud\ControllerCrud($modelName);
             $controllerCrud->make();
 
