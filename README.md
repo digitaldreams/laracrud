@@ -24,12 +24,12 @@ Then add following line  in console/kernal.php
     ];
 Then you can see new commands by running 'php artisan'
 
-* laracrud:model {tableName} (create model based on table)
-* laracrud:request {tableName} (create Request Class based on table)
-* laracrud:Controller {Model} (Create Controller Class based on Model)
+* laracrud:model {tableName} {name?} (create model based on table)
+* laracrud:request {tableName} {name?} (create Request Class based on table)
+* laracrud:Controller {Model} {name?} (Create Controller Class based on Model)
 * laracrud:mvc {table} (run above commands into one place)
 * laracrud:route {controller} (create routes based on controller method)
-* laracrud:view {table} {page(index|form|details)} {type(table|panel|tabpan)}
+* laracrud:view {table} {page(index|form|details)} {type(table|panel|tabpan)} {name?}
 
 
 ###How to Use###
@@ -43,13 +43,23 @@ ALso define relation, set*Attribute and get*Attribute for doing work before and 
 
 We are going to create this thing automatically by reading table structure and its relation to others table.
 
-  php artisan laracrud:model users
+    php artisan laracrud:model users
+  
+By default Model Name will be based on Table name. But Model name can be specified as second parameter. Like below
+
+    php artisan laracrud:model users MyUser
+
   
 ##Create Request##
 
  An well structured table validate everything before inserting . You can not insert a illegal date in a birth_date column if its data type set to date.So if we have this logic set on table why we should write it on Request again. Lets use this table logic to create a request class in laravel.
  
     php artisan laracrud:request users
+
+Like Model Name we can also specify a custom request name.
+
+    php artisan laracrud:request RegisterRequest
+  
 
 
 ##Create View 
@@ -67,6 +77,11 @@ This will create a complete users crud view.
 ##Create Controller##
  
     php artisan laracrud:controller User
+    //Or Give a controller name.
+    php artisan laracrud:controller User MyUserController
+    //Or we can give a sub namespace
+    php artisan laracrud:controller User User/UserController
+    //It will create a folder User to controllers
 
 This will create a controller which have create, edit, save and delete method with codes .
 It also handle your relation syncronization
