@@ -90,6 +90,7 @@ class ModelCrud extends LaraCrud
 
         $scopePlaceholders = '';
         $propertyDefiner   = '';
+        $methodDefiner     = '';
         if (isset($this->tableColumns[$tableName])) {
             foreach ($this->tableColumns[$tableName] as $column) {
                 $type = $column->Type;
@@ -102,6 +103,9 @@ class ModelCrud extends LaraCrud
                 }
                 $propertyDefiner.='@property '.$type.' $'.$column->Field.' '.str_replace("_",
                         " ", $column->Field)."\n";
+                $methodDefiner.='@method \Illuminate\Database\Eloquent\Builder '.lcfirst($this->getModelName($column->Field)).'('.$type.' $'.$column->Field.')'.str_replace("_",
+                        " ", $column->Field)."\n";
+
                 $scopeTemplateStr = $this->getTempFile('scope.txt');
                 $scopeMethodName  = ucfirst(camel_case($column->Field));
                 $scopeTemplateStr = str_replace("@@methodName@@",
@@ -109,8 +113,10 @@ class ModelCrud extends LaraCrud
                 $scopeTemplateStr = str_replace("@@fielName@@", $column->Field,
                     $scopeTemplateStr);
                 $scopePlaceholders.=$scopeTemplateStr."\n\n";
+                
             }
         }
+        $propertyDefiner.=$methodDefiner;
         $this->propertyDefiner = $propertyDefiner;
         return $scopePlaceholders;
     }
@@ -123,6 +129,7 @@ class ModelCrud extends LaraCrud
     protected function prepareRelationShip($tableName)
     {
         $relationShipsStr = '';
+         $propertyDefiner   = '';
 
         if (isset($this->finalRelationShips[$tableName]) && !empty($this->finalRelationShips[$tableName])) {
             $params = '';
@@ -152,6 +159,8 @@ class ModelCrud extends LaraCrud
                     $newCloneRelation);
 
                 $relationShipsStr.=$newCloneRelation."\n\n";
+                $fullClassName='\\'.$this->namespace.'\\'.$this->getNewModelName($tableName);
+                $propertyDefiner.='@property '.$fullClassName.' '.lcfirst($rls['model'])."\n";
             }
         }
         return $relationShipsStr;
