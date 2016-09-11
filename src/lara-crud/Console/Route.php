@@ -66,7 +66,11 @@ class Route extends Command
             }
 
             $routeCrud->make();
-            $this->info('Routes created successfully');
+            if (!empty($routeCrud->errors)) {
+                $this->error(implode(", ", $routeCrud->errors));
+            } else {
+                $this->info('Routes created successfully');
+            }
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
         }

@@ -40,7 +40,7 @@ class Request extends Command
     {
         try {
             $table = $this->argument('table');
-            $name=  $this->argument('name');
+            $name  = $this->argument('name');
 
             if ($table == 'all') {
                 $requestCrud = new \LaraCrud\RequestCrud();
@@ -49,11 +49,17 @@ class Request extends Command
                     $table = explode(",", $table);
                 }
                 \LaraCrud\LaraCrud::checkMissingTable($table);
-                $requestCrud = new \LaraCrud\RequestCrud($table,$name);
+                $requestCrud = new \LaraCrud\RequestCrud($table, $name);
             }
 
             $requestCrud->make();
-            $this->info('Request class successfully created');
+
+            if (!empty($requestCrud->errors)) {
+                $this->error(implode(", ", $requestCrud->errors));
+            } else {
+                $this->info('Request class successfully created');
+            }
+
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
         }

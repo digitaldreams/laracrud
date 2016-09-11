@@ -39,8 +39,8 @@ class Model extends Command
     public function handle()
     {
         try {
-            $table = $this->argument('table');
-            $modelName=  $this->argument('name');
+            $table     = $this->argument('table');
+            $modelName = $this->argument('name');
             if ($table == 'all') {
                 $modelCrud = new \LaraCrud\ModelCrud();
             } else {
@@ -48,11 +48,16 @@ class Model extends Command
                     $table = explode(",", $table);
                 }
                 \LaraCrud\LaraCrud::checkMissingTable($table);
-                $modelCrud = new \LaraCrud\ModelCrud($table,$modelName);
+                $modelCrud = new \LaraCrud\ModelCrud($table, $modelName);
             }
 
             $modelCrud->make();
-            $this->info('Model class successfully created');
+
+            if (!empty($modelCrud->errors)) {
+                $this->error(implode(", ", $modelCrud->errors));
+            } else {
+                $this->info('Model class successfully created');
+            }
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
         }

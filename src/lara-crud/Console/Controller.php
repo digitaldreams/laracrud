@@ -39,13 +39,18 @@ class Controller extends Command
     public function handle()
     {
         try {
-            $table     = $this->argument('model');
-            $table     = str_replace("/", "\\", $table);
-            $name      = $this->argument('name');
-            
-            $modelCrud = new \LaraCrud\ControllerCrud($table,$name);
-            $modelCrud->make();
-            $this->info('Controller class created successfully');
+            $table = $this->argument('model');
+            $table = str_replace("/", "\\", $table);
+            $name  = $this->argument('name');
+
+            $controllerCrud = new \LaraCrud\ControllerCrud($table, $name);
+            $controllerCrud->make();
+
+            if (!empty($controllerCrud->errors)) {
+                $this->error(implode(", ", $controllerCrud->errors));
+            } else {
+                $this->info('Controller class created successfully');
+            }
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
         }

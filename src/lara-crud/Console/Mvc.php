@@ -53,6 +53,9 @@ class Mvc extends Command
 
             $viewCrud = new \LaraCrud\ViewCrud($table);
             $viewCrud->make();
+
+          
+
             $this->info('Model, View, Request and Controlleer successfully created ');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());

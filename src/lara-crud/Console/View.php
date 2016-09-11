@@ -42,15 +42,20 @@ class View extends Command
             $table = $this->argument('table');
             $type  = $this->argument('type');
             $page  = $this->argument('page');
-            $name=  $this->argument('name');
+            $name  = $this->argument('name');
 
             if (strripos($table, ",")) {
                 $table = explode(",", $table);
             }
             \LaraCrud\LaraCrud::checkMissingTable($table);
-            $modelCrud = new \LaraCrud\ViewCrud($table, $page, $type,  $name);
-            $modelCrud->make();
-            $this->info('View created successfully');
+            $viewCrud = new \LaraCrud\ViewCrud($table, $page, $type, $name);
+            $viewCrud->make();
+
+            if (!empty($viewCrud->errors)) {
+                $this->error(implode(", ", $viewCrud->errors));
+            } else {
+                $this->info('View created successfully');
+            }
         } catch (\Exception $ex) {
             $this->error($ex->getMessage().' on '.$ex->getLine().' in '.$ex->getFile());
         }

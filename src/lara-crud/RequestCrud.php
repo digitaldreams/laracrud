@@ -13,7 +13,7 @@ class RequestCrud extends LaraCrud
     protected $validateionMsg = '';
     protected $fileName       = '';
 
-    public function __construct($table, $name)
+    public function __construct($table, $name='')
     {
         if (!empty($table)) {
             if (is_array($table)) {
@@ -40,7 +40,7 @@ class RequestCrud extends LaraCrud
     {
         $requestContent = $this->getTempFile('request.txt');
         $requestContent = str_replace("@@requestClassName@@",
-            $this->getNewModelName($table.'Request'), $requestContent);
+            $this->getNewModelName($tableName.'Request'), $requestContent);
         $requestContent = str_replace("@@validationMessage@@",
             $this->validateionMsg, $requestContent);
 
