@@ -89,8 +89,12 @@ class ViewCrud extends LaraCrud
         } else {
             $this->getTableList();
         }
-        $this->page     = $page;
-        $this->type     = $type;
+        $this->page = $page;
+        $this->type = $type;
+        if (!empty($name) && strpos($name, "/")) {
+            $narr = explode("/", $name);
+            $name = array_pop($narr);
+        }
         $this->fileName = $name;
 
         $this->loadDetails();
@@ -403,7 +407,8 @@ class ViewCrud extends LaraCrud
         } elseif ($this->page == static::PAGE_DETAILS) {
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php', $detailsHtml);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php',
+                $detailsHtml);
         } elseif ($this->page == static::PAGE_MODAL) {
 
             $modalHtml = $this->generateModal($table);
@@ -421,10 +426,12 @@ class ViewCrud extends LaraCrud
                     $idnexTableContent);
             }
             $formContent = $this->generateForm($table);
-            $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php',
+                $formContent);
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php', $detailsHtml);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php',
+                $detailsHtml);
         }
     }
 
