@@ -19,8 +19,6 @@ protected $guarded = ['id'];
 @@dateColumns@@
 
 @@relationShips@@
-
 @@attributeMethods@@
-
 @@scopeMethods@@
 }

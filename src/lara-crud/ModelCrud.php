@@ -163,6 +163,7 @@ class ModelCrud extends LaraCrud
                 $propertyDefiner.='@property '.$fullClassName.' '.lcfirst($rls['model'])."\n";
             }
         }
+        $this->propertyDefiner.=$propertyDefiner;
         return $relationShipsStr;
     }
 
