@@ -36,11 +36,17 @@ class ModelCrud extends LaraCrud
     public $path = 'app';
 
     /**
+     *
+     * @var string
+     */
+    public $modelName = '';
+
+    /**
      * Get table name. It may be an array or string.
      * Does all necessary work before start making Model.
      * @param string|array $table
      */
-    public function __construct($table = '')
+    public function __construct($table = '', $name = '')
     {
         if (!empty($table)) {
             $insertAbleTable = $table;
@@ -53,6 +59,18 @@ class ModelCrud extends LaraCrud
             $this->tables = $insertAbleTable;
         } else {
             $this->getTableList();
+        }
+        if (!empty($name)) {
+            if (strpos($name, "/", 1) !== FALSE) {
+                $narr            = explode("/", trim($name, "/"));
+                $this->modelName = $this->getModelName(array_pop($narr));
+
+                foreach ($narr as $path) {
+                    $this->namespace.='\\'.ucfirst($path);
+                    $this->path.='/'.ucfirst($path);
+                }
+                //   $sname=  str_replace("/","\\",$name);
+            }
         }
         $this->loadDetails();
         $this->columnDataTypes();
@@ -194,7 +212,7 @@ class ModelCrud extends LaraCrud
             $modelContent = str_replace("@@namespace@@", $this->namespace,
                 $modelContent);
             $modelContent = str_replace("@@modelName@@",
-                $this->getModelName($tableName), $modelContent);
+                $this->getNewModelName($tableName), $modelContent);
             $modelContent = str_replace("@@tableName@@", $tableName,
                 $modelContent);
 
@@ -339,7 +357,7 @@ class ModelCrud extends LaraCrud
     public function create($table)
     {
         try {
-            $signularTable = $this->getModelName($table);
+            $signularTable = $this->getNewModelName($table);
             $fullPath      = base_path($this->path).'/'.$signularTable.'.php';
 
             if (!file_exists($fullPath)) {
@@ -426,5 +444,13 @@ class ModelCrud extends LaraCrud
         $modelName = $this->getModelName($table);
         return '\\'.$this->namespace.'\\'.$modelName;
     }
+
     //public function make()
+    public function getNewModelName($table)
+    {
+        if (!empty($this->modelName)) {
+            return $this->modelName;
+        }
+        return $this->getModelName($table);
+    }
 }

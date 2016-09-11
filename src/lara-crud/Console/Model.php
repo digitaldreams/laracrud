@@ -12,7 +12,7 @@ class Model extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:model {table}";
+    protected $signature = "laracrud:model {table} {name?}";
 
     /**
      * The console command description.
@@ -40,6 +40,7 @@ class Model extends Command
     {
         try {
             $table = $this->argument('table');
+            $modelName=  $this->argument('name');
             if ($table == 'all') {
                 $modelCrud = new \LaraCrud\ModelCrud();
             } else {
@@ -47,7 +48,7 @@ class Model extends Command
                     $table = explode(",", $table);
                 }
                 \LaraCrud\LaraCrud::checkMissingTable($table);
-                $modelCrud = new \LaraCrud\ModelCrud($table);
+                $modelCrud = new \LaraCrud\ModelCrud($table,$modelName);
             }
 
             $modelCrud->make();
