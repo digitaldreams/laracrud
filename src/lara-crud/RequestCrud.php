@@ -40,7 +40,7 @@ class RequestCrud extends LaraCrud
     {
         $requestContent = $this->getTempFile('request.txt');
         $requestContent = str_replace("@@requestClassName@@",
-            $this->getModelName($tableName)."Request", $requestContent);
+            $this->getNewModelName($table.'Request'), $requestContent);
         $requestContent = str_replace("@@validationMessage@@",
             $this->validateionMsg, $requestContent);
 
@@ -164,7 +164,7 @@ class RequestCrud extends LaraCrud
     public function create($table)
     {
         try {
-            $signularTable = $this->getNewModelName($table).'Request';
+            $signularTable = $this->getNewModelName($table.'Request');
             $fullPath      = base_path('app/Http/Requests').'/'.$signularTable.'.php';
 
             if (!file_exists($fullPath)) {

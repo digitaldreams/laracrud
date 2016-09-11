@@ -22,7 +22,7 @@ class ControllerCrud extends LaraCrud
     protected $requestClass   = 'Request';
     public $table;
     protected $fileName       = '';
-    protected $path           = '';
+    public $path           = '';
     protected $subNameSpace   = '';
 
     public function __construct($modelName = '', $name = '')

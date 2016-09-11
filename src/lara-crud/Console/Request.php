@@ -43,16 +43,16 @@ class Request extends Command
             $name=  $this->argument('name');
 
             if ($table == 'all') {
-                $modelCrud = new \LaraCrud\RequestCrud();
+                $requestCrud = new \LaraCrud\RequestCrud();
             } else {
                 if (strripos($table, ",")) {
                     $table = explode(",", $table);
                 }
                 \LaraCrud\LaraCrud::checkMissingTable($table);
-                $modelCrud = new \LaraCrud\RequestCrud($table,$name);
+                $requestCrud = new \LaraCrud\RequestCrud($table,$name);
             }
 
-            $modelCrud->make();
+            $requestCrud->make();
             $this->info('Request class successfully created');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
