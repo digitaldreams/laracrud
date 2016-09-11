@@ -3,7 +3,7 @@ namespace App\Http\Controllers@@subnamespace@@;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Controller
 /**
  * Description of @@controllerName@@
  *
