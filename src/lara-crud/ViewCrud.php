@@ -60,6 +60,11 @@ class ViewCrud extends LaraCrud
     public $page;
 
     /**
+     * File Name
+     */
+    public $fileName = '';
+
+    /**
      *
      * @var array
      */
@@ -71,7 +76,8 @@ class ViewCrud extends LaraCrud
      */
     protected $foreginColumns = [];
 
-    public function __construct($table = '', $page = '', $type = 'panel')
+    public function __construct($table = '', $page = '', $type = 'panel',
+                                $name = '')
     {
         if (!empty($table)) {
             $this->mainTable = $table;
@@ -83,9 +89,9 @@ class ViewCrud extends LaraCrud
         } else {
             $this->getTableList();
         }
-        $this->page = $page;
-        $this->type = $type;
-
+        $this->page     = $page;
+        $this->type     = $type;
+        $this->fileName = $name;
 
         $this->loadDetails();
         $this->prepareRelation();
@@ -376,27 +382,28 @@ class ViewCrud extends LaraCrud
             if ($this->type == static::TYPE_PANEL) {
 
                 $idnexPanelContent = $this->generateIndexPanel($table);
-                $this->saveFile($pathToSave.'/index.blade.php',
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
                     $idnexPanelContent);
             } elseif ($this->type == static::TYPE_TABLE_PANEL) {
 
                 $idnexPanelContent = $this->tabPanel($table);
-                $this->saveFile($pathToSave.'/index.blade.php',
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
                     $idnexPanelContent);
             } else {
 
                 $idnexTableContent = $this->generateIndex($table);
-                $this->saveFile($pathToSave.'/index.blade.php',
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
                     $idnexTableContent);
             }
         } elseif ($this->page == static::PAGE_FORM) {
             $formContent = $this->generateForm($table);
 
-            $this->saveFile($pathToSave.'/form.blade.php', $formContent);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php',
+                $formContent);
         } elseif ($this->page == static::PAGE_DETAILS) {
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave.'/details.blade.php', $detailsHtml);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php', $detailsHtml);
         } elseif ($this->page == static::PAGE_MODAL) {
 
             $modalHtml = $this->generateModal($table);
@@ -405,19 +412,19 @@ class ViewCrud extends LaraCrud
             if ($this->type == static::TYPE_PANEL) {
 
                 $idnexPanelContent = $this->generateIndexPanel($table);
-                $this->saveFile($pathToSave.'/index.blade.php',
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
                     $idnexPanelContent);
             } else {
 
                 $idnexTableContent = $this->generateIndex($table);
-                $this->saveFile($pathToSave.'/index.blade.php',
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
                     $idnexTableContent);
             }
             $formContent = $this->generateForm($table);
-            $this->saveFile($pathToSave.'/form.blade.php', $formContent);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave.'/details.blade.php', $detailsHtml);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php', $detailsHtml);
         }
     }
 
@@ -535,5 +542,13 @@ class ViewCrud extends LaraCrud
                 }
             }
         }
+    }
+
+    public function getFileName($page)
+    {
+        if (!empty($this->fileName)) {
+            return str_replace(".blade.php", "", $this->fileName);
+        }
+        return $page;
     }
 }

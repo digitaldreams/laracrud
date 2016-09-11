@@ -12,7 +12,7 @@ class View extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:view {table} {page?} {type?}';
+    protected $signature = 'laracrud:view {table} {page?} {type?} {name?}';
 
     /**
      * The console command description.
@@ -42,12 +42,13 @@ class View extends Command
             $table = $this->argument('table');
             $type  = $this->argument('type');
             $page  = $this->argument('page');
+            $name=  $this->argument('name');
 
             if (strripos($table, ",")) {
                 $table = explode(",", $table);
             }
             \LaraCrud\LaraCrud::checkMissingTable($table);
-            $modelCrud = new \LaraCrud\ViewCrud($table, $page, $type);
+            $modelCrud = new \LaraCrud\ViewCrud($table, $page, $type,  $name);
             $modelCrud->make();
             $this->info('View created successfully');
         } catch (\Exception $ex) {

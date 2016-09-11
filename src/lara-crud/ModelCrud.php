@@ -70,6 +70,8 @@ class ModelCrud extends LaraCrud
                     $this->path.='/'.ucfirst($path);
                 }
                 //   $sname=  str_replace("/","\\",$name);
+            }else{
+                $this->modelName=  $this->getModelName($name);
             }
         }
         $this->loadDetails();
@@ -129,7 +131,6 @@ class ModelCrud extends LaraCrud
     protected function prepareRelationShip($tableName)
     {
         $relationShipsStr = '';
-         $propertyDefiner   = '';
 
         if (isset($this->finalRelationShips[$tableName]) && !empty($this->finalRelationShips[$tableName])) {
             $params = '';
@@ -159,11 +160,8 @@ class ModelCrud extends LaraCrud
                     $newCloneRelation);
 
                 $relationShipsStr.=$newCloneRelation."\n\n";
-                $fullClassName='\\'.$this->namespace.'\\'.$this->getNewModelName($tableName);
-                $propertyDefiner.='@property '.$fullClassName.' '.lcfirst($rls['model'])."\n";
             }
         }
-        $this->propertyDefiner.=$propertyDefiner;
         return $relationShipsStr;
     }
 
