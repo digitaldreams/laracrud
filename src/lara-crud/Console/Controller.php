@@ -12,7 +12,7 @@ class Controller extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:controller {model}';
+    protected $signature = 'laracrud:controller {model} {name?}';
 
     /**
      * The console command description.
@@ -39,10 +39,11 @@ class Controller extends Command
     public function handle()
     {
         try {
-            $table = $this->argument('model');
-            $table = str_replace("/", "\\", $table);
-
-            $modelCrud = new \LaraCrud\ControllerCrud($table);
+            $table     = $this->argument('model');
+            $table     = str_replace("/", "\\", $table);
+            $name      = $this->argument('name');
+            
+            $modelCrud = new \LaraCrud\ControllerCrud($table,$name);
             $modelCrud->make();
             $this->info('Controller class created successfully');
         } catch (\Exception $ex) {

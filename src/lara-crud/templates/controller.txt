@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers@@subnamespace@@;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
  *
  * @author Tuhin
  */
-class @@controllerName@@Controller extends Controller{
+class @@controllerName@@ extends Controller{
 
     //put your code here
     protected $model;

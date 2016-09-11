@@ -21,10 +21,27 @@ class ControllerCrud extends LaraCrud
     protected $modelNameSpace = '\App';
     protected $requestClass   = 'Request';
     public $table;
+    protected $fileName       = '';
+    protected $path           = '';
+    protected $subNameSpace   = '';
 
-    public function __construct($modelName = '')
+    public function __construct($modelName = '', $name = '')
     {
         $this->modelName = $this->modelNameSpace.'\\'.$modelName;
+        if (!empty($name)) {
+            if (strpos($name, "/") !== false) {
+                $narr           = explode("/", $name);
+                $this->fileName = array_pop($narr);
+
+                foreach ($narr as $p) {
+                    $this->subNameSpace.='\\'.$p;
+                    $this->path.='/'.$p;
+                }
+            } else {
+                $this->fileName = $name;
+            }
+        }
+
         // $this->getTableList();
         //$this->loadDetails();
         $this->init();
@@ -66,7 +83,7 @@ class ControllerCrud extends LaraCrud
         $contents = '';
 
         $contents = $this->getTempFile('controller.txt');
-        $contents = str_replace("@@controllerName@@", $this->controllerName,
+        $contents = str_replace("@@controllerName@@", $this->getFileName($this->controllerName.'Controller'),
             $contents);
         $contents = str_replace("@@modelName@@", $this->modelName, $contents);
         $contents = str_replace("@@viewPath@@", $this->viewPath, $contents);
@@ -74,7 +91,11 @@ class ControllerCrud extends LaraCrud
 
         $contents = str_replace("@@requestClass@@", $this->requestClass,
             $contents);
-        $contents = str_replace("@@table@@", strtolower($this->getModelName($this->table)), $contents);
+        $contents = str_replace("@@table@@",
+            strtolower($this->getModelName($this->table)), $contents);
+
+        $contents = str_replace("@@subnamespace@@", $this->subNameSpace,
+            $contents);
 
         $filterCode = $this->generateFilter();
         $contents   = str_replace("@@requestFiltetr@@", $filterCode, $contents);
@@ -87,13 +108,24 @@ class ControllerCrud extends LaraCrud
     public function make()
     {
         try {
-            $controllerFileName = $this->controllerName.'Controller.php';
-            $fullPath           = app_path('Http/Controllers/').$controllerFileName;
+            $controllerFileName = $this->getFileName($this->controllerName.'Controller').'.php';
+            $fullPath           = app_path('Http/Controllers/');
 
+            if (!empty($this->path)) {
+                $fullPath.=$this->path.'/';
+
+                if (!file_exists($fullPath)) {
+                    mkdir($fullPath);
+                }
+            }
+            $fullPath.=$controllerFileName;
+            
             if (!file_exists($fullPath)) {
                 $modelContent = $this->generateContent();
                 $this->saveFile($fullPath, $modelContent);
                 return true;
+            }else{
+                throw new \Exception('Controller already exists');
             }
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
@@ -145,5 +177,13 @@ class ControllerCrud extends LaraCrud
             }
         }
         return $retCode;
+    }
+
+    public function getFileName($name)
+    {
+        if (!empty($this->fileName)) {
+            return str_replace(".php", "", $this->fileName);
+        }
+        return $name;
     }
 }

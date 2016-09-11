@@ -77,13 +77,13 @@ Routes are the most vital part of a laravel application.
 WE create routes by its public methods and parameter. 
 Lets do this work to rotue command.
 
-    php artisan laracrud:controller UserController
+    php artisan laracrud:route UserController
 
 If you have some routes already redine for <controllerName> then do not worry.
 It will create routes for which does not define yet. 
 Please use forward slash(/) for sub namespace. For example,
 
-    php artisan laracrud:controller Auth/AuthController
+    php artisan laracrud:route Auth/AuthController
 
 
 ##Create everything at once##

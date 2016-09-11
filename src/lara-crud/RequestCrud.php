@@ -11,8 +11,9 @@ namespace LaraCrud;
 class RequestCrud extends LaraCrud
 {
     protected $validateionMsg = '';
+    protected $fileName       = '';
 
-    public function __construct($table)
+    public function __construct($table, $name)
     {
         if (!empty($table)) {
             if (is_array($table)) {
@@ -23,6 +24,8 @@ class RequestCrud extends LaraCrud
         } else {
             $this->getTableList();
         }
+        $this->fileName = $name;
+
         $this->loadDetails();
         $this->findPivotTables();
         $this->prepareRelation();
@@ -161,17 +164,19 @@ class RequestCrud extends LaraCrud
     public function create($table)
     {
         try {
-            $signularTable = $this->getModelName($table).'Request';
+            $signularTable = $this->getNewModelName($table).'Request';
             $fullPath      = base_path('app/Http/Requests').'/'.$signularTable.'.php';
 
             if (!file_exists($fullPath)) {
                 $requestContent = $this->generateContent($table);
                 $this->saveFile($fullPath, $requestContent);
                 return true;
+            } else {
+                throw new \Exception('Unable to create '.$signularTable.' class. Because file already exists');
             }
             return false;
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode(), $ex);
+            throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
         }
     }
 
@@ -189,5 +194,13 @@ class RequestCrud extends LaraCrud
         } catch (\Exception $ex) {
             $this->errors[] = $ex->getMessage();
         }
+    }
+
+    public function getNewModelName($table)
+    {
+        if (!empty($this->fileName)) {
+            return $this->getModelName($this->fileName);
+        }
+        return $this->getModelName($table);
     }
 }
