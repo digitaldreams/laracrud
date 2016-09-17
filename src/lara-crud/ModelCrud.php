@@ -39,9 +39,8 @@ class ModelCrud extends LaraCrud
      *
      * @var string
      */
-    public $modelName = '';
-
-    protected $searchScope='';
+    public $modelName      = '';
+    protected $searchScope = '';
 
     /**
      * Get table name. It may be an array or string.
@@ -126,8 +125,9 @@ class ModelCrud extends LaraCrud
             }
         }
         if (!empty($searchScopeStr)) {
-            $searchTemp = $this->getTempFile('search_scope.txt');
-            $this->searchScope= str_replace('@@whereClause@@', $searchScopeStr, $searchTemp);
+            $searchTemp        = $this->getTempFile('search_scope.txt');
+            $this->searchScope = str_replace('@@whereClause@@', $searchScopeStr,
+                $searchTemp);
         }
 
         $propertyDefiner.=$methodDefiner;
@@ -385,8 +385,8 @@ class ModelCrud extends LaraCrud
                 $modelContent = $this->generateContent($table);
                 $this->saveFile($fullPath, $modelContent);
                 return true;
-            }else{
-                $this->errors[]=$signularTable.' already exists';
+            } else {
+                $this->errors[] = $signularTable.' already exists';
             }
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
@@ -477,14 +477,23 @@ class ModelCrud extends LaraCrud
         return $this->getModelName($table);
     }
 
-    protected function makeSearch($type, $field)
+    protected function makeSearch($type, $field, $table = '')
     {
         $str = '';
+        if (in_array($field, $this->protectedColumns)) {
+            return $str;
+        }
+        if (isset($this->foreignKeys[$table]['keys']) && is_array($this->foreignKeys[$table]['keys'])) {
+            if (in_array($field, $this->foreignKeys[$table]['keys'])) {
+                return $str;
+            }
+        }
 
-        if (in_array($type, ['varchar', 'text', 'enum', 'char'])) {
-            $str="\t"."->orWhere('$field','LIKE','%'.\$q.'%')"."\n";
-        } elseif (in_array($type, ['int', 'bigint', 'tinyint'])) {
-            $str="\t"."->orWhere('$field',\$q)"."\n";
+
+        if (in_array($type, ['varchar', 'text'])) {
+            $str = "\t"."->orWhere('$field','LIKE','%'.\$q.'%')"."\n";
+        } elseif (in_array($type, ['int', 'bigint'])) {
+            $str = "\t"."->orWhere('$field',\$q)"."\n";
         }
 
         return $str;
