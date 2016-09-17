@@ -78,7 +78,6 @@ class @@controllerName@@ extends Controller{
         }
     }
 
-
     public function postStore(@@requestClass@@ $request) {
         try {
             $id = $request->get('id');
