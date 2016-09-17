@@ -5,6 +5,10 @@ return [
      */
     'modelNameSpace' => 'App',
     /**
+     * Default Model Folder
+     */
+    'modelpath' => 'app',
+    /**
      * Request Class suffex. E.g. UserRequest
      */
     'requestClassSuffix' => 'Request',

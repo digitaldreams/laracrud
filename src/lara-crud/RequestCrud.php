@@ -15,6 +15,7 @@ class RequestCrud extends LaraCrud
 
     public function __construct($table, $name = '')
     {
+         parent::__construct();
         if (!empty($table)) {
             if (is_array($table)) {
                 $this->tables = $table;

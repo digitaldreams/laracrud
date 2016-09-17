@@ -48,6 +48,7 @@ class ModelCrud extends LaraCrud
      */
     public function __construct($table = '', $name = '')
     {
+        parent::__construct();
         if (!empty($table)) {
             $insertAbleTable = $table;
 
@@ -60,6 +61,9 @@ class ModelCrud extends LaraCrud
         } else {
             $this->getTableList();
         }
+        $this->path      = $this->getConfig('modelpath');
+        $this->namespace = $this->getConfig('modelNameSpace');
+
         if (!empty($name)) {
             if (strpos($name, "/", 1) !== FALSE) {
                 $narr            = explode("/", trim($name, "/"));
@@ -70,8 +74,8 @@ class ModelCrud extends LaraCrud
                     $this->path.='/'.ucfirst($path);
                 }
                 //   $sname=  str_replace("/","\\",$name);
-            }else{
-                $this->modelName=  $this->getModelName($name);
+            } else {
+                $this->modelName = $this->getModelName($name);
             }
         }
         $this->loadDetails();
@@ -115,7 +119,6 @@ class ModelCrud extends LaraCrud
                 $scopeTemplateStr = str_replace("@@fielName@@", $column->Field,
                     $scopeTemplateStr);
                 $scopePlaceholders.=$scopeTemplateStr."\n\n";
-                
             }
         }
         $propertyDefiner.=$methodDefiner;

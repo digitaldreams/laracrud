@@ -64,6 +64,7 @@ class RouteCrud extends LaraCrud
 
     public function __construct($controller = '')
     {
+         parent::__construct();
         if (!is_array($controller)) {
             $this->controllers[] = $controller;
         } else {

@@ -79,6 +79,7 @@ class ViewCrud extends LaraCrud
     public function __construct($table = '', $page = '', $type = 'panel',
                                 $name = '')
     {
+        parent::__construct();
         if (!empty($table)) {
             $this->mainTable = $table;
             if (is_array($table)) {
@@ -253,7 +254,7 @@ class ViewCrud extends LaraCrud
 
         foreach ($this->columns[$tableName] as $column) {
             $dataOption.='data-'.$column.'="<?php echo $record->'.$column.';?>"'."\n";
-
+       
             $headerHtml.='<th>'."\n".''.ucwords(str_replace("_", " ", $column)).''."\n".'</th>'."\n";
             $bodyHtml.='<td>'."\n".'<?php echo $record->'.$column.'; ?>'."\n".'</td>'."\n";
         }

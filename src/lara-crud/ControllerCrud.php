@@ -28,6 +28,7 @@ class ControllerCrud extends LaraCrud
 
     public function __construct($modelName = '', $name = '')
     {
+        parent::__construct();
         $modelNamespace = $this->getConfig('modelNameSpace', '\App');
 
         if (substr_compare($modelNamespace, "\\", 0, 1) !== 0) {
