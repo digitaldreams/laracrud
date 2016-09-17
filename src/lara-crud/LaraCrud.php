@@ -144,11 +144,11 @@ class LaraCrud
      */
     public function __construct()
     {
+        $this->config           = include __DIR__.'/config/laracrud.php';
         $this->getDateFormat    = $this->getConfig('getDateFormat');
         $this->setDateFormat    = $this->getConfig('setDateFormat');
         $this->systemColumns    = $this->getConfig('systemColumns');
         $this->protectedColumns = $this->getConfig('protectedColumns');
-        $this->config           = require_once './config/laracrud.php';
     }
 
     public function getTableList()
