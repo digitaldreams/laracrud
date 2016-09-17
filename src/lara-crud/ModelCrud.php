@@ -127,7 +127,7 @@ class ModelCrud extends LaraCrud
         }
         if (!empty($searchScopeStr)) {
             $searchTemp = $this->getTempFile('search_scope.txt');
-            $this->searchScope= str_replace('@@whereClause@@', $str, $searchTemp);
+            $this->searchScope= str_replace('@@whereClause@@', $searchScopeStr, $searchTemp);
         }
 
         $propertyDefiner.=$methodDefiner;
@@ -480,9 +480,9 @@ class ModelCrud extends LaraCrud
         $str = '';
 
         if (in_array($type, ['varchar', 'text', 'enum', 'char'])) {
-            $str="\t"."->where('$field','LIKE','%'.\$q.'%')"."\n";
+            $str="\t"."->orWhere('$field','LIKE','%'.\$q.'%')"."\n";
         } elseif (in_array($type, ['int', 'bigint', 'tinyint'])) {
-            $str="\t"."->where('$field',\$q)"."\n";
+            $str="\t"."->orWhere('$field',\$q)"."\n";
         }
 
         return $str;
