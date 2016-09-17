@@ -453,7 +453,7 @@ class ViewCrud extends LaraCrud
 
     private function getViewPath($table)
     {
-        return base_path('resources/views/'.strtolower($this->getModelName($table)));
+        return base_path($this->getConfig("viewPath", 'resources/views/').strtolower($this->getModelName($table)));
     }
 
     public function hasErrorClass($column, $required)

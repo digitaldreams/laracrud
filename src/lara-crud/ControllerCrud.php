@@ -18,15 +18,25 @@ class ControllerCrud extends LaraCrud
     protected $controllerName;
     protected $modelName;
     protected $viewPath;
-    protected $modelNameSpace = '\App';
-    protected $requestClass   = 'Request';
+    protected $modelNameSpace     = '\App';
+    protected $requestClass       = 'Request';
+    protected $requestClassSuffix = 'Request';
     public $table;
-    protected $fileName       = '';
-    public $path           = '';
-    protected $subNameSpace   = '';
+    protected $fileName           = '';
+    public $path                  = '';
+    protected $subNameSpace       = '';
 
     public function __construct($modelName = '', $name = '')
     {
+        $modelNamespace = $this->getConfig('modelNameSpace', '\App');
+
+        if (substr_compare($modelNamespace, "\\", 0, 1) !== 0) {
+            $modelNamespace = "\\".$modelNamespace;
+        }
+        $this->modelNameSpace     = $modelNamespace;
+        $this->requestClassSuffix = $this->getConfig('requestClassSuffix',
+            'Request');
+
         $this->modelName = $this->modelNameSpace.'\\'.$modelName;
         if (!empty($name)) {
             if (strpos($name, "/") !== false) {
@@ -62,7 +72,11 @@ class ControllerCrud extends LaraCrud
                 $this->loadDetails();
 
                 $requestName = $this->getModelName($table);
-                $fullName    = '\App\Http\Requests\\'.$requestName.'Request';
+
+                $requestPath = $this->getConfig("requestPath",
+                    'app/Http/Requests');
+
+                $fullName = $this->pathToNs($requestPath).'\\'.$requestName.$this->requestClassSuffix;
                 if (class_exists($fullName)) {
                     $this->requestClass = $fullName;
                 }
@@ -83,8 +97,8 @@ class ControllerCrud extends LaraCrud
         $contents = '';
 
         $contents = $this->getTempFile('controller.txt');
-        $contents = str_replace("@@controllerName@@", $this->getFileName($this->controllerName.'Controller'),
-            $contents);
+        $contents = str_replace("@@controllerName@@",
+            $this->getFileName($this->controllerName.'Controller'), $contents);
         $contents = str_replace("@@modelName@@", $this->modelName, $contents);
         $contents = str_replace("@@viewPath@@", $this->viewPath, $contents);
 
@@ -109,7 +123,8 @@ class ControllerCrud extends LaraCrud
     {
         try {
             $controllerFileName = $this->getFileName($this->controllerName.'Controller').'.php';
-            $fullPath           = app_path('Http/Controllers/');
+            $fullPath           = base_path($this->getConfig('controllerPath',
+                    'app/Http/Controllers/'));
 
             if (!empty($this->path)) {
                 $fullPath.=$this->path.'/';
@@ -119,12 +134,12 @@ class ControllerCrud extends LaraCrud
                 }
             }
             $fullPath.=$controllerFileName;
-            
+
             if (!file_exists($fullPath)) {
                 $modelContent = $this->generateContent();
                 $this->saveFile($fullPath, $modelContent);
                 return true;
-            }else{
+            } else {
                 throw new \Exception('Controller already exists');
             }
         } catch (\Exception $ex) {
@@ -179,6 +194,11 @@ class ControllerCrud extends LaraCrud
         return $retCode;
     }
 
+    /**
+     * Get Controller File and Class Name
+     * @param string $name Default Name. It will be used if user does not provide any name.
+     * @return type
+     */
     public function getFileName($name)
     {
         if (!empty($this->fileName)) {

@@ -40,12 +40,7 @@ class LaraCrud
      * Pivot Table that are used for maintaining Relationships only
      * @var array
      */
-    public $pivotTables = ['migrations',
-        'role_user', 'role_permission',
-        'field_has_data_stores',
-        'data_store_has_template',
-        'data_store_contact_group',
-    ];
+    public $pivotTables = ['migrations'];
 
     /**
      * List of the Table name
@@ -64,21 +59,11 @@ class LaraCrud
      * @var array 
      */
     public $tableColumns        = [];
-    public $systemColumns       = ['created_at', 'updated_at', 'deleted_at'];
-    protected $protectedColumns = ['id', 'created_at', 'updated_at', 'deleted_at'];
+    public $systemColumns       = [];
+    protected $protectedColumns = [];
     public $columnsDataType     = [];
-    public $getDateFormat       = [
-        'time' => 'h:i A',
-        'date' => 'm/d/Y',
-        'datetime' => 'm/d/Y h:i A',
-        'timestamp' => 'm/d/Y h:i A'
-    ];
-    public $setDateFormat       = [
-        'time' => 'H:i:s',
-        'date' => 'Y-m-d',
-        'datetime' => 'Y-m-d H:i:s',
-        'timestamp' => 'Y-m-d H:i:s'
-    ];
+    public $getDateFormat       = [];
+    public $setDateFormat       = [];
 
     /**
      * List of indexes
@@ -148,9 +133,24 @@ class LaraCrud
     public $errors = [];
 
     /**
+     * Load default Configuration
+     * @var type 
+     */
+    protected $config = [];
+
+    /**
      * Get list of table name from current database
      * @return array 
      */
+    public function __construct()
+    {
+        $this->getDateFormat    = $this->getConfig('getDateFormat');
+        $this->setDateFormat    = $this->getConfig('setDateFormat');
+        $this->systemColumns    = $this->getConfig('systemColumns');
+        $this->protectedColumns = $this->getConfig('protectedColumns');
+        $this->config           = require_once './config/laracrud.php';
+    }
+
     public function getTableList()
     {
 
@@ -390,7 +390,7 @@ class LaraCrud
             if (!is_array($table)) {
                 $insertAbleTable = [$table];
             }
-            
+
             $availableTables = static::getTablesName();
             $missingTable    = array_diff($insertAbleTable, $availableTables);
 
@@ -403,5 +403,31 @@ class LaraCrud
         } catch (\Exception $ex) {
             throw new \Exception($ex->getMessage());
         }
+    }
+
+    /**
+     * Get value from configuration
+     * @param string $key
+     * @return string
+     */
+    public function getConfig($key)
+    {
+        $default = isset($this->config[$key]) ? $this->config[$key] : null;
+        return config('laracrud.'.$key, $default);
+    }
+
+    /**
+     * Path to Namespace
+     * @param type $path
+     * @return string Valid namespace
+     */
+    public function pathToNs($path)
+    {
+        $ns = str_replace("/", "\\", $path);
+        $ns = str_replace("app", "App", $ns);
+        if (substr_compare($ns, "\\", 0, 1) !== 0) {
+            return "\\".$ns;
+        }
+        return $ns;
     }
 }

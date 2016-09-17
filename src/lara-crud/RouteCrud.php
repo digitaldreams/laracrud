@@ -150,7 +150,8 @@ class RouteCrud extends LaraCrud
      */
     public function appendRoutes($routesCode)
     {
-        $routePath = base_path('/app/Http/routes.php');
+        $routePath = base_path($this->getConfig('routeFile',
+                'app/Http/routes.php'));
         if (file_exists($routePath)) {
             $splFile = new \SplFileObject($routePath, 'a');
             $splFile->fwrite($routesCode);

@@ -13,7 +13,7 @@ class RequestCrud extends LaraCrud
     protected $validateionMsg = '';
     protected $fileName       = '';
 
-    public function __construct($table, $name='')
+    public function __construct($table, $name = '')
     {
         if (!empty($table)) {
             if (is_array($table)) {
@@ -165,7 +165,8 @@ class RequestCrud extends LaraCrud
     {
         try {
             $signularTable = $this->getNewModelName($table.'Request');
-            $fullPath      = base_path('app/Http/Requests').'/'.$signularTable.'.php';
+            $fullPath      = base_path($this->getConfig("requestPath",
+                        'app/Http/Requests/')).$signularTable.'.php';
 
             if (!file_exists($fullPath)) {
                 $requestContent = $this->generateContent($table);
