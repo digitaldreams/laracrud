@@ -385,9 +385,11 @@ class ModelCrud extends LaraCrud
                 $modelContent = $this->generateContent($table);
                 $this->saveFile($fullPath, $modelContent);
                 return true;
+            }else{
+                $this->errors[]=$signularTable.' already exists';
             }
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode(), $ex);
+            throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
         }
         return false;
     }
