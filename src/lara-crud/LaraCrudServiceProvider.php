@@ -7,6 +7,7 @@
 
 namespace LaraCrud;
 
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -20,13 +21,17 @@ class LaraCrudServiceProvider extends ServiceProvider
 
     public function boot()
     {
+    
         $this->publishes([
             __DIR__.'/config/laracrud.php' => config_path('laracrud.php')
-        ]);
+            ], 'config');
     }
 
     public function register()
     {
-
+        $this->app->singleton(LaraCrud::class,
+            function ($app) {
+            return new LaraCrud();
+        });
     }
 }
