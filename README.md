@@ -10,7 +10,7 @@ By using this tools you can generate Models which have necessary methods and pro
         
 }
 
-Version 1.x is for laravel 5.2
+Version 1.x is for laravel 5.2 & 5.1
 
 Then add following line  in console/kernal.php
 
@@ -58,7 +58,7 @@ By default Model Name will be based on Table name. But Model name can be specifi
 
 Like Model Name we can also specify a custom request name.
 
-    php artisan laracrud:request RegisterRequest
+    php artisan laracrud:request users RegisterRequest
   
 
 
