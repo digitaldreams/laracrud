@@ -192,6 +192,8 @@ class ViewCrud extends LaraCrud
         $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml,
             $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
+        $searchBoxHtml=  $this->getTempFile('view/search.html');
+        $indexPageTemp = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
         return $indexPageTemp;
     }
@@ -271,6 +273,10 @@ class ViewCrud extends LaraCrud
             $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
+
+         $searchBoxHtml=  $this->getTempFile('view/search.html');
+        $indexPageTemp = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
+
         $modalHtml     = $this->generateModal($tableName);
         $indexPageTemp = str_replace('@@modalHtml@@', $modalHtml, $indexPageTemp);
         return $indexPageTemp;

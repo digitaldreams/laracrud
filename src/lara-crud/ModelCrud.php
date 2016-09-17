@@ -267,8 +267,11 @@ class ModelCrud extends LaraCrud
             $castsContent = $this->generateCast($tableName);
             $modelContent = str_replace("@@casts@@", $castsContent,
                 $modelContent);
-
-
+            
+            $searchScope=  $this->makeSearch($tableName);
+            
+            $modelContent=str_replace('@@searchMethod@@',$searchScope,
+                                $modelContent);
             return $modelContent;
         } catch (\Exception $ex) {
             $this->errors[] = $ex->getMessage();
@@ -463,5 +466,29 @@ class ModelCrud extends LaraCrud
             return $this->modelName;
         }
         return $this->getModelName($table);
+    }
+
+    protected function makeSearch($table)
+    {
+        $searchTemp = '';
+        $str        = '';
+        if (isset($this->tableColumns[$table])) {
+            foreach ($this->tableColumns[$table] as $column) {
+                $type = $column->Type;
+                if (empty($column->Field)) {
+                    continue;
+                }
+                if (in_array($type, ['varchar', 'text', 'enum', 'char'])) {
+                    $str.="\t"."->where('$column->Field','LIKE','%'.\$q.'%')"."\n";
+                } elseif (in_array($type, ['int', 'bigint', 'tinyint'])) {
+                    $str.="\t"."->where('$column->Field',\$q)"."\n";
+                }
+            }
+        }
+        if (!empty($str)) {
+            $searchTemp = $this->getTempFile('search_scope.txt');
+            $searchTemp = str_replace('@@whereClause@@', $str, $searchTemp);
+        }
+        return $searchTemp;
     }
 }
