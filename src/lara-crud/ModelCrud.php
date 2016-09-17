@@ -41,6 +41,8 @@ class ModelCrud extends LaraCrud
      */
     public $modelName = '';
 
+    protected $searchScope='';
+
     /**
      * Get table name. It may be an array or string.
      * Does all necessary work before start making Model.
@@ -97,6 +99,7 @@ class ModelCrud extends LaraCrud
         $scopePlaceholders = '';
         $propertyDefiner   = '';
         $methodDefiner     = '';
+        $searchScopeStr    = '';
         if (isset($this->tableColumns[$tableName])) {
             foreach ($this->tableColumns[$tableName] as $column) {
                 $type = $column->Type;
@@ -107,11 +110,12 @@ class ModelCrud extends LaraCrud
                 if (strpos($type, "(")) {
                     $type = substr($column->Type, 0, strpos($column->Type, "("));
                 }
+
                 $propertyDefiner.='@property '.$type.' $'.$column->Field.' '.str_replace("_",
                         " ", $column->Field)."\n";
                 $methodDefiner.='@method \Illuminate\Database\Eloquent\Builder '.lcfirst($this->getModelName($column->Field)).'('.$type.' $'.$column->Field.')'.str_replace("_",
                         " ", $column->Field)."\n";
-
+                $searchScopeStr.=$this->makeSearch($type, $column->Field);
                 $scopeTemplateStr = $this->getTempFile('scope.txt');
                 $scopeMethodName  = ucfirst(camel_case($column->Field));
                 $scopeTemplateStr = str_replace("@@methodName@@",
@@ -121,6 +125,11 @@ class ModelCrud extends LaraCrud
                 $scopePlaceholders.=$scopeTemplateStr."\n\n";
             }
         }
+        if (!empty($searchScopeStr)) {
+            $searchTemp = $this->getTempFile('search_scope.txt');
+            $this->searchScope= str_replace('@@whereClause@@', $str, $searchTemp);
+        }
+
         $propertyDefiner.=$methodDefiner;
         $this->propertyDefiner = $propertyDefiner;
         return $scopePlaceholders;
@@ -267,11 +276,9 @@ class ModelCrud extends LaraCrud
             $castsContent = $this->generateCast($tableName);
             $modelContent = str_replace("@@casts@@", $castsContent,
                 $modelContent);
-            
-            $searchScope=  $this->makeSearch($tableName);
-            
-            $modelContent=str_replace('@@searchMethod@@',$searchScope,
-                                $modelContent);
+
+            $modelContent = str_replace('@@searchMethod@@', $this->searchScope,
+                $modelContent);
             return $modelContent;
         } catch (\Exception $ex) {
             $this->errors[] = $ex->getMessage();
@@ -468,27 +475,16 @@ class ModelCrud extends LaraCrud
         return $this->getModelName($table);
     }
 
-    protected function makeSearch($table)
+    protected function makeSearch($type, $field)
     {
-        $searchTemp = '';
-        $str        = '';
-        if (isset($this->tableColumns[$table])) {
-            foreach ($this->tableColumns[$table] as $column) {
-                $type = $column->Type;
-                if (empty($column->Field)) {
-                    continue;
-                }
-                if (in_array($type, ['varchar', 'text', 'enum', 'char'])) {
-                    $str.="\t"."->where('$column->Field','LIKE','%'.\$q.'%')"."\n";
-                } elseif (in_array($type, ['int', 'bigint', 'tinyint'])) {
-                    $str.="\t"."->where('$column->Field',\$q)"."\n";
-                }
-            }
+        $str = '';
+
+        if (in_array($type, ['varchar', 'text', 'enum', 'char'])) {
+            $str="\t"."->where('$field','LIKE','%'.\$q.'%')"."\n";
+        } elseif (in_array($type, ['int', 'bigint', 'tinyint'])) {
+            $str="\t"."->where('$field',\$q)"."\n";
         }
-        if (!empty($str)) {
-            $searchTemp = $this->getTempFile('search_scope.txt');
-            $searchTemp = str_replace('@@whereClause@@', $str, $searchTemp);
-        }
-        return $searchTemp;
+
+        return $str;
     }
 }
