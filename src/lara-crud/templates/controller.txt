@@ -18,9 +18,18 @@ class @@controllerName@@ extends Controller{
        $this->model=new @@modelName@@;
     }
 
-    public function index() {
+    public function index(Request $request) {
         try {
-            $data = $this->model->paginate(10);
+            $model=$this->model;
+            $queryStr=$request->get('q');
+
+            /**
+            if(!empty($queryStr)){
+                $model=$model->q($queryStr);
+            }
+            */
+
+            $data = $model->paginate(10);
 
             return view('@@viewPath@@.index', [
                 'records' => $data,
