@@ -17,6 +17,7 @@ use Illuminate\Support\ServiceProvider;
  */
 class LaraCrudServiceProvider extends ServiceProvider
 {
+    protected $defer = true;
 
     public function boot()
     {
