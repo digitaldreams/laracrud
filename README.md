@@ -10,7 +10,9 @@ By using this tools you can generate Models which have necessary methods and pro
         
 }
 
-Version 1.x is for laravel 5.2 & 5.1
+Version 1.x is for laravel 5.1, 5.2 & 5.3
+
+For 5.3 route path sould be change to app/routes/web.php from config/laracrud.php
 
 Then add following line  in console/kernal.php
 
@@ -109,5 +111,22 @@ If we need all of the command to then just to
 
 It will create Model, Request, Controller, View.
 Then you just need to run route command to create routes.
+
+##Setting##
+To manipulate configuration you need to do following.
+
+01. Add this line to config/app.php providers array
+
+
+    LaraCrud\LaraCrudServiceProvider::class
+  
+  
+02. Then Run
+
+
+    php artisan vendor:publish --provider="LaraCrud\LaraCrudServiceProvider" --tag=config
+
+
+
 
 NB: only for mysql database
