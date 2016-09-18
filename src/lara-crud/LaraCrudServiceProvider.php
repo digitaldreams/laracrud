@@ -17,20 +17,20 @@ use Illuminate\Support\ServiceProvider;
  */
 class LaraCrudServiceProvider extends ServiceProvider
 {
-    protected $defer = true;
 
     public function boot()
     {
 
-        $this->publishes([
-            __DIR__.'/config/laracrud.php' => config_path('laracrud.php')
-            ], 'config');
+
+        return $this->publishes([
+                __DIR__.'/../config/laracrud.php' => config_path('laracrud.php')
+                ], 'config');
     }
 
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/config/laracrud.php', 'laracrud'
+            __DIR__.'/../config/laracrud.php', 'laracrud'
         );
     }
 }

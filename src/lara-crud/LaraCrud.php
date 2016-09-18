@@ -144,7 +144,7 @@ class LaraCrud
      */
     public function __construct()
     {
-        $this->config           = include __DIR__.'/config/laracrud.php';
+        $this->config           = include __DIR__.'/../config/laracrud.php';
         $this->getDateFormat    = $this->getConfig('getDateFormat');
         $this->setDateFormat    = $this->getConfig('setDateFormat');
         $this->systemColumns    = $this->getConfig('systemColumns');
