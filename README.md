@@ -127,6 +127,7 @@ To manipulate configuration you need to do following.
     php artisan vendor:publish --provider="LaraCrud\LaraCrudServiceProvider" --tag=config
 
 
-
+Watch tutorial :
+https://vimeo.com/183257085
 
 NB: only for mysql database
