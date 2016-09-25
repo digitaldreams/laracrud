@@ -125,6 +125,9 @@ To manipulate configuration you need to do following.
 
 
     php artisan vendor:publish --provider="LaraCrud\LaraCrudServiceProvider" --tag=config
+    
+Still do not see config/laracrud.php. Then manually copy from vandor/digitaldream/laracrud/src/config/laracrud.php to config/laracrud.php
+
 
 
 Watch tutorial :
