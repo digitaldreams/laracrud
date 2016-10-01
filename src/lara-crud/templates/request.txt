@@ -2,17 +2,19 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class @@requestClassName@@ extends Request {
+class @@requestClassName@@ extends FormRequest 
+{
 
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize() {
-            return true;
+    public function authorize() 
+    {
+        return true;
     }
 
     /**
@@ -20,34 +22,35 @@ class @@requestClassName@@ extends Request {
      *
      * @return array
      */
-    public function rules() {
+    public function rules() 
+    {
        
         return [
         @@rules@@
         ];
     }
-/**
- * Get the error messages for the defined validation rules.
- *
- * @return array
- */
-public function messages()
-{
-/**
-*return[
-@@validationMessage@@
-]
-*/
-    return [
+    /**
+    * Get the error messages for the defined validation rules.
+    *
+    * @return array
+    */
+    public function messages()
+    {
+    /**
+    *   return[
+        @@validationMessage@@
+        ]
+    */
+        return [
      
-    ];
-}
-/**
- *
+        ];
+    }
+    /**
+     *
  
-protected function formatErrors(Validator $validator)
-{
-    return $validator->errors()->all();
-}
-*/
+    protected function formatErrors(Validator $validator)
+    {
+        return $validator->errors()->all();
+    }
+    */
 }

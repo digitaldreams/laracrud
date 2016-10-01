@@ -76,8 +76,7 @@ class ViewCrud extends LaraCrud
      */
     protected $foreginColumns = [];
 
-    public function __construct($table = '', $page = '', $type = 'panel',
-                                $name = '')
+    public function __construct($table = '', $page = '', $type = 'panel', $name = '')
     {
         parent::__construct();
         if (!empty($table)) {
@@ -117,8 +116,7 @@ class ViewCrud extends LaraCrud
                 }
                 $this->columns[$tname][] = $column->Field;
 
-                $this->viewRules[$tname][] = $this->processColumn($column,
-                    $tname);
+                $this->viewRules[$tname][] = $this->processColumn($column, $tname);
             }
         }
     }
@@ -143,8 +141,7 @@ class ViewCrud extends LaraCrud
         $options['properties'] = [];
 
         if (strpos($type, "(")) {
-            $type            = substr($column->Type, 0,
-                strpos($column->Type, "("));
+            $type            = substr($column->Type, 0, strpos($column->Type, "("));
             $possibleOptions = $this->extractRulesFromType($column->Type);
             if (stripos($possibleOptions, ",")) {
                 $options['options'] = explode(",", $possibleOptions);
@@ -157,12 +154,10 @@ class ViewCrud extends LaraCrud
             $options['properties']['required'] = 'required';
         }
 
-        if (isset($this->foreignKeys[$tableName]) && in_array($column->Field,
-                $this->foreignKeys[$tableName]['keys'])) {
+        if (isset($this->foreignKeys[$tableName]) && in_array($column->Field, $this->foreignKeys[$tableName]['keys'])) {
             $options['type'] = 'select';
         } else {
-            $options['type'] = isset($this->inputType[$type]) ? $this->inputType[$type]
-                    : 'text';
+            $options['type'] = isset($this->inputType[$type]) ? $this->inputType[$type] : 'text';
         }
         // $options['type'] = isset($this->inputType[$type]) ? $this->inputType[$type] : 'text';
         $options['name'] = $column->Field;
@@ -175,47 +170,45 @@ class ViewCrud extends LaraCrud
         $tableName  = !empty($table) ? $table : $this->mainTable;
         $modelName  = strtolower($this->getModelName($tableName));
 
-        $bodyHtml = '<?php foreach($records as $record): ?><tr>'."\n";
+        $bodyHtml = '@foreach($records as $record)'."\n".'<tr>'."\n";
 
         foreach ($this->columns[$tableName] as $column) {
             $headerHtml.='<th>'.ucwords(str_replace("_", " ", $column)).'</th>'."\n";
-            $bodyHtml.='<td>'."\n".'<?php echo $record->'.$column.'; ?>'."\n".'</td>'."\n";
+            $bodyHtml.='<td>{{$record->'.$column.'}}</td>'."\n";
         }
         $headerHtml.='<th>&nbsp;</th>'."\n";
         $headerHtml.='<th>&nbsp;</th>'."\n";
 
-        $bodyHtml.='<td>'."\n".'<a href="<?php echo route(\''.$modelName.'.edit\',$record->id); ?>"><span class="glyphicon glyphicon-pencil"></span></a>'."\n".'</td>'."\n";
-        $bodyHtml.='<td>'."\n".'<a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\''.$modelName.'.delete\',$record->id); ?>"><span class="glyphicon glyphicon-remove"></span></a>'."\n".'</td>'."\n";
+        $bodyHtml.='<td>'."\n".'<a href="{{route(\''.$tableName.'.edit\',$record->id)}}"><span class="glyphicon glyphicon-pencil"></span></a>'."\n".'</td>'."\n";
+        $bodyHtml.='<td>'."\n".'<a onclick="return confirm(\'Are you sure you want to delete this record\')" href="{{route(\''.$tableName.'.destroy\',$record->id)}}"><span class="glyphicon glyphicon-remove"></span></a>'."\n".'</td>'."\n";
 
-        $bodyHtml.= '</tr><?php endforeach; ?>';
+        $bodyHtml.= '</tr>'."\n".'@endforeach';
         $indexPageTemp = $this->getTempFile('view/index.html');
-        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml,
-            $indexPageTemp);
+        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
-        $searchBoxHtml=  $this->getTempFile('view/search.html');
+        $searchBoxHtml = $this->getTempFile('view/search.html');
         $indexPageTemp = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
-        $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
         return $indexPageTemp;
     }
 
     public function generateIndexPanel($table = '')
     {
-        $retHtml = '<?php foreach($records as $record): ?>'."\n";
+        $retHtml = '@foreach($records as $record)'."\n";
 
         $tableName = !empty($table) ? $table : $this->mainTable;
         $modelName = strtolower($this->getModelName($tableName));
 
         $retHtml.=$this->panelBox($tableName);
-        $retHtml.='<?php endforeach; ?>';
+        $retHtml.='@endforeach';
 
         $retHtml.="\n\n\n";
 
         $modalHtml      = $this->generateModal($table);
         $panelmodalTemp = $this->getTempFile('view/index_panel_modal.html');
         $panelmodalTemp = str_replace("@@indexHtml@@", $retHtml, $panelmodalTemp);
-        $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml,
-            $panelmodalTemp);
-        $panelmodalTemp = str_replace("@@table@@", $modelName, $panelmodalTemp);
+        $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml, $panelmodalTemp);
+        $panelmodalTemp = str_replace("@@table@@", $table, $panelmodalTemp);
 
         return $panelmodalTemp;
     }
@@ -227,19 +220,17 @@ class ViewCrud extends LaraCrud
         $modelName  = strtolower($this->getModelName($tableName));
 
         foreach ($this->columns[$tableName] as $column) {
-            $dataOption.='data-'.$column.'="<?php echo $record->'.$column.';?>"'."\n";
+            $dataOption.='data-'.$column.'="{{$record->'.$column.'}}"'."\n";
             $bodyHtml.='<tr>'."\n".'<th>'.ucwords(str_replace("_", " ", $column))."\n".'</th>'."\n";
-            $bodyHtml.='<td>'."\n".'<?php echo $record->'.$column.'; ?>'."\n".'</td></tr>'."\n";
+            $bodyHtml.='<td>'."\n".'{{$record->'.$column.'}}'."\n".'</td></tr>'."\n";
         }
-        $headline      = '<?php echo $record->id; ?>';
+        $headline      = '{{$record->id}}';
         $indexPageTemp = $this->getTempFile('view/index_panel.html');
         $indexPageTemp = str_replace(' @@headline@@', $headline, $indexPageTemp);
-        $indexPageTemp = str_replace('@@modalName@@', $tableName.'Modal',
-            $indexPageTemp);
-        $indexPageTemp = str_replace('@@dataOptions@@', $dataOption,
-            $indexPageTemp);
+        $indexPageTemp = str_replace('@@modalName@@', $tableName.'Modal', $indexPageTemp);
+        $indexPageTemp = str_replace('@@dataOptions@@', $dataOption, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
-        $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
         return $indexPageTemp;
     }
 
@@ -252,29 +243,28 @@ class ViewCrud extends LaraCrud
         $headerHtml = '';
         $tableName  = !empty($table) ? $table : $this->mainTable;
         $modelName  = strtolower($this->getModelName($tableName));
-        $bodyHtml   = '<?php foreach($records as $record): ?><tr>'."\n";
+        $bodyHtml   = '@foreach($records as $record)'."\n".'<tr>'."\n";
 
         foreach ($this->columns[$tableName] as $column) {
-            $dataOption.='data-'.$column.'="<?php echo $record->'.$column.';?>"'."\n";
-       
+            $dataOption.='data-'.$column.'="{{$record->'.$column.'}}"'."\n";
+
             $headerHtml.='<th>'."\n".''.ucwords(str_replace("_", " ", $column)).''."\n".'</th>'."\n";
-            $bodyHtml.='<td>'."\n".'<?php echo $record->'.$column.'; ?>'."\n".'</td>'."\n";
+            $bodyHtml.='<td>'."\n".'{{$record->'.$column.'}}'."\n".'</td>'."\n";
         }
         $headerHtml.='<th>&nbsp;</th>'."\n";
         $headerHtml.='<th>&nbsp;</th>'."\n";
 
         $bodyHtml.='<td>'."\n".'<a  data-toggle="modal" data-target="#'.$tableName.'Modal"'.$dataOption.' >'."\n".'<span class="glyphicon glyphicon-pencil"></span>'."\n".'</a>'."\n".'</td>'."\n";
-        $bodyHtml.='<td>'."\n".'<a onclick="return confirm(\'Are you sure you want to delete this record\')" href="<?php echo route(\''.$tableName.'.delete\',$record->id); ?>">'."\n".'<span class="glyphicon glyphicon-remove"></span>'."\n".'</a>'."\n".'</td>'."\n";
+        $bodyHtml.='<td>'."\n".'<a onclick="return confirm(\'Are you sure you want to delete this record\')" href="{{route(\''.$tableName.'.destroy\',$record->id)}}">'."\n".'<span class="glyphicon glyphicon-remove"></span>'."\n".'</a>'."\n".'</td>'."\n";
 
-        $bodyHtml.= '</tr><?php endforeach; ?>'."\n".'';
+        $bodyHtml.= '</tr>'."\n".'@endforeach'."\n".'';
 
         $indexPageTemp = $this->getTempFile('view/panel_table.html');
-        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml,
-            $indexPageTemp);
+        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
-        $indexPageTemp = str_replace('@@table@@', $modelName, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
 
-         $searchBoxHtml=  $this->getTempFile('view/search.html');
+        $searchBoxHtml = $this->getTempFile('view/search.html');
         $indexPageTemp = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
 
         $modalHtml     = $this->generateModal($tableName);
@@ -292,8 +282,7 @@ class ViewCrud extends LaraCrud
 
                 $templateContent = $this->getSelectContent($column, $error_block);
             } elseif ($column['type'] == 'checkbox') {
-                $templateContent = $this->getCheckBoxContent($column,
-                    $error_block);
+                $templateContent = $this->getCheckBoxContent($column, $error_block);
             } elseif ($column['type'] == 'radio') {
                 $templateContent = $this->getTempFile('view/radio.txt');
             } elseif ($column['type'] == 'textarea') {
@@ -302,30 +291,21 @@ class ViewCrud extends LaraCrud
                 $templateContent = $this->getTempFile('view/default.txt');
             }
 
-            $templateContent = str_replace('@@name@@', $column['name'],
-                $templateContent);
-            $templateContent = str_replace('@@label@@',
-                ucwords(str_replace("_", " ", $column['name'])),
-                $templateContent);
-            $templateContent = str_replace('@@type@@', $column['type'],
-                $templateContent);
+            $templateContent = str_replace('@@name@@', $column['name'], $templateContent);
+            $templateContent = str_replace('@@label@@', ucwords(str_replace("_", " ", $column['name'])), $templateContent);
+            $templateContent = str_replace('@@type@@', $column['type'], $templateContent);
 
-            $hasErrorBlockText = $this->hasErrorClass($column['name'],
-                $error_block);
-            $templateContent   = str_replace('@@hasErrorClass@@',
-                $hasErrorBlockText, $templateContent);
+            $hasErrorBlockText = $this->hasErrorClass($column['name'], $error_block);
+            $templateContent   = str_replace('@@hasErrorClass@@', $hasErrorBlockText, $templateContent);
 
-            $showErrorText   = $this->showErrorText($column['name'],
-                $error_block);
-            $templateContent = str_replace('@@showErrorText@@', $showErrorText,
-                $templateContent);
+            $showErrorText   = $this->showErrorText($column['name'], $error_block);
+            $templateContent = str_replace('@@showErrorText@@', $showErrorText, $templateContent);
             $showColumnValue = '';
 
             if ($error_block) {
-                $showColumnValue = '<?php echo old(\''.$column['name'].'\',$model->'.$column['name'].')?>';
+                $showColumnValue = '{{old(\''.$column['name'].'\',$model->'.$column['name'].')}}';
             }
-            $templateContent = str_replace('@@columnValue@@', $showColumnValue,
-                $templateContent);
+            $templateContent = str_replace('@@columnValue@@', $showColumnValue, $templateContent);
 
             $propertiesText = '';
             if (is_array($column['properties'])) {
@@ -333,8 +313,7 @@ class ViewCrud extends LaraCrud
                     $propertiesText.=$name.'="'.$value.'" ';
                 }
             }
-            $templateContent = str_replace('@@properties@@', $propertiesText,
-                $templateContent);
+            $templateContent = str_replace('@@properties@@', $propertiesText, $templateContent);
             $retHtml.=$templateContent;
 //@@properties@@
         }
@@ -343,13 +322,10 @@ class ViewCrud extends LaraCrud
 
     protected function generateForm($table)
     {
-        $modelName = strtolower($this->getModelName($table));
-
         $formContent  = $this->generateContent($table, TRUE);
         $formTemplate = $this->getTempFile('view/form.html');
-        $formTemplate = str_replace('@@formContent@@', $formContent,
-            $formTemplate);
-        $formTemplate = str_replace('@@table@@', $modelName, $formTemplate);
+        $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
+        $formTemplate = str_replace('@@table@@', $table, $formTemplate);
         return $formTemplate;
     }
 
@@ -373,12 +349,9 @@ class ViewCrud extends LaraCrud
         $modalTemp = str_replace('@@form@@', $formHtml, $modalTemp);
         $modalTemp = str_replace('@@table@@', $table, $modalTemp);
 
-        $modalTemp = str_replace('@@showModalOnError@@', $modalShowOnError,
-            $modalTemp);
-        $modalTemp = str_replace('@@modalInputFillUp@@', $modalInputFill,
-            $modalTemp);
-        $modalTemp = str_replace('@@modalInputCleanUp@@', $modalInputClean,
-            $modalTemp);
+        $modalTemp = str_replace('@@showModalOnError@@', $modalShowOnError, $modalTemp);
+        $modalTemp = str_replace('@@modalInputFillUp@@', $modalInputFill, $modalTemp);
+        $modalTemp = str_replace('@@modalInputCleanUp@@', $modalInputClean, $modalTemp);
 
         return $modalTemp;
     }
@@ -393,29 +366,24 @@ class ViewCrud extends LaraCrud
             if ($this->type == static::TYPE_PANEL) {
 
                 $idnexPanelContent = $this->generateIndexPanel($table);
-                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
-                    $idnexPanelContent);
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php', $idnexPanelContent);
             } elseif ($this->type == static::TYPE_TABLE_PANEL) {
 
                 $idnexPanelContent = $this->tabPanel($table);
-                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
-                    $idnexPanelContent);
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php', $idnexPanelContent);
             } else {
 
                 $idnexTableContent = $this->generateIndex($table);
-                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
-                    $idnexTableContent);
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php', $idnexTableContent);
             }
         } elseif ($this->page == static::PAGE_FORM) {
             $formContent = $this->generateForm($table);
 
-            $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php',
-                $formContent);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_DETAILS) {
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php',
-                $detailsHtml);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php', $detailsHtml);
         } elseif ($this->page == static::PAGE_MODAL) {
 
             $modalHtml = $this->generateModal($table);
@@ -424,21 +392,17 @@ class ViewCrud extends LaraCrud
             if ($this->type == static::TYPE_PANEL) {
 
                 $idnexPanelContent = $this->generateIndexPanel($table);
-                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
-                    $idnexPanelContent);
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php', $idnexPanelContent);
             } else {
 
                 $idnexTableContent = $this->generateIndex($table);
-                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php',
-                    $idnexTableContent);
+                $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php', $idnexTableContent);
             }
             $formContent = $this->generateForm($table);
-            $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php',
-                $formContent);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php',
-                $detailsHtml);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php', $detailsHtml);
         }
     }
 
@@ -485,16 +449,12 @@ class ViewCrud extends LaraCrud
         $options         = '';
         if (in_array($column['name'], array_keys($this->foreginColumns))) {
             $selectOptions = $this->getTempFile('view/select-rel.txt');
-            $selectOptions = str_replace('@@modelVar@@',
-                strtolower($this->foreginColumns[$column['name']]),
-                $selectOptions);
-            $options       = str_replace('@@name@@', $column['name'],
-                $selectOptions);
+            $selectOptions = str_replace('@@modelVar@@', strtolower($this->foreginColumns[$column['name']]), $selectOptions);
+            $options       = str_replace('@@name@@', $column['name'], $selectOptions);
         } else {
             if (isset($column['options']) && is_array($column['options'])) {
                 foreach ($column['options'] as $opt) {
-                    $selectedText = $required == true ? '<?php echo old(\''.$column['name'].'\',$model->'.$column['name'].')==\''.$opt.'\'?"selected":"" ?>'
-                            : '';
+                    $selectedText = $required == true ? '{{old(\''.$column['name'].'\',$model->'.$column['name'].')==\''.$opt.'\'?"selected":""}}' : '';
                     $label        = ucwords(str_replace("_", " ", $opt));
                     $options.='<option value="'.$opt.'" '.$selectedText.' >'.$label.'</option>'."\n";
                 }
@@ -510,7 +470,7 @@ class ViewCrud extends LaraCrud
         $templateContent = $this->getTempFile('view/checkbox.txt');
         $selectTmp       = '';
         if ($required) {
-            $selectTmp = '<?php echo old("'.$column['name'].'",$model->'.$column['name'].')==""?"checked":"" ?>';
+            $selectTmp = '{{old("'.$column['name'].'",$model->'.$column['name'].')==""?"checked":""}}';
         }
         return str_replace('@@checked@@', $selectTmp, $templateContent);
     }
@@ -541,7 +501,7 @@ class ViewCrud extends LaraCrud
         $temp      = str_replace('@@panelHtmlBox@@', $modelHtml, $temp);
         $temp      = str_replace('@@relationshipData@@', $relationHtml, $temp);
         $temp      = str_replace('@@modalHtmlBox@@', $modalHtml, $temp);
-        $temp      = str_replace('@@table@@', $modelName, $temp);
+        $temp      = str_replace('@@table@@', $table, $temp);
         return $temp;
     }
 

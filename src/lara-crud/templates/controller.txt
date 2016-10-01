@@ -5,12 +5,15 @@ use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use @@fullmodelName@@;
+
 /**
  * Description of @@controllerName@@
  *
  * @author Tuhin
  */
-class @@controllerName@@ extends Controller{
+
+class @@controllerName@@ extends Controller
+{
 
      /**
      * Display a listing of the resource.
@@ -18,13 +21,14 @@ class @@controllerName@@ extends Controller{
      * @return \Illuminate\Http\Response
      */
 
-    public function index(Request $request) {
+    public function index(Request $request) 
+    {
 
-            $data = @@modelName@@::q($request->get('q'))->paginate(10);
+        $data = @@modelName@@::q($request->get('q'))->paginate(10);
 
-            return view('@@viewPath@@.index', [
+        return view('@@viewPath@@.index', [
                 'records' => $data,
-            ]);
+        ]);
     }
 
      /**
@@ -33,7 +37,8 @@ class @@controllerName@@ extends Controller{
      * @return \Illuminate\Http\Response
      */
 
-    public function create() {
+    public function create() 
+    {
          @@belongsToRelation@@
 
         return view('@@viewPath@@.form', [
@@ -49,11 +54,12 @@ class @@controllerName@@ extends Controller{
      * @return \Illuminate\Http\Response
      */
 
-    public function edit(@@modelName@@ $@@modelNameParam@@) {
-            
-              @@belongsToRelation@@
+    public function edit(@@modelName@@ $@@modelNameParam@@) 
+    {
+                    
+        @@belongsToRelation@@
 
-            return view('@@viewPath@@.form', [
+        return view('@@viewPath@@.form', [
                 'model' => $@@modelNameParam@@,
                 @@belongsToRelationVars@@
             ]);
@@ -65,10 +71,11 @@ class @@controllerName@@ extends Controller{
      * @return \Illuminate\Http\Response
      */
 
-    public function show(@@modelName@@ $@@modelNameParam@@) {
-         return view('@@viewPath@@.details', [
+    public function show(@@modelName@@ $@@modelNameParam@@) 
+    {
+        return view('@@viewPath@@.details', [
                 'record' =>$@@modelNameParam@@
-            ]);
+        ]);
        
     }
     /**
@@ -78,22 +85,25 @@ class @@controllerName@@ extends Controller{
      * @return \Illuminate\Http\Response
      */
 
-    public function store(@@requestClass@@ $request) {
+    public function store(@@requestClass@@ $request) 
+    {
       
-           $model=new @@modelName@@;
-            $model->fill($request->all());
+        $model=new @@modelName@@;
+        $model->fill($request->all());
 
-            if ($model->save()) {
-                 @@belongsToManyRelationSync@@
-                session()->flash('app_message', 'Data successfully saved');
-                return redirect()->route('@@table@@.index');
+        if ($model->save()) {
+            @@belongsToManyRelationSync@@
+
+            session()->flash('app_message', 'Data successfully saved');
+            return redirect()->route('@@table@@.index');
             } else {
                 session()->flash('app_message', 'Something is wrong while saving data');
             }
         return redirect()->back();
     }
 
-    public function destroy(@@modelName@@ $@@modelNameParam@@) {
+    public function destroy(@@modelName@@ $@@modelNameParam@@) 
+    {
         if ($@@modelNameParam@@->delete()) {
                 session()->flash('app_message', 'Record successfully deleted');
             } else {
@@ -103,7 +113,8 @@ class @@controllerName@@ extends Controller{
         return redirect()->back();
     }
 
-     protected function filterRequest($request){
+     protected function filterRequest($request)
+    {
           $model=new @@modelName@@;
             @@requestFiltetr@@
             return $model;
