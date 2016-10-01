@@ -37,7 +37,7 @@ class @@controllerName@@ extends Controller{
          @@belongsToRelation@@
 
         return view('@@viewPath@@.form', [
-            'model' => $this->model,
+            'model' => new @@modelName@@,
             @@belongsToRelationVars@@
         ]);
     }
