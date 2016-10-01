@@ -29,6 +29,10 @@ return [
      */
     'viewPath' => 'resources/views/',
     /**
+     * Default Layout
+     */
+    'layouts' => 'app',
+    /**
      * Pivot tables
      */
     'pivotTables' => [],

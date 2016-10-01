@@ -18,25 +18,26 @@ class ControllerCrud extends LaraCrud
     protected $controllerName;
     protected $modelName;
     protected $viewPath;
-    protected $modelNameSpace     = '\App';
+    protected $modelNameSpace     = 'App';
     protected $requestClass       = 'Request';
     protected $requestClassSuffix = 'Request';
     public $table;
     protected $fileName           = '';
     public $path                  = '';
     protected $subNameSpace       = '';
+    protected $shortModelName;
 
     public function __construct($modelName = '', $name = '')
     {
         parent::__construct();
-        $modelNamespace = $this->getConfig('modelNameSpace', '\App');
+        $modelNamespace       = $this->getConfig('modelNameSpace', '\App');
+        $this->shortModelName = $modelName;
 
         if (substr_compare($modelNamespace, "\\", 0, 1) !== 0) {
             $modelNamespace = "\\".$modelNamespace;
         }
         $this->modelNameSpace     = $modelNamespace;
-        $this->requestClassSuffix = $this->getConfig('requestClassSuffix',
-            'Request');
+        $this->requestClassSuffix = $this->getConfig('requestClassSuffix', 'Request');
 
         $this->modelName = $this->modelNameSpace.'\\'.$modelName;
         if (!empty($name)) {
@@ -74,8 +75,7 @@ class ControllerCrud extends LaraCrud
 
                 $requestName = $this->getModelName($table);
 
-                $requestPath = $this->getConfig("requestPath",
-                    'app/Http/Requests');
+                $requestPath = $this->getConfig("requestPath", 'app/Http/Requests');
 
                 $fullName = $this->pathToNs($requestPath).'\\'.$requestName.$this->requestClassSuffix;
                 if (class_exists($fullName)) {
@@ -98,19 +98,17 @@ class ControllerCrud extends LaraCrud
         $contents = '';
 
         $contents = $this->getTempFile('controller.txt');
-        $contents = str_replace("@@controllerName@@",
-            $this->getFileName($this->controllerName.'Controller'), $contents);
-        $contents = str_replace("@@modelName@@", $this->modelName, $contents);
+        $contents = str_replace("@@controllerName@@", $this->getFileName($this->controllerName.'Controller'), $contents);
+        $contents = str_replace("@@modelName@@", $this->shortModelName, $contents);
+        $contents = str_replace("@@fullmodelName@@", $this->modelName, $contents);
+        $contents = str_replace("@@modelNameParam@@", strtolower($this->shortModelName), $contents);
         $contents = str_replace("@@viewPath@@", $this->viewPath, $contents);
 
 
-        $contents = str_replace("@@requestClass@@", $this->requestClass,
-            $contents);
-        $contents = str_replace("@@table@@",
-            strtolower($this->getModelName($this->table)), $contents);
+        $contents = str_replace("@@requestClass@@", $this->requestClass, $contents);
+        $contents = str_replace("@@table@@", $this->table, $contents);
 
-        $contents = str_replace("@@subnamespace@@", $this->subNameSpace,
-            $contents);
+        $contents = str_replace("@@subnamespace@@", $this->subNameSpace, $contents);
 
         $filterCode = $this->generateFilter();
         $contents   = str_replace("@@requestFiltetr@@", $filterCode, $contents);
@@ -124,8 +122,7 @@ class ControllerCrud extends LaraCrud
     {
         try {
             $controllerFileName = $this->getFileName($this->controllerName.'Controller').'.php';
-            $fullPath           = base_path($this->getConfig('controllerPath',
-                    'app/Http/Controllers/'));
+            $fullPath           = base_path($this->getConfig('controllerPath', 'app/Http/Controllers/'));
 
             if (!empty($this->path)) {
                 $fullPath.=$this->path.'/';
@@ -167,12 +164,9 @@ class ControllerCrud extends LaraCrud
             }
         }
         $bmanySync.='*/';
-        $contents = str_replace("@@belongsToRelation@@", $initialization,
-            $contents);
-        $contents = str_replace("@@belongsToRelationVars@@", $variablePass,
-            $contents);
-        $contents = str_replace("@@belongsToManyRelationSync@@", $bmanySync,
-            $contents);
+        $contents = str_replace("@@belongsToRelation@@", $initialization, $contents);
+        $contents = str_replace("@@belongsToRelationVars@@", $variablePass, $contents);
+        $contents = str_replace("@@belongsToManyRelationSync@@", $bmanySync, $contents);
         return $contents;
     }
 
@@ -187,8 +181,7 @@ class ControllerCrud extends LaraCrud
                 }
 
                 $temp = str_replace('@@columnName@@', $column->Field, $temp);
-                $temp = str_replace('@@scopeName@@', camel_case($column->Field),
-                    $temp);
+                $temp = str_replace('@@scopeName@@', camel_case($column->Field), $temp);
                 $retCode.=$temp;
             }
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers@@subnamespace@@;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use @@fullmodelName@@;
 /**
  * Description of @@controllerName@@
  *
@@ -11,34 +12,26 @@ use App\Http\Controllers\Controller;
  */
 class @@controllerName@@ extends Controller{
 
-    //put your code here
-    protected $model;
-
-    public function __construct() {
-       $this->model=new @@modelName@@;
-    }
+     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
 
     public function index(Request $request) {
-        try {
-            $model=$this->model;
-            $queryStr=$request->get('q');
 
-            /**
-            if(!empty($queryStr)){
-                $model=$model->q($queryStr);
-            }
-            */
-
-            $data = $model->paginate(10);
+            $data = @@modelName@@::q($request->get('q'))->paginate(10);
 
             return view('@@viewPath@@.index', [
                 'records' => $data,
             ]);
-        } catch (\Exception $ex) {
-              session()->flash('app_error', $ex->getMessage());
-             return redirect()->back();
-        }
     }
+
+     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
 
     public function create() {
          @@belongsToRelation@@
@@ -48,86 +41,70 @@ class @@controllerName@@ extends Controller{
             @@belongsToRelationVars@@
         ]);
     }
+    
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  @@modelName@  $@@modelNameParam@@
+     * @return \Illuminate\Http\Response
+     */
 
-    public function edit($id) {
-        try {
-            $foundModel = $this->model->find($id);
-
-            if (!$foundModel) {
-                session()->flash('app_error', 'No data found to edit');
-                return redirect()->back();
-            }
+    public function edit(@@modelName@@ $@@modelNameParam@@) {
+            
               @@belongsToRelation@@
 
             return view('@@viewPath@@.form', [
-                'model' => $foundModel,
+                'model' => $@@modelNameParam@@,
                 @@belongsToRelationVars@@
             ]);
-        } catch (\Exception $ex) {
-            session()->flash('app_error', $ex->getMessage());
-            return redirect()->back();
-        }
     }
+      /**
+     * Display the specified resource.
+     *
+     * @param  @@modelName@@  $@@modelNameParam@@
+     * @return \Illuminate\Http\Response
+     */
 
-    public function details($id) {
-        try {
-            $foundModel = $this->model->find($id);
-
-            if (!$foundModel) {
-                session()->flash('app_error', 'No data found');
-                return redirect()->back();
-            }
-
-            return view('@@viewPath@@.details', [
-                'record' => $foundModel
+    public function show(@@modelName@@ $@@modelNameParam@@) {
+         return view('@@viewPath@@.details', [
+                'record' =>$@@modelNameParam@@
             ]);
-        } catch (\Exception $ex) {
-            session()->flash('app_error', $ex->getMessage());
-            return redirect()->back();
-        }
+       
     }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  @@requestClass@@  $request
+     * @return \Illuminate\Http\Response
+     */
 
-    public function postStore(@@requestClass@@ $request) {
-        try {
-            $id = $request->get('id');
-            $foundModel = $this->model->find($id);
+    public function store(@@requestClass@@ $request) {
+      
+           $model=new @@modelName@@;
+            $model->fill($request->all());
 
-            if ($foundModel) {
-                $this->model = $foundModel;
-            }
-
-            $this->model->fill($request->all());
-
-            if ($this->model->save()) {
+            if ($model->save()) {
                  @@belongsToManyRelationSync@@
                 session()->flash('app_message', 'Data successfully saved');
                 return redirect()->route('@@table@@.index');
             } else {
                 session()->flash('app_message', 'Something is wrong while saving data');
             }
-        } catch (\Exception $ex) {
-            session()->flash('app_message', $ex->getMessage());
-        }
         return redirect()->back();
     }
 
-    public function delete($id) {
-        try {
-            $model = $this->model->find($id);
-
-            if ($model && $model->delete()) {
+    public function destroy(@@modelName@@ $@@modelNameParam@@) {
+        if ($@@modelNameParam@@->delete()) {
                 session()->flash('app_message', 'Record successfully deleted');
             } else {
                 session()->flash('app_error', 'Error occured while deleteing');
             }
-        } catch (\Exception $ex) {
-            session()->flash('app_error', $ex->getMessage());
-        }
+        
         return redirect()->back();
     }
 
      protected function filterRequest($request){
-          $model=$this->model;
+          $model=new @@modelName@@;
             @@requestFiltetr@@
             return $model;
      }

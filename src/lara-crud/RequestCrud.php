@@ -15,7 +15,7 @@ class RequestCrud extends LaraCrud
 
     public function __construct($table, $name = '')
     {
-         parent::__construct();
+        parent::__construct();
         if (!empty($table)) {
             if (is_array($table)) {
                 $this->tables = $table;
@@ -30,6 +30,10 @@ class RequestCrud extends LaraCrud
         $this->loadDetails();
         $this->findPivotTables();
         $this->prepareRelation();
+
+        if (!file_exists(base_path($this->getConfig("requestPath")))) {
+            mkdir(base_path($this->getConfig("requestPath")));
+        }
     }
 
     /**
@@ -40,10 +44,8 @@ class RequestCrud extends LaraCrud
     private function generateContent($tableName)
     {
         $requestContent = $this->getTempFile('request.txt');
-        $requestContent = str_replace("@@requestClassName@@",
-            $this->getNewModelName($tableName.'Request'), $requestContent);
-        $requestContent = str_replace("@@validationMessage@@",
-            $this->validateionMsg, $requestContent);
+        $requestContent = str_replace("@@requestClassName@@", $this->getNewModelName($tableName.'Request'), $requestContent);
+        $requestContent = str_replace("@@validationMessage@@", $this->validateionMsg, $requestContent);
 
         $rulesText = '';
 
@@ -108,8 +110,7 @@ class RequestCrud extends LaraCrud
                     if ($retVals == 1) {
                         $validationRules .="boolean|";
                     }
-                } elseif (in_array($dataType,
-                        ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float',
+                } elseif (in_array($dataType, ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float',
                         'double'])) {
                     $validationRules .="numeric|";
                 }
@@ -125,8 +126,7 @@ class RequestCrud extends LaraCrud
                 } elseif ($type == 'double') {
 
                     $validationRules .="numeric|";
-                } elseif (in_array($type,
-                        ['text', 'tinytext', 'mediumtext', 'longtext'])) {
+                } elseif (in_array($type, ['text', 'tinytext', 'mediumtext', 'longtext'])) {
 
                     $validationRules .="string|";
                 }
@@ -134,8 +134,7 @@ class RequestCrud extends LaraCrud
             //we there have any foreign keys in this table column then we will use exists validator
             if (isset($this->foreignKeys[$tname])) {
 
-                if (in_array($column->Field, $this->foreignKeys[$tname]['keys'])
-                    && isset($this->foreignKeys[$tname]['rel'][$column->Field])) {
+                if (in_array($column->Field, $this->foreignKeys[$tname]['keys']) && isset($this->foreignKeys[$tname]['rel'][$column->Field])) {
 
                     $tableName   = $this->foreignKeys[$tname]['rel'][$column->Field]->REFERENCED_TABLE_NAME;
                     $tableColumn = $this->foreignKeys[$tname]['rel'][$column->Field]->REFERENCED_COLUMN_NAME;
@@ -156,8 +155,7 @@ class RequestCrud extends LaraCrud
             }
             //At the end it needs to remove extra | symbol 
             if (!empty($validationRules)) {
-                $this->rules[$tname][$column->Field] = rtrim($validationRules,
-                    "|");
+                $this->rules[$tname][$column->Field] = rtrim($validationRules, "|");
             }
         }
     }
@@ -165,9 +163,8 @@ class RequestCrud extends LaraCrud
     public function create($table)
     {
         try {
-            $signularTable = $this->getNewModelName($table.'Request');
-            $fullPath      = base_path($this->getConfig("requestPath",
-                        'app/Http/Requests/')).$signularTable.'.php';
+            $signularTable = $this->getNewModelName($table);
+            $fullPath      = base_path($this->getConfig("requestPath", 'app/Http/Requests/')).$signularTable.'.php';
 
             if (!file_exists($fullPath)) {
                 $requestContent = $this->generateContent($table);
@@ -203,6 +200,6 @@ class RequestCrud extends LaraCrud
         if (!empty($this->fileName)) {
             return $this->getModelName($this->fileName);
         }
-        return $this->getModelName($table);
+        return $this->getModelName($table).'Request';
     }
 }
