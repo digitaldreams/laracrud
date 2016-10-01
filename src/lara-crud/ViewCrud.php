@@ -185,12 +185,12 @@ class ViewCrud extends LaraCrud
         $bodyHtml.='<td>'."\n".'<a onclick="return confirm(\'Are you sure you want to delete this record\')" href="{{route(\''.$tableName.'.destroy\',$record->id)}}"><span class="glyphicon glyphicon-remove"></span></a>'."\n".'</td>'."\n";
 
         $bodyHtml.= '</tr>'."\n".'@endforeach';
-        $indexPageTemp  = $this->getTempFile('view/index.html');
-        $indexPageTemp  = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
-        $indexPageTemp  = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
-        $searchBoxHtml  = $this->getTempFile('view/search.html');
-        $indexPageTemp  = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
-        $indexPageTemp  = str_replace('@@table@@', $tableName, $indexPageTemp);
+        $indexPageTemp = $this->getTempFile('view/index.html');
+        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
+        $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
+        $searchBoxHtml = $this->getTempFile('view/search.html');
+        $indexPageTemp = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
+        $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
         $indexPageTemp = str_replace('@@layout@@', $this->getConfig('layout'), $indexPageTemp);
 
         return $indexPageTemp;
@@ -435,8 +435,11 @@ class ViewCrud extends LaraCrud
                 $idnexTableContent = $this->generateIndex($table);
                 $this->saveFile($pathToSave.'/'.$this->getFileName('index').'.blade.php', $idnexTableContent);
             }
-            $formContent = $this->generateForm($table);
-            $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
+            $formContent = $this->generateEditForm($table);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('edit').'.blade.php', $formContent);
+
+            $formContent = $this->generateCreateForm($table);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('create').'.blade.php', $formContent);
 
             $detailsHtml = $this->generateDetails($table);
             $this->saveFile($pathToSave.'/'.$this->getFileName('show').'.blade.php', $detailsHtml);
@@ -539,6 +542,8 @@ class ViewCrud extends LaraCrud
         $temp      = str_replace('@@relationshipData@@', $relationHtml, $temp);
         $temp      = str_replace('@@modalHtmlBox@@', $modalHtml, $temp);
         $temp      = str_replace('@@table@@', $table, $temp);
+        $temp      = str_replace('@@layout@@', $this->getConfig('layout'), $temp);
+
         return $temp;
     }
 

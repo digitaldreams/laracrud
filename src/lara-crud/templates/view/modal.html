@@ -27,9 +27,9 @@
 
     $(document).ready(function(e){
         var jq = jQuery.noConflict();
-    @if(@@showModalOnError@@)
+    <?php if(@@showModalOnError@@): ?>
             jq("#@@modalName@@").("show");
-   @endif
+    <?php endif; ?>
      
     jq("#@@modalName@@").on("show.bs.modal", function(e) {
     var btn = jq(e.relatedTarget);
