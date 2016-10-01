@@ -185,12 +185,14 @@ class ViewCrud extends LaraCrud
         $bodyHtml.='<td>'."\n".'<a onclick="return confirm(\'Are you sure you want to delete this record\')" href="{{route(\''.$tableName.'.destroy\',$record->id)}}"><span class="glyphicon glyphicon-remove"></span></a>'."\n".'</td>'."\n";
 
         $bodyHtml.= '</tr>'."\n".'@endforeach';
-        $indexPageTemp = $this->getTempFile('view/index.html');
-        $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
-        $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
-        $searchBoxHtml = $this->getTempFile('view/search.html');
-        $indexPageTemp = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
-        $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
+        $indexPageTemp  = $this->getTempFile('view/index.html');
+        $indexPageTemp  = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
+        $indexPageTemp  = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
+        $searchBoxHtml  = $this->getTempFile('view/search.html');
+        $indexPageTemp  = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
+        $indexPageTemp  = str_replace('@@table@@', $tableName, $indexPageTemp);
+        $indexPageTemp = str_replace('@@layout@@', $this->getConfig('layout'), $indexPageTemp);
+
         return $indexPageTemp;
     }
 
@@ -211,6 +213,7 @@ class ViewCrud extends LaraCrud
         $panelmodalTemp = str_replace("@@indexHtml@@", $retHtml, $panelmodalTemp);
         $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml, $panelmodalTemp);
         $panelmodalTemp = str_replace("@@table@@", $table, $panelmodalTemp);
+        $panelmodalTemp = str_replace('@@layout@@', $this->getConfig('layout'), $panelmodalTemp);
 
         return $panelmodalTemp;
     }
@@ -265,6 +268,7 @@ class ViewCrud extends LaraCrud
         $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@table@@', $tableName, $indexPageTemp);
+        $indexPageTemp = str_replace('@@layout@@', $this->getConfig('layout'), $indexPageTemp);
 
         $searchBoxHtml = $this->getTempFile('view/search.html');
         $indexPageTemp = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
@@ -328,6 +332,7 @@ class ViewCrud extends LaraCrud
         $formTemplate = $this->getTempFile('view/form.html');
         $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
         $formTemplate = str_replace('@@table@@', $table, $formTemplate);
+        $formTemplate = str_replace('@@layout@@', $this->getConfig('layout'), $formTemplate);
         return $formTemplate;
     }
 
@@ -337,6 +342,8 @@ class ViewCrud extends LaraCrud
         $formTemplate = $this->getTempFile('view/create.html');
         $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
         $formTemplate = str_replace('@@table@@', $table, $formTemplate);
+        $formTemplate = str_replace('@@layout@@', $this->getConfig('layout'), $formTemplate);
+
         return $formTemplate;
     }
 
@@ -346,6 +353,8 @@ class ViewCrud extends LaraCrud
         $formTemplate = $this->getTempFile('view/edit.html');
         $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
         $formTemplate = str_replace('@@table@@', $table, $formTemplate);
+        $formTemplate = str_replace('@@layout@@', $this->getConfig('layout'), $formTemplate);
+
         return $formTemplate;
     }
 

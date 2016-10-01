@@ -31,7 +31,7 @@ return [
     /**
      * Default Layout
      */
-    'layouts' => 'app',
+    'layout' => 'app',
     /**
      * Pivot tables
      */
