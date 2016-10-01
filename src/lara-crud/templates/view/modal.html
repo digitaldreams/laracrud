@@ -4,7 +4,7 @@
             
             <form action="{{route('@@table@@.store')}}" method="POST" name="@@modalName@@Form" id="@@modalName@@Form">
                 <input type="hidden" name="id" id="id" value=""/>
-               {{csrf_field(()}}
+               {{csrf_field()}}
                
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

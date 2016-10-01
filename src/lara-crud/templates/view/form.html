@@ -11,14 +11,14 @@
                     <div class="row">
                         <div class="col-sm-8">
                             <h4>
-                                {{empty($model->id) ? 'Edit ' . $model->id : 'Create @@table@@';}}
+                                {{empty($model->id) ? 'Edit ' . $model->id : 'Create @@table@@'}}
                             </h4>
                         </div>
                         <div class="col-sm-4 text-right">
                             @if(!empty($model->id))
-                            <a href="{{route('@@table@@.create')}}"><span class="glyphicon glyphicon-plus"></span> @@table@@</a>;
+                            <a href="{{route('@@table@@.create')}}"><span class="glyphicon glyphicon-plus"></span> @@table@@</a>
                             @else
-                            <a href="{{route('@@table@@.index')}}"><span class="glyphicon glyphicon-list"> @@table@@</a>;
+                            <a href="{{route('@@table@@.index')}}"><span class="glyphicon glyphicon-list"> @@table@@</a>
                             @endif
 
                         </div>

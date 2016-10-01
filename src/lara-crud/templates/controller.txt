@@ -41,7 +41,7 @@ class @@controllerName@@ extends Controller
     {
          @@belongsToRelation@@
 
-        return view('@@viewPath@@.form', [
+        return view('@@viewPath@@.create', [
             'model' => new @@modelName@@,
             @@belongsToRelationVars@@
         ]);
@@ -59,7 +59,7 @@ class @@controllerName@@ extends Controller
                     
         @@belongsToRelation@@
 
-        return view('@@viewPath@@.form', [
+        return view('@@viewPath@@.edit', [
                 'model' => $@@modelNameParam@@,
                 @@belongsToRelationVars@@
             ]);
@@ -73,8 +73,11 @@ class @@controllerName@@ extends Controller
 
     public function show(@@modelName@@ $@@modelNameParam@@) 
     {
-        return view('@@viewPath@@.details', [
+        @@belongsToRelation@@
+
+        return view('@@viewPath@@.show', [
                 'record' =>$@@modelNameParam@@
+                @@belongsToRelationVars@@
         ]);
        
     }
@@ -98,6 +101,29 @@ class @@controllerName@@ extends Controller
             return redirect()->route('@@table@@.index');
             } else {
                 session()->flash('app_message', 'Something is wrong while saving data');
+            }
+        return redirect()->back();
+    }
+
+     /**
+     * Update a existing resource in storage.
+     *
+     * @param  @@requestClass@@  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function update(@@requestClass@@ $request,@@modelName@@ $@@modelNameParam@@) 
+    {
+
+        $@@modelNameParam@@->fill($request->all());
+
+        if ($@@modelNameParam@@->save()) {
+            @@belongsToManyRelationSync@@
+
+            session()->flash('app_message', 'Data successfully updated');
+            return redirect()->route('@@table@@.index');
+            } else {
+                session()->flash('app_error', 'Something is wrong while updating data');
             }
         return redirect()->back();
     }

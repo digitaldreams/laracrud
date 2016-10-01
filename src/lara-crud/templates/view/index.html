@@ -10,7 +10,7 @@
             @@searchBox@@
         </div>
         <div class="col-sm-1">
-            <a href="<?php echo route('@@table@@.create') ?>"><span class="glyphicon glyphicon-plus"></span></a>
+            <a href="{{route('@@table@@.create')}}"><span class="glyphicon glyphicon-plus"></span></a>
         </div>
     </div>
     <table class="table table-bordered table-striped">
@@ -25,7 +25,7 @@
         <tfoot>
             <tr>
                 <td colspan="3">
-                {{{$records->render();}}}
+                {{{$records->render()}}}
                 </td>
             </tr>
         </tfoot>
