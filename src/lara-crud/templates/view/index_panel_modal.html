@@ -7,7 +7,7 @@
             <h4>@@table@@</h4>
         </div>
         <div class="col-sm-2">
-            <a href="<?php echo route('@@table@@.create') ?>"><span class="glyphicon glyphicon-plus"></span></a>
+            <a href="{{route('@@table@@.create')}}"><span class="glyphicon glyphicon-plus"></span></a>
         </div>
     </div>
     <div class="row">
@@ -15,7 +15,7 @@
     </div>
     <div class='row'>
         <div class="col-sm-12">
-            <?php echo $records->render(); ?>
+           {{{$records->render()}}}
         </div>
     </div>
 </div>

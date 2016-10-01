@@ -44,7 +44,7 @@ class RequestCrud extends LaraCrud
     private function generateContent($tableName)
     {
         $requestContent = $this->getTempFile('request.txt');
-        $requestContent = str_replace("@@requestClassName@@", $this->getNewModelName($tableName.'Request'), $requestContent);
+        $requestContent = str_replace("@@requestClassName@@", $this->getNewModelName($tableName), $requestContent);
         $requestContent = str_replace("@@validationMessage@@", $this->validateionMsg, $requestContent);
 
         $rulesText = '';

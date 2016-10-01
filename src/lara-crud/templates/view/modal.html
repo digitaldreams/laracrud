@@ -2,9 +2,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             
-            <form action="<?php echo route('@@table@@.poststore') ?>" method="POST" name="@@modalName@@Form" id="@@modalName@@Form">
+            <form action="{{route('@@table@@.store')}}" method="POST" name="@@modalName@@Form" id="@@modalName@@Form">
                 <input type="hidden" name="id" id="id" value=""/>
-                <input type="hidden" name="_token" value="<?php echo csrf_token();?>"/>
+               {{csrf_field(()}}
                
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -27,9 +27,9 @@
 
     $(document).ready(function(e){
         var jq = jQuery.noConflict();
-    <?php if (@@showModalOnError@@): ?>
+    @if(@@showModalOnError@@)
             jq("#@@modalName@@").("show");
-    <?php endif; ?>
+   @endif
      
     jq("#@@modalName@@").on("show.bs.modal", function(e) {
     var btn = jq(e.relatedTarget);

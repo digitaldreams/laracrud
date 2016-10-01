@@ -16,7 +16,7 @@
                        >
                         <span class="glyphicon glyphicon-pencil"></span> 
                     </a>
-                    <a onclick="return confirm('Are you sure you want to delete this record?')" href="<?php echo route('@@table@@.delete',$record->id);?>">
+                    <a onclick="return confirm('Are you sure you want to delete this record?')" href="{{route('@@table@@.destroy',$record->id)}}">
                         <span class="glyphicon glyphicon-remove"></span>
                     </a>
                 </div>

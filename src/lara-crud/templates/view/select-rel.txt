@@ -1,6 +1,4 @@
-<?php
-    foreach ($@@modelVar@@ as $data) {
-        $selected = $data->id == $model->@@name@@ ? 'selected' : '';
-        echo '<option value="' . $data->id . '" '.$selected.'>' . $data->id . '</option>';
-         }
+    @foreach ($@@modelVar@@ as $data)
+        {{'<option value="' . $data->id . '" '.$data->id == $model->@@name@@ ? 'selected' : ''.'>' . $data->id . '</option>'}};
+    @endforeach
 ?>
