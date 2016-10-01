@@ -58,7 +58,7 @@ class Mvc extends Command
 
             $this->info('Model, View, Request and Controlleer successfully created ');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage());
+            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 }

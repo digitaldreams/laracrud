@@ -25,9 +25,8 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <form action="{{route('@@table@@.store')}}" method="POST">
+                    <form action="{{route('@@table@@.update',$model->id)}}" method="PUT">
                         {{csrf_field()}}
-                        <input type="hidden" name="id" value="{{$model->id}}"/>
                         @@formContent@@
 
                         <div class="form-group text-right ">

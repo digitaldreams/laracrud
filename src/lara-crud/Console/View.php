@@ -57,7 +57,7 @@ class View extends Command
                 $this->info('View created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 }

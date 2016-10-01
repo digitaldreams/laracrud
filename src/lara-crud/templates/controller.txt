@@ -76,7 +76,7 @@ class @@controllerName@@ extends Controller
         @@belongsToRelation@@
 
         return view('@@viewPath@@.show', [
-                'record' =>$@@modelNameParam@@
+                'record' =>$@@modelNameParam@@,
                 @@belongsToRelationVars@@
         ]);
        

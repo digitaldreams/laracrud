@@ -14,6 +14,8 @@ class ViewCrud extends LaraCrud
     const TYPE_TABLE_PANEL = 'tabpan';
     const PAGE_INDEX       = 'index';
     const PAGE_FORM        = 'form';
+    const PAGE_CREATE      = 'create';
+    const PAGE_EDIT        = 'edit';
     const PAGE_DETAILS     = 'details';
     const PAGE_MODAL       = 'modal';
 
@@ -329,6 +331,24 @@ class ViewCrud extends LaraCrud
         return $formTemplate;
     }
 
+    public function generateCreateForm($table)
+    {
+        $formContent  = $this->generateContent($table, TRUE);
+        $formTemplate = $this->getTempFile('view/create.html');
+        $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
+        $formTemplate = str_replace('@@table@@', $table, $formTemplate);
+        return $formTemplate;
+    }
+
+    public function generateEditForm($table)
+    {
+        $formContent  = $this->generateContent($table, TRUE);
+        $formTemplate = $this->getTempFile('view/edit.html');
+        $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
+        $formTemplate = str_replace('@@table@@', $table, $formTemplate);
+        return $formTemplate;
+    }
+
     public function generateModal($table)
     {
         $modalInputFill   = '';
@@ -380,10 +400,18 @@ class ViewCrud extends LaraCrud
             $formContent = $this->generateForm($table);
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
+        } elseif ($this->page == static::PAGE_CREATE) {
+            $formContent = $this->generateCreateForm($table);
+
+            $this->saveFile($pathToSave.'/'.$this->getFileName('create').'.blade.php', $formContent);
+        } elseif ($this->page == static::PAGE_EDIT) {
+            $formContent = $this->generateEditForm($table);
+
+            $this->saveFile($pathToSave.'/'.$this->getFileName('edit').'.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_DETAILS) {
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php', $detailsHtml);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('show').'.blade.php', $detailsHtml);
         } elseif ($this->page == static::PAGE_MODAL) {
 
             $modalHtml = $this->generateModal($table);
@@ -402,7 +430,7 @@ class ViewCrud extends LaraCrud
             $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
 
             $detailsHtml = $this->generateDetails($table);
-            $this->saveFile($pathToSave.'/'.$this->getFileName('details').'.blade.php', $detailsHtml);
+            $this->saveFile($pathToSave.'/'.$this->getFileName('show').'.blade.php', $detailsHtml);
         }
     }
 

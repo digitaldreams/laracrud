@@ -27,7 +27,6 @@
                 <div class="panel-body">
                     <form action="{{route('@@table@@.store')}}" method="POST">
                         {{csrf_field()}}
-                        <input type="hidden" name="id" value="{{$model->id}}"/>
                         @@formContent@@
 
                         <div class="form-group text-right ">

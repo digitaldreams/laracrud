@@ -72,7 +72,7 @@ class Route extends Command
                 $this->info('Routes created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage());
+            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 }
