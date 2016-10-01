@@ -182,9 +182,11 @@ class ViewCrud extends LaraCrud
         $headerHtml.='<th>&nbsp;</th>'."\n";
 
         $bodyHtml.='<td>'."\n".'<a href="{{route(\''.$tableName.'.edit\',$record->id)}}"><span class="glyphicon glyphicon-pencil"></span></a>'."\n".'</td>'."\n";
-        $bodyHtml.='<td>'."\n".'<a onclick="return confirm(\'Are you sure you want to delete this record\')" href="{{route(\''.$tableName.'.destroy\',$record->id)}}"><span class="glyphicon glyphicon-remove"></span></a>'."\n".'</td>'."\n";
-
+        $deleteTemp = $this->getTempFile('view/delete_link.html');
+        $deleteTemp = str_replace('@@table@@', $tableName, $deleteTemp);
+        $bodyHtml.='<td>'.$deleteTemp.'</td>'."\n";
         $bodyHtml.= '</tr>'."\n".'@endforeach';
+
         $indexPageTemp = $this->getTempFile('view/index.html');
         $indexPageTemp = str_replace('@@tableHeader@@', $headerHtml, $indexPageTemp);
         $indexPageTemp = str_replace('@@tableBody@@', $bodyHtml, $indexPageTemp);
@@ -226,8 +228,8 @@ class ViewCrud extends LaraCrud
 
         foreach ($this->columns[$tableName] as $column) {
             $dataOption.='data-'.$column.'="{{$record->'.$column.'}}"'."\n";
-            $bodyHtml.='<tr>'."\n".'<th>'.ucwords(str_replace("_", " ", $column))."\n".'</th>'."\n";
-            $bodyHtml.='<td>'."\n".'{{$record->'.$column.'}}'."\n".'</td></tr>'."\n";
+            $bodyHtml.='<tr>'."\n".'<th>'.ucwords(str_replace("_", " ", $column)).'</th>'."\n";
+            $bodyHtml.='<td>{{$record->'.$column.'}}</td></tr>'."\n";
         }
         $headline      = '{{$record->id}}';
         $indexPageTemp = $this->getTempFile('view/index_panel.html');

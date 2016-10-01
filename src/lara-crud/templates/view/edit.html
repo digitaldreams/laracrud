@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <form action="{{route('@@table@@.update',$model->id)}}">
+                    <form action="{{route('@@table@@.update',$model->id)}}" method="POST">
                         {{ method_field('PUT') }}
                         {{csrf_field()}}
                         @@formContent@@
