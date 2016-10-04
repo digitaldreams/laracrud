@@ -149,6 +149,7 @@ class LaraCrud
         $this->setDateFormat    = $this->getConfig('setDateFormat');
         $this->systemColumns    = $this->getConfig('systemColumns');
         $this->protectedColumns = $this->getConfig('protectedColumns');
+        $this->pivotTables      = $this->getConfig('pivotTables');
     }
 
     public function getTableList()
@@ -255,8 +256,7 @@ class LaraCrud
 
         foreach ($uniqueRelationShips as $relation) {
             $this->foreignKeys[$relation->TABLE_NAME]['keys'][]                      = $relation->COLUMN_NAME;
-            $this->foreignKeys[$relation->TABLE_NAME]['rel'][$relation->COLUMN_NAME]
-                = $relation;
+            $this->foreignKeys[$relation->TABLE_NAME]['rel'][$relation->COLUMN_NAME] = $relation;
 
             //If current table is a pivot table then it holds many to many relationship
             if (in_array($relation->TABLE_NAME, $this->pivotTables)) {
@@ -395,8 +395,7 @@ class LaraCrud
             $missingTable    = array_diff($insertAbleTable, $availableTables);
 
             if (!empty($missingTable)) {
-                $message = implode(",", $missingTable).' tables not found in '.implode("\n",
-                        $availableTables);
+                $message = implode(",", $missingTable).' tables not found in '.implode("\n", $availableTables);
                 throw new \Exception($message);
             }
             return true;

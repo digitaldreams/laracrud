@@ -341,8 +341,9 @@ class ViewCrud extends LaraCrud
     public function generateCreateForm($table)
     {
         $formContent  = $this->generateContent($table, TRUE);
+        $folderName   = strtolower($this->getModelName($table));
         $formTemplate = $this->getTempFile('view/create.html');
-        $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
+        $formTemplate = str_replace('@@folderName@@', $folderName, $formTemplate);
         $formTemplate = str_replace('@@table@@', $table, $formTemplate);
         $formTemplate = str_replace('@@layout@@', $this->getConfig('layout'), $formTemplate);
 
@@ -351,13 +352,22 @@ class ViewCrud extends LaraCrud
 
     public function generateEditForm($table)
     {
-        $formContent  = $this->generateContent($table, TRUE);
+        $folderName = strtolower($this->getModelName($table));
+
         $formTemplate = $this->getTempFile('view/edit.html');
-        $formTemplate = str_replace('@@formContent@@', $formContent, $formTemplate);
+        $formTemplate = str_replace('@@folderName@@', $folderName, $formTemplate);
         $formTemplate = str_replace('@@table@@', $table, $formTemplate);
         $formTemplate = str_replace('@@layout@@', $this->getConfig('layout'), $formTemplate);
 
         return $formTemplate;
+    }
+
+    protected function makePartialForm($table)
+    {
+        if (!file_exists($this->getViewPath($table).'/_form.blade.php')) {
+            $formContent = $this->generateContent($table, TRUE);
+            $this->saveFile($pathToSave.'/_form.blade.php', $formContent);
+        }
     }
 
     public function generateModal($table)
@@ -412,10 +422,12 @@ class ViewCrud extends LaraCrud
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_CREATE) {
+            $this->makePartialForm($table);
             $formContent = $this->generateCreateForm($table);
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('create').'.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_EDIT) {
+            $this->makePartialForm($table);
             $formContent = $this->generateEditForm($table);
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('edit').'.blade.php', $formContent);

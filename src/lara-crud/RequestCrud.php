@@ -55,7 +55,7 @@ class RequestCrud extends LaraCrud
                 if (strlen($colName) <= 1) {
                     continue;
                 }
-                $rulesText.="'$colName'=>'$rules',"."\n";
+                $rulesText.="\t"."\t"."'$colName'=>'$rules',"."\n";
             }
         }
         $requestContent = str_replace(" @@rules@@", $rulesText, $requestContent);
@@ -102,10 +102,10 @@ class RequestCrud extends LaraCrud
                 //for enum data type we will use in validator.
                 if ($dataType == 'enum') {
                     $validationRules .= 'in:'.$retVals.'|';
-                    $this->validateionMsg.="'$column->Field.in'=>''"."\n";
+                    $this->validateionMsg.="\t"."\t"."'$column->Field.in'=>''"."\n";
                 } elseif ($dataType == 'varchar') {
                     $validationRules .="max:".$retVals.'|';
-                    $this->validateionMsg.="'$column->Field.max'=>''"."\n";
+                    $this->validateionMsg.="\t"."\t"."'$column->Field.max'=>''"."\n";
                 } elseif ($dataType == 'tinyint') {
                     if ($retVals == 1) {
                         $validationRules .="boolean|";
@@ -118,11 +118,11 @@ class RequestCrud extends LaraCrud
                 if (in_array($type, ["timestamp", 'date', 'datetime'])) {
 
                     $validationRules .="date|";
-                    $this->validateionMsg.="'$column->Field.date'=>''"."\n";
+                    $this->validateionMsg.="\t"."\t"."'$column->Field.date'=>''"."\n";
                 } elseif ($type == 'time') {
 
                     $validationRules .="regex:/^([0-9]|0[0-9]|[1,2][0-3]):[0-5][0-9]?\s?(AM|PM|am|pm)?$/";
-                    $this->validateionMsg.="'$column->Field.date'=>'Invalid time'"."\n";
+                    $this->validateionMsg.="\t"."\t"."'$column->Field.date'=>'Invalid time'"."\n";
                 } elseif ($type == 'double') {
 
                     $validationRules .="numeric|";
@@ -140,17 +140,17 @@ class RequestCrud extends LaraCrud
                     $tableColumn = $this->foreignKeys[$tname]['rel'][$column->Field]->REFERENCED_COLUMN_NAME;
 
                     $validationRules.='exists:'.$tableName.','.$tableColumn;
-                    $this->validateionMsg.="'$column->Field.exists'=>''"."\n";
+                    $this->validateionMsg.="\t"."\t"."'$column->Field.exists'=>''"."\n";
                 }
             } else {
                 //IF column is not nullable and no default then it is required
                 if ($column->Null == 'NO' && $column->Default == "") {
                     $validationRules.='required|';
-                    $this->validateionMsg.="'$column->Field.required'=>''"."\n";
+                    $this->validateionMsg.="\t"."\t"."'$column->Field.required'=>''"."\n";
                 }
                 if ($column->Key == 'UNI') {
                     $validationRules.='unique:'.$tname.','.$column->Field;
-                    $this->validateionMsg.="'$column->Field.unique'=>''"."\n";
+                    $this->validateionMsg.="\t"."\t"."'$column->Field.unique'=>''"."\n";
                 }
             }
             //At the end it needs to remove extra | symbol 
