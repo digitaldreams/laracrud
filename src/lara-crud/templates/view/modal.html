@@ -3,7 +3,8 @@
         <div class="modal-content">
             
             <form action="{{route('@@table@@.store')}}" method="POST" name="@@modalName@@Form" id="@@modalName@@Form">
-                <input type="hidden" name="id" id="id" value=""/>
+                <input type="hidden" name="id" id="id" value="PUT" id="PUTMETHOD"/>
+                <input type="hidden" name="_method" value=""/>
                {{csrf_field()}}
                
                 <div class="modal-header">
@@ -32,12 +33,26 @@
     <?php endif; ?>
      
     jq("#@@modalName@@").on("show.bs.modal", function(e) {
+         
     var btn = jq(e.relatedTarget);
+    var id=btn.data('id');
+    
+    if(id.length >0){
+        var action='{{route(@@table@@.update,"@@id@@")}}';
+        action.replace("@@id@@",id);
+        jq("@@modalName@@Form").attr("action",action);
+        jq("#PUTMETHOD").val('PUT');
+    }else{
+         jq("#PUTMETHOD").val('POST');
+    }
+            
     @@modalInputFillUp@@
 
     });
     jq("#@@modalName@@").on("hidden.bs.modal", function(e) {
     @@modalInputCleanUp@@
+    
+     jq("#PUTMETHOD").val('');
      jq("#@@modalName@@Form .form-group").removeClass("has-error");
     jq("#@@modalName@@Form .form-group .help-block").html("");
     });
