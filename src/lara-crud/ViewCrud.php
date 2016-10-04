@@ -105,7 +105,7 @@ class ViewCrud extends LaraCrud
     }
 
     /**
-     * 
+     *
      */
     protected function makeRules()
     {
@@ -124,7 +124,7 @@ class ViewCrud extends LaraCrud
     }
 
     /**
-     * 
+     *
      * @param type $column
      * [
      * type=> any valid input type e.g text,email,number,url,date,time,datetime,textarea,select
@@ -132,7 +132,7 @@ class ViewCrud extends LaraCrud
      * label=> Label of the input field
      * name=> name of the column
      * options=> for checkox, radio and select
-     * 
+     *
      * ]
      */
     protected function processColumn($column, $tableName)
@@ -340,6 +340,8 @@ class ViewCrud extends LaraCrud
 
     public function generateCreateForm($table)
     {
+        $this->makePartialForm($table);
+
         $formContent  = $this->generateContent($table, TRUE);
         $folderName   = strtolower($this->getModelName($table));
         $formTemplate = $this->getTempFile('view/create.html');
@@ -352,6 +354,8 @@ class ViewCrud extends LaraCrud
 
     public function generateEditForm($table)
     {
+        $this->makePartialForm($table);
+
         $folderName = strtolower($this->getModelName($table));
 
         $formTemplate = $this->getTempFile('view/edit.html');
@@ -364,9 +368,10 @@ class ViewCrud extends LaraCrud
 
     protected function makePartialForm($table)
     {
-        if (!file_exists($this->getViewPath($table).'/_form.blade.php')) {
+        $pathToSave = $this->getViewPath($table).'/_form.blade.php';
+        if (!file_exists($pathToSave)) {
             $formContent = $this->generateContent($table, TRUE);
-            $this->saveFile($pathToSave.'/_form.blade.php', $formContent);
+            $this->saveFile($pathToSave, $formContent);
         }
     }
 
@@ -422,12 +427,12 @@ class ViewCrud extends LaraCrud
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_CREATE) {
-            $this->makePartialForm($table);
+
             $formContent = $this->generateCreateForm($table);
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('create').'.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_EDIT) {
-            $this->makePartialForm($table);
+
             $formContent = $this->generateEditForm($table);
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('edit').'.blade.php', $formContent);
@@ -544,7 +549,7 @@ class ViewCrud extends LaraCrud
                         $tableName = lcfirst(snake_case($rel['model']));
 
                         if (isset($this->tableColumns[$tableName])) {
-                            
+
                         }
                     }
                 }
