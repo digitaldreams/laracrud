@@ -1,4 +1,6 @@
-    @foreach ($@@modelVar@@ as $data)
-        {{'<option value="' . $data->id . '" '.$data->id == $model->@@name@@ ? 'selected' : ''.'>' . $data->id . '</option>'}};
+    @if(isset($@@modelVar@@))
+     @foreach ($@@modelVar@@ as $data)
+        <option value="{{$data->id}}">{{$data->id}}</option>;
     @endforeach
+    @endif
 ?>
