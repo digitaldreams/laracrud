@@ -3,8 +3,7 @@
         <div class="modal-content">
             
             <form action="{{route('@@table@@.store')}}" method="POST" name="@@modalName@@Form" id="@@modalName@@Form">
-                <input type="hidden" name="id" id="id" value="PUT" id="PUTMETHOD"/>
-                <input type="hidden" name="_method" value=""/>
+                <input type="hidden" name="_method" value="PUT" id="PUTMETHOD"/>
                {{csrf_field()}}
                
                 <div class="modal-header">
@@ -37,10 +36,10 @@
     var btn = jq(e.relatedTarget);
     var id=btn.data('id');
     
-    if(id.length >0){
-        var action='{{route(@@table@@.update,"@@id@@")}}';
-        action.replace("@@id@@",id);
-        jq("@@modalName@@Form").attr("action",action);
+    if(id > 0){
+        var action='{{route('@@table@@.update',"id")}}';
+        action.replace("id",id);
+        jq("#@@modalName@@Form").attr("action",action);
         jq("#PUTMETHOD").val('PUT');
     }else{
          jq("#PUTMETHOD").val('POST');

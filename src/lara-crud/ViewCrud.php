@@ -216,7 +216,7 @@ class ViewCrud extends LaraCrud
         $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml, $panelmodalTemp);
         $panelmodalTemp = str_replace("@@table@@", $table, $panelmodalTemp);
         $panelmodalTemp = str_replace('@@layout@@', $this->getConfig('layout'), $panelmodalTemp);
-        $panelmodalTemp  = str_replace('@@folderName@@', $modelName, $panelmodalTemp);
+        $panelmodalTemp = str_replace('@@folderName@@', $modelName, $panelmodalTemp);
         $this->makeModalForm($tableName);
         return $panelmodalTemp;
     }
@@ -284,10 +284,13 @@ class ViewCrud extends LaraCrud
 
     protected function makeModalForm($table)
     {
-        $pathToSave = $this->getViewPath($table);
+        $pathToSave = $this->getViewPath($table).'/partial/';
 
-        $modalHtml = $this->generateModal($tableName);
-        $this->saveFile($pathToSave.'/partial/modal_form.blade.php', $modalHtml);
+        if (!file_exists($pathToSave)) {
+            mkdir($pathToSave);
+        }
+        $modalHtml = $this->generateModal($table);
+        $this->saveFile($pathToSave.'modal_form.blade.php', $modalHtml);
     }
 
     protected function generateContent($table, $error_block = FALSE)
@@ -378,7 +381,13 @@ class ViewCrud extends LaraCrud
 
     protected function makePartialForm($table)
     {
-        $pathToSave = $this->getViewPath($table).'/partial/form.blade.php';
+        $pathToSave = $this->getViewPath($table).'/partial/';
+
+        if (!file_exists($pathToSave)) {
+            mkdir($pathToSave);
+        }
+
+        $pathToSave.='form.blade.php';
         if (!file_exists($pathToSave)) {
             $formContent = $this->generateContent($table, TRUE);
             $this->saveFile($pathToSave, $formContent);
