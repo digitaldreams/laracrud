@@ -37,8 +37,8 @@
     var id=btn.data('id');
     
     if(id > 0){
-        var action='{{route('@@table@@.update',"id")}}';
-        action.replace("id",id);
+        var action='{{route('@@table@@.update',"@id")}}';
+        action=action.replace("@id",id);
         jq("#@@modalName@@Form").attr("action",action);
         jq("#PUTMETHOD").val('PUT');
     }else{
