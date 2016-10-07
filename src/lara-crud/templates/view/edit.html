@@ -23,7 +23,7 @@
                     <form action="{{route('@@table@@.update',$model->id)}}" method="POST">
                         {{ method_field('PUT') }}
                         {{csrf_field()}}
-                        @include('@@folderName@@._form')
+                        @include('@@folderName@@.partial.form')
 
                         <div class="form-group text-right ">
                             <input type="reset" class="btn btn-default" value="Clear"/>
