@@ -29,7 +29,6 @@ class MigrationCrud extends LaraCrud
         'float' => 'float',
         'double' => 'double',
         'decimal' => 'decimal',
-        'int' => 'boolean',
         'enum' => 'enum',
         'date' => 'date',
         'datetime' => 'dateTime',
@@ -99,7 +98,8 @@ class MigrationCrud extends LaraCrud
 
                 //for enum data type we will use in validator.
                 if ($dataType == 'enum') {
-                    $params = '['.$retVals.']';
+                    $retVals = str_replace(",", "','", $retVals);
+                    $params  = '[\''.$retVals.'\']';
                 } elseif ($dataType == 'varchar') {
                     $params = $retVals;
                 } elseif ($dataType == 'tinyint') {
@@ -135,7 +135,7 @@ class MigrationCrud extends LaraCrud
             if ($column->Key == 'uni') {
                 $otherMethods[] = [
                     'name' => 'unique',
-                    'params' => $column->Default
+                    'params' => ''
                 ];
             }
             if (isset($this->foreignKeys[$table]['keys'])) {

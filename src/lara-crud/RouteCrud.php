@@ -64,7 +64,7 @@ class RouteCrud extends LaraCrud
 
     public function __construct($controller = '')
     {
-         parent::__construct();
+        parent::__construct();
         if (!is_array($controller)) {
             $this->controllers[] = $controller;
         } else {
@@ -82,8 +82,7 @@ class RouteCrud extends LaraCrud
         $routes = Route::getRoutes();
         foreach ($routes as $route) {
             $controllerName = strstr($route->getActionName(), '@', true);
-            $methodName     = str_replace("@", "",
-                strstr($route->getActionName(), '@'));
+            $methodName     = str_replace("@", "", strstr($route->getActionName(), '@'));
             $this->routes[] = [
                 'name' => $route->getName(),
                 'path' => $route->getPath(),
@@ -131,8 +130,7 @@ class RouteCrud extends LaraCrud
     {
         $retMethods = [];
         foreach ($reflectionMethods as $method) {
-            if (substr_compare($method->name, '__', 0, 2) != 0 && $method->class
-                == $controllerName) {
+            if (substr_compare($method->name, '__', 0, 2) != 0 && $method->class == $controllerName) {
                 $retMethods[] = $method->name;
             }
         }
@@ -151,8 +149,7 @@ class RouteCrud extends LaraCrud
      */
     public function appendRoutes($routesCode)
     {
-        $routePath = base_path($this->getConfig('routeFile',
-                'app/Http/routes.php'));
+        $routePath = base_path($this->getConfig('routeFile', 'app/Http/routes.php'));
         if (file_exists($routePath)) {
             $splFile = new \SplFileObject($routePath, 'a');
             $splFile->fwrite($routesCode);
@@ -165,31 +162,43 @@ class RouteCrud extends LaraCrud
      */
     public function generateContent()
     {
-        $retRoutes = '';
+        $retRoutes       = '';
+        $resourceMethods = ['index', 'create', 'edit', 'show', 'store', 'update', 'destroy'];
+
         foreach ($this->controllerMethods as $controllerName => $ctr) {
             $controllerRoutes = '';
             $subNameSpace     = '';
 
-            $path                = str_replace([static::PARENT_NAMESPACE, $ctr['shortName']],
-                "", $ctr['full_name']);
+            $path                = str_replace([static::PARENT_NAMESPACE, $ctr['shortName']], "", $ctr['full_name']);
             $path                = trim($path, "\\");
-            $controllerShortName = strtolower(str_replace("Controller", "",
-                    $ctr['shortName']));
+            $controllerShortName = strtolower(str_replace("Controller", "", $ctr['shortName']));
 
             if (!empty($path)) {
                 $subNameSpace        = ','."'namespace'=>'".$path."'";
                 $controllerShortName = strtolower($path)."/".$controllerShortName;
             }
 
-            $routesMethods     = isset($this->methodNames[$controllerName]) ? $this->methodNames[$controllerName]
-                    : [];
+            $routesMethods     = isset($this->methodNames[$controllerName]) ? $this->methodNames[$controllerName] : [];
             $controllerMethods = isset($ctr['methods']) ? $ctr['methods'] : [];
             $newRouteMethods   = array_diff($controllerMethods, $routesMethods);
+
+            $resources = array_intersect($resourceMethods, $newRouteMethods);
+
+            if (count($resourceMethods) == count($resources)) {
+                $newRouteMethods = array_diff($newRouteMethods, $resources);
+                $resourceRTemp   = $this->getTempFile('route_resource.txt');
+                $tableName       = str_plural(strtolower(str_replace("Controller", "", $ctr['shortName'])));
+                $resourceRTemp   = str_replace('@@table@@',  $tableName, $resourceRTemp);
+                $resourceRTemp   = str_replace('@@controller@@', $ctr['shortName'],$resourceRTemp);
+               
+            }
+
+
             foreach ($newRouteMethods as $newMethod) {
-                $controllerRoutes.=$this->generateRoute($ctr['shortName'],
-                    $newMethod, $controllerName, $path);
+                $controllerRoutes.=$this->generateRoute($ctr['shortName'], $newMethod, $controllerName, $path);
             }
             if (empty($controllerRoutes)) {
+                $retRoutes.=$resourceRTemp;
                 continue;
             }
 
@@ -197,13 +206,12 @@ class RouteCrud extends LaraCrud
 
             $reflectionClass = new \ReflectionClass($ctr['full_name']);
             $routeGroupTemp  = $this->getTempFile('route_group.txt');
-            $routeGroupTemp  = str_replace('@@namespace@@', $subNameSpace,
-                $routeGroupTemp);
-            $routeGroupTemp  = str_replace('@@routes@@', $controllerRoutes,
-                $routeGroupTemp);
-            $routeGroupTemp  = str_replace('@@prefix@@', $controllerShortName,
-                $routeGroupTemp);
+            $routeGroupTemp  = str_replace('@@namespace@@', $subNameSpace, $routeGroupTemp);
+            $routeGroupTemp  = str_replace('@@routes@@', $controllerRoutes, $routeGroupTemp);
+            $routeGroupTemp  = str_replace('@@prefix@@', $controllerShortName, $routeGroupTemp);
             $retRoutes.=$routeGroupTemp;
+            $retRoutes.=$resourceRTemp;
+            
         }
         return $retRoutes;
     }
@@ -218,8 +226,7 @@ class RouteCrud extends LaraCrud
      * @param string $subNameSpace
      * @return string
      */
-    public function generateRoute($controllerName, $method, $fullClassName = '',
-                                  $subNameSpace = '')
+    public function generateRoute($controllerName, $method, $fullClassName = '', $subNameSpace = '')
     {
         $template  = $this->getTempFile('route.txt');
         $matches   = [];
@@ -236,8 +243,7 @@ class RouteCrud extends LaraCrud
         $path.=strtolower($method);
         if (count($matches) > 0) {
             $routeMethodName = array_pop($matches);
-            $path            = substr_replace($path, '', 0,
-                strlen($routeMethodName));
+            $path            = substr_replace($path, '', 0, strlen($routeMethodName));
         }
 
         $path.=$this->addParams($fullClassName, $method);
@@ -246,7 +252,7 @@ class RouteCrud extends LaraCrud
 
 
         $actionName = $controllerName.'@'.$method;
-        $routeName.=strtolower($controllerShortName).'.'.strtolower($method);
+        $routeName.=str_plural(strtolower($controllerShortName)).'.'.strtolower($method);
 
         $template = str_replace('@method@', $routeMethodName, $template);
         $template = str_replace('@@path@@', '/'.$path, $template);

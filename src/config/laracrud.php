@@ -23,7 +23,7 @@ return [
     /**
      * Path to route file
      */
-    'routeFile' => 'app/Http/routes.php',
+    'routeFile' => 'routes/web.php',
     /**
      * Path to route file
      */
