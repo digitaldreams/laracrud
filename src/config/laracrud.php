@@ -29,6 +29,10 @@ return [
      */
     'viewPath' => 'resources/views/',
     /**
+     * Path to Migration
+     */
+    'migrationPath' => 'database/migrations/',
+    /**
      * Default Layout
      */
     'layout' => 'app',

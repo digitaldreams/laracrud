@@ -37,7 +37,7 @@ class MigrationCrud extends LaraCrud
         'timestamp' => 'timestamp',
     ];
 
-    public function __construct($table)
+    public function __construct($table = '')
     {
         parent::__construct();
         if (!empty($table)) {
@@ -60,17 +60,15 @@ class MigrationCrud extends LaraCrud
     public function makeRules()
     {
         foreach ($this->tables as $table) {
-            $rules = $this->rules($table);
-            print_r($rules);
+            $rules               = $this->rules($table);
+            $this->rules[$table] = $rules;
         }
     }
 
     private function rules($table)
     {
         $retArr = [];
-        if (!isset($this->tableColumns[$table])) {
-            return false;
-        }
+
         foreach ($this->tableColumns[$table] as $column) {
             $arr          = [];
             $params       = '';
@@ -86,18 +84,24 @@ class MigrationCrud extends LaraCrud
                     $arr['methodName'] = 'bigIncrements';
                 }
             } else {
-                $arr['methodName'] = isset($this->columnMap[$table][$dataType]) ? $this->columnMap[$table][$dataType] : '';
+                $arr['methodName'] = isset($this->columnMap[$dataType]) ? $this->columnMap[$dataType] : '';
             }
 
             if (strpos($column->Type, "(")) {
                 $retVals = $this->extractRulesFromType($column->Type);
+                if (is_array($retVals)) {
+                    $newValues = [];
+                    foreach ($retVals as $rv) {
+                        $newValues[] = "'".$rv."'";
+                    }
+                    $retVals = $newValues;
+                }
+
                 //for enum data type we will use in validator.
                 if ($dataType == 'enum') {
                     $params = '['.$retVals.']';
-                    $this->validateionMsg.="\t"."\t"."'$column->Field.in'=>''"."\n";
                 } elseif ($dataType == 'varchar') {
                     $params = $retVals;
-                    $this->validateionMsg.="\t"."\t"."'$column->Field.max'=>''"."\n";
                 } elseif ($dataType == 'tinyint') {
                     if ($retVals == 1) {
                         $arr['methodName'] = 'boolean';
@@ -125,7 +129,7 @@ class MigrationCrud extends LaraCrud
             if (!empty($column->Default)) {
                 $otherMethods[] = [
                     'name' => 'default',
-                    'params' => $column->Default
+                    'params' => "'".$column->Default."'"
                 ];
             }
             if ($column->Key == 'uni') {
@@ -147,9 +151,11 @@ class MigrationCrud extends LaraCrud
 
             $arr['mainParams'] = $params;
 
+            $arr['otherMethods'] = $otherMethods;
 
             $retArr[$columnName] = $arr;
         }
+        return $retArr;
     }
 
     protected function readDir()
@@ -162,8 +168,61 @@ class MigrationCrud extends LaraCrud
         
     }
 
+    public function generateContent($table)
+    {
+        $retContent = '';
+
+
+
+        foreach ($this->rules[$table] as $r) {
+            $retContent.="\t"."\t"."\t".'$table->'.$r['methodName'];
+            $retContent.=!empty($r['mainParams']) ? '("'.$r['columnName'].'",'.$r['mainParams'].')' : '("'.$r['columnName'].'")';
+            if (!empty($r['otherMethods'])) {
+                foreach ($r['otherMethods'] as $om) {
+                    $retContent.='->'.$om['name'].'('.$om['params'].')';
+                }
+            }
+            $retContent.=";"."\n";
+        }
+        $tempCon = $this->getTempFile('migration.txt');
+
+        $tempCon = str_replace("@@className@@", $this->generateClassName($table), $tempCon);
+        $tempCon = str_replace("@@content@@", $retContent, $tempCon);
+        $tempCon = str_replace("@@table@@", $table, $tempCon);
+        return $tempCon;
+    }
+
+    public function create($table)
+    {
+        $content  = $this->generateContent($table);
+        $fullPath = $this->getConfig("migrationPath", 'database/migrations/').$this->generateName($table).".php";
+        $this->saveFile(base_path($fullPath), $content);
+    }
+
     public function make()
     {
-        return $this->tableColumns;
+        try {
+            $this->makeRules();
+
+            foreach ($this->tables as $table) {
+                try {
+                    $this->create($table);
+                } catch (\Exception $ex) {
+                    $this->errors[] = $ex->getMessage();
+                }
+            }
+        } catch (\Exception $ex) {
+            throw new \Exception($ex->getMessage(), $ex->getCode(), $ex);
+        }
+    }
+
+    public function generateName($table)
+    {
+        return date('Y_m_d_His').'_create_'.$table.'_table';
+    }
+
+    public function generateClassName($table)
+    {
+        return 'create'.ucfirst(camel_case($table)).'Table';
     }
 }
