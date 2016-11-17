@@ -105,7 +105,7 @@ class ViewCrud extends LaraCrud
     }
 
     /**
-     *
+     * 
      */
     protected function makeRules()
     {
@@ -124,7 +124,7 @@ class ViewCrud extends LaraCrud
     }
 
     /**
-     *
+     * 
      * @param type $column
      * [
      * type=> any valid input type e.g text,email,number,url,date,time,datetime,textarea,select
@@ -132,7 +132,7 @@ class ViewCrud extends LaraCrud
      * label=> Label of the input field
      * name=> name of the column
      * options=> for checkox, radio and select
-     *
+     * 
      * ]
      */
     protected function processColumn($column, $tableName)
@@ -216,8 +216,7 @@ class ViewCrud extends LaraCrud
         $panelmodalTemp = str_replace("@@modalHtml@@", $modalHtml, $panelmodalTemp);
         $panelmodalTemp = str_replace("@@table@@", $table, $panelmodalTemp);
         $panelmodalTemp = str_replace('@@layout@@', $this->getConfig('layout'), $panelmodalTemp);
-        $panelmodalTemp = str_replace('@@folderName@@', $modelName, $panelmodalTemp);
-        $this->makeModalForm($tableName);
+
         return $panelmodalTemp;
     }
 
@@ -276,21 +275,9 @@ class ViewCrud extends LaraCrud
         $searchBoxHtml = $this->getTempFile('view/search.html');
         $indexPageTemp = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
 
-
-        $indexPageTemp = str_replace('@@folderName@@', $modelName, $indexPageTemp);
-        $this->makeModalForm($tableName);
+        $modalHtml     = $this->generateModal($tableName);
+        $indexPageTemp = str_replace('@@modalHtml@@', $modalHtml, $indexPageTemp);
         return $indexPageTemp;
-    }
-
-    protected function makeModalForm($table)
-    {
-        $pathToSave = $this->getViewPath($table).'/partial/';
-
-        if (!file_exists($pathToSave)) {
-            mkdir($pathToSave);
-        }
-        $modalHtml = $this->generateModal($table);
-        $this->saveFile($pathToSave.'modal_form.blade.php', $modalHtml);
     }
 
     protected function generateContent($table, $error_block = FALSE)
@@ -353,8 +340,6 @@ class ViewCrud extends LaraCrud
 
     public function generateCreateForm($table)
     {
-        $this->makePartialForm($table);
-
         $formContent  = $this->generateContent($table, TRUE);
         $folderName   = strtolower($this->getModelName($table));
         $formTemplate = $this->getTempFile('view/create.html');
@@ -367,8 +352,6 @@ class ViewCrud extends LaraCrud
 
     public function generateEditForm($table)
     {
-        $this->makePartialForm($table);
-
         $folderName = strtolower($this->getModelName($table));
 
         $formTemplate = $this->getTempFile('view/edit.html');
@@ -381,16 +364,9 @@ class ViewCrud extends LaraCrud
 
     protected function makePartialForm($table)
     {
-        $pathToSave = $this->getViewPath($table).'/partial/';
-
-        if (!file_exists($pathToSave)) {
-            mkdir($pathToSave);
-        }
-
-        $pathToSave.='form.blade.php';
-        if (!file_exists($pathToSave)) {
+        if (!file_exists($this->getViewPath($table).'/_form.blade.php')) {
             $formContent = $this->generateContent($table, TRUE);
-            $this->saveFile($pathToSave, $formContent);
+            $this->saveFile($pathToSave.'/_form.blade.php', $formContent);
         }
     }
 
@@ -446,12 +422,12 @@ class ViewCrud extends LaraCrud
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('form').'.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_CREATE) {
-
+            $this->makePartialForm($table);
             $formContent = $this->generateCreateForm($table);
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('create').'.blade.php', $formContent);
         } elseif ($this->page == static::PAGE_EDIT) {
-
+            $this->makePartialForm($table);
             $formContent = $this->generateEditForm($table);
 
             $this->saveFile($pathToSave.'/'.$this->getFileName('edit').'.blade.php', $formContent);
@@ -568,7 +544,7 @@ class ViewCrud extends LaraCrud
                         $tableName = lcfirst(snake_case($rel['model']));
 
                         if (isset($this->tableColumns[$tableName])) {
-
+                            
                         }
                     }
                 }

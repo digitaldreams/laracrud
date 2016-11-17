@@ -60,7 +60,8 @@ class MigrationCrud extends LaraCrud
     public function makeRules()
     {
         foreach ($this->tables as $table) {
-            
+            $rules = $this->rules($table);
+            print_r($rules);
         }
     }
 
