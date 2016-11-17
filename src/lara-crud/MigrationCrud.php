@@ -223,6 +223,11 @@ class MigrationCrud extends LaraCrud
 
     public function generateClassName($table)
     {
-        return 'create'.ucfirst(camel_case($table)).'Table';
+        $class = 'create'.ucfirst(camel_case($table)).'Table';
+
+        if (class_exists($class)) {
+            throw new \Exception('Migration for table '.$table.' already exists');
+        }
+        return $class;
     }
 }

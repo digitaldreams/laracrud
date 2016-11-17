@@ -13,7 +13,7 @@ class @@className@@ extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('@@table@@', function (Blueprint $table) {
             @@content@@
         });
     }
