@@ -1,0 +1,34 @@
+@extends('layouts.@@layout@@')
+
+@section('content')
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>@@table@@</h4>
+        </div>
+        <div class="col-sm-6">
+            @@searchBox@@
+        </div>
+        <div class="col-sm-1">
+            <a href="{{route('@@table@@.create')}}"><span class="glyphicon glyphicon-plus"></span></a>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                @@tableHeader@@
+            </tr>
+        </thead>
+        <tbody>
+            @@tableBody@@
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">
+                {{{$records->render()}}}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+@endSection

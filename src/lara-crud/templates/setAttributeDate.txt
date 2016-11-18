@@ -1,0 +1,5 @@
+
+public function set@@columnLabel@@Attribute($value)
+{
+    $this->attributes['@@column@@'] =   \Carbon\Carbon::parse($value)->format('@@format@@');
+}

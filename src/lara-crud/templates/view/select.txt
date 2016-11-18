@@ -1,0 +1,9 @@
+<div class="col-md-6">  
+    <div class="form-group @@hasErrorClass@@">
+        <label for="@@name@@">@@label@@</label>
+        <select class="form-control" name="@@name@@" id="@@name@@" >
+            @@options@@
+        </select>
+        @@showErrorText@@
+     </div>
+</div>

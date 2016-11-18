@@ -1,0 +1,4 @@
+public function @@methodName@@() 
+{
+    return $this->@@relationShip@@(@@modelName@@::class @@params@@);
+}
