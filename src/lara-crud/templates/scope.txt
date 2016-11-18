@@ -1,4 +1,0 @@
-public function scope@@methodName@@($query, $@@fielName@@) 
-{
-    return $query->where('@@fielName@@', $@@fielName@@);
-}

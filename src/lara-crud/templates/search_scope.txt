@@ -1,6 +1,0 @@
-public function scopeQ($query, $q) 
-{
-    return $query->where(function($sq)use($q){
-    $sq@@whereClause@@;
-    });
-}
