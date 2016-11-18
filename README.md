@@ -6,13 +6,14 @@ By using this tools you can generate Models which have necessary methods and pro
 ### Installation ###
   "require": {
   
-     "digitaldream/laracrud": "1.0.*"
+     "digitaldream/laracrud": "1.*"
         
 }
 
 Version 1.x is for laravel 5.1, 5.2 & 5.3
 
-For 5.3 route path sould be change to app/routes/web.php from config/laracrud.php
+This version are ready to use in Laravel 5.3. If you use 5.2 or 5.1 please have a look to config/laracrud.php and adjust folder path.
+
 
 Then add following line  in console/kernal.php
 
@@ -22,7 +23,8 @@ Then add following line  in console/kernal.php
         \LaraCrud\Console\Controller::class,
         \LaraCrud\Console\Route::class,
         \LaraCrud\Console\View::class,
-        \LaraCrud\Console\Mvc::class
+        \LaraCrud\Console\Mvc::class,
+        \LaraCrud\Console\Migration::class,
     ];
 Then you can see new commands by running 'php artisan'
 
@@ -32,6 +34,7 @@ Then you can see new commands by running 'php artisan'
 * laracrud:mvc {table} (run above commands into one place)
 * laracrud:route {controller} (create routes based on controller method)
 * laracrud:view {table} {page(index|form|details)} {type(table|panel|tabpan)} {name?}
+* laracrud:migration {table}
 
 
 ###How to Use###
@@ -112,6 +115,12 @@ If we need all of the command to then just to
 It will create Model, Request, Controller, View.
 Then you just need to run route command to create routes.
 
+##Migration##
+
+Somethings we may need to create a migration file from a table. Then this command will be useful.
+
+    php artisan laracrud:migration users
+
 ##Setting##
 To manipulate configuration you need to do following.
 
@@ -134,3 +143,5 @@ Watch tutorial :
 https://vimeo.com/183257085
 
 NB: only for mysql database
+
+It is recommended to take a look in the generated file before use it.
