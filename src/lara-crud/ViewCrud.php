@@ -180,11 +180,14 @@ class ViewCrud extends LaraCrud
         }
         $headerHtml.='<th>&nbsp;</th>'."\n";
         $headerHtml.='<th>&nbsp;</th>'."\n";
+        $headerHtml.='<th>&nbsp;</th>'."\n";
 
         $bodyHtml.='<td>'."\n".'<a href="{{route(\''.$tableName.'.edit\',$record->id)}}"><span class="glyphicon glyphicon-pencil"></span></a>'."\n".'</td>'."\n";
         $deleteTemp = $this->getTempFile('view/delete_link.html');
         $deleteTemp = str_replace('@@table@@', $tableName, $deleteTemp);
         $bodyHtml.='<td>'.$deleteTemp.'</td>'."\n";
+        $bodyHtml.='<td>'."\n".'<a href="{{route(\''.$tableName.'.show\',$record->id)}}"><span class="glyphicon glyphicon-chevron-right"></span></a>'."\n".'</td>'."\n";
+
         $bodyHtml.= '</tr>'."\n".'@endforeach';
 
         $indexPageTemp = $this->getTempFile('view/index.html');
@@ -260,15 +263,12 @@ class ViewCrud extends LaraCrud
         }
         $headerHtml.='<th>&nbsp;</th>'."\n";
         $headerHtml.='<th>&nbsp;</th>'."\n";
-
+        $headerHtml.='<th>&nbsp;</th>'."\n";
+        $deleteTemp = $this->getTempFile('view/delete_link.html');
+        $deleteTemp = str_replace('@@table@@', $tableName, $deleteTemp);
         $bodyHtml.='<td>'."\n".'<a  data-toggle="modal" data-target="#'.$tableName.'Modal"'.$dataOption.' >'."\n".'<span class="glyphicon glyphicon-pencil"></span>'."\n".'</a>'."\n".'</td>'."\n";
-        $bodyHtml.='<td>'."\n".'<form action="{{route(\''.$tableName.'.destroy\',$record->id)}}" method="POST">
-                        {{ method_field(\'DELETE\') }}
-                        {{ csrf_field() }}
-                        <button class="btn btn-danger btn-xs" onclick="return confirm(\'Are you sure you want to delete this record\')">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                    </form>'."\n".'</td>'."\n";
+        $bodyHtml.='<td>'."\n".$deleteTemp."\n".'</td>'."\n";
+        $bodyHtml.='<td>'."\n".'<a href="{{route(\''.$tableName.'.show\',$record->id)}}">'."\n".'<span class="glyphicon glyphicon-chevron-right"></span>'."\n".'</a>'."\n".'</td>'."\n";
 
         $bodyHtml.= '</tr>'."\n".'@endforeach'."\n".'';
 
@@ -282,7 +282,7 @@ class ViewCrud extends LaraCrud
         $indexPageTemp = str_replace('@@searchBox@@', $searchBoxHtml, $indexPageTemp);
 
         $modalHtml     = $this->generateModal($tableName);
-        $indexPageTemp  = str_replace("@@folderName@@", strtolower($this->getModelName($tableName)), $indexPageTemp);
+        $indexPageTemp = str_replace("@@folderName@@", strtolower($this->getModelName($tableName)), $indexPageTemp);
 
         return $indexPageTemp;
     }

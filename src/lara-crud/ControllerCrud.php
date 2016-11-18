@@ -77,7 +77,7 @@ class ControllerCrud extends LaraCrud
 
                 $requestPath = $this->getConfig("requestPath", 'app/Http/Requests');
 
-                $fullName = $this->pathToNs($requestPath).'\\'.$requestName.$this->requestClassSuffix;
+                $fullName = $this->pathToNs($requestPath).''.$requestName.$this->requestClassSuffix;
                 if (class_exists($fullName)) {
                     $this->requestClass = $fullName;
                 }

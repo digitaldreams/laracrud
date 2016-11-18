@@ -4,18 +4,24 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-sm-10">
+                <div class="col-sm-9">
                     @@headline@@
                 </div>
-                <div class="col-sm-2">
-                    <a href="#"
-                       data-toggle="modal" 
-                       data-target="#@@modalName@@"
-                       data-id="{{$record->id}}"
-                       @@dataOptions@@
-                       >
-                        <span class="glyphicon glyphicon-pencil"></span> 
-                    </a>
+                <div class="col-sm-3">
+                    <div class="btn-group" style="float: left">
+                        <a class="btn btn-default btn-xs" href="#"
+                           data-toggle="modal" 
+                           data-target="#@@modalName@@"
+                           data-id="{{$record->id}}"
+                           @@dataOptions@@
+                           >
+                            <span class="glyphicon glyphicon-pencil"></span> 
+                        </a>
+
+                        <a class="btn btn-default btn-xs" href="{{route('@@table@@.show',$record->id)}}">
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </a>
+                    </div>
                     <form action="{{route('@@table@@.destroy',$record->id)}}" method="POST">
                         {{ method_field('DELETE') }}
                         {{ csrf_field() }}
@@ -23,6 +29,8 @@
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </form>
+
+
                 </div>
             </div>
         </div>
