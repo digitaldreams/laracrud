@@ -78,7 +78,7 @@ class RequestCrud extends LaraCrud
     }
 
     /**
-     *
+     * Convert Table Rules to Request Rules
      * @param string $tname Table Name
      */
     public function rules($tname)
@@ -160,6 +160,12 @@ class RequestCrud extends LaraCrud
         }
     }
 
+    /**
+     * Create a Request class and save it to project Folder
+     * @param type $table
+     * @return boolean
+     * @throws \Exception
+     */
     public function create($table)
     {
         try {
@@ -179,6 +185,9 @@ class RequestCrud extends LaraCrud
         }
     }
 
+    /**
+     * Generate all Request Class 
+     */
     public function make()
     {
         try {
@@ -195,6 +204,11 @@ class RequestCrud extends LaraCrud
         }
     }
 
+    /**
+     * If Request class name given then Return that name otherwise make name from table
+     * @param string $table
+     * @return type
+     */
     public function getNewModelName($table)
     {
         if (!empty($this->fileName)) {

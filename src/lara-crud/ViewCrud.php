@@ -78,6 +78,14 @@ class ViewCrud extends LaraCrud
      */
     protected $foreginColumns = [];
 
+    /**
+     * Class Constructor
+     * 
+     * @param string $table Name of the Database Table
+     * @param string $page type of the page either index,form,create,edit,show
+     * @param string $type Page Type for index page, either table,panel,tabpan
+     * @param string $name name of the page
+     */
     public function __construct($table = '', $page = '', $type = 'panel', $name = '')
     {
         parent::__construct();
@@ -105,7 +113,7 @@ class ViewCrud extends LaraCrud
     }
 
     /**
-     * 
+     * Make some rules based on Table Column
      */
     protected function makeRules()
     {
@@ -166,6 +174,11 @@ class ViewCrud extends LaraCrud
         return $options;
     }
 
+    /**
+     * Make Index.blade.php file with Table structure
+     * @param type $table
+     * @return type
+     */
     public function generateIndex($table = '')
     {
         $headerHtml = '';
@@ -201,6 +214,11 @@ class ViewCrud extends LaraCrud
         return $indexPageTemp;
     }
 
+    /**
+     * Generate Index.blade.php with Bootstrap panel and Modal
+     * @param type $table
+     * @return type
+     */
     public function generateIndexPanel($table = '')
     {
         $retHtml = '@foreach($records as $record)'."\n";
@@ -223,6 +241,11 @@ class ViewCrud extends LaraCrud
         return $panelmodalTemp;
     }
 
+    /**
+     * Generate Single Panel for a specific record
+     * @param type $tableName
+     * @return type
+     */
     protected function panelBox($tableName)
     {
         $dataOption = '';
@@ -244,6 +267,11 @@ class ViewCrud extends LaraCrud
         return $indexPageTemp;
     }
 
+    /**
+     * make index.blade.php with Table and bootstrap Modal
+     * @param type $tableName
+     * @return type
+     */
     protected function tabPanel($tableName)
     {
         $dataOption = '';
@@ -287,6 +315,12 @@ class ViewCrud extends LaraCrud
         return $indexPageTemp;
     }
 
+    /**
+     * Generate Final Code 
+     * @param type $table
+     * @param type $error_block
+     * @return type
+     */
     protected function generateContent($table, $error_block = FALSE)
     {
         $retHtml = '';
@@ -335,6 +369,11 @@ class ViewCrud extends LaraCrud
         return $retHtml;
     }
 
+    /**
+     * Generate Form
+     * @param string $table
+     * @return string
+     */
     protected function generateForm($table)
     {
         $formContent  = $this->generateContent($table, TRUE);
@@ -345,6 +384,11 @@ class ViewCrud extends LaraCrud
         return $formTemplate;
     }
 
+    /**
+     * Make content for create.blade.php
+     * @param type $table
+     * @return string
+     */
     public function generateCreateForm($table)
     {
         $formContent  = $this->generateContent($table, TRUE);
@@ -357,6 +401,11 @@ class ViewCrud extends LaraCrud
         return $formTemplate;
     }
 
+    /**
+     * Make content for edit.blade.php
+     * @param type $table
+     * @return string
+     */
     public function generateEditForm($table)
     {
         $folderName = strtolower($this->getModelName($table));
@@ -369,6 +418,10 @@ class ViewCrud extends LaraCrud
         return $formTemplate;
     }
 
+    /**
+     * make form which will be used both create.blade.php and edit.blade.php
+     * @param type $table
+     */
     protected function makePartialForm($table)
     {
         $pathToSave = $this->getViewPath($table).'/partial';
@@ -383,6 +436,10 @@ class ViewCrud extends LaraCrud
         }
     }
 
+    /**
+     * Make Bootstrap modal and saved to partial/modal.blade.php
+     * @param type $table
+     */
     public function makePartialModal($table)
     {
         $pathToSave = $this->getViewPath($table).'/partial';
@@ -396,6 +453,11 @@ class ViewCrud extends LaraCrud
         }
     }
 
+    /**
+     * Generate full Bootstrap Modal with form fields
+     * @param type $table
+     * @return type
+     */
     public function generateModal($table)
     {
         $modalInputFill   = '';
@@ -423,6 +485,10 @@ class ViewCrud extends LaraCrud
         return $modalTemp;
     }
 
+    /**
+     * Create Views for one table
+     * @param type $table
+     */
     protected function prepareMake($table)
     {
         $pathToSave = $this->getViewPath($table);
@@ -488,6 +554,10 @@ class ViewCrud extends LaraCrud
         }
     }
 
+    /**
+     * Generte views for multiple table if has
+     * @return string
+     */
     public function make()
     {
         $retHtml = '';
@@ -504,11 +574,22 @@ class ViewCrud extends LaraCrud
         return $retHtml;
     }
 
+    /**
+     * Get Application view path
+     * @param type $table
+     * @return type
+     */
     private function getViewPath($table)
     {
         return base_path($this->getConfig("viewPath", 'resources/views/').strtolower($this->getModelName($table)));
     }
 
+    /**
+     * Add $errors->* for not Modal based form e.g. edit.blade.php where this is required to generate has-error class form form-group
+     * @param type $column
+     * @param type $required
+     * @return type
+     */
     public function hasErrorClass($column, $required)
     {
         $content = '';
@@ -517,6 +598,12 @@ class ViewCrud extends LaraCrud
         return $content;
     }
 
+    /**
+     * Make html to show Error Text
+     * @param string $column Column Name
+     * @param boolean $required
+     * @return type
+     */
     public function showErrorText($column, $required)
     {
         $content = '';
@@ -525,6 +612,12 @@ class ViewCrud extends LaraCrud
         return $content;
     }
 
+    /**
+     * Generate select field
+     * @param type $column
+     * @param type $required
+     * @return type
+     */
     public function getSelectContent($column, $required)
     {
         $templateContent = $this->getTempFile('view/select.txt');
@@ -547,6 +640,12 @@ class ViewCrud extends LaraCrud
         return $templateContent;
     }
 
+    /**
+     * Generate Checkbox
+     * @param type $column
+     * @param type $required
+     * @return type
+     */
     public function getCheckBoxContent($column, $required)
     {
         $templateContent = $this->getTempFile('view/checkbox.txt');
@@ -557,6 +656,11 @@ class ViewCrud extends LaraCrud
         return str_replace('@@checked@@', $selectTmp, $templateContent);
     }
 
+    /**
+     * Make Details page
+     * @param type $table
+     * @return type
+     */
     public function generateDetails($table)
     {
         $temp      = $this->getTempFile('view/details.html');
@@ -589,6 +693,10 @@ class ViewCrud extends LaraCrud
         return $temp;
     }
 
+    /**
+     * Check Table FOreign keys
+     * @param type $table
+     */
     protected function checkForeignKeys($table)
     {
 
@@ -602,6 +710,12 @@ class ViewCrud extends LaraCrud
         }
     }
 
+    /**
+     * Get qualified name of the view file. E.g. index will be index.blade.php.
+     * This is just adding .blade.php to the file name
+     * @param string $page
+     * @return type
+     */
     public function getFileName($page)
     {
         if (!empty($this->fileName)) {

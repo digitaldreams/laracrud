@@ -110,24 +110,19 @@ class ModelCrud extends LaraCrud
                     $type = substr($column->Type, 0, strpos($column->Type, "("));
                 }
 
-                $propertyDefiner.='@property '.$type.' $'.$column->Field.' '.str_replace("_",
-                        " ", $column->Field)."\n";
-                $methodDefiner.='@method \Illuminate\Database\Eloquent\Builder '.lcfirst($this->getModelName($column->Field)).'('.$type.' $'.$column->Field.')'.str_replace("_",
-                        " ", $column->Field)."\n";
+                $propertyDefiner.='@property '.$type.' $'.$column->Field.' '.str_replace("_", " ", $column->Field)."\n";
+                $methodDefiner.='@method \Illuminate\Database\Eloquent\Builder '.lcfirst($this->getModelName($column->Field)).'('.$type.' $'.$column->Field.')'.str_replace("_", " ", $column->Field)."\n";
                 $searchScopeStr.=$this->makeSearch($type, $column->Field);
                 $scopeTemplateStr = $this->getTempFile('scope.txt');
                 $scopeMethodName  = ucfirst(camel_case($column->Field));
-                $scopeTemplateStr = str_replace("@@methodName@@",
-                    $scopeMethodName, $scopeTemplateStr);
-                $scopeTemplateStr = str_replace("@@fielName@@", $column->Field,
-                    $scopeTemplateStr);
+                $scopeTemplateStr = str_replace("@@methodName@@", $scopeMethodName, $scopeTemplateStr);
+                $scopeTemplateStr = str_replace("@@fielName@@", $column->Field, $scopeTemplateStr);
                 $scopePlaceholders.=$scopeTemplateStr."\n\n";
             }
         }
         if (!empty($searchScopeStr)) {
             $searchTemp        = $this->getTempFile('search_scope.txt');
-            $this->searchScope = str_replace('@@whereClause@@', $searchScopeStr,
-                $searchTemp);
+            $this->searchScope = str_replace('@@whereClause@@', $searchScopeStr, $searchTemp);
         }
 
         $propertyDefiner.=$methodDefiner;
@@ -153,14 +148,10 @@ class ModelCrud extends LaraCrud
                 }
                 $newCloneRelation = $this->getTempFile('relationship.txt');
                 $paramsNt         = '';
-                $newCloneRelation = str_replace("@@methodName@@",
-                    lcfirst($rls['model']), $newCloneRelation);
-                $newCloneRelation = str_replace("@@modelName@@", $rls['model'],
-                    $newCloneRelation);
-                $newCloneRelation = str_replace("@@relationShip@@",
-                    $rls['name'], $newCloneRelation);
-                $newCloneRelation = str_replace("@@namespace@@",
-                    $this->namespace, $newCloneRelation);
+                $newCloneRelation = str_replace("@@methodName@@", lcfirst($rls['model']), $newCloneRelation);
+                $newCloneRelation = str_replace("@@modelName@@", $rls['model'], $newCloneRelation);
+                $newCloneRelation = str_replace("@@relationShip@@", $rls['name'], $newCloneRelation);
+                $newCloneRelation = str_replace("@@namespace@@", $this->namespace, $newCloneRelation);
 
                 if (isset($rls['pivotTable']) && $rls['name'] = 'belongsToMany') {
                     $paramsNt = ","."'".$rls['pivotTable']."'";
@@ -168,8 +159,7 @@ class ModelCrud extends LaraCrud
                     $paramsNt = ","."'".$rls['foreign_key']."'";
                 }
 
-                $newCloneRelation = str_replace("@@params@@", $paramsNt,
-                    $newCloneRelation);
+                $newCloneRelation = str_replace("@@params@@", $paramsNt, $newCloneRelation);
 
                 $relationShipsStr.=$newCloneRelation."\n\n";
             }
@@ -195,9 +185,7 @@ class ModelCrud extends LaraCrud
 
             $retVals = $this->extractRulesFromType($type);
             //Check if it is a data time column. If so then add it to $protected $dates=[]
-            if (in_array($column->Type,
-                    ['time', 'date', 'datetime', 'timestamp']) && !in_array($column->Field,
-                    $this->systemColumns)) {
+            if (in_array($column->Type, ['time', 'date', 'datetime', 'timestamp']) && !in_array($column->Field, $this->systemColumns)) {
                 $this->dateColumns[$tableName][] = $column->Field;
             }
 
@@ -229,17 +217,13 @@ class ModelCrud extends LaraCrud
     {
         try {
             $modelContent = $this->getTempFile('model.txt');
-            $modelContent = str_replace("@@namespace@@", $this->namespace,
-                $modelContent);
-            $modelContent = str_replace("@@modelName@@",
-                $this->getNewModelName($tableName), $modelContent);
-            $modelContent = str_replace("@@tableName@@", $tableName,
-                $modelContent);
+            $modelContent = str_replace("@@namespace@@", $this->namespace, $modelContent);
+            $modelContent = str_replace("@@modelName@@", $this->getNewModelName($tableName), $modelContent);
+            $modelContent = str_replace("@@tableName@@", $tableName, $modelContent);
 
             $constantsStr = $this->prepareConstant($tableName);
 
-            $modelContent = str_replace("@@constants@@", $constantsStr,
-                $modelContent);
+            $modelContent = str_replace("@@constants@@", $constantsStr, $modelContent);
 
             $dateColumns = '';
             if (isset($this->dateColumns[$tableName]) && !empty($this->dateColumns[$tableName])) {
@@ -251,34 +235,26 @@ class ModelCrud extends LaraCrud
                 $dateColumns.='];'."\n";
             }
 
-            $modelContent = str_replace("@@dateColumns@@", $dateColumns,
-                $modelContent);
+            $modelContent = str_replace("@@dateColumns@@", $dateColumns, $modelContent);
 
             $relationShipsStr = $this->prepareRelationShip($tableName);
-            $modelContent     = str_replace("@@relationShips@@",
-                $relationShipsStr, $modelContent);
+            $modelContent     = str_replace("@@relationShips@@", $relationShipsStr, $modelContent);
 
             $scopePlaceholders = $this->prepareScopes($tableName);
 
-            $modelContent = str_replace("@@scopeMethods@@", $scopePlaceholders,
-                $modelContent);
+            $modelContent = str_replace("@@scopeMethods@@", $scopePlaceholders, $modelContent);
 
-            $modelContent     = str_replace("@@propertyDefiner@@",
-                $this->propertyDefiner, $modelContent);
+            $modelContent     = str_replace("@@propertyDefiner@@", $this->propertyDefiner, $modelContent);
             $attributeMethods = $this->attributeGenerator($tableName);
-            $modelContent     = str_replace("@@attributeMethods@@",
-                $attributeMethods, $modelContent);
+            $modelContent     = str_replace("@@attributeMethods@@", $attributeMethods, $modelContent);
 
             $fillableContent = $this->generateFillable($tableName);
-            $modelContent    = str_replace("@@fillable@@", $fillableContent,
-                $modelContent);
+            $modelContent    = str_replace("@@fillable@@", $fillableContent, $modelContent);
 
             $castsContent = $this->generateCast($tableName);
-            $modelContent = str_replace("@@casts@@", $castsContent,
-                $modelContent);
+            $modelContent = str_replace("@@casts@@", $castsContent, $modelContent);
 
-            $modelContent = str_replace('@@searchMethod@@', $this->searchScope,
-                $modelContent);
+            $modelContent = str_replace('@@searchMethod@@', $this->searchScope, $modelContent);
             return $modelContent;
         } catch (\Exception $ex) {
             $this->errors[] = $ex->getMessage();
@@ -310,39 +286,28 @@ class ModelCrud extends LaraCrud
                     continue;
                 }
                 $temp  = '';
-                $label = str_replace(" ", "",
-                    ucwords(str_replace("_", " ", $columnName)));
+                $label = str_replace(" ", "", ucwords(str_replace("_", " ", $columnName)));
 
                 if (in_array($type, ['time', 'date', 'datetime', 'timestamp'])) {
 
-                    $setDateFormat = isset($this->setDateFormat[$type]) ? $this->setDateFormat[$type]
-                            : "Y-m-d";
-                    $getDateFormat = isset($this->getDateFormat[$type]) ? $this->getDateFormat[$type]
-                            : "Y-m-d";
+                    $setDateFormat = isset($this->setDateFormat[$type]) ? $this->setDateFormat[$type] : "Y-m-d";
+                    $getDateFormat = isset($this->getDateFormat[$type]) ? $this->getDateFormat[$type] : "Y-m-d";
 
                     $tempSetDate = $this->getTempFile('setAttributeDate.txt');
-                    $tempSetDate = str_replace("@@format@@", $setDateFormat,
-                        $tempSetDate);
-                    $tempSetDate = str_replace("@@columnLabel@@", $label,
-                        $tempSetDate);
-                    $tempSetDate = str_replace("@@column@@", $columnName,
-                        $tempSetDate);
+                    $tempSetDate = str_replace("@@format@@", $setDateFormat, $tempSetDate);
+                    $tempSetDate = str_replace("@@columnLabel@@", $label, $tempSetDate);
+                    $tempSetDate = str_replace("@@column@@", $columnName, $tempSetDate);
                     $retCode.=$tempSetDate;
 
                     $tempGetDate = $this->getTempFile('getAttributeDate.txt');
-                    $tempGetDate = str_replace("@@format@@", $getDateFormat,
-                        $tempGetDate);
-                    $tempGetDate = str_replace("@@columnLabel@@", $label,
-                        $tempGetDate);
+                    $tempGetDate = str_replace("@@format@@", $getDateFormat, $tempGetDate);
+                    $tempGetDate = str_replace("@@columnLabel@@", $label, $tempGetDate);
                     $retCode.=$tempGetDate;
-                } elseif (in_array($type,
-                        ['varchar', 'text', 'tinytext', 'bigtext'])) {
+                } elseif (in_array($type, ['varchar', 'text', 'tinytext', 'bigtext'])) {
 
                     $tempSetText = $this->getTempFile('setAttributeText.txt');
-                    $tempSetText = str_replace("@@column@@", $columnName,
-                        $tempSetText);
-                    $tempSetText = str_replace("@@columnLabel@@", $label,
-                        $tempSetText);
+                    $tempSetText = str_replace("@@column@@", $columnName, $tempSetText);
+                    $tempSetText = str_replace("@@columnLabel@@", $label, $tempSetText);
                     $retCode.=$tempSetText;
                 }
             }
@@ -477,6 +442,13 @@ class ModelCrud extends LaraCrud
         return $this->getModelName($table);
     }
 
+    /**
+     * Make special scope for all columns search of the table.
+     * @param type $type
+     * @param type $field
+     * @param type $table
+     * @return string
+     */
     protected function makeSearch($type, $field, $table = '')
     {
         $str = '';

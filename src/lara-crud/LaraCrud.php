@@ -56,14 +56,56 @@ class LaraCrud
 
     /**
      * Table Column Details
-     * @var array 
+     * @var array
+     *
+     * [
+     *  tableName=>[
+     *          [
+     *                [Field] => id
+      [Type] => int(10) unsigned
+      [Null] => NO
+      [Key] => PRI
+      [Default] =>
+      [Extra] => auto_increment
+     *          ]
+     *      ]
+     * ]
      */
-    public $tableColumns        = [];
-    public $systemColumns       = [];
+    public $tableColumns = [];
+
+    /**
+     * Columns used by the Laravel Framework internally
+     * e.g. updated_at, created_at, deleted_at
+     * @var string
+     */
+    public $systemColumns = [];
+
+    /**
+     * Columns which will be not be searchable and is not viewable to public
+     * @var type 
+     */
     protected $protectedColumns = [];
     public $columnsDataType     = [];
-    public $getDateFormat       = [];
-    public $setDateFormat       = [];
+
+    /**
+     * Date Format of the Column if column is whthin date,datetime,time,timestamp.
+     * For example birth_date value column is typically date so its here in getDateFormat[date]=>'m/d/Y'
+     * So when getBirthDateAttribute() method return formatted date this formate will be used.
+     * @var string.
+     *
+     *
+     */
+    public $getDateFormat = [];
+
+    /**
+     * Date Time Column may have more than one accpeted values but system will insert only one format.
+     *
+     * For example. 12 November 2016, November 12 2016, 11/12/2016 all there are valid date and user may input any of this.
+     * But system will save only 2016-11-12 (Y-m-d) format.
+     *
+     * @var type 
+     */
+    public $setDateFormat = [];
 
     /**
      * List of indexes
@@ -152,6 +194,10 @@ class LaraCrud
         $this->pivotTables      = $this->getConfig('pivotTables');
     }
 
+    /**
+     * Get all the tables name from the database
+     * @return array
+     */
     public function getTableList()
     {
 
@@ -316,12 +362,27 @@ class LaraCrud
         return $retType;
     }
 
+    /**
+     * Convert table name to Laravel Standard Model Name
+     * For example users table become User.
+     * Plural to singular and snakeCase to camelCase
+     *
+     * @param type $name
+     * @return type
+     */
     public function getModelName($name)
     {
         $name = $this->getSingular($name);
         return ucfirst(camel_case($name));
     }
 
+    /**
+     * Pass relative path of the file and get absolute file path.
+     * All the internal used template are stored in the templates folder
+     * So view/controller.txt will return full path.
+     * @param type $file
+     * @return string
+     */
     public function getTempFile($file)
     {
         try {
@@ -336,6 +397,11 @@ class LaraCrud
         }
     }
 
+    /**
+     * This will get columns data Type from tableColumns array and store in columnsDataType
+     * for future use. E.g. making Request Rules, Model mutators and accessors and migration column method
+     * 
+     */
     public function columnDataTypes()
     {
         foreach ($this->tableColumns as $tname => $tableColumns) {
@@ -349,6 +415,13 @@ class LaraCrud
         }
     }
 
+    /**
+     * 
+     * @param url $filePath Absolute path of the file where to save. E.g. for Model ..../app/User.php
+     * @param string $contents content of the file
+     * @return boolean
+     * @throws \Exception
+     */
     public function saveFile($filePath, $contents)
     {
         try {
@@ -384,6 +457,13 @@ class LaraCrud
         $this->pivotTables = array_unique($tablesWithoutPrimaryKey);
     }
 
+    /**
+     * If table name mistyped and then tell user that table not found and show him a list of table.
+     *
+     * @param type $table
+     * @return boolean
+     * @throws \Exception
+     */
     public static function checkMissingTable($table)
     {
         try {

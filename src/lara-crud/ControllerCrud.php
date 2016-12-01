@@ -15,18 +15,82 @@ namespace LaraCrud;
  */
 class ControllerCrud extends LaraCrud
 {
+    /**
+     * Controller Name prefix.
+     * If Model Name is User and no controller name is supplier then it will be User and then Controller will be appended.
+     * Its name will be UserController
+
+     * @var string
+     */
     protected $controllerName;
+
+    /**
+     * Model Name 
+     *
+     * @var string
+     */
     protected $modelName;
+
+    /**
+     * View Path of the Controller.
+     * This will be lower case of model name.
+     * @var type 
+     */
     protected $viewPath;
-    protected $modelNameSpace     = 'App';
-    protected $requestClass       = 'Request';
+
+    /**
+     * Default Model Namespace. So if not namespace is specified on
+     *  Model then this namespace will be added and check if model exists.
+     * @var type
+     */
+    protected $modelNameSpace = 'App';
+
+    /**
+     * Request Class.
+     * Check if any Request Class created for this Model. If so then Use that Request Name otherwise use default Request
+
+     * @var type 
+     */
+    protected $requestClass = 'Request';
+
+    /**
+     * Generally all Request class are suffix with Request.
+     * So for Model User it will search UserRequest in Request folder
+     * @var string
+     */
     protected $requestClassSuffix = 'Request';
+
+    /**
+     * Name of the Model Table
+     * @var string
+     */
     public $table;
-    protected $fileName           = '';
-    public $path                  = '';
-    protected $subNameSpace       = '';
+    protected $fileName = '';
+
+    /**
+     * Sub Path of the Controller.
+     * Generally Controller are stored in Controllers folder. But for grouping Controller may be put into folders.
+     * @var type 
+     */
+    public $path = '';
+
+    /**
+     * Namespace version of subpath
+     * @var type 
+     */
+    protected $subNameSpace = '';
+
+    /**
+     * Model Name without Namespace
+     * @var type
+     */
     protected $shortModelName;
 
+    /**
+     *
+     * @param String $modelName Model Name
+     * @param String $name Controller Name. Optional if not specfied Model Name will be used
+     */
     public function __construct($modelName = '', $name = '')
     {
         parent::__construct();
@@ -60,6 +124,9 @@ class ControllerCrud extends LaraCrud
         $this->prepareRelation();
     }
 
+    /**
+     * Preparing Info like Table Name, RequestName, Path and Sub Namespace based on Model  and Controller Name
+     */
     public function init()
     {
         if (!empty($this->modelName)) {
@@ -85,6 +152,10 @@ class ControllerCrud extends LaraCrud
         }
     }
 
+    /**
+     * Analyze Model and get extract information from there
+     * Like Get folder Name of the view, Controller Short Name etc
+     */
     protected function parseModelName()
     {
         $class                = new \ReflectionClass($this->modelName);
@@ -93,6 +164,10 @@ class ControllerCrud extends LaraCrud
         $this->controllerName = $class->getShortName();
     }
 
+    /**
+     * Make Controller Code
+     * @return string PHP code
+     */
     public function generateContent()
     {
         $contents = '';
@@ -118,6 +193,12 @@ class ControllerCrud extends LaraCrud
         return $contents;
     }
 
+    /**
+     * Make the Controller.
+     * 
+     * @return boolean
+     * @throws \Exception
+     */
     public function make()
     {
         try {
@@ -146,6 +227,12 @@ class ControllerCrud extends LaraCrud
         return false;
     }
 
+    /**
+     * Check the Relation and if model has any Many To Many then run sync after the create of model
+     * @param string $table
+     * @param string $contents
+     * @return string
+     */
     public function checkRelation($table, $contents)
     {
         $initialization = '';
