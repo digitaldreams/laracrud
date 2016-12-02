@@ -33,6 +33,14 @@ return [
      */
     'migrationPath' => 'database/migrations/',
     /**
+     * Path to store chart pages
+     */
+    'chartPath' => 'resources/views/charts',
+    /**
+     * Chart Library
+     */
+    'chartLibrary' => 'chartjs',
+    /**
      * Default Layout
      */
     'layout' => 'app',

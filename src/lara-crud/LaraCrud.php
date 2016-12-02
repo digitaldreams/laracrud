@@ -509,4 +509,24 @@ class LaraCrud
         }
         return $ns;
     }
+
+     /**
+     *
+     *
+     * @param type $table
+     * @param type $column
+     * @return Column Object or boolean
+     */
+     protected function getColumnObj($table, $column)
+    {
+        $tableDetails = isset($this->tableColumns[$table]) ? $this->tableColumns[$table] : FALSE;
+        if ($tableDetails) {
+            foreach ($tableDetails as $colObj) {
+                if ($colObj->Field == $column) {
+                    return $colObj;
+                }
+            }
+        }
+        return false;
+    }
 }

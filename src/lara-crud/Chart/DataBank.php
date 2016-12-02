@@ -47,7 +47,7 @@ class DataBank extends LaraCrud implements JsonSerializable
      * ]
      *
      */
-    protected $total = [];
+    public $total = [];
 
     /**
      * Database Connection
@@ -76,6 +76,11 @@ class DataBank extends LaraCrud implements JsonSerializable
         if (!empty($end_date)) {
             $this->end_date = ($end_date instanceof \DateTime) ? $end_date : new \DateTime($end_date);
         }
+        if (!empty($this->start_date) && empty($this->end_date)) {
+            $this->end_date = new \DateTime();
+        }
+
+
         $this->db = app('db');
         $this->getTableList();
         $this->loadDetails();
@@ -109,7 +114,7 @@ class DataBank extends LaraCrud implements JsonSerializable
     }
 
     /**
-     * 
+     *
      * @param \Illuminate\Database\Connection $db
      *
      * @return \Illuminate\Database\Connection Description
@@ -125,12 +130,47 @@ class DataBank extends LaraCrud implements JsonSerializable
         return $db;
     }
 
-    public function column($table, $column, $groupBy = '')
+    protected function addWhereStr($str = '')
     {
-        $column = isset($this->tableColumns[$table][$column]) ? $this->tableColumns[$table][$column] : FALSE;
-        if ($column) {
-            
+        if (!empty($this->start_date) && !empty($this->end_date)) {
+            return " $str `created_at` BETWEEN '".$this->start_date->format('Y-m-d H:i:s')."' AND '".$this->end_date->format('Y-m-d H:i:s')."'";
         }
+        return FALSE;
+    }
+
+    public function column($table, $column, $dataType = 'varchar', $groupBy = '', $groupByDt = 'day')
+    {
+        $groupby = !empty($groupBy) ? $groupBy : $column;
+        if (in_array($dataType, ['date', 'datetime', 'timestamp'])) {
+
+            $where = $this->addWhereStr('WHERE');
+            $dt    = $this->getGroupByDtFrequency($groupByDt);
+            $sql   = "SELECT $column, count(*) as total from `$table`  ".$where." GROUP BY ".$this->getGroupByDtFrequency($groupByDt);
+            return $this->db->select($sql);
+        } else {
+            return $this->addWhere($this->db->table($table))
+                    ->select($this->db->raw("$column,count(*) as total"))
+                    ->groupBy($groupby)->get();
+        }
+    }
+
+    private function getGroupByDtFrequency($frequencey)
+    {
+        switch ($frequencey) {
+            case 'day':
+                $dt = 'DAY(`created_at`)';
+                break;
+            case 'month':
+                $dt = 'MONTH(`created_at`)';
+                break;
+            case 'year':
+                $dt = 'YEAR(`created_at`)';
+                break;
+            default:
+                $dt = 'DAY(`created_at`)';
+                break;
+        }
+        return $dt;
     }
 
     public function __get($name)
