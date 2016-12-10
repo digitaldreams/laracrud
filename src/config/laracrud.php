@@ -15,7 +15,15 @@ return [
     /**
      * Controller Classes Folder
      */
+    'controllerNameSpace' => 'App\Http\Controllers',
+    /**
+     * Controller Classes Folder
+     */
     'controllerPath' => 'app/Http/Controllers/',
+    /**
+     * Request Classes Folder
+     */
+    'requestNameSpace' => 'App\Http\Requests',
     /**
      * Request Classes Folder
      */
@@ -66,6 +74,12 @@ return [
         'datetime' => 'Y-m-d H:i:s',
         'timestamp' => 'Y-m-d H:i:s'
     ],
+    /**
+     * System Columns
+     */
     'systemColumns' => ['created_at', 'updated_at', 'deleted_at'],
+    /**
+     * Not Fillable Columns
+     */
     'protectedColumns' => ['id', 'created_at', 'updated_at', 'deleted_at'],
 ];

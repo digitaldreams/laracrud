@@ -180,13 +180,10 @@ class ControllerCrud extends LaraCrud
         $contents = str_replace("@@viewPath@@", $this->viewPath, $contents);
 
 
-        $contents = str_replace("@@requestClass@@", $this->requestClass, $contents);
-        $contents = str_replace("@@table@@", $this->table, $contents);
-
-        $contents = str_replace("@@subnamespace@@", $this->subNameSpace, $contents);
-
-        $filterCode = $this->generateFilter();
-        $contents   = str_replace("@@requestFiltetr@@", $filterCode, $contents);
+        $contents        = str_replace("@@requestClass@@", $this->requestClass, $contents);
+        $contents        = str_replace("@@table@@", $this->table, $contents);
+        $parentNameSpace = $this->getConfig('controllerNameSpace', 'App\Http\Controllers');
+        $contents        = str_replace("@@namespace@@", $parentNameSpace.$this->subNameSpace, $contents);
 
         $contents = $this->checkRelation($this->table, $contents);
 
@@ -255,24 +252,6 @@ class ControllerCrud extends LaraCrud
         $contents = str_replace("@@belongsToRelationVars@@", $variablePass, $contents);
         $contents = str_replace("@@belongsToManyRelationSync@@", $bmanySync, $contents);
         return $contents;
-    }
-
-    protected function generateFilter()
-    {
-        $retCode = '';
-        if (isset($this->tableColumns[$this->table])) {
-            foreach ($this->tableColumns[$this->table] as $column) {
-                $temp = $this->getTempFile('view/controller-filter.txt');
-                if (in_array($column->Field, $this->protectedColumns)) {
-                    continue;
-                }
-
-                $temp = str_replace('@@columnName@@', $column->Field, $temp);
-                $temp = str_replace('@@scopeName@@', camel_case($column->Field), $temp);
-                $retCode.=$temp;
-            }
-        }
-        return $retCode;
     }
 
     /**

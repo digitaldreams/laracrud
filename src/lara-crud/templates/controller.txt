@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers@@subnamespace@@;
+namespace @@namespace@@;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
@@ -139,11 +139,6 @@ class @@controllerName@@ extends Controller
         return redirect()->back();
     }
 
-     protected function filterRequest($request)
-    {
-          $model=new @@modelName@@;
-            @@requestFiltetr@@
-            return $model;
-     }
+    
 
 }

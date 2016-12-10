@@ -1,6 +1,0 @@
-$@@columnName@@=$request->get('@@columnName@@');
-
-if(!empty($@@columnName@@)){
-  $model=$model->@@scopeName@@($@@columnName@@);
-}
-
