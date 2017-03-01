@@ -27,7 +27,7 @@ class Chart extends Command
      *
      * @var string
      */
-    protected $description = 'Create view based on table';
+    protected $description = 'Create view based on table. Under devlopment';
 
     /**
      * Create a new command instance.
