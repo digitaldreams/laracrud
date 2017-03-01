@@ -43,7 +43,6 @@ class LaraCrudServiceProvider extends ServiceProvider
     public function boot()
     {
 
-
         return $this->publishes([
             __DIR__ . '/../config/laracrud.php' => config_path('laracrud.php')
         ], 'config');
@@ -55,8 +54,14 @@ class LaraCrudServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__ . '/../config/laracrud.php', 'laracrud'
         );
+
         if ($this->app->runningInConsole()) {
             $this->commands($this->commands);
         }
+    }
+
+    public function provides()
+    {
+        return ['laracrud'];
     }
 }
