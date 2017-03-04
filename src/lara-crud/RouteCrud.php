@@ -85,7 +85,7 @@ class RouteCrud extends LaraCrud
             $methodName     = str_replace("@", "", strstr($route->getActionName(), '@'));
             $this->routes[] = [
                 'name' => $route->getName(),
-                'path' => $route->getPath(),
+                'path' => $route->uri(),
                 'controller' => $controllerName,
                 'action' => $route->getActionName(),
                 'method' => $methodName
