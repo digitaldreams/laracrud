@@ -14,18 +14,23 @@ Version 1.x is for laravel 5.1, 5.2 & 5.3
 
 This version are ready to use in Laravel 5.3. If you use 5.2 or 5.1 please have a look to config/laracrud.php and adjust folder path.
 
+##Setting##
 
-Then add following line  in console/kernal.php
+01. Add this line to config/app.php providers array
 
-     protected $commands = [
-        \LaraCrud\Console\Request::class,
-        \LaraCrud\Console\Model::class,
-        \LaraCrud\Console\Controller::class,
-        \LaraCrud\Console\Route::class,
-        \LaraCrud\Console\View::class,
-        \LaraCrud\Console\Mvc::class,
-        \LaraCrud\Console\Migration::class,
-    ];
+
+    LaraCrud\LaraCrudServiceProvider::class
+  
+  
+02. Then Run
+
+
+    php artisan vendor:publish --provider="LaraCrud\LaraCrudServiceProvider" --tag=config
+    
+Still do not see config/laracrud.php. Then manually copy from vendor/digitaldream/laracrud/src/config/laracrud.php to config/laracrud.php
+
+
+
 Then you can see new commands by running 'php artisan'
 
 * laracrud:model {tableName} {name?} (create model based on table)
@@ -120,22 +125,6 @@ Then you just need to run route command to create routes.
 Somethings we may need to create a migration file from a table. Then this command will be useful.
 
     php artisan laracrud:migration users
-
-##Setting##
-To manipulate configuration you need to do following.
-
-01. Add this line to config/app.php providers array
-
-
-    LaraCrud\LaraCrudServiceProvider::class
-  
-  
-02. Then Run
-
-
-    php artisan vendor:publish --provider="LaraCrud\LaraCrudServiceProvider" --tag=config
-    
-Still do not see config/laracrud.php. Then manually copy from vendor/digitaldream/laracrud/src/config/laracrud.php to config/laracrud.php
 
 
 
