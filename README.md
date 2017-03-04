@@ -10,9 +10,9 @@ By using this tools you can generate Models which have necessary methods and pro
         
 }
 
-Version 1.x is for laravel 5.1, 5.2 & 5.3
+Version 1.x is for laravel 5.1, 5.2, 5.3 & 5.4
 
-This version are ready to use in Laravel 5.3. If you use 5.2 or 5.1 please have a look to config/laracrud.php and adjust folder path.
+This version are ready to use in Laravel 5.3 & 5.4. If you use 5.2 or 5.1 please have a look to config/laracrud.php and adjust folder path.
 
 ##Setting##
 
