@@ -9,6 +9,7 @@ namespace LaraCrud;
 
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Support\ServiceProvider;
+use LaraCrud\Console\Assets;
 use LaraCrud\Console\Chart;
 use LaraCrud\Console\Controller;
 use LaraCrud\Console\Migration;
@@ -37,7 +38,8 @@ class LaraCrudServiceProvider extends ServiceProvider
         Mvc::class,
         Request::class,
         Route::class,
-        View::class
+        View::class,
+        Assets::class
     ];
 
     public function boot()
@@ -46,6 +48,7 @@ class LaraCrudServiceProvider extends ServiceProvider
         return $this->publishes([
             __DIR__ . '/../config/laracrud.php' => config_path('laracrud.php')
         ], 'config');
+
 
     }
 
@@ -57,6 +60,23 @@ class LaraCrudServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands($this->commands);
+
+            $this->publishes([
+                __DIR__ . '/resources/views/layouts' => resource_path('views/layouts')
+            ], 'laracrud-layouts');
+
+            $this->publishes([
+                __DIR__ . '/resources/assets/css' => public_path('css')
+            ], 'laracrud-layouts');
+
+            $this->publishes([
+                __DIR__ . '/resources/assets/js' => public_path('js')
+            ], 'laracrud-layouts');
+
+            $this->publishes([
+                __DIR__ . '/resources/assets/fonts' => public_path('fonts')
+            ], 'laracrud-layouts');
+
         }
     }
 
