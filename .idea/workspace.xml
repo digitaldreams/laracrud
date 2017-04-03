@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="49c6a824-962b-4ea6-b8a2-89f7e528f464" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lara-crud/RouteCrud.php" afterPath="$PROJECT_DIR$/src/lara-crud/RouteCrud.php" />
     </list>
     <ignored path="laracrud.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,8 +39,8 @@
       <file leaf-file-name="RouteCrud.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/lara-crud/RouteCrud.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="85" column="31" selection-start-line="85" selection-start-column="31" selection-end-line="85" selection-end-column="31" />
+            <state relative-caret-position="689">
+              <caret line="284" column="5" selection-start-line="284" selection-start-column="5" selection-end-line="284" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -218,12 +217,12 @@
       <workItem from="1488341130004" duration="3947000" />
       <workItem from="1488355273290" duration="25000" />
       <workItem from="1488355313519" duration="739000" />
-      <workItem from="1488632776016" duration="42000" />
+      <workItem from="1488632776016" duration="1251000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4753000" />
+    <option name="totallyTimeSpent" value="5962000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
@@ -455,8 +454,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/lara-crud/RouteCrud.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="85" column="31" selection-start-line="85" selection-start-column="31" selection-end-line="85" selection-end-column="31" />
+        <state relative-caret-position="689">
+          <caret line="284" column="5" selection-start-line="284" selection-start-column="5" selection-end-line="284" selection-end-column="5" />
           <folding />
         </state>
       </provider>
