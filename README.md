@@ -69,7 +69,9 @@ Like Model Name we can also specify a custom request name.
 php artisan laracrud:request users RegisterRequest
 ```  
 Also If you like to create multiple request for your resourceful controller then 
+```php
 php artisan laracrud:request users –-resource=index,show,create,update,destroy
+```
 It will create a folder users on app/Http/Requests folder and create these request classes. 
 Sometimes you may like to create individual request class for each of your controller method then. 
 ```php
