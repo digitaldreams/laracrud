@@ -2,8 +2,17 @@
 
 namespace LaraCrud\Console;
 
+use DbReader\Table as TableReader;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
+use LaraCrud\Crud\Model;
+use LaraCrud\View\Create;
+use LaraCrud\View\Edit;
+use LaraCrud\View\Index;
+use LaraCrud\View\Partial\Form;
+use LaraCrud\View\Partial\Modal;
+use LaraCrud\View\Partial\Panel;
+use LaraCrud\View\Partial\Table;
+use LaraCrud\View\Show;
 
 class View extends Command
 {
@@ -12,7 +21,7 @@ class View extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:view {table} {page?} {type?} {name?}';
+    protected $signature = 'laracrud:view {table} {page?} {--type=} {--name=}';
 
     /**
      * The console command description.
@@ -20,16 +29,6 @@ class View extends Command
      * @var string
      */
     protected $description = 'Create view based on table';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.
@@ -40,24 +39,85 @@ class View extends Command
     {
         try {
             $table = $this->argument('table');
-            $type  = $this->argument('type');
-            $page  = $this->argument('page');
-            $name  = $this->argument('name');
+            $page = $this->argument('page');
+            $type = $this->option('type');
+            $name = $this->option('name');
 
-            if (strripos($table, ",")) {
-                $table = explode(",", $table);
-            }
-            \LaraCrud\LaraCrud::checkMissingTable($table);
-            $viewCrud = new \LaraCrud\ViewCrud($table, $page, $type, $name);
-            $viewCrud->make();
 
-            if (!empty($viewCrud->errors)) {
-                $this->error(implode(", ", $viewCrud->errors));
-            } else {
-                $this->info('View created successfully');
+            $tables = explode(",", $table);
+            foreach ($tables as $tb) {
+                Model::checkMissingTable($tb);
+                $tableReader = new TableReader($tb);
+                if (!empty($page)) {
+                    $pageMaker = $this->pageMaker($page, $tableReader, $name, $type);
+                    if (!empty($pageMaker)) {
+                        $pageMaker->save();
+                        $this->info($page . ' page created successfully');
+                    }
+                } else {
+                    $indexPage = new Index($tableReader);
+                    $indexPage->save();
+                    $this->info('Index page created successfully');
+
+                    $showPage = new Show($tableReader);
+                    $showPage->save();
+                    $this->info('Show page created successfully');
+
+                    $createPage = new Create($tableReader);
+                    $createPage->save();
+                    $this->info('Create page created successfully');
+
+                    $edit = new Edit($tableReader);
+                    $edit->save();
+                    $this->info('Edit page created successfully');
+
+                }
             }
+
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
+    }
+
+    /**
+     * @param $page
+     * @param TableReader $tableReader
+     * @param string $name
+     * @param string $type
+     * @return bool|Form|Modal|Panel|Table
+     */
+    private
+    function pageMaker($page, TableReader $tableReader, $name = '', $type = '')
+    {
+        switch ($page) {
+            case 'form':
+                $pageMaker = new Form($tableReader, $name);
+                break;
+            case 'table':
+                $pageMaker = new Table($tableReader, $name);
+                break;
+            case 'modal':
+                $pageMaker = new Modal($tableReader, $name);
+                break;
+            case 'panel':
+                $pageMaker = new Panel($tableReader, $name);
+                break;
+            case 'create':
+                $pageMaker = new Create($tableReader, $name);
+                break;
+            case 'edit':
+                $pageMaker = new Edit($tableReader, $name);
+                break;
+            case 'show':
+                $pageMaker = new Show($tableReader, $name, $type);
+                break;
+            case 'index':
+                $pageMaker = new Index($tableReader, $name, $type);
+                break;
+            default:
+                $pageMaker = false;
+                break;
+        }
+        return $pageMaker;
     }
 }

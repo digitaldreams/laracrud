@@ -1,0 +1,20 @@
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  @@requestClass@@  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(@@requestClass@@ $request)
+    {
+        $model=new @@modelName@@;
+        $model->fill($request->all());
+
+        if ($model->save()) {
+            @@belongsToManyRelationSync@@
+            session()->flash('app_message', '@@modelName@@ saved successfully');
+            return redirect()->route('@@table@@.index');
+            } else {
+                session()->flash('app_message', 'Something is wrong while saving @@modelName@@');
+            }
+        return redirect()->back();
+    }

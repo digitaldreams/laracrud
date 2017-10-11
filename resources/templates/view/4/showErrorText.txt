@@ -1,0 +1,5 @@
+  @if($errors->has('@@column@@'))
+    <span class="form-control-feedback">
+        <strong>{{ $errors->first('@@column@@') }}</strong>
+    </span>
+  @endif

@@ -1,0 +1,5 @@
+  @if($errors->has('@@column@@'))
+    <span class="help-block">
+        <strong>{{ $errors->first('@@column@@') }}</strong>
+    </span>
+  @endif

@@ -1,0 +1,11 @@
+    /**
+     * Determine whether the user can view the @@modelClass@@.
+     *
+     * @param  User  $user
+     * @param  @@modelClass@@  $@@modelClassVar@@
+     * @return mixed
+     */
+    public function view(User $user, @@modelClass@@  $@@modelClassVar@@)
+    {
+        return true;
+    }

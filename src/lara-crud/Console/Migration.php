@@ -3,7 +3,7 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
+use LaraCrud\Crud\MigrationCrud;
 
 class Migration extends Command
 {
@@ -40,27 +40,27 @@ class Migration extends Command
     {
         try {
             $table = $this->argument('table');
-            if ($table == 'all') {
-                $migrationCrud = new \LaraCrud\MigrationCrud();
-            } else {
-                if (strripos($table, ",")) {
-                    $table = explode(",", $table);
+            if (strripos($table, ",")) {
+                $tables = explode(",", $table);
+                foreach ($tables as $table) {
+                    $migrationCrud = new MigrationCrud($table);
+                    $migrationCrud->save();
                 }
-
-
-                \LaraCrud\LaraCrud::checkMissingTable($table);
-                $migrationCrud = new \LaraCrud\MigrationCrud($table);
-            }
-
-            $migrationCrud->make();
-
-            if (!empty($migrationCrud->errors)) {
-                $this->error(implode(", ", $migrationCrud->errors));
+                $this->info('Migration classes successfully created');
             } else {
-                $this->info('Migration class successfully created');
+                MigrationCrud::checkMissingTable($table);
+                $migrationCrud = new MigrationCrud($table);
+                $migrationCrud->save();
+
+                if (!empty($migrationCrud->errors)) {
+                    $this->error(implode(", ", $migrationCrud->errors));
+                } else {
+                    $this->info('Migration class successfully created');
+                }
             }
+
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 }

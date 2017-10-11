@@ -1,0 +1,19 @@
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+    @@tableHeader@@
+    </tr>
+    </thead>
+    <tbody>
+    @foreach($records as $record)
+    @@tableBody@@
+    @endforeach
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="3">
+            {{{$records->render()}}}
+        </td>
+    </tr>
+    </tfoot>
+</table>

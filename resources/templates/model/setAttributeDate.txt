@@ -1,0 +1,7 @@
+    /**
+    * @@column@@ column mutator. Date will be converted automatically to db format before saving.
+    */
+    public function set@@columnLabel@@Attribute($value)
+    {
+        $this->attributes['@@column@@'] =  \Carbon\Carbon::parse($value)->format('@@format@@');
+    }

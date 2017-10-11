@@ -1,0 +1,4 @@
+    /**
+    * Date time columns.
+    */
+    protected $dates=[@@columns@@];

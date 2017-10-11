@@ -1,0 +1,5 @@
+    <div class="form-group @@hasErrorClass@@">
+        <label for="@@name@@">@@label@@</label>
+        <input type="@@type@@" class="form-control" name="@@name@@" id="@@name@@" value="@@columnValue@@" placeholder="" @@properties@@>
+        @@showErrorText@@ 
+    </div>

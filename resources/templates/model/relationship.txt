@@ -1,0 +1,10 @@
+
+    /**
+    * @@methodName@@
+    *
+    * @return \Illuminate\Database\Eloquent\Relations\@@returnType@@
+    */
+    public function @@methodName@@()
+    {
+        return $this->@@relationShip@@(@@modelName@@::class@@params@@);
+    }

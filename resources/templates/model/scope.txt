@@ -1,0 +1,10 @@
+    /**
+    *
+    * @param \Illuminate\Database\Eloquent\Builder $query
+    * @param $@@fielName@@
+    * @return \Illuminate\Database\Eloquent\Builder
+    */
+    public function scope@@methodName@@($query, $@@fielName@@)
+    {
+        return $query->where('@@fielName@@', $@@fielName@@);
+    }

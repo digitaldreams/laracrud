@@ -1,0 +1,24 @@
+<?php
+
+namespace @@namespace@@;
+
+use @@modelFullClass@@;
+use @@userClass@@;
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class @@className@@
+{
+    use HandlesAuthorization;
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function before(User $user)
+    {
+        //return true if user has super power
+    }
+
+    @@methods@@
+
+}

@@ -1,0 +1,7 @@
+    <div class="checkbox @@hasErrorClass@@">
+        <label>
+            <input type="checkbox" value="1" @@checked@@ name="@@name@@" id="@@name@@">
+            @@label@@
+        </label>
+        @@showErrorText@@
+    </div>

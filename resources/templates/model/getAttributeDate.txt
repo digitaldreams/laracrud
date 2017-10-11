@@ -1,0 +1,7 @@
+    /**
+    * @@column@@ column accessor. Date will be converted to human readable format before display
+    */
+    public function get@@columnLabel@@Attribute($value)
+    {
+        return  \Carbon\Carbon::parse($value)->format('@@format@@');
+    }

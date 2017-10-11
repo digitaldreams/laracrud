@@ -1,0 +1,60 @@
+<div class="modal fade" id="@@modalName@@" tabindex="-1" role="dialog" aria-labelledby="@@modalName@@">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            
+            <form action="{{route('@@table@@.store')}}" method="POST" name="@@modalName@@Form" id="@@modalName@@Form">
+                <input type="hidden" name="_method" value="PUT" id="PUTMETHOD"/>
+               {{csrf_field()}}
+               
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="@@modalName@@Label">Title</h4>
+                </div>
+                
+                <div class="modal-body">
+                          @@form@@
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function(e){
+        var jq = jQuery.noConflict();
+    <?php if(@@showModalOnError@@): ?>
+            jq("#@@modalName@@").("show");
+    <?php endif; ?>
+     
+    jq("#@@modalName@@").on("show.bs.modal", function(e) {
+         
+    var btn = jq(e.relatedTarget);
+    var id=btn.data('id');
+    
+    if(id > 0){
+        var action='{{route('@@table@@.update',"@id")}}';
+        action=action.replace("@id",id);
+        jq("#@@modalName@@Form").prop("action",action);
+        jq("#PUTMETHOD").val('PUT');
+    }else{
+         jq("#PUTMETHOD").val('POST');
+    }
+            
+    @@modalInputFillUp@@
+
+    });
+    jq("#@@modalName@@").on("hidden.bs.modal", function(e) {
+    @@modalInputCleanUp@@
+    
+     jq("#PUTMETHOD").val('');
+     jq("#@@modalName@@Form .form-group").removeClass("has-error");
+    jq("#@@modalName@@Form .form-group .help-block").html("");
+    });
+    })
+
+</script>

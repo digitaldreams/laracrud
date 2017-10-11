@@ -1,0 +1,12 @@
+    /**
+    * Table wise search
+    * @param \Illuminate\Database\Eloquent\Builder $query
+    * @param $q
+    * @return \Illuminate\Database\Eloquent\Builder
+    */
+    public function scopeQ($query, $q)
+    {
+        return $query->where(function($sq)use($q){
+        $sq@@whereClause@@;
+        });
+    }

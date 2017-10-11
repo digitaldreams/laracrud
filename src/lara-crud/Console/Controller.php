@@ -1,9 +1,16 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: Tuhin
+ * Date: 9/10/2017
+ * Time: 5:37 PM
+ */
 
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
+use LaraCrud\Crud\Controller as ControllerCrud;
+
 
 class Controller extends Command
 {
@@ -12,24 +19,14 @@ class Controller extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:controller {model} {name?}';
+    protected $signature = "laracrud:controller {model} {name?} {--only=}";
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a Controller class based on Model';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $description = 'Create a Controller based on Model';
 
     /**
      * Execute the console command.
@@ -39,20 +36,15 @@ class Controller extends Command
     public function handle()
     {
         try {
-            $table = $this->argument('model');
-            $table = str_replace("/", "\\", $table);
-            $name  = $this->argument('name');
-
-            $controllerCrud = new \LaraCrud\ControllerCrud($table, $name);
-            $controllerCrud->make();
-
-            if (!empty($controllerCrud->errors)) {
-                $this->error(implode(", ", $controllerCrud->errors));
-            } else {
-                $this->info('Controller class created successfully');
-            }
+            $model = $this->argument('model');
+            $name = $this->argument('name');
+            $only = $this->option('only');
+            $onlyArr = !empty($only) ? explode(",", $only) : '';
+            $controllerCrud = new ControllerCrud($model, $name, $onlyArr);
+            $controllerCrud->save();
+            $this->info('Controller class successfully created');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 }

@@ -1,0 +1,11 @@
+    /**
+     * Determine whether the user can update the @@modelClass@@.
+     *
+     * @param User $user
+     * @param  @@modelClass@@  $@@modelClassVar@@
+     * @return mixed
+     */
+    public function update(User $user, @@modelClass@@  $@@modelClassVar@@)
+    {
+        return true;
+    }

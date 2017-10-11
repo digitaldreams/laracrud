@@ -1,0 +1,11 @@
+    /**
+     * Determine whether the user can @@method@@ the @@modelClass@@.
+     *
+     * @param  User  $user
+     * @param  @@modelClass@@  $@@modelClassVar@@
+     * @return mixed
+     */
+    public function @@method@@(User $user, @@modelClass@@  $@@modelClassVar@@)
+    {
+       return true;
+    }

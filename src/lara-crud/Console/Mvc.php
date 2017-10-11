@@ -2,8 +2,16 @@
 
 namespace LaraCrud\Console;
 
+use DbReader\Table as TableReader;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
+use LaraCrud\Crud\Controller;
+use LaraCrud\Crud\Model;
+use LaraCrud\Crud\Request;
+use LaraCrud\Crud\RequestResource;
+use LaraCrud\View\Create;
+use LaraCrud\View\Edit;
+use LaraCrud\View\Index;
+use LaraCrud\View\Show;
 
 class Mvc extends Command
 {
@@ -19,7 +27,7 @@ class Mvc extends Command
      *
      * @var string
      */
-    protected $description = 'Create view based on table';
+    protected $description = 'Create Request, Model, Controller, View based on table';
 
     /**
      * Create a new command instance.
@@ -39,26 +47,40 @@ class Mvc extends Command
     public function handle()
     {
         try {
-            $table     = $this->argument('table');
-            \LaraCrud\LaraCrud::checkMissingTable($table);
-            $modelCrud = new \LaraCrud\ModelCrud($table);
-            $modelCrud->make();
+            $table = $this->argument('table');
+            Request::checkMissingTable($table);
+            $tableReader = new TableReader($table);
+            $requestCrud = new RequestResource($table);
+            $requestCrud->save();
+            $this->info('Request classes created successfully');
 
-            $requestCrud = new \LaraCrud\RequestCrud($table);
-            $requestCrud->make();
+            $modelCrud = new Model($table);
+            $modelCrud->save();
+            $this->info('Model class created successfully');
 
-            $modelName      = $modelCrud->getModelName($table);
-            $controllerCrud = new \LaraCrud\ControllerCrud($modelName);
-            $controllerCrud->make();
+            $controllerCrud = new Controller($modelCrud->modelName());
+            $controllerCrud->save();
+            $this->info('Controller class created successfully');
 
-            $viewCrud = new \LaraCrud\ViewCrud($table);
-            $viewCrud->make();
+            $this->warn('Creating views files');
 
-          
+            $indexPage = new Index($tableReader);
+            $indexPage->save();
+            $this->info('Index page created successfully');
 
-            $this->info('Model, View, Request and Controlleer successfully created ');
+            $showPage = new Show($tableReader);
+            $showPage->save();
+            $this->info('Show page created successfully');
+
+            $createPage = new Create($tableReader);
+            $createPage->save();
+            $this->info('Create page created successfully');
+
+            $edit = new Edit($tableReader);
+            $edit->save();
+            $this->info('Edit page created successfully');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 }

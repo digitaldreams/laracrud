@@ -1,9 +1,8 @@
 <?php
-
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
+use LaraCrud\Crud\Model as ModelCrud;
 
 class Model extends Command
 {
@@ -12,7 +11,7 @@ class Model extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:model {table} {name?}";
+    protected $signature = "laracrud:model {table} {name?} {--on=} {--off=}";
 
     /**
      * The console command description.
@@ -22,16 +21,6 @@ class Model extends Command
     protected $description = 'Create a Model class based on table';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
@@ -39,27 +28,45 @@ class Model extends Command
     public function handle()
     {
         try {
-            $table     = $this->argument('table');
+            $table = $this->argument('table');
             $modelName = $this->argument('name');
+            $on = $this->option('on');
+            $off = $this->option('off');
+
+            //Overwrite existing Configuration file for this Model Instance
+            if (!empty($on)) {
+                $ons = explode(",", $on);
+                foreach ($ons as $option) {
+                    config(["laracrud.model.$option" => true]);
+                }
+            }
+            if (!empty($off)) {
+                $offs = explode(",", $off);
+                foreach ($offs as $option) {
+                    config(["laracrud.model.$option" => false]);
+                }
+            }
             if ($table == 'all') {
-                $modelCrud = new \LaraCrud\ModelCrud();
+                $modelCrud = new ModelCrud();
             } else {
                 if (strripos($table, ",")) {
                     $table = explode(",", $table);
+                    ModelCrud::checkMissingTable($table);
+                    foreach ($table as $tb) {
+                        $modelCrud = new ModelCrud($table);
+                        $modelCrud->save();
+                    }
+                } else {
+                    ModelCrud::checkMissingTable($table);
+                    $modelCrud = new ModelCrud($table, $modelName);
+                    $modelCrud->save();
                 }
-                \LaraCrud\LaraCrud::checkMissingTable($table);
-                $modelCrud = new \LaraCrud\ModelCrud($table, $modelName);
+
             }
 
-            $modelCrud->make();
-
-            if (!empty($modelCrud->errors)) {
-                $this->error(implode(", ", $modelCrud->errors));
-            } else {
-                $this->info('Model class successfully created');
-            }
+            $this->info('Model class successfully created');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 }

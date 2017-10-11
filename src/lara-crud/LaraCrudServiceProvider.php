@@ -1,20 +1,15 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 namespace LaraCrud;
 
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use DbReader\Database;
 use Illuminate\Support\ServiceProvider;
-use LaraCrud\Console\Assets;
-use LaraCrud\Console\Chart;
 use LaraCrud\Console\Controller;
 use LaraCrud\Console\Migration;
 use LaraCrud\Console\Model;
 use LaraCrud\Console\Mvc;
+use LaraCrud\Console\Policy;
 use LaraCrud\Console\Request;
 use LaraCrud\Console\Route;
 use LaraCrud\Console\View;
@@ -32,54 +27,59 @@ class LaraCrudServiceProvider extends ServiceProvider
      * @var array
      */
     protected $commands = [
-        Controller::class,
-        Migration::class,
         Model::class,
-        Mvc::class,
         Request::class,
+        Controller::class,
         Route::class,
+        Migration::class,
         View::class,
-        Assets::class
+        Mvc::class,
+        Policy::class
     ];
 
+    /**
+     * Run on application loading
+     */
     public function boot()
     {
-
-        return $this->publishes([
+        $this->publishes([
             __DIR__ . '/../config/laracrud.php' => config_path('laracrud.php')
-        ], 'config');
+        ], 'laracrud-config');
 
+        // Publish Templates to view/vendor folder so user can customize this own templates
+        $this->publishes([
+            __DIR__ . '/../../resources/templates' => resource_path('views/vendor/laracrud/templates')
+        ], 'laracrud-template');
 
     }
 
+    /**
+     * Run after all boot method completed
+     */
     public function register()
     {
         $this->mergeConfigFrom(
             __DIR__ . '/../config/laracrud.php', 'laracrud'
         );
-
         if ($this->app->runningInConsole()) {
+            //DbReader\Database settings
+            Database::settings([
+                'pdo' => app('db')->connection()->getPdo(),
+                'manualRelations' => config('laracrud.model.relations', []),
+                'ignore' => config('laracrud.view.ignore', []),
+                'protectedColumns' => config('laracrud.model.protectedColumns', []),
+                'files' => config('laracrud.image.columns', [])
+            ]);
             $this->commands($this->commands);
-
-            $this->publishes([
-                __DIR__ . '/resources/views/layouts' => resource_path('views/layouts')
-            ], 'laracrud-layouts');
-
-            $this->publishes([
-                __DIR__ . '/resources/assets/css' => public_path('css')
-            ], 'laracrud-layouts');
-
-            $this->publishes([
-                __DIR__ . '/resources/assets/js' => public_path('js')
-            ], 'laracrud-layouts');
-
-            $this->publishes([
-                __DIR__ . '/resources/assets/fonts' => public_path('fonts')
-            ], 'laracrud-layouts');
-
         }
+
     }
 
+    /**
+     * To register laracrud as first level command. E.g. laracrud:model
+     *
+     * @return array
+     */
     public function provides()
     {
         return ['laracrud'];

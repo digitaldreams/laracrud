@@ -1,0 +1,10 @@
+    /**
+     * Determine whether the user can create @@modelClass@@.
+     *
+     * @param  User  $user
+     * @return mixed
+     */
+    public function create(User $user)
+    {
+        return true;
+    }

@@ -1,0 +1,11 @@
+    /**
+     * Determine whether the user can delete the @@modelClass@@.
+     *
+     * @param User  $user
+     * @param  @@modelClass@@  $@@modelClassVar@@
+     * @return mixed
+     */
+    public function delete(User $user, @@modelClass@@  $@@modelClassVar@@)
+    {
+        return true;
+    }

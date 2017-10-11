@@ -1,0 +1,24 @@
+<?php
+namespace @@namespace@@;
+
+use Illuminate\Database\Eloquent\Model;
+/**
+   @@propertyDefiner@@
+   @@methodDefiner@@
+ */
+class @@modelName@@ extends Model 
+{
+    @@constants@@
+    /**
+    * Database table name
+    */
+    protected $table = '@@tableName@@';
+@@guarded@@
+@@fillable@@
+@@casts@@
+@@dateColumns@@
+@@relationShips@@
+@@mutators@@
+@@accessors@@
+@@scopes@@
+}

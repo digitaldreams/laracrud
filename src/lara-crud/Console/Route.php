@@ -4,6 +4,7 @@ namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use LaraCrud\Crud\RouteCrud;
 
 class Route extends Command
 {
@@ -54,7 +55,7 @@ class Route extends Command
                     }
                     $rit->next();
                 }
-                $routeCrud = new \LaraCrud\RouteCrud($controllers);
+                $routeCrud = new RouteCrud($controllers);
             } else {
                 $controller = str_replace("/", "\\", $controller);
                 if (!stripos("App\Http\Controllers\\", $controller)) {
@@ -62,10 +63,10 @@ class Route extends Command
                 }
 
 
-                $routeCrud = new \LaraCrud\RouteCrud($controller);
+                $routeCrud = new RouteCrud($controller);
             }
 
-            $routeCrud->make();
+            $routeCrud->save();
             if (!empty($routeCrud->errors)) {
                 $this->error(implode(", ", $routeCrud->errors));
             } else {

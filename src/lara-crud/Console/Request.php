@@ -3,7 +3,9 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
+use LaraCrud\Crud\Request as RequestCrud;
+use LaraCrud\Crud\RequestController as RequestControllerCrud;
+use LaraCrud\Crud\RequestResource as RequestResourceCrud;
 
 class Request extends Command
 {
@@ -12,7 +14,7 @@ class Request extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:request {table} {name?}';
+    protected $signature = 'laracrud:request {table} {name?} {--controller=} {--resource=}';
 
     /**
      * The console command description.
@@ -20,16 +22,6 @@ class Request extends Command
      * @var string
      */
     protected $description = 'Create a request class based on table';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.
@@ -40,28 +32,38 @@ class Request extends Command
     {
         try {
             $table = $this->argument('table');
-            $name  = $this->argument('name');
+            $name = $this->argument('name');
+            $controller = $this->option('controller');
+            $resource = $this->option('resource');
+            if (!empty($controller)) {
+                $requestController = new RequestControllerCrud($table, $controller);
+                $requestController->save();
+                $this->info('Request controller classes created successfully');
 
-            if ($table == 'all') {
-                $requestCrud = new \LaraCrud\RequestCrud();
+            } elseif (!empty($resource)) {
+                $methods = explode(",", $resource);
+                $requestResource = new RequestResourceCrud($table, $methods);
+                $requestResource->save();
+                $this->info('Request resource classes created successfully');
+
             } else {
                 if (strripos($table, ",")) {
                     $table = explode(",", $table);
+                    RequestCrud::checkMissingTable($table);
+                    foreach ($table as $tb) {
+                        $requestCrud = new RequestCrud($tb);
+                        $requestCrud->save();
+                    }
+                } else {
+                    $requestCrud = new RequestCrud($table, $name);
+                    $requestCrud->save();
                 }
-                \LaraCrud\LaraCrud::checkMissingTable($table);
-                $requestCrud = new \LaraCrud\RequestCrud($table, $name);
+                $this->info('Request class created successfully');
             }
 
-            $requestCrud->make();
-
-            if (!empty($requestCrud->errors)) {
-                $this->error(implode(", ", $requestCrud->errors));
-            } else {
-                $this->info('Request class successfully created');
-            }
 
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 }

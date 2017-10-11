@@ -1,0 +1,1 @@
+        $table->foreign('@@column@@')->references('@@references@@')->on('@@on@@')->onDelete('cascade');
