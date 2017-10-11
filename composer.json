@@ -16,7 +16,7 @@
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": ">=5.1.1",
-      "digitaldream/dbreader":"~1.*"
+      "digitaldream/dbreader":"~1.0"
     },
     "require-dev":{
 
