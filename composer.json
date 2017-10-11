@@ -9,17 +9,20 @@
         {
             "name": "Tuhin Bepari",
             "email": "digitaldreams40@gmail.com",
-            "homepage": "http://rpms.ieltsmaster.net",
+            "homepage": "http://www.tuhinbepari.com",
             "role": "Developer"
         }
     ],
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": ">=5.1.1"
-        
+        "laravel/framework": ">=5.1.1",
+      "digitaldream/dbreader":"~1.*"
     },
     "require-dev":{
-        
+
+    },
+   "suggest":{
+    "intervention/image": "For Image"
     },
     "autoload": {
      "psr-4": {
