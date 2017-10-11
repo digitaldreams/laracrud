@@ -4,17 +4,17 @@ Do you have a well structed database and you want to make a Laravel Application 
 By using this tools you can generate Models which have necessary methods and property, Request class with rules, generate route from controllers method and its parameter and full features form with validation error message and more with a single line of command. So lets start.
 
 ### Installation ###
-  "require": {
-  
+```javascript
+  "require": { 
      "digitaldream/laracrud": "2.*"
-        
 }
+```
 
 Version 2.x is for laravel 5.1, 5.2, 5.3 & 5.4
 
 This version are ready to use in Laravel 5.3 & 5.4. If you use 5.2 or 5.1 please have a look to config/laracrud.php and adjust folder path.
 
-##Setting##
+## Setting
 
 01. Add this line to config/app.php providers array
 ```php
