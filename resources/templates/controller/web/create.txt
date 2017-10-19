@@ -1,0 +1,14 @@
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @param  @@requestClass@@  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function create(@@requestClass@@ $request)
+    {
+         @@belongsToRelation@@
+        return view('@@viewPath@@.create', [
+            'model' => new @@modelName@@,
+            @@belongsToRelationVars@@
+        ]);
+    }

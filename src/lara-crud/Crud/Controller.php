@@ -91,6 +91,11 @@ class Controller implements Crud
     protected $shortModelName;
 
     /**
+     * @var string
+     */
+    protected $template;
+
+    /**
      * @var array
      */
     protected $only = ['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'];
@@ -100,9 +105,10 @@ class Controller implements Crud
      * @param $model
      * @param string $name
      * @param array|string $only
+     * @param string $template
      * @internal param array $except
      */
-    public function __construct($model, $name = '', $only = '')
+    public function __construct($model, $name = '', $only = '', $template = '')
     {
         $modelNamespace = config('laracrud.model.namespace', 'App');
         $this->shortModelName = $model;
@@ -137,6 +143,7 @@ class Controller implements Crud
                 $this->fileName = $name;
             }
         }
+        $this->template = !empty($template) ? $template : 'web';
         $this->namespace = trim(config('laracrud.controller.namespace'), "/") . $this->subNameSpace;
         $this->parseModelName();
     }
@@ -147,7 +154,7 @@ class Controller implements Crud
      */
     public function template()
     {
-        $tempMan = new TemplateManager('controller/template.txt', array_merge($this->globalVars(), [
+        $tempMan = new TemplateManager('controller'.$this->template .'/template.txt', array_merge($this->globalVars(), [
             'methods' => $this->buildMethods()
         ]));
         return $tempMan->get();
@@ -197,16 +204,16 @@ class Controller implements Crud
     protected function buildMethods()
     {
         $retTemp = '';
-        $tempMan = new TemplateManager('controller/template.txt', []);
+        $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', []);
         foreach ($this->only as $method) {
             $requestFolder = !empty($this->table) ? ucfirst($this->table) : $this->modelName;
             $fullRequestNs = config('laracrud.request.namespace') . "\\" . $requestFolder . "\\" . ucfirst($method);
 
-            $requestClass = class_exists($fullRequestNs) ? "\\" .$fullRequestNs : 'Request';
+            $requestClass = class_exists($fullRequestNs) ? "\\" . $fullRequestNs : 'Request';
 
             if ($filePath = $tempMan->getFullPath("controller/" . $method . '.txt')) {
                 $methodTemp = new TemplateManager("controller/" . $method . ".txt", array_merge($this->globalVars(), [
-                    'requestClass' =>  $requestClass
+                    'requestClass' => $requestClass
                 ]));
                 $retTemp .= $methodTemp->get();
             }

@@ -1,0 +1,20 @@
+    /**
+     * Update a existing resource in storage.
+     *
+     * @param  @@requestClass@@  $request
+     * @param  @@modelName@@  $@@modelNameParam@@
+     * @return \Illuminate\Http\Response
+     */
+    public function update(@@requestClass@@ $request,@@modelName@@ $@@modelNameParam@@)
+    {
+        $@@modelNameParam@@->fill($request->all());
+
+        if ($@@modelNameParam@@->save()) {
+            @@belongsToManyRelationSync@@
+            session()->flash('app_message', '@@modelName@@ successfully updated');
+            return redirect()->route('@@table@@.index');
+            } else {
+                session()->flash('app_error', 'Something is wrong while updating @@modelName@@');
+            }
+        return redirect()->back();
+    }

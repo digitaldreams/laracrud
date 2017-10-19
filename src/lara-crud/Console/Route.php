@@ -13,7 +13,7 @@ class Route extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:route {controller}';
+    protected $signature = 'laracrud:route {controller} {--template=web}';
 
     /**
      * The console command description.
@@ -42,6 +42,8 @@ class Route extends Command
         try {
             $controllers = [];
             $controller  = $this->argument('controller');
+            $template = $this->option('template');
+
             if ($controller == 'all') {
 
                 $dirIt = new \RecursiveDirectoryIterator(app_path('Http/Controllers'));
@@ -63,7 +65,7 @@ class Route extends Command
                 }
 
 
-                $routeCrud = new RouteCrud($controller);
+                $routeCrud = new RouteCrud($controller, $template);
             }
 
             $routeCrud->save();

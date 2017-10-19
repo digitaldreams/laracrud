@@ -14,7 +14,7 @@ class Request extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:request {table} {name?} {--controller=} {--resource=}';
+    protected $signature = 'laracrud:request {table} {name?} {--controller=} {--resource=} {--template=web}';
 
     /**
      * The console command description.
@@ -35,14 +35,16 @@ class Request extends Command
             $name = $this->argument('name');
             $controller = $this->option('controller');
             $resource = $this->option('resource');
+            $template = $this->option('template');
+
             if (!empty($controller)) {
-                $requestController = new RequestControllerCrud($table, $controller);
+                $requestController = new RequestControllerCrud($table, $controller, $template);
                 $requestController->save();
                 $this->info('Request controller classes created successfully');
 
             } elseif (!empty($resource)) {
                 $methods = explode(",", $resource);
-                $requestResource = new RequestResourceCrud($table, $methods);
+                $requestResource = new RequestResourceCrud($table, $methods, $template);
                 $requestResource->save();
                 $this->info('Request resource classes created successfully');
 
@@ -51,11 +53,11 @@ class Request extends Command
                     $table = explode(",", $table);
                     RequestCrud::checkMissingTable($table);
                     foreach ($table as $tb) {
-                        $requestCrud = new RequestCrud($tb);
+                        $requestCrud = new RequestCrud($tb, '', $template);
                         $requestCrud->save();
                     }
                 } else {
-                    $requestCrud = new RequestCrud($table, $name);
+                    $requestCrud = new RequestCrud($table, $name, $template);
                     $requestCrud->save();
                 }
                 $this->info('Request class created successfully');

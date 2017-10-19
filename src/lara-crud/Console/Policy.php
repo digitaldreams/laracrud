@@ -10,7 +10,7 @@ class Policy extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:policy {model} {--controller=} {--name=}";
+    protected $signature = "laracrud:policy {model} {--controller=} {--name=} {--template=web}";
 
     /**
      * The console command description.
@@ -30,8 +30,9 @@ class Policy extends Command
             $model = $this->argument('model');
             $controller = $this->option('controller');
             $name = $this->option('name');
+            $template = $this->option('template');
 
-            $policyCrud = new \LaraCrud\Crud\Policy($model, $controller, $name);
+            $policyCrud = new \LaraCrud\Crud\Policy($model, $controller, $name, $template);
             $policyCrud->save();
             $this->info('Policy class created successfully');
         } catch (\Exception $ex) {

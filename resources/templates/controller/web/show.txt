@@ -1,0 +1,15 @@
+    /**
+     * Display the specified resource.
+     *
+     * @param  @@requestClass@@  $request
+     * @param  @@modelName@@  $@@modelNameParam@@
+     * @return \Illuminate\Http\Response
+     */
+    public function show(@@requestClass@@ $request, @@modelName@@ $@@modelNameParam@@)
+    {
+        return view('@@viewPath@@.show', [
+                'record' =>$@@modelNameParam@@,
+                @@belongsToRelationVars@@
+        ]);
+
+    }
