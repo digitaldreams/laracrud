@@ -145,8 +145,7 @@ php artisan laracrud:policy User --controller=UserController
 ```
 
 Watch tutorial :
-https://vimeo.com/183257085
-
+https://www.youtube.com/watch?v=N03bsypA-oc
 NB: only for mysql database
 
 It is recommended to take a look in the generated file before use it.
