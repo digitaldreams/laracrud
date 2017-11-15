@@ -1,17 +1,21 @@
     /**
-     * Delete a  resource from  storage.
+     * Delete an existing @@modelName@@
      *
-     * @param  @@requestClass@@  $request
-     * @param  @@modelName@@  $@@modelNameParam@@
-     * @return \Illuminate\Http\Response
+     * @Delete("/{id}")
+     *
+     * @Versions({"v1"})
+     *
+     * @Response(200, body={
+       "status": 200,
+       "message": "@@modelName@@ successfully deleted"
+    })
+     * @Response(404, body={"message": "No query results for model [App\\@@modelName@@]."})
      */
     public function destroy(@@requestClass@@ $request, @@modelName@@ $@@modelNameParam@@)
     {
         if ($@@modelNameParam@@->delete()) {
-                session()->flash('app_message', '@@modelName@@ successfully deleted');
-            } else {
-                session()->flash('app_error', 'Error occurred while deleting @@modelName@@');
-            }
-
-        return redirect()->back();
+            return $this->response->array(['status' => 200, 'message' => 'User successfully deleted']);
+        } else {
+             return $this->response->errorInternal('Error occurred while deleting @@modelName@@');
+        }
     }

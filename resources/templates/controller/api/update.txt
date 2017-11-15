@@ -1,20 +1,23 @@
     /**
-     * Update a existing resource in storage.
+     * Update a existing @@modelName@@
      *
-     * @param  @@requestClass@@  $request
-     * @param  @@modelName@@  $@@modelNameParam@@
-     * @return \Illuminate\Http\Response
+     * @Put("/{id}")
+     *
+     * @Versions({"v1"})
+     *
+     * @Request("{"key:"value"}", contentType="application/x-www-form-urlencoded")
+     *
+     * @Response(200, body={
+     })
+     * @Response(404, body={"message": "No query results for model [App\\@@modelName@@]."})
      */
     public function update(@@requestClass@@ $request,@@modelName@@ $@@modelNameParam@@)
     {
         $@@modelNameParam@@->fill($request->all());
 
         if ($@@modelNameParam@@->save()) {
-            @@belongsToManyRelationSync@@
-            session()->flash('app_message', '@@modelName@@ successfully updated');
-            return redirect()->route('@@table@@.index');
-            } else {
-                session()->flash('app_error', 'Something is wrong while updating @@modelName@@');
-            }
-        return redirect()->back();
+            return $this->response->item($@@modelNameParam@@, new UserTransformer());
+        } else {
+             return $this->response->errorInternal('Error occurred while saving @@modelName@@');
+        }
     }

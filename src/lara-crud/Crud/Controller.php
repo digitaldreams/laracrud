@@ -154,7 +154,7 @@ class Controller implements Crud
      */
     public function template()
     {
-        $tempMan = new TemplateManager('controller'.$this->template .'/template.txt', array_merge($this->globalVars(), [
+        $tempMan = new TemplateManager('controller/'.$this->template .'/template.txt', array_merge($this->globalVars(), [
             'methods' => $this->buildMethods()
         ]));
         return $tempMan->get();
@@ -211,8 +211,8 @@ class Controller implements Crud
 
             $requestClass = class_exists($fullRequestNs) ? "\\" . $fullRequestNs : 'Request';
 
-            if ($filePath = $tempMan->getFullPath("controller/" . $method . '.txt')) {
-                $methodTemp = new TemplateManager("controller/" . $method . ".txt", array_merge($this->globalVars(), [
+            if ($filePath = $tempMan->getFullPath("controller/". $this->template.'/'. $method . '.txt')) {
+                $methodTemp = new TemplateManager("controller/" . $this->template.'/'. $method . ".txt", array_merge($this->globalVars(), [
                     'requestClass' => $requestClass
                 ]));
                 $retTemp .= $methodTemp->get();

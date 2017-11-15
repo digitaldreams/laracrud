@@ -1,8 +1,14 @@
     /**
-     * Store a newly created resource in storage.
+     * Create a @@modelName@@
      *
-     * @param  @@requestClass@@  $request
-     * @return \Illuminate\Http\Response
+     *
+     * @Post("/store")
+     *
+     * @Versions({"v1"})
+     *
+     * @Request("{"key":"value"}", contentType="application/x-www-form-urlencoded")
+     *
+     * @Response(200, body={})
      */
     public function store(@@requestClass@@ $request)
     {
@@ -10,11 +16,9 @@
         $model->fill($request->all());
 
         if ($model->save()) {
-            @@belongsToManyRelationSync@@
             session()->flash('app_message', '@@modelName@@ saved successfully');
-            return redirect()->route('@@table@@.index');
-            } else {
-                session()->flash('app_message', 'Something is wrong while saving @@modelName@@');
-            }
-        return redirect()->back();
+            return $this->response->item($model, new UserTransformer());
+        } else {
+              return $this->response->errorInternal('Error occured while saving @@modelName@@');
+        }
     }

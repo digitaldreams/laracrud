@@ -1,10 +1,15 @@
-   /**
-     * Display a listing of the resource.
+ /**
+     * List of @@modelName@@
      *
-     * @param  @@requestClass@@  $request
-     * @return \Illuminate\Http\Response
+     * @Get("/")
+     *
+     * @Versions({"v1"})
+     *
+     * @Response(200, body={
+       "data": {}
+    })
      */
     public function index(@@requestClass@@ $request)
     {
-        return view('@@viewPath@@.index', ['records' => @@modelName@@::paginate(10)]);
+       return $this->response->paginator(@@modelName@@::paginate(10), new UserTransformer());
     }
