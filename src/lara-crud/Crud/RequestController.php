@@ -2,13 +2,14 @@
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>
  */
+
 namespace LaraCrud\Crud;
 
 
 use LaraCrud\Contracts\Crud;
+use LaraCrud\Helpers\ClassInspector;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-use LaraCrud\Helpers\ClassInspector;
 
 class RequestController implements Crud
 {
@@ -39,6 +40,8 @@ class RequestController implements Crud
      */
     protected $namespace;
 
+    protected $template;
+
     /**
      * @var array
      */
@@ -48,13 +51,16 @@ class RequestController implements Crud
      * RequestControllerCrud constructor.
      * @param $table
      * @param string $controller
+     * @param bool $api
      * @throws \Exception
      */
 
-    public function __construct($table, $controller = '')
+    public function __construct($table, $controller = '', $api = false)
     {
-        $this->controllerNs = config('laracrud.controller.namespace', 'App\Http\Controllers');
+
+        $this->controllerNs = !empty($api) ? config('laracrud.controller.apiNamespace', 'App\Http\Controllers\Api') : config('laracrud.controller.namespace', 'App\Http\Controllers');
         $this->table = $table;
+        $this->template = !empty($api) ? 'api' : 'web';
         if (!empty($controller)) {
             if (!class_exists($controller)) {
                 $this->controllerName = $this->controllerNs . "\\" . $controller;
@@ -65,7 +71,8 @@ class RequestController implements Crud
             }
 
             $this->classInspector = new ClassInspector($this->controllerName);
-            $this->namespace = trim(config('laracrud.request.namespace'), "/") . '\\' . ucfirst($table);
+            $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
+            $this->namespace = trim($requestNs, "/") . '\\' . ucfirst($table);
             $this->modelName = $this->getModelName($table);
         }
     }
@@ -76,7 +83,7 @@ class RequestController implements Crud
      */
     public function template()
     {
-        $tempMan = new TemplateManager('request/template.txt', [
+        $tempMan = new TemplateManager('request/' . $this->template . '/template.txt', [
             'namespace' => $this->namespace,
             'requestClassName' => $this->modelName,
             'rules' => implode("\n", [])
@@ -87,6 +94,7 @@ class RequestController implements Crud
     /**
      * Get code and save to disk
      * @return mixed
+     * @throws \Exception
      */
     public function save()
     {
@@ -102,11 +110,12 @@ class RequestController implements Crud
                 if (file_exists($filePath)) {
                     continue;
                 }
+                $isApi = $this->template == 'api' ? true : false;
                 if ($method === 'store') {
-                    $requestStore = new Request($this->table, ucfirst($this->table) . '/Store');
+                    $requestStore = new Request($this->table, ucfirst($this->table) . '/Store', $isApi);
                     $requestStore->save();
                 } elseif ($method === 'update') {
-                    $requestUpdate = new Request($this->table, ucfirst($this->table) . '/Update');
+                    $requestUpdate = new Request($this->table, ucfirst($this->table) . '/Update', $isApi);
                     $requestUpdate->save();
                 } else {
                     $model = new \SplFileObject($filePath, 'w+');

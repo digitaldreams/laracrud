@@ -2,6 +2,7 @@
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>
  */
+
 namespace LaraCrud\Crud;
 
 
@@ -29,22 +30,27 @@ class RequestResource implements Crud
 
     protected $methods = ['index', 'show', 'create', 'store', 'update', 'destroy'];
 
+    protected $template = '';
+
     /**
      * RequestControllerCrud constructor.
      * @param $table
      * @param string $only
+     * @param bool $api
      * @internal param string $controller
      */
 
-    public function __construct($table, $only = '')
+    public function __construct($table, $only = '', $api = false)
     {
         $this->table = $table;
 
         if (!empty($only) && is_array($only)) {
             $this->methods = $only;
         }
-        $this->namespace = trim(config('laracrud.request.namespace'), "/") . '\\' . ucfirst($table);
+        $ns = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
+        $this->namespace = trim($ns, "/") . '\\' . ucfirst($table);
         $this->modelName = $this->getModelName($table);
+        $this->template = !empty($api) ? 'api' : 'web';
     }
 
     /**
@@ -53,7 +59,7 @@ class RequestResource implements Crud
      */
     public function template()
     {
-        $tempMan = new TemplateManager('request/template.txt', [
+        $tempMan = new TemplateManager('request/' . $this->template . '/template.txt', [
             'namespace' => $this->namespace,
             'requestClassName' => $this->modelName,
             'rules' => implode("\n", [])
@@ -64,6 +70,7 @@ class RequestResource implements Crud
     /**
      * Get code and save to disk
      * @return mixed
+     * @throws \Exception
      */
     public function save()
     {
@@ -79,17 +86,17 @@ class RequestResource implements Crud
                 if (file_exists($filePath)) {
                     continue;
                 }
+                $isApi = $this->template == 'api' ? true : false;
                 if ($method === 'store') {
-                    $requestStore = new Request($this->table, ucfirst($this->table) . '/Store');
+                    $requestStore = new Request($this->table, ucfirst($this->table) . '/Store', $isApi);
                     $requestStore->save();
                 } elseif ($method === 'update') {
-                    $requestUpdate = new Request($this->table, ucfirst($this->table) . '/Update');
+                    $requestUpdate = new Request($this->table, ucfirst($this->table) . '/Update', $isApi);
                     $requestUpdate->save();
                 } else {
                     $model = new \SplFileObject($filePath, 'w+');
                     $model->fwrite($this->template());
                 }
-
             }
         }
     }
