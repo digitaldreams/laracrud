@@ -17,8 +17,8 @@
 
         if ($model->save()) {
             session()->flash('app_message', '@@modelName@@ saved successfully');
-            return $this->response->item($model, new UserTransformer());
+            return $this->response->item($model, new @@transformer@@());
         } else {
-              return $this->response->errorInternal('Error occured while saving @@modelName@@');
+              return $this->response->errorInternal('Error occurred while saving @@modelName@@');
         }
     }

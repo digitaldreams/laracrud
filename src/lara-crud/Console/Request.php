@@ -14,7 +14,7 @@ class Request extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:request {table} {name?} {--controller=} {--resource=} {--template=web}';
+    protected $signature = 'laracrud:request {table} {name?} {--controller=} {--resource=} {--api}';
 
     /**
      * The console command description.

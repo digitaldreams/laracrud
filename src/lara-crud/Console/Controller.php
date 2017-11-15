@@ -19,7 +19,7 @@ class Controller extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:controller {model} {name?} {--only=} {--template=web}";
+    protected $signature = "laracrud:controller {model} {name?} {--only=} {--api}";
 
     /**
      * The console command description.
@@ -39,9 +39,9 @@ class Controller extends Command
             $model = $this->argument('model');
             $name = $this->argument('name');
             $only = $this->option('only');
-            $template = $this->option('template');
+            $api = $this->option('api');
             $onlyArr = !empty($only) ? explode(",", $only) : '';
-            $controllerCrud = new ControllerCrud($model, $name, $onlyArr, $template);
+            $controllerCrud = new ControllerCrud($model, $name, $onlyArr, $api);
             $controllerCrud->save();
             $this->info('Controller class successfully created');
         } catch (\Exception $ex) {

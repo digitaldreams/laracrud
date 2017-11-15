@@ -7,9 +7,9 @@ use App\Http\Controllers\ApiController;
 use @@fullmodelName@@;
 
 /**
- * @@controllerName@@
+ * @@modelName@@
  *
- * @Resource("Users", uri="/users")
+ * @Resource("@@modelName@@", uri="/@@table@@")
  */
 
 class @@controllerName@@ extends ApiController

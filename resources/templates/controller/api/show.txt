@@ -1,4 +1,4 @@
-   /**
+     /**
      * Show details about a @@modelName@@
      *
      * @Get("/{id}")
@@ -11,5 +11,5 @@
      */
     public function show(@@requestClass@@ $request, @@modelName@@ $@@modelNameParam@@)
     {
-      return $this->response->item($@@modelNameParam@@, new UserTransformer());
+      return $this->response->item($@@modelNameParam@@, new @@transformer@@());
     }

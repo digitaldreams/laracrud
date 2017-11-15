@@ -2,6 +2,7 @@
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>
  */
+
 namespace LaraCrud\Crud;
 
 
@@ -105,10 +106,10 @@ class Controller implements Crud
      * @param $model
      * @param string $name
      * @param array|string $only
-     * @param string $template
+     * @param bool $api
      * @internal param array $except
      */
-    public function __construct($model, $name = '', $only = '', $template = '')
+    public function __construct($model, $name = '', $only = '', $api = false)
     {
         $modelNamespace = config('laracrud.model.namespace', 'App');
         $this->shortModelName = $model;
@@ -143,8 +144,9 @@ class Controller implements Crud
                 $this->fileName = $name;
             }
         }
-        $this->template = !empty($template) ? $template : 'web';
-        $this->namespace = trim(config('laracrud.controller.namespace'), "/") . $this->subNameSpace;
+        $this->template = !empty($api) ? 'api' : 'web';
+        $ns = !empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
+        $this->namespace = trim($ns, "/") . $this->subNameSpace;
         $this->parseModelName();
     }
 
@@ -154,7 +156,7 @@ class Controller implements Crud
      */
     public function template()
     {
-        $tempMan = new TemplateManager('controller/'.$this->template .'/template.txt', array_merge($this->globalVars(), [
+        $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', array_merge($this->globalVars(), [
             'methods' => $this->buildMethods()
         ]));
         return $tempMan->get();
@@ -176,7 +178,8 @@ class Controller implements Crud
             'namespace' => trim($this->namespace, "/"),
             'belongsToRelation' => '',
             'belongsToRelationVars' => '',
-            'belongsToManyRelationSync' => ''
+            'belongsToManyRelationSync' => '',
+            'transformer' => '',
         ];
     }
 
@@ -207,12 +210,12 @@ class Controller implements Crud
         $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', []);
         foreach ($this->only as $method) {
             $requestFolder = !empty($this->table) ? ucfirst($this->table) : $this->modelName;
-            $fullRequestNs = config('laracrud.request.namespace') . "\\" . $requestFolder . "\\" . ucfirst($method);
-
+            $requestNs = !empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
+            $fullRequestNs = $requestNs . "\\" . $requestFolder . "\\" . ucfirst($method);
             $requestClass = class_exists($fullRequestNs) ? "\\" . $fullRequestNs : 'Request';
 
-            if ($filePath = $tempMan->getFullPath("controller/". $this->template.'/'. $method . '.txt')) {
-                $methodTemp = new TemplateManager("controller/" . $this->template.'/'. $method . ".txt", array_merge($this->globalVars(), [
+            if ($filePath = $tempMan->getFullPath("controller/" . $this->template . '/' . $method . '.txt')) {
+                $methodTemp = new TemplateManager("controller/" . $this->template . '/' . $method . ".txt", array_merge($this->globalVars(), [
                     'requestClass' => $requestClass
                 ]));
                 $retTemp .= $methodTemp->get();

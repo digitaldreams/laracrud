@@ -141,9 +141,14 @@ return [
     ],
     'controller' => [
         /**
-         * Controller Parent Namespace
+         * Controller Parent Namespace for web
          */
         'namespace' => 'App\Http\Controllers',
+
+        /**
+         * Controller Parent Namespace for API
+         */
+        'apiNamespace'=>'App\Http\Controllers\Api',
 
         /**
          * After every request class name this world will be added. For example, User will be UserController
@@ -152,9 +157,14 @@ return [
     ],
     'request' => [
         /**
-         *  Request Parent Namespace
+         *  Request Parent Namespace for web
          */
         'namespace' => 'App\Http\Requests',
+
+        /**
+         *  Request Parent Namespace for API
+         */
+        'apiNamespace' => 'App\Http\Requests\Api',
 
         /**
          * After every request class name this world will be added. For example, Users will be UsersRequest
