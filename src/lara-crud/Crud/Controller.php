@@ -193,7 +193,6 @@ class Controller implements Crud
         $this->checkPath("");
         $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) . ".php" : $this->controllerName . 'Controller' . '.php';
         $filePath = base_path($this->toPath($this->namespace)) . "/" . $fileName;
-
         if (file_exists($filePath)) {
             throw new \Exception($filePath . ' already exists');
         }
@@ -208,9 +207,10 @@ class Controller implements Crud
     {
         $retTemp = '';
         $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', []);
+        $api = $this->template == 'api' ? true : false;
         foreach ($this->only as $method) {
             $requestFolder = !empty($this->table) ? ucfirst($this->table) : $this->modelName;
-            $requestNs = !empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
+            $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
             $fullRequestNs = $requestNs . "\\" . $requestFolder . "\\" . ucfirst($method);
             $requestClass = class_exists($fullRequestNs) ? "\\" . $fullRequestNs : 'Request';
 

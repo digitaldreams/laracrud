@@ -10,7 +10,8 @@ use DbReader\Database;
 
 trait Helper
 {
-    public $errors=[];
+    public $errors = [];
+
     /**
      * Convert table name to Laravel Standard Model Name
      * For example users table become User.
@@ -89,8 +90,17 @@ trait Helper
     public function checkPath($extension = ".php")
     {
         //If model path does not exists then create model path.
-        if (!file_exists(base_path($this->toPath($this->namespace)))) {
-            mkdir(base_path($this->toPath($this->namespace)));
+        $fullPath = base_path($this->toPath($this->namespace));
+        if (!file_exists($fullPath)) {
+            $relPath = $this->toPath($this->namespace);
+            $nextPath = '';
+            $folders = explode("/", $relPath);
+            foreach ($folders as $folder) {
+                $nextPath .= !empty($nextPath) ? "/" . $folder : $folder;
+                if (!file_exists(base_path($nextPath))) {
+                    mkdir(base_path($nextPath));
+                }
+            }
         }
         return base_path($this->toPath($this->namespace) . '/' . $this->modelName . $extension);
     }
