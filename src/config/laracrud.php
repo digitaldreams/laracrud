@@ -148,7 +148,7 @@ return [
         /**
          * Controller Parent Namespace for API
          */
-        'apiNamespace'=>'App\Http\Controllers\Api',
+        'apiNamespace' => 'App\Http\Controllers\Api',
 
         /**
          * After every request class name this world will be added. For example, User will be UserController
@@ -201,6 +201,17 @@ return [
         'subResource' => [
             //'child'=>'parent.child' e.g. photos=>posts.photos
         ]
+    ],
+    'transformer' => [
+        /**
+         * Root namespace
+         */
+        'namespace' => 'App\Transformer',
+
+        /**
+         * After every transformer class name this world will be added. For example, Users will be UsersTransformer
+         */
+        'classSuffix' => 'Transformer'
     ],
 
     /**
