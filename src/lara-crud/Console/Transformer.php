@@ -9,7 +9,7 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
-use LaraCrud\Crud\Controller as ControllerCrud;
+use LaraCrud\Crud\Transformer as TransformerCrud;
 
 
 class Transformer extends Command
@@ -38,8 +38,18 @@ class Transformer extends Command
         try {
             $model = $this->argument('model');
             $name = $this->argument('name');
-          //  $controllerCrud = new ControllerCrud($model, $name, $onlyArr, $api);
-         //   $controllerCrud->save();
+
+            if (class_exists($model)) {
+                $modelObj = new $model;
+            } else {
+                $model = config('laracrud.model.namespace') . '\\' . $model;
+                if (!class_exists($model)) {
+                    $this->warn($model . ' class does not exists');
+                }
+                $modelObj = new $model;
+            }
+            $transformerCrud = new TransformerCrud($modelObj, $name);
+            $transformerCrud->save();
             $this->info('Transformer class successfully created');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());

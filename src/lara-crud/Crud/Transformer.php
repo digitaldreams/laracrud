@@ -2,6 +2,7 @@
 
 namespace LaraCrud\Crud;
 
+use DbReader\Table;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
@@ -55,9 +56,9 @@ class Transformer implements Crud
             'namespace' => $this->namespace,
             'modelFullName' => get_class($this->model),
             'model' => $this->reflectionClass->getShortName(),
+            'properties' => $this->makeProperties(),
             'modelParam' => lcfirst($this->reflectionClass->getShortName()),
             'className' => $this->modelName,
-            'properties' => '',
             'availableInclude' => '',
             'defaultInclude' => ''
         ]))->get();
@@ -76,5 +77,18 @@ class Transformer implements Crud
         }
         $model = new \SplFileObject($filePath, 'w+');
         $model->fwrite($this->template());
+    }
+
+    private function makeProperties()
+    {
+        $retStr = '';
+        $modelName=lcfirst($this->reflectionClass->getShortName());
+        $table = $this->model->getTable();
+        $tableLib = new Table($table);
+        $columnClasses = $tableLib->columnClasses();
+        foreach ($columnClasses as $columnClass) {
+            $retStr .= '"' . $columnClass->name() . '"=>$'.$modelName.'->' . $columnClass->name() . "," . PHP_EOL;
+        }
+        return $retStr;
     }
 }
