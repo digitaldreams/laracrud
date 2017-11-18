@@ -3,11 +3,13 @@
 namespace LaraCrud\Crud;
 
 use LaraCrud\Contracts\Crud;
+use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
 
 class Transformer implements Crud
 {
+    use Helper;
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
@@ -16,7 +18,7 @@ class Transformer implements Crud
     /**
      * @var string
      */
-    protected $name;
+    protected $modelName;
 
     /**
      * parent namespace of the Transformer
@@ -24,12 +26,23 @@ class Transformer implements Crud
      */
     protected $namespace;
 
+    /**
+     * @var \ReflectionClass
+     */
+    protected $reflectionClass;
+
+    /**
+     * Transformer constructor.
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param bool $name
+     */
     public function __construct(\Illuminate\Database\Eloquent\Model $model, $name = false)
     {
         $this->model = $model;
         $this->name = $name;
-        $this->namespace = config('');
-
+        $this->namespace = config('laracrud.transformer.namespace');
+        $this->reflectionClass = new \ReflectionClass(get_class($model));
+        $this->modelName = !empty($name) ? $name : $this->reflectionClass->getShortName() . config('laracrud.transformer.classSuffix', 'Transformer');
     }
 
     /**
@@ -38,12 +51,22 @@ class Transformer implements Crud
      */
     public function template()
     {
-        return (new TemplateManager('transformer/tempalte.txt', []))->get();
+        return (new TemplateManager('transformer/template.txt', [
+            'namespace' => $this->namespace,
+            'modelFullName' => get_class($this->model),
+            'model' => $this->reflectionClass->getShortName(),
+            'modelParam' => lcfirst($this->reflectionClass->getShortName()),
+            'className' => $this->modelName,
+            'properties' => '',
+            'availableInclude' => '',
+            'defaultInclude' => ''
+        ]))->get();
     }
 
     /**
      * Get code and save to disk
      * @return mixed
+     * @throws \Exception
      */
     public function save()
     {

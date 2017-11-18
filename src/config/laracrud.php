@@ -206,7 +206,7 @@ return [
         /**
          * Root namespace
          */
-        'namespace' => 'App\Transformer',
+        'namespace' => 'App\Transformers',
 
         /**
          * After every transformer class name this world will be added. For example, Users will be UsersTransformer

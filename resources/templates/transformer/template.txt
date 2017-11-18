@@ -1,0 +1,41 @@
+<?php
+namespace @@namespace@@;
+
+use League\Fractal\TransformerAbstract;
+use @@modelFullName@@;
+
+class @@className@@ extends TransformerAbstract
+{
+    public function __construct()
+    {
+
+    }
+
+    /**
+     * @var array
+     */
+    private $validParams = ['q', 'limit', 'page'];
+
+    /**
+     * @var array
+     */
+    protected $availableIncludes = [
+        @@availableInclude@@
+    ];
+
+     /**
+      * @var array
+      */
+    protected $defaultIncludes = [
+        @@defaultInclude@@
+    ];
+
+
+    public function transform(@@model@@ $@@modelParam@@)
+    {
+        return [
+@@properties@@
+        ];
+
+    }
+}

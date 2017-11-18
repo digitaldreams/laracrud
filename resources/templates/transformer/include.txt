@@ -1,0 +1,10 @@
+
+    /**
+     * Include all photos
+     *
+     * @return \League\Fractal\Resource\Collection;
+     */
+    public function includePhotos(PlaceDB $place)
+    {
+        return $this->item($place->leadPhoto(), new PhotoTransformer());
+    }
