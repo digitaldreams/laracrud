@@ -41,7 +41,7 @@ class Table extends Page
     public function make()
     {
         $headerhtml = '';
-        $bodyhtml = '';
+        $bodyhtml = '<tr>';
         $columns = $this->table->columnClasses();
         foreach ($columns as $column) {
             if ($column->isIgnore() || $column->isProtected()) {
@@ -52,7 +52,7 @@ class Table extends Page
         }
         $headerhtml .= "\t\t<th>&nbsp;</th>";
         $link = new Link($this->table->name());
-        $bodyhtml .= "\t<td>" . $link->edit() . PHP_EOL . $link->show() . "</td>" . PHP_EOL;
+        $bodyhtml .= "\t<td>" . $link->edit() . PHP_EOL . $link->show() . "</td></tr>" . PHP_EOL;
 
         return [
             'tableHeader' => $headerhtml,
