@@ -95,7 +95,7 @@ class Request implements Crud
             if (in_array($column->name(), config('laracrud.model.protectedColumns'))) {
                 continue;
             }
-            $rules[] = "\t\t'{$column->name()} '=>'" . implode("|", $this->rule($column)) . "',";
+            $rules[] = "\t\t'{$column->name()}'=>'" . implode("|", $this->rule($column)) . "',";
         }
         return $rules;
     }

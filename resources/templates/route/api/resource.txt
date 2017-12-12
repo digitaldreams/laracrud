@@ -1,2 +1,2 @@
-Route::resource('@@table@@','@@controller@@');
+$api->resource('@@table@@','@@controller@@');
 
