@@ -42,27 +42,27 @@ class Route extends Command
             $controllers = [];
             $controller = $this->argument('controller');
             $api = $this->option('api');
+            $namespace = $api == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
 
             if ($controller == 'all') {
-
-                $dirIt = new \RecursiveDirectoryIterator(app_path('Http/Controllers'));
+                $path = str_replace("App/", "app/", str_replace("\\", "/", $namespace));
+                $dirIt = new \RecursiveDirectoryIterator(base_path($path));
                 $rit = new \RecursiveIteratorIterator($dirIt);
 
                 while ($rit->valid()) {
 
                     if (!$rit->isDot()) {
-                        $controllers[] = "App\Http\Controllers\\" . str_replace(".php",
-                                "", $rit->getSubPathName());
+                        $controllers[] = rtrim($namespace, "\\") . "\\" . str_replace(".php",
+                                "", str_replace("/", "\\", $rit->getSubPathName()));
                     }
                     $rit->next();
                 }
                 $routeCrud = new RouteCrud($controllers, $api);
             } else {
                 $controller = str_replace("/", "\\", $controller);
-                if (!stripos("App\Http\Controllers\\", $controller)) {
-                    $controller = 'App\Http\Controllers\\' . $controller;
+                if (!stripos(rtrim($namespace, "\\") . "\\", $controller)) {
+                    $controller = rtrim($namespace, "\\") . '\\' . $controller;
                 }
-
 
                 $routeCrud = new RouteCrud($controller, $api);
             }

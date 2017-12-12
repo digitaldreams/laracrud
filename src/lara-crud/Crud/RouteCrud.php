@@ -68,7 +68,7 @@ class RouteCrud implements Crud
 
     private $template = 'web';
 
-    const PARENT_NAMESPACE = 'App\Http\Controllers\\';
+    protected $namespace;
 
     public function __construct($controller = '', $api = false)
     {
@@ -81,6 +81,9 @@ class RouteCrud implements Crud
         $this->fetchControllerMethods();
         $this->api = $api;
         $this->template = !empty($api) ? 'api' : 'web';
+        $this->namespace = $api == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
+        $this->namespace = rtrim($this->namespace, "\\") . "\\";
+
 
     }
 
@@ -254,7 +257,7 @@ class RouteCrud implements Crud
             $subNameSpace = '';
             $resourceRTemp = '';
 
-            $path = str_replace([static::PARENT_NAMESPACE, $ctr['shortName']], "", $ctr['full_name']);
+            $path = str_replace([$this->namespace, $ctr['shortName']], "", $ctr['full_name']);
             $path = trim($path, "\\");
             $controllerShortName = strtolower(str_replace("Controller", "", $ctr['shortName']));
 
@@ -272,7 +275,7 @@ class RouteCrud implements Crud
             if (count($resourceMethods) == count($resources)) {
                 $newRouteMethods = array_diff($newRouteMethods, $resources);
                 $tableName = str_plural(strtolower(str_replace("Controller", "", $ctr['shortName'])));
-                $resourceRTempObj = new TemplateManager('route/'.$this->template.'/resource.txt', [
+                $resourceRTempObj = new TemplateManager('route/' . $this->template . '/resource.txt', [
                     'table' => $tableName,
                     'controller' => $ctr['shortName']
                 ]);
@@ -288,7 +291,7 @@ class RouteCrud implements Crud
                 continue;
             }
 
-            $routeGroupTempObj = new TemplateManager('route/'.$this->template.'/group.txt', [
+            $routeGroupTempObj = new TemplateManager('route/' . $this->template . '/group.txt', [
                 'namespace' => $subNameSpace,
                 'routes' => $controllerRoutes,
                 'prefix' => str_plural($controllerShortName)
