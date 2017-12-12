@@ -3,7 +3,6 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 use LaraCrud\Crud\RouteCrud;
 
 class Route extends Command
@@ -13,7 +12,7 @@ class Route extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:route {controller} {--template=web}';
+    protected $signature = 'laracrud:route {controller} {--api}';
 
     /**
      * The console command description.
@@ -41,31 +40,31 @@ class Route extends Command
     {
         try {
             $controllers = [];
-            $controller  = $this->argument('controller');
-            $template = $this->option('template');
+            $controller = $this->argument('controller');
+            $api = $this->option('api');
 
             if ($controller == 'all') {
 
                 $dirIt = new \RecursiveDirectoryIterator(app_path('Http/Controllers'));
-                $rit   = new \RecursiveIteratorIterator($dirIt);
+                $rit = new \RecursiveIteratorIterator($dirIt);
 
                 while ($rit->valid()) {
 
                     if (!$rit->isDot()) {
-                        $controllers[] = "App\Http\Controllers\\".str_replace(".php",
+                        $controllers[] = "App\Http\Controllers\\" . str_replace(".php",
                                 "", $rit->getSubPathName());
                     }
                     $rit->next();
                 }
-                $routeCrud = new RouteCrud($controllers);
+                $routeCrud = new RouteCrud($controllers, $api);
             } else {
                 $controller = str_replace("/", "\\", $controller);
                 if (!stripos("App\Http\Controllers\\", $controller)) {
-                    $controller = 'App\Http\Controllers\\'.$controller;
+                    $controller = 'App\Http\Controllers\\' . $controller;
                 }
 
 
-                $routeCrud = new RouteCrud($controller, $template);
+                $routeCrud = new RouteCrud($controller, $api);
             }
 
             $routeCrud->save();
@@ -75,7 +74,7 @@ class Route extends Command
                 $this->info('Routes created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 }

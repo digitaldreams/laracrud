@@ -62,11 +62,15 @@ class RouteCrud implements Crud
      */
     public $subNameSpace = '';
 
-    public $errors=[];
+    public $errors = [];
+
+    private $api = false;
+
+    private $template = 'web';
 
     const PARENT_NAMESPACE = 'App\Http\Controllers\\';
 
-    public function __construct($controller = '')
+    public function __construct($controller = '', $api = false)
     {
         if (!is_array($controller)) {
             $this->controllers[] = $controller;
@@ -75,6 +79,9 @@ class RouteCrud implements Crud
         }
         $this->getRoute();
         $this->fetchControllerMethods();
+        $this->api = $api;
+        $this->template = !empty($api) ? 'api' : 'web';
+
     }
 
     /**
@@ -146,11 +153,21 @@ class RouteCrud implements Crud
      */
     public function appendRoutes($routesCode)
     {
-        $routePath = base_path(config('laracrud.route.web', 'app/Http/routes.php'));
+        $routePath = base_path($this->getRouteFileName());
         if (file_exists($routePath)) {
             $splFile = new \SplFileObject($routePath, 'a');
             $splFile->fwrite($routesCode);
         }
+    }
+
+    /**
+     * Get route file name based on web or api
+     *
+     * @return string
+     */
+    protected function getRouteFileName()
+    {
+        return $this->api == true ? config('laracrud.route.api') : config('laracrud.route.web');
     }
 
     /**
@@ -190,7 +207,7 @@ class RouteCrud implements Crud
         $actionName = $controllerName . '@' . $method;
         $routeName .= str_plural(strtolower($controllerShortName)) . '.' . strtolower($method);
 
-        $tempObj = new TemplateManager('route/template.txt', [
+        $tempObj = new TemplateManager('route/' . $this->template . '/template.txt', [
             'method' => $routeMethodName,
             'path' => $path,
             'routeName' => $routeName,
@@ -255,7 +272,7 @@ class RouteCrud implements Crud
             if (count($resourceMethods) == count($resources)) {
                 $newRouteMethods = array_diff($newRouteMethods, $resources);
                 $tableName = str_plural(strtolower(str_replace("Controller", "", $ctr['shortName'])));
-                $resourceRTempObj = new TemplateManager('route/resource.txt', [
+                $resourceRTempObj = new TemplateManager('route/'.$this->template.'/resource.txt', [
                     'table' => $tableName,
                     'controller' => $ctr['shortName']
                 ]);
@@ -271,7 +288,7 @@ class RouteCrud implements Crud
                 continue;
             }
 
-            $routeGroupTempObj = new TemplateManager('route/group.txt', [
+            $routeGroupTempObj = new TemplateManager('route/'.$this->template.'/group.txt', [
                 'namespace' => $subNameSpace,
                 'routes' => $controllerRoutes,
                 'prefix' => str_plural($controllerShortName)
