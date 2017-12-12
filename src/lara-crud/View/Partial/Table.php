@@ -1,4 +1,5 @@
 <?php
+
 namespace LaraCrud\View\Partial;
 
 use DbReader\Table as TableReader;
@@ -52,9 +53,10 @@ class Table extends Page
         }
         $headerhtml .= "\t\t<th>&nbsp;</th>";
         $link = new Link($this->table->name());
-        $bodyhtml .= "\t<td>" . $link->edit() . PHP_EOL . $link->show() . "</td></tr>" . PHP_EOL;
-
+        $bodyhtml .= "\t<td>" . $link->show() . $link->edit() . PHP_EOL . $link->destroy() . "</td></tr>" . PHP_EOL;
+        $bodyhtml = str_replace('@@table@@', $this->table->name(), $bodyhtml);
         return [
+            'table' => $this->table->name(),
             'tableHeader' => $headerhtml,
             'tableBody' => $bodyhtml
         ];
