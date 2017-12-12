@@ -3,4 +3,3 @@
                 <option value="{{$data->id}}">{{$data->id}}</option>;
             @endforeach
         @endif
-?>
