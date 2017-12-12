@@ -52,7 +52,7 @@ class Table extends Page
         }
         $headerhtml .= "\t\t<th>&nbsp;</th>";
         $link = new Link($this->table->name());
-        $bodyhtml .= "\t<td>" . $link->edit() . PHP_EOL . $link->show() . "}}</td>" . PHP_EOL;
+        $bodyhtml .= "\t<td>" . $link->edit() . PHP_EOL . $link->show() . "</td>" . PHP_EOL;
 
         return [
             'tableHeader' => $headerhtml,

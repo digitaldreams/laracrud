@@ -230,9 +230,11 @@ class Controller implements Crud
      */
     protected function parseModelName()
     {
+        $pagePath = config("laracrud.view.page.path");
         $class = new \ReflectionClass($this->modelName);
+        $model=$class->newInstance();
         $this->modelNameSpace = $class->getNamespaceName();
-        $this->viewPath = strtolower($class->getShortName());
+        $this->viewPath = !empty($pagePath) ? str_replace("/", ".", $pagePath) . "." . $model->getTable() : $model->getTable();
         $this->controllerName = $class->getShortName();
     }
 }

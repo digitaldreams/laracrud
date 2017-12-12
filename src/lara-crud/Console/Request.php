@@ -43,7 +43,8 @@ class Request extends Command
                 $this->info('Request controller classes created successfully');
 
             } elseif (!empty($resource)) {
-                $methods = explode(",", $resource);
+
+                $methods = $resource === 'all' ? false : explode(",", $resource);
                 $requestResource = new RequestResourceCrud($table, $methods, $api);
                 $requestResource->save();
                 $this->info('Request resource classes created successfully');
