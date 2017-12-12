@@ -1,4 +1,5 @@
 <?php
+
 namespace LaraCrud\View;
 
 /**
@@ -7,15 +8,25 @@ namespace LaraCrud\View;
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Form;
-
 class Edit extends Page
 {
+    /**
+     * @var Form
+     */
+    protected $form;
 
+    /**
+     * Edit constructor.
+     * @param Table $table
+     * @param string $name
+     */
     public function __construct(Table $table, $name = '')
     {
         $this->table = $table;
         $this->setFolderName();
         $this->name = !empty($name) ? $name : config('laracrud.view.page.edit.name');
+        $this->form = new Form($this->table);
+
         parent::__construct();
     }
 
@@ -27,6 +38,7 @@ class Edit extends Page
         return (new TemplateManager("view/{$this->version}/pages/edit.html", [
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
+            'partialFilename' => str_singular($this->table->name())
         ]))->get();
     }
 
@@ -35,10 +47,8 @@ class Edit extends Page
      */
     public function save()
     {
-        $formPath = 'views/forms/' . str_singular($this->table->name()) . ".blade.php";
-        if (!file_exists(resource_path($formPath))) {
-            $form = new Form($this->table);
-            $form->save();
+        if (!$this->form->isExists()) {
+            $this->form->save();
         }
         parent::save();
     }

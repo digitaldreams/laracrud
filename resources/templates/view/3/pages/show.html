@@ -1,25 +1,25 @@
 @extends('@@layout@@')
 @section('content')
-    <div class="row">
-        <div class="col-sm-8">
-            <h4>
-                {{$record->id}}
-            </h4>
-        </div>
-        <div class="col-sm-4 text-right">
-            <div class="btn-group btn-group-sm">
-                <a class="btn btn-default btn-sm" href="{{route('@@table@@.create')}}">
-                    <span class="glyphicon glyphicon-plus"></span>&nbsp;
-                </a>
-                <a class="btn btn-default btn-sm" href="{{route('@@table@@.index')}}">
-                    <span class="glyphicon glyphicon-list"></span>&nbsp;
-                </a>
-            </div>
+<div class="row">
+    <div class="col-sm-8">
+        <h4>
+            {{$record->id}}
+        </h4>
+    </div>
+    <div class="col-sm-4 text-right">
+        <div class="btn-group btn-group-sm">
+            <a class="btn btn-default btn-sm" href="{{route('@@table@@.create')}}">
+                <span class="glyphicon glyphicon-plus"></span>&nbsp;
+            </a>
+            <a class="btn btn-default btn-sm" href="{{route('@@table@@.index')}}">
+                <span class="glyphicon glyphicon-list"></span>&nbsp;
+            </a>
         </div>
     </div>
-    <div class="row">
-       <div class="col-sm-8">
-           @include('@@folder@@.@@table@@')
-       </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        @include('@@folder@@.@@partialFilename@@')
     </div>
+</div>
 @endSection

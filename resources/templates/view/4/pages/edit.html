@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="panel-body">
-                @include('forms.@@table@@',[
+                @include('forms.@@partialFilename@@',[
                 'route'=>route('@@table@@.update',$model->id),
                 'method'=>'PUT'
                 ])

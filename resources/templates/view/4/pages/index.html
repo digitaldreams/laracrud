@@ -11,6 +11,6 @@
             <a href="{{route('@@table@@.create')}}"><span class="glyphicon glyphicon-plus"></span></a>
         </div>
     </div>
-    @include('tables.@@table@@')
+    @include('tables.@@partialFilename@@')
     {!! $records->render() !!}
 @endSection

@@ -40,6 +40,7 @@ class Show extends Page
             'table' => $this->table->name(),
             'layout' => config('laracrud.view.layout'),
             'folder' => $this->panel->getFolder(),
+            'partialFilename' => str_singular($this->table->name())
         ]))->get();
     }
 

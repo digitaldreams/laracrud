@@ -42,7 +42,7 @@ class View extends Command
             $page = $this->argument('page');
             $type = $this->option('type');
             $name = $this->option('name');
-            $template= $this->option('template');
+            $template = $this->option('template');
 
 
             $tables = explode(",", $table);
@@ -56,19 +56,19 @@ class View extends Command
                         $this->info($page . ' page created successfully');
                     }
                 } else {
-                    $indexPage = new Index($tableReader);
+                    $indexPage = new Index($tableReader, $name, $type);
                     $indexPage->save();
                     $this->info('Index page created successfully');
 
-                    $showPage = new Show($tableReader);
+                    $showPage = new Show($tableReader, $name, $type);
                     $showPage->save();
                     $this->info('Show page created successfully');
 
-                    $createPage = new Create($tableReader);
+                    $createPage = new Create($tableReader, $name);
                     $createPage->save();
                     $this->info('Create page created successfully');
 
-                    $edit = new Edit($tableReader);
+                    $edit = new Edit($tableReader, $name);
                     $edit->save();
                     $this->info('Edit page created successfully');
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace LaraCrud\View;
 
 /**
@@ -11,11 +12,14 @@ use LaraCrud\View\Partial\Form;
 
 class Create extends Page
 {
+    protected $form;
+
     public function __construct(Table $table, $name = '')
     {
         $this->table = $table;
         $this->setFolderName();
         $this->name = !empty($name) ? $name : config('laracrud.view.page.create.name');
+        $this->form = new Form($this->table);
         parent::__construct();
     }
 
@@ -27,15 +31,18 @@ class Create extends Page
         return (new TemplateManager("view/{$this->version}/pages/create.html", [
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
+            'partialFilename' => str_singular($this->table->name())
         ]))->get();
     }
 
+    /**
+     * @return mixed|void
+     * @throws \Exception
+     */
     public function save()
     {
-        $formPath = 'views/forms/' . str_singular($this->table->name()) . ".blade.php";
-        if (!file_exists(resource_path($formPath))) {
-            $form = new Form($this->table);
-            $form->save();
+        if (!$this->form->isExists()) {
+            $this->form->save();
         }
         parent::save();
     }
