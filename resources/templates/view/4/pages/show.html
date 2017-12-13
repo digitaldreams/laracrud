@@ -2,16 +2,13 @@
 @section('content')
     <div class="row">
         <div class="col-sm-8">
-            <h4>
+            <h1>
                 {{$record->id}}
-            </h4>
+            </h1>
         </div>
         <div class="col-sm-4 text-right">
             <div class="btn-group btn-group-sm">
-                <a class="btn btn-default btn-sm" href="{{route('@@table@@.create')}}"><span
-                        class="glyphicon glyphicon-plus"></span>&nbsp;</a>
-                <a class="btn btn-default btn-sm" href="{{route('@@table@@.index')}}"><span
-                        class="glyphicon glyphicon-list"></span>&nbsp;</a>
+                @@buttons@@
             </div>
         </div>
     </div>

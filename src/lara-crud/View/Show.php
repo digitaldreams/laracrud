@@ -1,4 +1,5 @@
 <?php
+
 namespace LaraCrud\View;
 
 /**
@@ -6,6 +7,7 @@ namespace LaraCrud\View;
  */
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
+use LaraCrud\View\Partial\Link;
 use LaraCrud\View\Partial\Panel;
 
 class Show extends Page
@@ -36,11 +38,13 @@ class Show extends Page
      */
     function template()
     {
+        $link = new Link($this->table->name());
         return (new TemplateManager("view/{$this->version}/pages/show.html", [
             'table' => $this->table->name(),
             'layout' => config('laracrud.view.layout'),
             'folder' => $this->panel->getFolder(),
-            'partialFilename' => str_singular($this->table->name())
+            'partialFilename' => str_singular($this->table->name()),
+            'buttons' => PHP_EOL . $link->create() . PHP_EOL . $link->edit() . PHP_EOL . str_replace("@@table@@", $this->table->name(), $link->destroy()) . PHP_EOL
         ]))->get();
     }
 
