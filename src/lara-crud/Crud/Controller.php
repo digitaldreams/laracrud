@@ -6,6 +6,7 @@
 namespace LaraCrud\Crud;
 
 
+use DbReader\Table;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
@@ -78,6 +79,12 @@ class Controller implements Crud
      * @var
      */
     public $namespace;
+
+    /**
+     * Import Namespace for Usages
+     * @var array
+     */
+    public $import = [];
 
     /**
      * Namespace version of subpath
@@ -156,8 +163,11 @@ class Controller implements Crud
      */
     public function template()
     {
-        $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', array_merge($this->globalVars(), [
-            'methods' => $this->buildMethods()
+        $globalVars = $this->globalVars();
+        $methods = $this->buildMethods();
+        $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', array_merge($globalVars, [
+            'methods' => $methods,
+            'importNameSpace' => $this->makeNamespaceUseString()
         ]));
         return $tempMan->get();
     }
@@ -167,6 +177,7 @@ class Controller implements Crud
      */
     protected function globalVars()
     {
+        $rel = $this->makeRelation();
         return [
             'controllerName' => $this->getFileName($this->controllerName . 'Controller'),
             'modelName' => $this->shortModelName,
@@ -176,10 +187,11 @@ class Controller implements Crud
             'requestClass' => $this->requestClass,
             'table' => $this->table,
             'namespace' => trim($this->namespace, "/"),
-            'belongsToRelation' => '',
-            'belongsToRelationVars' => '',
+            'belongsToRelation' => $rel['belongsToRelation'],
+            'belongsToRelationVars' => $rel['belongsToRelationVars'],
             'belongsToManyRelationSync' => '',
             'transformer' => '',
+            'importNameSpace' => '',
         ];
     }
 
@@ -207,21 +219,35 @@ class Controller implements Crud
     {
         $retTemp = '';
         $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', []);
-        $api = $this->template == 'api' ? true : false;
         foreach ($this->only as $method) {
-            $requestFolder = !empty($this->table) ? ucfirst($this->table) : $this->modelName;
-            $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-            $fullRequestNs = $requestNs . "\\" . $requestFolder . "\\" . ucfirst($method);
-            $requestClass = class_exists($fullRequestNs) ? "\\" . $fullRequestNs : 'Request';
-
             if ($filePath = $tempMan->getFullPath("controller/" . $this->template . '/' . $method . '.txt')) {
                 $methodTemp = new TemplateManager("controller/" . $this->template . '/' . $method . ".txt", array_merge($this->globalVars(), [
-                    'requestClass' => $requestClass
+                    'requestClass' => $this->getRequestClass($method)
                 ]));
                 $retTemp .= $methodTemp->get();
             }
         }
         return $retTemp;
+    }
+
+    /**
+     * @param $method
+     * @return string
+     */
+    protected function getRequestClass($method)
+    {
+        $api = $this->template == 'api' ? true : false;
+        $requestFolder = !empty($this->table) ? ucfirst($this->table) : $this->modelName;
+        $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
+        $fullRequestNs = $requestNs . "\\" . $requestFolder . "\\" . ucfirst($method);
+
+        if ($fullRequestNs) {
+            $requestClass = ucfirst($method);
+            $this->import[] = $fullRequestNs;
+        } else {
+            $requestClass = 'Request';
+        }
+        return $requestClass;
     }
 
     /**
@@ -232,9 +258,50 @@ class Controller implements Crud
     {
         $pagePath = config("laracrud.view.page.path");
         $class = new \ReflectionClass($this->modelName);
-        $model=$class->newInstance();
+        $model = $class->newInstance();
         $this->modelNameSpace = $class->getNamespaceName();
         $this->viewPath = !empty($pagePath) ? str_replace("/", ".", $pagePath) . "." . $model->getTable() : $model->getTable();
         $this->controllerName = $class->getShortName();
+    }
+
+    /**
+     * @return array
+     */
+    public function makeRelation()
+    {
+        $retArr = [
+            'belongsToRelation' => '',
+            'belongsToRelationVars' => ''
+        ];
+        if (!empty($this->table)) {
+            $tableReader = new Table($this->table);
+            $columnClasses = $tableReader->columnClasses();
+            $rel = '';
+            $relVars = '';
+            foreach ($columnClasses as $column) {
+                if ($column->isForeign()) {
+                    $variableName = $column->foreignTable();
+                    $this->import[] = $this->modelNameSpace . '\\' . $this->getModelName($variableName);
+                    $rel .= "\t\t".'$' . strtolower($variableName) . ' = ' . $this->getModelName($variableName) . "::all(['id']);" . PHP_EOL;
+                    $relVars .= "\t\t\t".'"' . strtolower($variableName) . '" => $' . strtolower($variableName) . ',' . PHP_EOL;
+                }
+            }
+            $retArr['belongsToRelation'] = $rel;
+            $retArr['belongsToRelationVars'] = $relVars;
+        }
+        return $retArr;
+    }
+
+    /**
+     * @return string
+     */
+    protected function makeNamespaceUseString()
+    {
+        $retStr = '';
+        $ns = array_unique($this->import);
+        foreach ($ns as $namespace) {
+            $retStr .= 'use ' . $namespace . ';' . PHP_EOL;
+        }
+        return $retStr;
     }
 }

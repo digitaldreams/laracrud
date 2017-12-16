@@ -7,9 +7,9 @@
      */
     public function edit(@@requestClass@@ $request, @@modelName@@ $@@modelNameParam@@)
     {
-        @@belongsToRelation@@
+@@belongsToRelation@@
         return view('@@viewPath@@.edit', [
-                'model' => $@@modelNameParam@@,
-                @@belongsToRelationVars@@
+            'model' => $@@modelNameParam@@,
+@@belongsToRelationVars@@
             ]);
     }

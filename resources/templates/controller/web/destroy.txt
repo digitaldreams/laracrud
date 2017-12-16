@@ -4,6 +4,7 @@
      * @param  @@requestClass@@  $request
      * @param  @@modelName@@  $@@modelNameParam@@
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(@@requestClass@@ $request, @@modelName@@ $@@modelNameParam@@)
     {

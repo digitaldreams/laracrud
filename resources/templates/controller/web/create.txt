@@ -6,9 +6,9 @@
      */
     public function create(@@requestClass@@ $request)
     {
-         @@belongsToRelation@@
+@@belongsToRelation@@
         return view('@@viewPath@@.create', [
             'model' => new @@modelName@@,
-            @@belongsToRelationVars@@
+@@belongsToRelationVars@@
         ]);
     }

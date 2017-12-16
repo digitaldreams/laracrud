@@ -9,7 +9,6 @@
     {
         return view('@@viewPath@@.show', [
                 'record' =>$@@modelNameParam@@,
-                @@belongsToRelationVars@@
         ]);
 
     }
