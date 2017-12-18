@@ -2,6 +2,9 @@
 
 namespace LaraCrud\Crud;
 
+use LaraCrud\Contracts\Crud;
+use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\Helpers\TestMethod;
 
 /**
@@ -10,26 +13,33 @@ use LaraCrud\Helpers\TestMethod;
  *
  * @author Tuhin
  */
-class Test extends RouteCrud
+class Test extends RouteCrud implements Crud
 {
+    use Helper;
     protected $params = [];
 
     /**
      * @var
      */
     protected $suffix;
+
     /**
      * @var
      */
-    protected $path;
+    protected $namespace;
+
+    protected $controllerInfo;
+    protected $fileName;
 
 
     public function __construct($controller = '', $api = false)
     {
-        $this->suffix = config('laracrud.test.feature.suffix', 'Test');
-        $this->path = rtrim(base_path(config('laracrud.test.feature.path', 'tests/Feature')), "/");
-
         parent::__construct($controller, $api);
+
+        $this->suffix = config('laracrud.test.feature.suffix', 'Test');
+        $this->namespace = config('laracrud.test.feature.namespace', 'Tests\Feature');
+        $this->controllerInfo = array_shift($this->controllerMethods);
+        $this->fileName = $this->controllerInfo['shortName'] . $this->suffix;
     }
 
     /**
@@ -39,7 +49,7 @@ class Test extends RouteCrud
      */
     public function hasRoute($controller, $method)
     {
-        return (isset($this->methodNames[$controller]) && in_array($this->methodNames[$controller], $method));
+        return (isset($this->methodNames[$controller]) && in_array($method,$this->methodNames[$controller]));
     }
 
     /**
@@ -48,24 +58,36 @@ class Test extends RouteCrud
      */
     public function template()
     {
+        return (new TemplateManager('test/' . $this->template . '/template.txt', [
+            'namespace' => $this->namespace,
+            'import' => '',
+            'className' => $this->fileName,
+            'methods' => $this->getMethodTestCode()
+        ]))->get();
+
+    }
+
+    public function getMethodTestCode()
+    {
         $testCodes = '';
 
-        foreach ($this->controllerMethods as $controllerName => $ctr) {
-            $testCode = '';
-            foreach ($ctr['methods'] as $method) {
+        foreach ($this->controllerInfo['methods'] as $method) {
 
-                if ($this->hasRoute($ctr['full_name'], $method)) {
-                    $routeInfo = $this->getRouteInfo();
-                    if (!empty($routeInfo)) {
-                        $testCode .= (new TestMethod($routeInfo))->template();
-                    }
+            if ($this->hasRoute($this->controllerInfo['full_name'], $method)) {
+                $routeInfo = $this->getRouteInfo($this->controllerInfo['full_name'],$method);
+                if (!empty($routeInfo)) {
+                    $testCodes .= (new TestMethod($routeInfo, $this->api))->template();
                 }
             }
-            $testCodes[$ctr['shortName']] = $testCode;
         }
         return $testCodes;
     }
 
+    /**
+     * @param $controller
+     * @param $method
+     * @return array
+     */
     protected function getRouteInfo($controller, $method)
     {
         $action = $controller . '@' . $method;
@@ -79,11 +101,12 @@ class Test extends RouteCrud
      */
     public function save()
     {
-        $testCodes = $this->template();
-        foreach ($testCodes as $name => $testCode) {
-
-            $this->saveFile($name, $testCode);
+        $fullPath = $this->toPath($this->namespace . "\\" . $this->fileName) . ".php";
+        if (file_exists($fullPath)) {
+            throw new \Exception('TestClass already exists');
         }
+        $testClass = new \SplFileObject($fullPath, 'w+');
+        $testClass->fwrite($this->template());
     }
 
     /**
@@ -93,11 +116,7 @@ class Test extends RouteCrud
      */
     public function saveFile($fileName, $content)
     {
-        $fileName = $this->path . '/' . $fileName . $this->suffix . '.php';
-        if (file_exists($fileName)) {
-            throw new \Exception('TestClass already exists');
-        }
-        $testClass = new \SplFileObject($fileName, 'w+');
-        $testClass->fwrite($content);
+        $fileName = $this->namespace . '/' . $fileName . $this->suffix . '.php';
+
     }
 }

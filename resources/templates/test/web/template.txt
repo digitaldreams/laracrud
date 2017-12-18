@@ -1,0 +1,13 @@
+<?php
+
+namespace @@namespace@@;
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+@@import@@
+
+class @@className@@ extends TestCase
+{
+@@methods@@
+}

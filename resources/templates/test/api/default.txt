@@ -1,0 +1,10 @@
+    /**
+     * @@name@@ Method Test.
+     *
+     * @return void
+     */
+    public function test@@name@@Test()
+    {
+        $this->assertTrue(false);
+    }
+

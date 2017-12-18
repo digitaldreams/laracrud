@@ -232,9 +232,9 @@ return [
          */
         'feature' => [
             /**
-             * Where to save Test File
+             * Namespace
              */
-            'path' => 'tests/Feature',
+            'namespace' => 'Tests\Feature',
 
             /**
              * Suffix added after each test class name. For example UserController will be UserControllerTest
