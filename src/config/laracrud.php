@@ -76,6 +76,14 @@ return [
             'datetime' => 'Y-m-d H:i:s',
             'timestamp' => 'Y-m-d H:i:s'
         ],
+        /**
+         * By default we assume Table name's singular version is Model name and also assume its in Model parent namespace.
+         * But this may not be happen all the time. If you are using models that does not match table name and parent namespace
+         * please map those model here
+         */
+        'map' => [
+            //'users'=>'App\Models\AdminUser::class'
+        ]
     ],
     'view' => [
         /**
@@ -212,6 +220,27 @@ return [
          * After every transformer class name this world will be added. For example, Users will be UsersTransformer
          */
         'classSuffix' => 'Transformer'
+    ],
+
+    /**
+     * PHPUnit test. Which shifts with laravel by default
+     */
+    'test' => [
+        /**
+         * Feature tests may test a larger portion of your code, including how several objects interact
+         * with each other or even a full HTTP request to a JSON endpoint
+         */
+        'feature' => [
+            /**
+             * Where to save Test File
+             */
+            'path' => 'tests/Feature',
+
+            /**
+             * Suffix added after each test class name. For example UserController will be UserControllerTest
+             */
+            'suffix' => 'Test'
+        ],
     ],
 
     /**

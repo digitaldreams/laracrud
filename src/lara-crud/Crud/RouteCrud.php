@@ -64,9 +64,9 @@ class RouteCrud implements Crud
 
     public $errors = [];
 
-    private $api = false;
+    protected $api = false;
 
-    private $template = 'web';
+    protected $template = 'web';
 
     protected $namespace;
 
@@ -96,12 +96,14 @@ class RouteCrud implements Crud
         foreach ($routes as $route) {
             $controllerName = strstr($route->getActionName(), '@', true);
             $methodName = str_replace("@", "", strstr($route->getActionName(), '@'));
-            $this->routes[] = [
+            $this->routes[$route->getActionName()] = [
                 'name' => $route->getName(),
                 'path' => $route->uri(),
                 'controller' => $controllerName,
+                'method' => $methodName,
+                'http_verbs' => $route->methods(),
                 'action' => $route->getActionName(),
-                'method' => $methodName
+                'parameters' => $route->parameterNames()
             ];
 
             if (!empty($controllerName)) {
