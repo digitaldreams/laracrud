@@ -28,5 +28,14 @@
      "psr-4": {
             "LaraCrud\\": "src/lara-crud/"
         }
+    },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "LaraCrud\\LaraCrudServiceProvider"
+      ],
+      "aliases": {
+      }
     }
+  }
 }

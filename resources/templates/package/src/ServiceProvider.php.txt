@@ -1,0 +1,54 @@
+<?php
+
+namespace @@packageNamespace@@;
+
+/**
+ * Class ServiceProvider
+ * @package LaraCrud
+ */
+
+class ServiceProvider
+{
+
+    protected $defer = true;
+
+    /**
+     * List of command which will be registered.
+     * @var array
+     */
+    protected $commands = [];
+
+    /**
+     * Perform post-registration booting of services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+    }
+
+    /**
+     * Register bindings in the container.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->publishes([
+            __DIR__ . '/../config/package.php' => config_path('@@packageName@@.php'),
+        ],'@@packageName@@-config');
+
+        $this->publishes([
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/@@packageName@@'),
+        ],'@@packageName@@-views');
+
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', '@@packageName@@');
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/@@packageName@@.php', '@@packageName@@'
+        );
+    }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "digitaldream/@@packageName@@",
+  "type": "library",
+  "description": "Package short description",
+  "keywords": [],
+  "homepage": "https://github.com/digitaldreams/laracrud",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tuhin Bepari",
+      "email": "digitaldreams40@gmail.com",
+      "homepage": "http://www.tuhinbepari.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.9",
+    "laravel/framework": ">=5.1.1"
+  },
+  "require-dev":{
+
+  },
+  "suggest":{
+  },
+  "autoload": {
+    "psr-4": {
+      "@@packageNamespace@@\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "@@packageNamespace@@\\ServiceProvider"
+      ],
+      "aliases": {
+      }
+    }
+  }
+}

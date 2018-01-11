@@ -9,6 +9,7 @@ use LaraCrud\Console\Controller;
 use LaraCrud\Console\Migration;
 use LaraCrud\Console\Model;
 use LaraCrud\Console\Mvc;
+use LaraCrud\Console\Package;
 use LaraCrud\Console\Policy;
 use LaraCrud\Console\Request;
 use LaraCrud\Console\Route;
@@ -38,7 +39,8 @@ class LaraCrudServiceProvider extends ServiceProvider
         Mvc::class,
         Policy::class,
         Transformer::class,
-        Test::class
+        Test::class,
+        Package::class
     ];
 
     /**

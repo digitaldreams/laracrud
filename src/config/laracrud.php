@@ -242,6 +242,12 @@ return [
             'suffix' => 'Test'
         ],
     ],
+    'package' => [
+        /**
+         * Root directory of all package
+         */
+        'path' => base_path('packages')
+    ],
 
     /**
      * Path to Migration
