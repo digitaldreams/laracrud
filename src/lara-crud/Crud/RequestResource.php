@@ -48,7 +48,7 @@ class RequestResource implements Crud
             $this->methods = $only;
         }
         $ns = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $this->namespace = trim($ns, "/") . '\\' . ucfirst($table);
+        $this->namespace = $this->getFullNS(trim($ns, "/")) . '\\' . ucfirst($table);
         $this->modelName = $this->getModelName($table);
         $this->template = !empty($api) ? 'api' : 'web';
     }

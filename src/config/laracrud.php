@@ -1,10 +1,19 @@
 <?php
 return [
+    /**
+     * Root Namespace of all the Classes. For example if root namespace is App then controller nas Http|Controllers
+     * will be App\Http\Controllers
+     */
+    'rootNamespace'=>'App',
+    /**
+     *
+     */
     'model' => [
         /**
          * Default Model Namespace.
+         * So full namespace will be App\Models
          */
-        'namespace' => 'App',
+        'namespace' => 'Models',
 
         /**
          * Use Property Definer.
@@ -89,7 +98,7 @@ return [
         /**
          * Path to the main folder. Folder path are relative to base_path
          */
-        'path' => 'resources/views/',
+        'path' => resource_path('views'),
 
         /**
          * Default Layout
@@ -151,12 +160,12 @@ return [
         /**
          * Controller Parent Namespace for web
          */
-        'namespace' => 'App\Http\Controllers',
+        'namespace' => 'Http\Controllers',
 
         /**
          * Controller Parent Namespace for API
          */
-        'apiNamespace' => 'App\Http\Controllers\Api',
+        'apiNamespace' => 'Http\Controllers\Api',
 
         /**
          * After every request class name this world will be added. For example, User will be UserController
@@ -167,12 +176,12 @@ return [
         /**
          *  Request Parent Namespace for web
          */
-        'namespace' => 'App\Http\Requests',
+        'namespace' => 'Http\Requests',
 
         /**
          *  Request Parent Namespace for API
          */
-        'apiNamespace' => 'App\Http\Requests\Api',
+        'apiNamespace' => 'Http\Requests\Api',
 
         /**
          * After every request class name this world will be added. For example, Users will be UsersRequest
@@ -183,7 +192,7 @@ return [
         /**
          * Root namespace
          */
-        'namespace' => 'App\Policies',
+        'namespace' => 'Policies',
 
         /**
          * After every policy class name this world will be added. For example, User will be UserPolicy
@@ -214,7 +223,7 @@ return [
         /**
          * Root namespace
          */
-        'namespace' => 'App\Transformers',
+        'namespace' => 'Transformers',
 
         /**
          * After every transformer class name this world will be added. For example, Users will be UsersTransformer

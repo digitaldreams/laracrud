@@ -41,7 +41,7 @@ class Transformer implements Crud
     {
         $this->model = $model;
         $this->name = $name;
-        $this->namespace = config('laracrud.transformer.namespace');
+        $this->namespace = $this->getFullNS(config('laracrud.transformer.namespace'));
         $this->reflectionClass = new \ReflectionClass(get_class($model));
         $this->modelName = !empty($name) ? $name : $this->reflectionClass->getShortName() . config('laracrud.transformer.classSuffix', 'Transformer');
     }
@@ -82,12 +82,12 @@ class Transformer implements Crud
     private function makeProperties()
     {
         $retStr = '';
-        $modelName=lcfirst($this->reflectionClass->getShortName());
+        $modelName = lcfirst($this->reflectionClass->getShortName());
         $table = $this->model->getTable();
         $tableLib = new Table($table);
         $columnClasses = $tableLib->columnClasses();
         foreach ($columnClasses as $columnClass) {
-            $retStr .= '"' . $columnClass->name() . '"=>$'.$modelName.'->' . $columnClass->name() . "," . PHP_EOL;
+            $retStr .= '"' . $columnClass->name() . '"=>$' . $modelName . '->' . $columnClass->name() . "," . PHP_EOL;
         }
         return $retStr;
     }

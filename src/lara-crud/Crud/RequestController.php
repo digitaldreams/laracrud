@@ -58,7 +58,8 @@ class RequestController implements Crud
     public function __construct($table, $controller = '', $api = false)
     {
 
-        $this->controllerNs = !empty($api) ? config('laracrud.controller.apiNamespace', 'App\Http\Controllers\Api') : config('laracrud.controller.namespace', 'App\Http\Controllers');
+        $controllerNs = !empty($api) ? config('laracrud.controller.apiNamespace', 'App\Http\Controllers\Api') : config('laracrud.controller.namespace', 'App\Http\Controllers');
+        $this->controllerNs = $this->getFullNS($controllerNs);
         $this->table = $table;
         $this->template = !empty($api) ? 'api' : 'web';
         if (!empty($controller)) {
@@ -72,7 +73,7 @@ class RequestController implements Crud
 
             $this->classInspector = new ClassInspector($this->controllerName);
             $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-            $this->namespace = trim($requestNs, "/") . '\\' . ucfirst($table);
+            $this->namespace = $this->getFullNS(trim($requestNs, "/")). '\\' . ucfirst($table);
             $this->modelName = $this->getModelName($table);
         }
     }

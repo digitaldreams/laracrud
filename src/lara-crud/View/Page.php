@@ -45,10 +45,20 @@ abstract Class Page implements Crud
      */
     protected $filePath;
 
+    /**
+     * @var \Illuminate\Config\Repository|mixed
+     */
+    protected $resource_path;
+
+    /**
+     * Page constructor.
+     */
     public function __construct()
     {
         $this->version = config('laracrud.view.bootstrap');
-        $this->filePath = resource_path("views/{$this->folder}/{$this->name}" . ".blade.php");
+        $this->resource_path = config('laracrud.view.path');
+
+        $this->filePath = rtrim($this->resource_path, "/") . "/" . $this->folder . "/" . $this->name . ".blade.php";
     }
 
     /**
@@ -59,8 +69,9 @@ abstract Class Page implements Crud
         if (file_exists($this->filePath)) {
             throw  new \Exception($this->name . ' already exists');
         }
-        if (!file_exists(resource_path('views/' . $this->folder))) {
-            mkdir(resource_path('views/' . $this->folder));
+        $folder=rtrim($this->resource_path, "/") . "/" . $this->folder;
+        if (!file_exists($folder)) {
+            mkdir($folder);
         }
         $table = new \SplFileObject($this->filePath, 'w+');
         $table->fwrite($this->template());
@@ -73,8 +84,9 @@ abstract Class Page implements Crud
     {
         $pagePath = config('laracrud.view.page.path');
         if (!empty($pagePath)) {
-            if (!file_exists(resource_path('views/' . $pagePath))) {
-                mkdir(resource_path('views/' . $pagePath));
+            $folder=rtrim(config('laracrud.view.path'), "/") . "/" . $pagePath;
+            if (!file_exists($folder)) {
+                mkdir($folder);
             }
             $this->folder = trim($pagePath, "/") . "/" . $this->table->name();
         } else {

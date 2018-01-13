@@ -118,7 +118,7 @@ class Controller implements Crud
      */
     public function __construct($model, $name = '', $only = '', $api = false)
     {
-        $modelNamespace = config('laracrud.model.namespace', 'App');
+        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         $this->shortModelName = $model;
 
         if (!empty($only) && is_array($only)) {
@@ -153,7 +153,7 @@ class Controller implements Crud
         }
         $this->template = !empty($api) ? 'api' : 'web';
         $ns = !empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
-        $this->namespace = trim($ns, "/") . $this->subNameSpace;
+        $this->namespace = trim($this->getFullNS($ns), "/") . $this->subNameSpace;
         $this->parseModelName();
     }
 
@@ -239,9 +239,9 @@ class Controller implements Crud
         $api = $this->template == 'api' ? true : false;
         $requestFolder = !empty($this->table) ? ucfirst($this->table) : $this->modelName;
         $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $fullRequestNs = $requestNs . "\\" . $requestFolder . "\\" . ucfirst($method);
+        $fullRequestNs = $this->getFullNS($requestNs) . "\\" . $requestFolder . "\\" . ucfirst($method);
 
-        if ($fullRequestNs) {
+        if (class_exists($fullRequestNs)) {
             $requestClass = ucfirst($method);
             $this->import[] = $fullRequestNs;
         } else {

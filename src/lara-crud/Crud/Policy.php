@@ -77,10 +77,11 @@ class Policy implements Crud
      * @param string $controller
      * @param string $name
      * @param string $only
+     * @throws \Exception
      */
     public function __construct($model, $controller = '', $name = '', $only = '')
     {
-        $modelNamespace = config('laracrud.model.namespace', 'App');
+        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         $this->shortModelName = $model;
         $this->checkController($controller);
 
@@ -96,7 +97,7 @@ class Policy implements Crud
         $this->modelFullClass = $this->modelName = class_exists($model) ? $model : $this->modelNameSpace . '\\' . $model;
 
         $this->checkName($name);
-        $this->namespace = trim(config('laracrud.policy.namespace'), " / ") . $this->subNameSpace;
+        $this->namespace = $this->getFullNS(trim(config('laracrud.policy.namespace'), " / ")) . $this->subNameSpace;
     }
 
     /**

@@ -48,6 +48,7 @@ class Request implements Crud
     {
         $this->table = new Table($table);
         $this->namespace = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
+        $this->namespace = $this->getFullNS($this->namespace);
         $this->modelName = $this->getModelName($table);
         if (!empty($name)) {
             $this->parseName($name);
@@ -55,20 +56,6 @@ class Request implements Crud
             $this->modelName .= config('laracrud.request.classSuffix');
         }
         $this->template = !empty($api) ? 'api' : 'web';
-    }
-
-    /**
-     * Generate complete code.
-     * @return string
-     */
-    public function template()
-    {
-        $tempMan = new TemplateManager('request/'.$this->template.'/template.txt', [
-            'namespace' => $this->namespace,
-            'requestClassName' => $this->modelName,
-            'rules' => implode("\n", $this->makeRules())
-        ]);
-        return $tempMan->get();
     }
 
     /**
@@ -82,6 +69,20 @@ class Request implements Crud
         }
         $model = new \SplFileObject($filePath, 'w+');
         $model->fwrite($this->template());
+    }
+
+    /**
+     * Generate complete code.
+     * @return string
+     */
+    public function template()
+    {
+        $tempMan = new TemplateManager('request/' . $this->template . '/template.txt', [
+            'namespace' => $this->namespace,
+            'requestClassName' => $this->modelName,
+            'rules' => implode("\n", $this->makeRules())
+        ]);
+        return $tempMan->get();
     }
 
     /**

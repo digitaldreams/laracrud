@@ -4,6 +4,7 @@ namespace LaraCrud\Crud;
 
 use Illuminate\Support\Facades\Route;
 use LaraCrud\Contracts\Crud;
+use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
 /**
@@ -14,6 +15,7 @@ use LaraCrud\Helpers\TemplateManager;
  */
 class RouteCrud implements Crud
 {
+    use Helper;
     /**
      * Save all register routes name. To avoid name conficts for new routes
      * @var array
@@ -82,7 +84,7 @@ class RouteCrud implements Crud
         $this->api = $api;
         $this->template = !empty($api) ? 'api' : 'web';
         $this->namespace = $api == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
-        $this->namespace = rtrim($this->namespace, "\\") . "\\";
+        $this->namespace = rtrim($this->getFullNS($this->namespace), "\\") . "\\";
 
 
     }

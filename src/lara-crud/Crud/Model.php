@@ -47,7 +47,7 @@ class Model implements Crud
     {
         $this->table = new Table($table);
         $this->modelBuilder = $this->makeModelBuilders();
-        $this->namespace = config('laracrud.model.namespace');
+        $this->namespace = $this->getFullNS(config('laracrud.model.namespace'));
         $this->modelName = $this->getModelName($table);
         if (!empty($name)) {
             $this->parseName($name);

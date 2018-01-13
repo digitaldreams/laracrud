@@ -13,36 +13,6 @@ trait Helper
     public $errors = [];
 
     /**
-     * Convert table name to Laravel Standard Model Name
-     * For example users table become User.
-     * Plural to singular and snakeCase to camelCase
-     *
-     * @param type $name
-     * @return type
-     */
-    public function getModelName($name)
-    {
-        $name = $this->getSingular($name);
-        return ucfirst(camel_case($name));
-    }
-
-    /**
-     * Generally laravel use plural version of model name  as table name.
-     * For example products table will be Product as Model name
-     * @param string $words
-     * @return string
-     */
-    public function getSingular($words)
-    {
-        return str_singular($words);
-    }
-
-    public function toPath($namespace)
-    {
-        return lcfirst(str_replace("\\", "/", $namespace));
-    }
-
-    /**
      * If table name mistyped and then tell user that table not found and show him a list of table.
      *
      * @param type $table
@@ -83,6 +53,31 @@ trait Helper
     }
 
     /**
+     * Convert table name to Laravel Standard Model Name
+     * For example users table become User.
+     * Plural to singular and snakeCase to camelCase
+     *
+     * @param type $name
+     * @return type
+     */
+    public function getModelName($name)
+    {
+        $name = $this->getSingular($name);
+        return ucfirst(camel_case($name));
+    }
+
+    /**
+     * Generally laravel use plural version of model name  as table name.
+     * For example products table will be Product as Model name
+     * @param string $words
+     * @return string
+     */
+    public function getSingular($words)
+    {
+        return str_singular($words);
+    }
+
+    /**
      * Convert NS to path and then check if it exists if not then create it. Then return full specified path of the class.
      * @param string $extension
      * @return mixed
@@ -106,6 +101,21 @@ trait Helper
     }
 
     /**
+     * @param $namespace Full Qualified namespace e.g. App\Http\Controllers
+     * @return string will be return like app/Http/Controllers
+     */
+    protected function toPath($namespace)
+    {
+        $nsArr = explode('\\', trim($namespace, "\\"));
+        $rootNs = array_shift($nsArr);
+        $loadComposerJson = new \SplFileObject(base_path('composer.json'));
+        $composerArr = json_decode($loadComposerJson->fread($loadComposerJson->getSize()), true);
+        $psr4 = isset($composerArr['autoload']['psr-4']) ? $composerArr['autoload']['psr-4'] : [];
+        $rootPath = isset($psr4[$rootNs . "\\"]) ? $psr4[$rootNs . "\\"] : lcfirst($rootNs);
+        return trim($rootPath, "/") . "/" . implode("/", $nsArr);
+    }
+
+    /**
      * Get Controller File and Class Name
      * @param string $name Default Name. It will be used if user does not provide any name.
      * @return type
@@ -116,6 +126,20 @@ trait Helper
             return str_replace(".php", "", $this->fileName);
         }
         return $name;
+    }
+
+    /**
+     * Return Full Qualify namespace
+     * @param $namespace
+     * @return string
+     */
+    public function getFullNS($namespace)
+    {
+        $rootNs = config('laracrud.rootNamespace', 'App');
+        if (substr_compare($namespace, $rootNs, 0, strlen($rootNs)) !== 0) {
+            return trim($rootNs, "\\") ."\\". $namespace;
+        }
+        return $namespace;
     }
 
 }
