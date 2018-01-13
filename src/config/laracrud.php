@@ -6,7 +6,7 @@ return [
      */
     'rootNamespace'=>'App',
     /**
-     *
+     * Configure Model settings
      */
     'model' => [
         /**
