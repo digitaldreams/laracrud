@@ -56,6 +56,13 @@ class LaraCrudServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../resources/templates' => resource_path('views/vendor/laracrud/templates')
         ], 'laracrud-template');
+        $this->publishes([
+            __DIR__ . '/../../resources/assets' => public_path('laracrud'),
+            __DIR__ . '/../../resources/views' => public_path('views/vendor/laracrud/views')
+        ], 'laracrud-assets');
+
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'laracrud');
+
 
     }
 
