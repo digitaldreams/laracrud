@@ -87,8 +87,7 @@ class View extends Command
      * @param string $type
      * @return bool|Form|Modal|Panel|Table
      */
-    private
-    function pageMaker($page, TableReader $tableReader, $name = '', $type = '')
+    private function pageMaker($page, TableReader $tableReader, $name = '', $type = '')
     {
         switch ($page) {
             case 'form':

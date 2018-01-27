@@ -61,14 +61,13 @@ class ClassInspector
     }
 
     /**
-     * @param $controller
      * @param $method
      * @return array
      */
-    protected function prepareMethodArgs($controller, $method)
+    public function prepareMethodArgs($method)
     {
         $args = [];
-        $reflectionMethod = new \ReflectionMethod($controller, $method);
+        $reflectionMethod = new \ReflectionMethod($this->name, $method);
         foreach ($reflectionMethod->getParameters() as $param) {
             if ($param->getClass()) {
                 if (is_subclass_of($param->getClass()->name, \Illuminate\Http\Request::class) || $param->getClass()->name == \Illuminate\Http\Request::class) {
@@ -79,12 +78,12 @@ class ClassInspector
                     $args[] = new $modelClass;
                 }
             } else {
-                $optional = $param->isOptional() == TRUE ? '?' : "";
                 $args[] = '';
             }
         }
         return $args;
     }
+
     public function __get($name)
     {
         return property_exists($this, $name) ? $this->{$name} : false;
