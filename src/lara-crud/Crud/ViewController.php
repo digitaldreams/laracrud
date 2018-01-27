@@ -34,40 +34,22 @@ class ViewController extends RouteCrud
 
                 if (isset($routeInfo['http_verbs'])) {
                     if ((is_array($routeInfo['http_verbs']) && in_array('GET', $routeInfo['http_verbs']) || $routeInfo['http_verbs'] == 'GET')) {
-                        $this->getViewPath($controllerFullName, $method);
+                        try {
+                            $args = $this->prepareMethodArgs($controllerFullName, $method);
+                            $reflectionMethod = new \ReflectionMethod($controllerFullName, $method);
+                            $response = $reflectionMethod->invokeArgs(new $controllerFullName, $args);
+                            if (is_object($response) && $response instanceof \Illuminate\View\View) {
+                                print_r($response->getPath()."<br>");
+                            }
+                        } catch (\Exception $e) {
+                            echo 'Exception => ' . $e->getMessage();
+                        }
                     }
                 }
-
             }
-
         }
     }
 
-    /**
-     * @param $controller
-     * @param $method
-     * @return array
-     */
-    protected function prepareMethodArgs($controller, $method)
-    {
-        $args = [];
-        $reflectionMethod = new \ReflectionMethod($controller, $method);
-        foreach ($reflectionMethod->getParameters() as $param) {
-            if ($param->getClass()) {
-                if (is_subclass_of($param->getClass()->name, \Illuminate\Http\Request::class)) {
-                    $requestClass = $param->getClass()->name;
-                    $args[] = new $requestClass;
-                } elseif (is_subclass_of($param->getClass()->name, \Illuminate\Database\Eloquent\Model::class)) {
-                    $modelClass = $param->getClass()->name;
-                    $args[] = new $modelClass;
-                }
-            } else {
-                $optional = $param->isOptional() == TRUE ? '?' : "";
-                $args[] = '';
-            }
-        }
-        return $args;
-    }
 
     public function save()
     {

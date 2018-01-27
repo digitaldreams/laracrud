@@ -60,6 +60,31 @@ class ClassInspector
         return $retMethods;
     }
 
+    /**
+     * @param $controller
+     * @param $method
+     * @return array
+     */
+    protected function prepareMethodArgs($controller, $method)
+    {
+        $args = [];
+        $reflectionMethod = new \ReflectionMethod($controller, $method);
+        foreach ($reflectionMethod->getParameters() as $param) {
+            if ($param->getClass()) {
+                if (is_subclass_of($param->getClass()->name, \Illuminate\Http\Request::class) || $param->getClass()->name == \Illuminate\Http\Request::class) {
+                    $requestClass = $param->getClass()->name;
+                    $args[] = new $requestClass;
+                } elseif (is_subclass_of($param->getClass()->name, \Illuminate\Database\Eloquent\Model::class)) {
+                    $modelClass = $param->getClass()->name;
+                    $args[] = new $modelClass;
+                }
+            } else {
+                $optional = $param->isOptional() == TRUE ? '?' : "";
+                $args[] = '';
+            }
+        }
+        return $args;
+    }
     public function __get($name)
     {
         return property_exists($this, $name) ? $this->{$name} : false;
