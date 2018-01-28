@@ -23,7 +23,7 @@
 
 <body>
 <div id="app">
-    @include('laracrud::includes.navbar')
+    @include('laracrud.includes.navbar')
     @if(auth()->check())
         <nav aria-label="breadcrumb" role="navigation" class="container">
             <ol class="breadcrumb mb-1" style="font-size: 14px;font-weight: 400;margin: auto">
@@ -43,7 +43,7 @@
     @endif
 
     <div class="container">
-        @include('laracrud::includes.alerts')
+        @include('laracrud.includes.alerts')
         @yield('content')
     </div>
 </div>
