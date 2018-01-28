@@ -10,6 +10,7 @@ namespace LaraCrud\Crud;
 
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\ClassInspector;
+use LaraCrud\View\Blank;
 use LaraCrud\View\Create;
 use LaraCrud\View\Edit;
 use LaraCrud\View\Index;
@@ -44,6 +45,7 @@ class ViewController extends RouteCrud
     {
         parent::__construct($controller);
         $this->tableReader = $tableReader;
+        $this->getViewNames();
     }
 
     public function getViewNames()
@@ -84,9 +86,11 @@ class ViewController extends RouteCrud
         }
     }
 
+    /**
+     * @param $pathArr
+     */
     protected function makeFolder($pathArr)
     {
-
         $currentPath = '';
         $viewPath = config('laracrud.view.path');
         foreach ($pathArr as $path) {
@@ -96,24 +100,47 @@ class ViewController extends RouteCrud
                 mkdir($folder);
             }
         }
-
     }
 
-
+    /**
+     * @return mixed|void
+     */
     public function save()
     {
         foreach ($this->notFoundViews as $view) {
-            $view = trim($view, "[]");
+            try {
+                $view = trim($view, "[]");
 
-            $pathArr = explode(".", $view);
-            $viewFileName = array_pop($pathArr);
-            $this->makeFolder($pathArr);
-
-
+                $pathArr = explode(".", $view);
+                $viewFileName = array_pop($pathArr);
+                $this->makeFolder($pathArr);
+                $folder = $this->getFullPath(implode("/", $pathArr));
+                $fullFilePath = $folder . "/" . $viewFileName . ".blade.php";
+                $pageMaker = $this->pageMaker($viewFileName)->setFilePath($fullFilePath);
+                $pageMaker->save();
+            } catch (\Exception $e) {
+                $this->errors[] = $e->getMessage();
+            }
         }
     }
 
-    public function makeView($viewFileName, $type = '')
+    /**
+     * @param $view
+     * @return string
+     */
+    protected function getFullPath($view)
+    {
+        $path = str_replace(".", "/", $view);
+        $folder = rtrim(config('laracrud.view.path'), "/") . "/" . $path;
+        return $folder;
+    }
+
+    /**
+     * @param $viewFileName
+     * @param string $type
+     * @return Blank|Create|Edit|Index|Show
+     */
+    protected function pageMaker($viewFileName, $type = '')
     {
         switch ($viewFileName) {
             case 'create':
@@ -129,8 +156,10 @@ class ViewController extends RouteCrud
                 $pageMaker = new Index($this->tableReader, $viewFileName, $type);
                 break;
             default:
+                $pageMaker = new Blank($this->tableReader);
                 break;
         }
+        return $pageMaker;
     }
 
 }

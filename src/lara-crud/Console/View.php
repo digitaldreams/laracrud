@@ -5,6 +5,7 @@ namespace LaraCrud\Console;
 use DbReader\Table as TableReader;
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Model;
+use LaraCrud\Crud\ViewController;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\View\Create;
 use LaraCrud\View\Edit;
@@ -47,19 +48,8 @@ class View extends Command
             $name = $this->option('name');
             $template = $this->option('template');
             $controller = $this->option('controller');
-            if (!empty($controller)) {
-                $namespace = config('laracrud.controller.namespace');
-                $fullNs = $this->getFullNS(rtrim($namespace, "\\") . "\\" . $controller);
-                if (class_exists($controller)) {
-                    Page::$controller = $controller;
-                }
-                if (class_exists($fullNs)) {
-                    Page::$controller = $fullNs;
-                }
 
-            } else {
-                Page::$controller = false;
-            }
+            Page::$controller = $this->getControllerNs($controller);
             Page::fetchRoute();
 
             $tables = explode(",", $table);
@@ -71,6 +61,19 @@ class View extends Command
                     if (!empty($pageMaker)) {
                         $pageMaker->save();
                         $this->info($page . ' page created successfully');
+                    }
+                } elseif (!empty($controller)) {
+                    $controllerFullNs = $this->getControllerNs($controller);
+
+                    if (class_exists($controllerFullNs)) {
+                        $viewController = new ViewController($controllerFullNs, $tableReader);
+                        $viewController->save();
+
+                        if (count($viewController->errors) > 0) {
+                            $this->error(implode("\n", $viewController->errors));
+                        }else{
+                            $this->info('Controller views saved successfully');
+                        }
                     }
                 } else {
                     $indexPage = new Index($tableReader, $name, $type);
@@ -136,5 +139,23 @@ class View extends Command
                 break;
         }
         return $pageMaker;
+    }
+
+    /**
+     * @param $controller
+     * @return string
+     */
+    protected function getControllerNs($controller)
+    {
+        $namespace = config('laracrud.controller.namespace');
+        $fullNs = $this->getFullNS(rtrim($namespace, "\\") . "\\" . $controller);
+
+        if (class_exists($controller)) {
+            return $controller;
+        }
+        if (class_exists($fullNs)) {
+            return $fullNs;
+        }
+        return false;
     }
 }

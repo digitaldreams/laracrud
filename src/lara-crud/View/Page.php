@@ -125,6 +125,16 @@ abstract Class Page implements Crud
     }
 
     /**
+     * @param $filePath full path
+     * @return $this
+     */
+    public function setFilePath($filePath)
+    {
+        $this->filePath = $filePath;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getName()
