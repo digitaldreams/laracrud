@@ -1,26 +1,22 @@
 @extends('@@layout@@')
+
+@section('breadcrumb')
+<li>
+    <a href="{{route('@@indexRoute@@')}}">@@table@@</a>
+</li>
+<li>
+    Create
+</li>
+@endsection
+
 @section('content')
-    <div class="row">
-        <div class='col-md-12'>
-            <div class='panel panel-default'>
-                <div class='panel-heading'>
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <h4>
-                                Create @@table@@
-                            </h4>
-                        </div>
-                        <div class="col-sm-4 text-right">
-                            <a href="{{route('@@indexRoute@@')}}">
-                                <span class="glyphicon glyphicon-list"> @@table@@</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    @include('forms.@@partialFilename@@')
-                </div>
+<div class="row">
+    <div class='col-md-12'>
+        <div class='panel panel-default'>
+            <div class="panel-body">
+                @include('forms.@@partialFilename@@')
             </div>
         </div>
     </div>
+</div>
 @endSection

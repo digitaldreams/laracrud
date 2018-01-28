@@ -1,23 +1,27 @@
 @extends('@@layout@@')
+@section('breadcrumb')
+<li class="breadcrumb-item">
+    <a href="{{route('@@indexRoute@@')}}">@@table@@</a>
+</li>
+<li class="breadcrumb-item">
+    <a href="{{route('@@showRoute@@',$model->id)}}">{{$model->id}}</a>
+</li>
+<li class="breadcrumb-item">
+    Edit
+</li>
+@endsection
+
+@section('tools')
+<a href="{{route('@@createRoute@@')}}">
+    <span class="fa fa-plus"></span> @@table@@
+</a>
+@endsection
+
 @section('content')
 <div class="row">
     <div class='col-md-12'>
-        <div class='panel panel-default'>
-            <div class='panel-heading'>
-                <div class="row">
-                    <div class="col-sm-8">
-                        <h4>
-                            Edit {{$model->id}}
-                        </h4>
-                    </div>
-                    <div class="col-sm-4 text-right">
-                        <a href="{{route('@@createRoute@@')}}">
-                            <span class="fa fa-plus"></span> @@table@@
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="panel-body">
+        <div class='card'>
+            <div class="card-body">
                 @include('forms.@@partialFilename@@',[
                 'route'=>route('@@updateRoute@@',$model->id),
                 'method'=>'PUT'

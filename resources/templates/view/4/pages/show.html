@@ -1,20 +1,23 @@
 @extends('@@layout@@')
+@section('breadcrumb')
+<li class="breadcrumb-item">
+    <a href="{{route('@@indexRoute@@')}}">@@table@@</a>
+</li>
+<li class="breadcrumb-item">
+    {{$model->id}}
+</li>
+
+@endsection
+
+@section('tools')
+@@buttons@@
+@endsection
+
 @section('content')
-    <div class="row">
-        <div class="col-sm-8">
-            <h1>
-                {{$record->id}}
-            </h1>
-        </div>
-        <div class="col-sm-4 text-right">
-            <div class="btn-group btn-group-sm">
-                @@buttons@@
-            </div>
-        </div>
+
+<div class="row">
+    <div class="col-sm-8">
+        @include('@@folder@@.@@partialFilename@@')
     </div>
-    <div class="row">
-        <div class="col-sm-8">
-            @include('@@folder@@.@@partialFilename@@')
-        </div>
-    </div>
+</div>
 @endSection

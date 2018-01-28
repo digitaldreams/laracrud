@@ -1,19 +1,24 @@
 @extends('@@layout@@')
+
+@section('breadcrumb')
+<li>
+    @@table@@
+</li>
+@endsection
+
+@section('tools')
+<a href="{{route('@@createRoute@@')}}">
+    <span class="glyphicon glyphicon-plus"></span>
+</a>
+@endsection
+
 @section('content')
-    <div class="row">
-        <div class="col-sm-10">
-            <h4>@@table@@</h4>
-        </div>
-        <div class="col-sm-2">
-            <a href="{{route('@@createRoute@@')}}"><span class="glyphicon glyphicon-plus"></span></a>
-        </div>
+<div class="row">
+    @@indexHtml@@
+</div>
+<div class='row'>
+    <div class="col-sm-12">
+        {{{$records->render()}}}
     </div>
-    <div class="row">
-        @@indexHtml@@
-    </div>
-    <div class='row'>
-        <div class="col-sm-12">
-           {{{$records->render()}}}
-        </div>
-    </div>
+</div>
 @endSection

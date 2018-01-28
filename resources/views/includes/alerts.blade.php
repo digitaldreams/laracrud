@@ -1,15 +1,15 @@
-<?php if (!empty(session('permit_error'))): ?>
+<?php if (!empty(session('app_error'))): ?>
 <div class="alert alert-danger alert-dismissable p-2 px-4" role="alert"
-     id="app_error">{{ session('permit_error') }}
+     id="app_error">{{ session('app_error') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 <?php endif; ?>
         <!-- check for flash message -->
-@if(empty(session('permit_error')) && !empty(session('permit_message')))
+@if(empty(session('app_error')) && !empty(session('app_message')))
     <div class="alert alert-success alert-dismissable p-2 px-4" role="alert"
-         id="app_message">{{ session('permit_message') }}
+         id="app_message">{{ session('app_message') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -24,20 +24,20 @@
 </div>
 <?php endif; ?>
         <!-- check for flash warning message -->
-@if(!empty(session('permit_warning')))
+@if(!empty(session('app_warning')))
     <div class="alert alert-warning alert-dismissable p-2 px-4" role="alert" id="app_warning">
         <button type="button" class="close" data-dismiss="alert">
             <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
         </button>
-        {{ session('permit_warning') }}
+        {{ session('app_warning') }}
     </div>
     @endif<!-- check for flash info message -->
-    @if(!empty(session('permit_info')))
+    @if(!empty(session('app_info')))
         <div class="alert alert-info alert-dismissable p-2 px-4" role="alert" id="app_info">
             <button type="button" class="close" data-dismiss="alert">
                 <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
             </button>
-            {{ session('permit_info') }}
+            {{ session('app_info') }}
         </div>
     @endif
 

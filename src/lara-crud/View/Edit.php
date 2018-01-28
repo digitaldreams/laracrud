@@ -41,6 +41,7 @@ class Edit extends Page
             'table' => $this->table->name(),
             'partialFilename' => str_singular($this->table->name()),
             'createRoute' => $this->getRouteName('create', $this->table->name()),
+            'showRoute' => $this->getRouteName('show', $this->table->name()),
             'updateRoute' => $this->getRouteName('update', $this->table->name())
         ]))->get();
     }

@@ -1,29 +1,35 @@
 @extends('@@layout@@')
+
+@section('breadcrumb')
+<li>
+    <a href="{{route('@@indexRoute@@')}}">@@table@@</a>
+</li>
+<li>
+    <a href="{{route('@@showRoute@@',$model->id)}}">{{$model->id}}</a>
+</li>
+<li>
+    Edit
+</li>
+@endsection
+
+@section('tools')
+<a href="{{route('@@createRoute@@')}}">
+    <span class="glyphicon glyphicon-plus"></span>
+</a>
+@endsection
+
 @section('content')
-    <div class="row">
-        <div class='col-md-12'>
-            <div class='panel panel-default'>
-                <div class='panel-heading'>
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <h4>
-                                Edit {{$model->id}}
-                            </h4>
-                        </div>
-                        <div class="col-sm-4 text-right">
-                            <a href="{{route('@@createRoute@@')}}">
-                                <span class="glyphicon glyphicon-plus"></span> @@table@@
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    @include('forms.@@partialFilename@@',[
-                    'route'=>route('@@updateRoute@@',$model->id),
-                    'method'=>'PUT'
-                    ])
-                </div>
+<div class="row">
+    <div class='col-md-12'>
+        <div class='panel panel-default'>
+
+            <div class="panel-body">
+                @include('forms.@@partialFilename@@',[
+                'route'=>route('@@updateRoute@@',$model->id),
+                'method'=>'PUT'
+                ])
             </div>
         </div>
     </div>
+</div>
 @endSection
