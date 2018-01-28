@@ -31,7 +31,8 @@ class Create extends Page
         return (new TemplateManager("view/{$this->version}/pages/create.html", [
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
-            'partialFilename' => str_singular($this->table->name())
+            'partialFilename' => str_singular($this->table->name()),
+            'indexRoute' => $this->getRouteName('index', $this->table->name())
         ]))->get();
     }
 

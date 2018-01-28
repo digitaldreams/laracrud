@@ -1,4 +1,4 @@
-<form action="{{$route or route('@@table@@.store')}}" method="POST" @@options@@>
+<form action="{{$route or route('@@routeName@@')}}" method="POST" @@options@@>
     {{csrf_field()}}
     <input type="hidden" name="_method" value="{{$method or 'POST'}}"/>
     @@formContent@@

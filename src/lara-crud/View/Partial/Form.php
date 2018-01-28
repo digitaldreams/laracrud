@@ -1,4 +1,5 @@
 <?php
+
 namespace LaraCrud\View\Partial;
 
 use DbReader\Column;
@@ -62,7 +63,8 @@ class Form extends Page
         return (new TemplateManager("view/{$this->version}/form.html", [
             'formContent' => implode("\n", $this->make()),
             'table' => $this->table->name(),
-            'options' => $this->makeOptions()
+            'options' => $this->makeOptions(),
+            'routeName' => $this->getRouteName('store', $this->table->name())
         ]))->get();
     }
 

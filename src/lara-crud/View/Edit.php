@@ -8,6 +8,7 @@ namespace LaraCrud\View;
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Form;
+
 class Edit extends Page
 {
     /**
@@ -38,7 +39,9 @@ class Edit extends Page
         return (new TemplateManager("view/{$this->version}/pages/edit.html", [
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
-            'partialFilename' => str_singular($this->table->name())
+            'partialFilename' => str_singular($this->table->name()),
+            'createRoute' => $this->getRouteName('create', $this->table->name()),
+            'updateRoute' => $this->getRouteName('update', $this->table->name())
         ]))->get();
     }
 

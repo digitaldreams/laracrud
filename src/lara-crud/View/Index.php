@@ -37,7 +37,8 @@ class Index extends Page
             'layout' => config('laracrud.view.layout'),
             'folder' => $this->version == 3 ? 'panels' : 'cards',
             'searchBox' => '',
-            'partialFilename' => str_singular($this->table->name())
+            'partialFilename' => str_singular($this->table->name()),
+            'createRoute' => $this->getRouteName('create', $this->table->name())
         ];
         switch ($this->type) {
             case 'panel':

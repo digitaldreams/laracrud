@@ -11,7 +11,7 @@
                             </h4>
                         </div>
                         <div class="col-sm-4 text-right">
-                            <a href="{{route('@@table@@.create')}}">
+                            <a href="{{route('@@createRoute@@')}}">
                                 <span class="glyphicon glyphicon-plus"></span> @@table@@
                             </a>
                         </div>
@@ -19,7 +19,7 @@
                 </div>
                 <div class="panel-body">
                     @include('forms.@@partialFilename@@',[
-                    'route'=>route('@@table@@.update',$model->id),
+                    'route'=>route('@@updateRoute@@',$model->id),
                     'method'=>'PUT'
                     ])
                 </div>

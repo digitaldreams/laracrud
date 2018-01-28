@@ -8,6 +8,7 @@ namespace LaraCrud\View;
 use DbReader\Table;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
+use Route;
 
 abstract Class Page implements Crud
 {
@@ -51,6 +52,19 @@ abstract Class Page implements Crud
     protected $resource_path;
 
     /**
+     * Routes Map
+     *
+     * @var
+     */
+    public static $routeMap = [];
+
+    /**
+     * Current Controller Name
+     * @var string
+     */
+    public static $controller;
+
+    /**
      * Page constructor.
      */
     public function __construct()
@@ -69,7 +83,7 @@ abstract Class Page implements Crud
         if (file_exists($this->filePath)) {
             throw  new \Exception($this->name . ' already exists');
         }
-        $folder=rtrim($this->resource_path, "/") . "/" . $this->folder;
+        $folder = rtrim($this->resource_path, "/") . "/" . $this->folder;
         if (!file_exists($folder)) {
             mkdir($folder);
         }
@@ -84,7 +98,7 @@ abstract Class Page implements Crud
     {
         $pagePath = config('laracrud.view.page.path');
         if (!empty($pagePath)) {
-            $folder=rtrim(config('laracrud.view.path'), "/") . "/" . $pagePath;
+            $folder = rtrim(config('laracrud.view.path'), "/") . "/" . $pagePath;
             if (!file_exists($folder)) {
                 mkdir($folder);
             }
@@ -126,5 +140,30 @@ abstract Class Page implements Crud
         return $this->type;
     }
 
+    /**
+     * @param $method
+     * @param string $table
+     * @return mixed|string
+     */
+    public static function getRouteName($method, $table = '')
+    {
+        $action = static::$controller . "@" . $method;
+        if (isset(static::$routeMap[$action])) {
+            return static::$routeMap[$action];
+        }
+        return $table . "." . $method;
 
+    }
+
+    /**
+     * @return array
+     */
+    public static function fetchRoute()
+    {
+        $routes = Route::getRoutes();
+        foreach ($routes as $route) {
+            static::$routeMap[$route->getActionName()] = $route->getName();
+        }
+        return static::$routeMap;
+    }
 }

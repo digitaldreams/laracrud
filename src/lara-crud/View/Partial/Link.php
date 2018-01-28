@@ -8,6 +8,7 @@ namespace LaraCrud\View\Partial;
 
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
+use LaraCrud\View\Page;
 
 class Link
 {
@@ -25,7 +26,10 @@ class Link
     public function create()
     {
         $version = config('laracrud.view.bootstrap');
-        $temMan = new TemplateManager("view/$version/link/create.html", ['table' => $this->table]);
+        $temMan = new TemplateManager("view/$version/link/create.html", [
+            'table' => $this->table,
+            'createRoute' => Page::getRouteName('create', $this->table)
+        ]);
         return $temMan->get();
     }
 
@@ -36,7 +40,10 @@ class Link
     public function edit()
     {
         $version = config('laracrud.view.bootstrap');
-        $temMan = new TemplateManager("view/$version/link/edit.html", ['table' => $this->table]);
+        $temMan = new TemplateManager("view/$version/link/edit.html", [
+            'table' => $this->table,
+            'editRoute' => Page::getRouteName('edit', $this->table)
+        ]);
         return $temMan->get();
     }
 
@@ -71,7 +78,10 @@ class Link
     public function show()
     {
         $version = config('laracrud.view.bootstrap');
-        $temMan = new TemplateManager("view/$version/link/show.html", ['table' => $this->table]);
+        $temMan = new TemplateManager("view/$version/link/show.html", [
+            'table' => $this->table,
+            'showRoute' => Page::getRouteName('show', $this->table)
+        ]);
         return $temMan->get();
     }
 
@@ -82,7 +92,9 @@ class Link
     public function destroy()
     {
         $version = config('laracrud.view.bootstrap');
-        $temMan = new TemplateManager("view/$version/link/destroy.html");
+        $temMan = new TemplateManager("view/$version/link/destroy.html", [
+            'destroyRoute' => Page::getRouteName('destroy', $this->table)
+        ]);
         return $temMan->get();
     }
 }

@@ -5,9 +5,11 @@ namespace LaraCrud\Console;
 use DbReader\Table as TableReader;
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Model;
+use LaraCrud\Helpers\Helper;
 use LaraCrud\View\Create;
 use LaraCrud\View\Edit;
 use LaraCrud\View\Index;
+use LaraCrud\View\Page;
 use LaraCrud\View\Partial\Form;
 use LaraCrud\View\Partial\Modal;
 use LaraCrud\View\Partial\Panel;
@@ -16,12 +18,13 @@ use LaraCrud\View\Show;
 
 class View extends Command
 {
+    use Helper;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'laracrud:view {table} {page?} {--type=} {--name=} {--template=}';
+    protected $signature = 'laracrud:view {table} {--page=} {--type=} {--name=} {--template=} {--controller=}';
 
     /**
      * The console command description.
@@ -39,11 +42,25 @@ class View extends Command
     {
         try {
             $table = $this->argument('table');
-            $page = $this->argument('page');
+            $page = $this->option('page');
             $type = $this->option('type');
             $name = $this->option('name');
             $template = $this->option('template');
+            $controller = $this->option('controller');
+            if (!empty($controller)) {
+                $namespace = config('laracrud.controller.namespace');
+                $fullNs = $this->getFullNS(rtrim($namespace, "\\") . "\\" . $controller);
+                if (class_exists($controller)) {
+                    Page::$controller = $controller;
+                }
+                if (class_exists($fullNs)) {
+                    Page::$controller = $fullNs;
+                }
 
+            } else {
+                Page::$controller = false;
+            }
+            Page::fetchRoute();
 
             $tables = explode(",", $table);
             foreach ($tables as $tb) {
