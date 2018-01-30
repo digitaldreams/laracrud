@@ -79,9 +79,11 @@ class RouteCrud implements Crud
         } else {
             $this->controllers = $controller;
         }
+        $this->api = $api;
+
         $this->getRoute();
         $this->fetchControllerMethods();
-        $this->api = $api;
+
         $this->template = !empty($api) ? 'api' : 'web';
         $this->namespace = $api == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
         $this->namespace = rtrim($this->getFullNS($this->namespace), "\\") . "\\";
@@ -89,12 +91,24 @@ class RouteCrud implements Crud
 
     }
 
+
     /**
      * This will get all defined routes.
      */
     public function getRoute()
     {
-        $routes = Route::getRoutes();
+        if ($this->api) {
+            $routes = [];
+            $routeCollection = \Dingo\Api\Facade\Route::getRoutes();
+            foreach ($routeCollection as $rts) {
+                foreach ($rts as $route) {
+                    $routes[] = $route;
+                }
+            }
+        } else {
+            $routes = Route::getRoutes();
+        }
+
         foreach ($routes as $route) {
             $controllerName = strstr($route->getActionName(), '@', true);
             $methodName = str_replace("@", "", strstr($route->getActionName(), '@'));
