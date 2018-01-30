@@ -5,10 +5,9 @@
      *
      * @Versions({"v1"})
      *
-     * @Request("{"key:"value"}", contentType="application/x-www-form-urlencoded")
+     * @Request({"key":"value"})
      *
-     * @Response(200, body={
-     })
+     * @Response(200, body={})
      * @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
      */
     public function update(@@requestClass@@ $request, $@@modelNameParam@@)

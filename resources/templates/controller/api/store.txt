@@ -6,7 +6,7 @@
      *
      * @Versions({"v1"})
      *
-     * @Request("{"key":"value"}", contentType="application/x-www-form-urlencoded")
+     * @Request({"key":"value"})
      *
      * @Response(200, body={})
      */
