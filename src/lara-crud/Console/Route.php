@@ -4,9 +4,11 @@ namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\RouteCrud;
+use LaraCrud\Helpers\Helper;
 
 class Route extends Command
 {
+    use Helper;
     /**
      * The name and signature of the console command.
      *
@@ -43,9 +45,10 @@ class Route extends Command
             $controller = $this->argument('controller');
             $api = $this->option('api');
             $namespace = $api == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
+            $namespace = $this->getFullNS($namespace);
 
             if ($controller == 'all') {
-                $path = str_replace("App/", "app/", str_replace("\\", "/", $namespace));
+                $path = $this->toPath($namespace);
                 $dirIt = new \RecursiveDirectoryIterator(base_path($path));
                 $rit = new \RecursiveIteratorIterator($dirIt);
 

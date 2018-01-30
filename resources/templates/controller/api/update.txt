@@ -9,10 +9,11 @@
      *
      * @Response(200, body={
      })
-     * @Response(404, body={"message": "No query results for model [App\\@@modelName@@]."})
+     * @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
      */
-    public function update(@@requestClass@@ $request,@@modelName@@ $@@modelNameParam@@)
+    public function update(@@requestClass@@ $request, $@@modelNameParam@@)
     {
+        $@@modelNameParam@@ = @@modelName@@::findOrFail($@@modelNameParam@@);
         $@@modelNameParam@@->fill($request->all());
 
         if ($@@modelNameParam@@->save()) {

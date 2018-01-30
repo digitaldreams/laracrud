@@ -9,10 +9,12 @@
        "status": 200,
        "message": "@@modelName@@ successfully deleted"
     })
-     * @Response(404, body={"message": "No query results for model [App\\@@modelName@@]."})
+     * @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
      */
-    public function destroy(@@requestClass@@ $request, @@modelName@@ $@@modelNameParam@@)
+    public function destroy(@@requestClass@@ $request, $@@modelNameParam@@)
     {
+        $@@modelNameParam@@ = @@modelName@@::findOrFail($@@modelNameParam@@);
+
         if ($@@modelNameParam@@->delete()) {
             return $this->response->array(['status' => 200, 'message' => '@@modelName@@ successfully deleted']);
         } else {

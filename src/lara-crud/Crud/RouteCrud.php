@@ -254,7 +254,11 @@ class RouteCrud implements Crud
     public function template()
     {
         $retRoutes = '';
-        $resourceMethods = ['index', 'create', 'edit', 'show', 'store', 'update', 'destroy'];
+        $resourceMethods = ['index', 'show', 'store', 'update', 'destroy'];
+
+        if (empty($this->api)) {
+            $resourceMethods = array_merge($resourceMethods, ['create', 'edit']);
+        }
 
         foreach ($this->controllerMethods as $controllerName => $ctr) {
             $controllerRoutes = '';

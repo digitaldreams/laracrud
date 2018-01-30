@@ -104,7 +104,7 @@ trait Helper
      * @param $namespace Full Qualified namespace e.g. App\Http\Controllers
      * @return string will be return like app/Http/Controllers
      */
-    protected function toPath($namespace)
+    public function toPath($namespace)
     {
         $nsArr = explode('\\', trim($namespace, "\\"));
         $rootNs = array_shift($nsArr);
@@ -112,7 +112,7 @@ trait Helper
         $composerArr = json_decode($loadComposerJson->fread($loadComposerJson->getSize()), true);
         $psr4 = isset($composerArr['autoload']['psr-4']) ? $composerArr['autoload']['psr-4'] : [];
         $rootPath = isset($psr4[$rootNs . "\\"]) ? $psr4[$rootNs . "\\"] : lcfirst($rootNs);
-        return trim($rootPath, "/") . "/" . implode("/", $nsArr);
+        return rtrim($rootPath, "/") . "/" . implode("/", $nsArr);
     }
 
     /**
