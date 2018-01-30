@@ -1,4 +1,5 @@
 <?php
+
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
@@ -28,7 +29,7 @@ class Policy extends Command
     {
         try {
             $model = $this->argument('model');
-            $controller = $this->option('controller');
+            $controller = str_replace("/", "\\", $this->option('controller'));
             $name = $this->option('name');
 
             $policyCrud = new \LaraCrud\Crud\Policy($model, $controller, $name);

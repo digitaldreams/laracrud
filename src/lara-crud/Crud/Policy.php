@@ -168,7 +168,7 @@ class Policy implements Crud
     private function checkController($controller)
     {
         if (!empty($controller)) {
-            $this->controllerName = class_exists($controller) ? $controller : config('laracrud.controller.namespace') . "\\" . $controller;
+            $this->controllerName = class_exists($controller) ? $controller : $this->getFullNS(config('laracrud.controller.namespace') . "\\" . $controller);
             if (!class_exists($this->controllerName)) {
                 throw new \Exception($controller . " does not exists");
             }
