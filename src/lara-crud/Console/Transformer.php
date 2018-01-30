@@ -10,10 +10,12 @@ namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Transformer as TransformerCrud;
+use LaraCrud\Helpers\Helper;
 
 
 class Transformer extends Command
 {
+    use Helper;
     /**
      * The name and signature of the console command.
      *
@@ -38,11 +40,11 @@ class Transformer extends Command
         try {
             $model = $this->argument('model');
             $name = $this->argument('name');
-
             if (class_exists($model)) {
                 $modelObj = new $model;
             } else {
-                $model = config('laracrud.model.namespace') . '\\' . $model;
+                $namespace = $this->getFullNS(config('laracrud.model.namespace'));
+                $model = $namespace . '\\' . $model;
                 if (!class_exists($model)) {
                     $this->warn($model . ' class does not exists');
                 }

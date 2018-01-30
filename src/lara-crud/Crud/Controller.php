@@ -30,6 +30,11 @@ class Controller implements Crud
     protected $modelName;
 
     /**
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $model;
+
+    /**
      * View Path of the Controller.
      * This will be lower case of model name.
      * @var type
@@ -108,12 +113,15 @@ class Controller implements Crud
      */
     protected $only = ['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'];
 
+    protected $transformerName;
+
     /**
      * ControllerCrud constructor.
      * @param $model
      * @param string $name
      * @param array|string $only
      * @param bool $api
+     * @throws \Exception
      * @internal param array $except
      */
     public function __construct($model, $name = '', $only = '', $api = false)
@@ -134,7 +142,7 @@ class Controller implements Crud
         $this->modelName = $this->modelNameSpace . '\\' . $model;
 
         if (class_exists($this->modelName)) {
-            $model = new $this->modelName;
+            $this->model = $model = new $this->modelName;
             $this->table = $model->getTable();
         }
 
@@ -155,6 +163,10 @@ class Controller implements Crud
         $ns = !empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
         $this->namespace = trim($this->getFullNS($ns), "/") . $this->subNameSpace;
         $this->parseModelName();
+
+        if (!empty($api)) {
+            $this->transformerName = $this->getTransformerClass();
+        }
     }
 
     /**
@@ -190,7 +202,7 @@ class Controller implements Crud
             'belongsToRelation' => $rel['belongsToRelation'],
             'belongsToRelationVars' => $rel['belongsToRelationVars'],
             'belongsToManyRelationSync' => '',
-            'transformer' => '',
+            'transformer' => $this->transformerName,
             'importNameSpace' => '',
         ];
     }
@@ -251,6 +263,26 @@ class Controller implements Crud
     }
 
     /**
+     * Get Transformer Class
+     */
+    protected function getTransformerClass()
+    {
+        $transformerNs = $this->getFullNS(config('laracrud.transformer.namespace', 'Transformers'));
+        $suffiex = config('laracrud.transformer.classSuffix', 'Transformer');
+        $transformerName = $this->shortModelName . $suffiex;
+        $fullTransformerNs =  $transformerNs . '\\' . $transformerName;
+        $this->import[] = $fullTransformerNs;
+
+        if (class_exists($fullTransformerNs)) {
+            return $transformerName;
+        } else if (is_object($this->model)) {
+            $transformerCrud = new Transformer($this->model);
+            $transformerCrud->save();
+        }
+        return $transformerName;
+    }
+
+    /**
      * Analyze Model and get extract information from there
      * Like Get folder Name of the view, Controller Short Name etc
      */
@@ -282,8 +314,8 @@ class Controller implements Crud
                 if ($column->isForeign()) {
                     $variableName = $column->foreignTable();
                     $this->import[] = $this->modelNameSpace . '\\' . $this->getModelName($variableName);
-                    $rel .= "\t\t".'$' . strtolower($variableName) . ' = ' . $this->getModelName($variableName) . "::all(['id']);" . PHP_EOL;
-                    $relVars .= "\t\t\t".'"' . strtolower($variableName) . '" => $' . strtolower($variableName) . ',' . PHP_EOL;
+                    $rel .= "\t\t" . '$' . strtolower($variableName) . ' = ' . $this->getModelName($variableName) . "::all(['id']);" . PHP_EOL;
+                    $relVars .= "\t\t\t" . '"' . strtolower($variableName) . '" => $' . strtolower($variableName) . ',' . PHP_EOL;
                 }
             }
             $retArr['belongsToRelation'] = $rel;
@@ -304,4 +336,6 @@ class Controller implements Crud
         }
         return $retStr;
     }
+
+
 }

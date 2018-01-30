@@ -87,7 +87,7 @@ class Transformer implements Crud
         $tableLib = new Table($table);
         $columnClasses = $tableLib->columnClasses();
         foreach ($columnClasses as $columnClass) {
-            $retStr .= '"' . $columnClass->name() . '"=>$' . $modelName . '->' . $columnClass->name() . "," . PHP_EOL;
+            $retStr .= "\t\t\t".'"' . $columnClass->name() . '" => $' . $modelName . '->' . $columnClass->name() . "," . PHP_EOL;
         }
         return $retStr;
     }

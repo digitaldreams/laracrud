@@ -19,16 +19,12 @@ class @@className@@ extends TransformerAbstract
     /**
      * @var array
      */
-    protected $availableIncludes = [
-        @@availableInclude@@
-    ];
+    protected $availableIncludes = [@@availableInclude@@];
 
      /**
       * @var array
       */
-    protected $defaultIncludes = [
-        @@defaultInclude@@
-    ];
+    protected $defaultIncludes = [@@defaultInclude@@];
 
 
     public function transform(@@model@@ $@@modelParam@@)
