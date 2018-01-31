@@ -20,7 +20,7 @@ class Mvc extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:mvc {table}';
+    protected $signature = 'laracrud:mvc {table} {--api}';
 
     /**
      * The console command description.
@@ -48,37 +48,62 @@ class Mvc extends Command
     {
         try {
             $table = $this->argument('table');
+            $api = $this->option('api');
+
             Request::checkMissingTable($table);
             $tableReader = new TableReader($table);
-            $requestCrud = new RequestResource($table);
-            $requestCrud->save();
-            $this->info('Request classes created successfully');
 
-            $modelCrud = new Model($table);
-            $modelCrud->save();
-            $this->info('Model class created successfully');
+            try {
+                $requestCrud = new RequestResource($table, false, $api);
+                $requestCrud->save();
+                $this->info('Request classes created successfully');
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+            }
 
-            $controllerCrud = new Controller($modelCrud->modelName());
-            $controllerCrud->save();
-            $this->info('Controller class created successfully');
+            try {
+                $modelCrud = new Model($table);
+                $modelCrud->save();
+                $this->info('Model class created successfully');
+
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+            }
+
+            try {
+                $controllerCrud = new Controller($modelCrud->modelName(), false, false, $api);
+                $controllerCrud->save();
+                $this->info('Controller class created successfully');
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+            }
+
+
+            if ($api) {
+                return;
+            }
 
             $this->warn('Creating views files');
+            try {
+                $indexPage = new Index($tableReader);
+                $indexPage->save();
+                $this->info('Index page created successfully');
 
-            $indexPage = new Index($tableReader);
-            $indexPage->save();
-            $this->info('Index page created successfully');
+                $showPage = new Show($tableReader);
+                $showPage->save();
+                $this->info('Show page created successfully');
 
-            $showPage = new Show($tableReader);
-            $showPage->save();
-            $this->info('Show page created successfully');
+                $createPage = new Create($tableReader);
+                $createPage->save();
+                $this->info('Create page created successfully');
 
-            $createPage = new Create($tableReader);
-            $createPage->save();
-            $this->info('Create page created successfully');
+                $edit = new Edit($tableReader);
+                $edit->save();
+                $this->info('Edit page created successfully');
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+            }
 
-            $edit = new Edit($tableReader);
-            $edit->save();
-            $this->info('Edit page created successfully');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
