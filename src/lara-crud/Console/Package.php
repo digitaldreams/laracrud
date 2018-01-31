@@ -9,7 +9,7 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
-use LaraCrud\Crud\Controller as ControllerCrud;
+use LaraCrud\Crud\Package as PackageCrud;
 
 
 class Package extends Command
@@ -19,7 +19,7 @@ class Package extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:package {name} {--only=}";
+    protected $signature = "laracrud:package {name}";
 
     /**
      * The console command description.
@@ -37,8 +37,9 @@ class Package extends Command
     {
         try {
             $name = $this->argument('name');
-            $only = $this->option('only');
-            $onlyArr = !empty($only) ? explode(",", $only) : '';
+            $package = new PackageCrud($name);
+            $package->save();
+
             $this->info('Package successfully created');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
