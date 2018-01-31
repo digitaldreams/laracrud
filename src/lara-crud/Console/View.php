@@ -25,7 +25,7 @@ class View extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:view {table} {--page=} {--type=} {--name=} {--template=} {--controller=}';
+    protected $signature = 'laracrud:view {table} {--page=} {--type=} {--name=} {--controller=}';
 
     /**
      * The console command description.
@@ -46,7 +46,6 @@ class View extends Command
             $page = $this->option('page');
             $type = $this->option('type');
             $name = $this->option('name');
-            $template = $this->option('template');
             $controller = $this->option('controller');
 
             Page::$controller = $this->getControllerNs($controller);

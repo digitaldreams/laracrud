@@ -6,17 +6,16 @@ By using this tools you can generate Models which have necessary methods and pro
 ### Installation ###
 ```javascript
   "require": { 
-     "digitaldream/laracrud": "2.*"
+     "digitaldream/laracrud": "3.*"
 }
 ```
 
-Version 2.x is for laravel 5.1, 5.2, 5.3 & 5.4
 
-This version are ready to use in Laravel 5.3 & 5.4. If you use 5.2 or 5.1 please have a look to config/laracrud.php and adjust folder path.
+This version are ready to use in Laravel 5.3 and above. If you are using 5.2  please have a look to config/laracrud.php and adjust folder path.
 
 ## Setting
 
-01. Add this line to config/app.php providers array
+01. Add this line to config/app.php providers array . Not needed if you are using laravel 5.5 or greater
 ```php
     LaraCrud\LaraCrudServiceProvider::class
 ``` 
@@ -30,15 +29,18 @@ This version are ready to use in Laravel 5.3 & 5.4. If you use 5.2 or 5.1 please
 Then you can see new commands by running 'php artisan'
 
 *	laracrud:model {tableName} {name?} {--on=} {--off=} (create model based on table)
-*	laracrud:request {tableName} {name?} {--resource=} {--controller=} (create Request Class based on table)
-*	laracrud:Controller {Model} {name?} (Create Controller Class based on Model)
-*	laracrud:mvc {table} (run above commands into one place)
-*	laracrud:route {controller} (create routes based on controller method)
-*	laracrud:view {table} {page(index|create|edit|show|form|table|panel|modal)} 
-{--type=}{--name=
+*	laracrud:request {tableName} {name?} {--resource=} {--controller=} {--api} (create Request Class/es based on table)
+*	laracrud:Controller {Model} {name?} {--only=} {--api} (Create Controller Class based on Model)
+*	laracrud:mvc {table} {--api} (run above commands into one place)
+*	laracrud:route {controller} {--api} (create routes based on controller method)
+*	laracrud:view {table} {--page=(index|create|edit|show|form|table|panel|modal)} {--type=} {--name=} {--controller=}
 *	laracrud:migration {table} (Create a migration file based on Table structure. Its opposite of normal migration file creation in Laravel)}
-* laracrud:policy {model} {--controller=}
+*   laracrud:policy {model} {--controller=} {--name=}
+*   laracrud:package {--name=}
+*   laracrud:transformer {model} {name?} (Create a dingo api transformer for a model)
+*   laracrud:test {controller} {--api} (Create test methods for each of the method of a controller)
 
+**N.B: --api option will generate api resource. Like Controller, Request, Route, Test. Dingo API compatible code will be generated**
 
 
 ### How to Use
@@ -72,26 +74,15 @@ Also If you like to create multiple request for your resourceful controller then
 ```php
 php artisan laracrud:request users –-resource=index,show,create,update,destroy
 ```
+
 It will create a folder users on app/Http/Requests folder and create these request classes. 
 Sometimes you may like to create individual request class for each of your controller method then. 
 ```php
 php artisan laracrud:request users –-controller=UserController
+php artisan laracrud:request users --controller=UserController --api //this will generated Request for API usages
+
 ```
 It will read your controller and create request classes for your Public method 
-
-
-## Create View 
-
-A typical form represent a database table. 
-E.g. for a Registration form it has all the input field which is necessary for users table. Most of the time we use 
-Bootstrap to generate a form . It has error field highlighting if validation fails. Also display value. This all can be done by
-```php  
- php artisan laracrud:view users form
- php artisan laracrud:view users index //There are three type of layout for index page panel,table and tabpan
- php artisan laracrud:view users details
- ```
-
-This will create a complete users crud view. 
 
 ## Create Controller
 ```php 
@@ -105,6 +96,22 @@ This will create a complete users crud view.
 This will create a controller which have create, edit, save and delete method with codes .
 It also handle your relation syncronization
 
+
+## Create View 
+
+A typical form represent a database table. 
+E.g. for a Registration form it has all the input field which is necessary for users table. Most of the time we use 
+Bootstrap to generate a form . It has error field highlighting if validation fails. Also display value. This all can be done by
+```php  
+ php artisan laracrud:view users --page=form
+ php artisan laracrud:view users --page=index --type=panel //There are three type of layout for index page panel,table and tabpan
+ php artisan laracrud:view users --controller=UserController // Create all the views which is not created yet for this controller
+ 
+ ```
+
+This will create a complete users crud view. 
+
+
 ## Create Route
 
 Routes are the most vital part of a laravel application.
@@ -112,6 +119,7 @@ WE create routes by its public methods and parameter.
 Lets do this work to rotue command.
 ```php 
     php artisan laracrud:route UserController
+    php artisan laracrud:route UserController --api // generate api routes for this conroller
 ```
 If you have some routes already redine for <controllerName> then do not worry.
 It will create routes for which does not define yet. 
@@ -120,21 +128,6 @@ Please use forward slash(/) for sub namespace. For example,
  php artisan laracrud:route Auth/AuthController
 ```
 
-## Create everything at once
-
-If we need all of the command to then just to
-```php 
-    php artisan laracrud:mvc users
-```
-It will create Model, Request, Controller, View.
-Then you just need to run route command to create routes.
-
-## Migration
-
-Somethings we may need to create a migration file from a table. Then this command will be useful.
-```php 
-php artisan laracrud:migration users
-```
 ## Policy
 Laravel have default policy generator. It works like same with one extra feature that is create policy method based on controller public methods. 
 ```php
@@ -143,6 +136,50 @@ php artisan laracrud:policy User
 php artisan laracrud:policy User --controller=UserController
 // create method based on Controller public methods
 ```
+
+##Package
+Packages gives us opportunity to create/use components into our existing application. That make our code reusable. 
+Laravel package has similar structure as a Laravel application has.
+```php
+php artisan laracrud:package Hello
+```
+This will create a folder same structure as a Laravel application has into your /packages folder
+
+To use this package you need to change the rootNamespace from config/laracrud to your Package rootNamespace. Then everything will be store into package folder.
+
+## Test
+We need to test our routes endpoints. To create test class based on a controller do the following
+```php
+php artisan laracrud:test UserController
+// or to make api test just pass --api like below
+php artisan laracrud:test UserController --api
+```
+
+## Transformer
+Transformer are a vital part of Dingo API. To expose a model to api endpoint Transformer play media between api and model.
+
+```php
+php artisan laracrud:transformer User
+```
+
+## Create everything at once
+
+If we need all of the command to then just to
+```php 
+    php artisan laracrud:mvc users
+    php artisan laracrud:mvc users --api // create all the API related resources
+```
+
+
+## Migration
+
+Somethings we may need to create a migration file from a table. Then this command will be useful.
+```php 
+php artisan laracrud:migration users
+```
+
+It will create Model, Request, Controller, View.
+Then you just need to run route command to create routes.
 
 Watch tutorial :
 https://www.youtube.com/watch?v=N03bsypA-oc
