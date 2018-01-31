@@ -172,7 +172,7 @@ class Model
     public function casts()
     {
         if (isset($this->converTypes[$this->column->type()])) {
-            $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->converTypes[$this->column->type()] . "',";
+            $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->converTypes[$this->column->type()] . "'";
         }
         return $this->casts;
     }
