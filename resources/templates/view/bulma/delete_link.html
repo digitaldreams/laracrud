@@ -1,0 +1,7 @@
+<form action="{{route('@@table@@.destroy',$record->id)}}" method="POST">
+    {{ method_field('DELETE') }}
+    {{ csrf_field() }}
+    <button class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete this record')">
+        <span class="fa fa-remove"></span>
+    </button>
+</form>

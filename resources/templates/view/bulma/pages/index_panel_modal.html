@@ -1,0 +1,27 @@
+@extends('@@layout@@')
+
+@section('breadcrumb')
+<li class="is-active">
+    @@table@@
+</li>
+@endsection
+
+@section('tools')
+<a class="navbar-item" href="{{route('@@createRoute@@')}}">
+    <span class="fa fa-plus"></span> @@table@@
+</a>
+@endsection
+
+@section('content')
+
+<div class="columns">
+    @@indexHtml@@
+</div>
+<div class='columns'>
+    <div class="column">
+        {{{$records->render()}}}
+    </div>
+</div>
+@include('@@folderName@@/partial/modal_form')
+
+@endSection

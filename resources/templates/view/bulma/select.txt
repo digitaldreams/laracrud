@@ -1,0 +1,10 @@
+<div class="field">
+ <label for="@@name@@">@@label@@</label>
+  <div class="control">
+    <div class="select @@hasErrorClass@@">
+     <select class="form-control" name="@@name@@" id="@@name@@" >
+        @@options@@
+     </select>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,5 @@
+        @if(isset($@@modelVar@@))
+            @foreach ($@@modelVar@@ as $data)
+                <option value="{{$data->id}}">{{$data->id}}</option>
+            @endforeach
+        @endif

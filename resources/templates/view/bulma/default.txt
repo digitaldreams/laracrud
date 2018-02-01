@@ -1,0 +1,13 @@
+<div class="field is-horizontal">
+    <div class="field-label is-normal">
+        <label for="@@name@@" class="label">@@label@@</label>
+    </div>
+    <div class="field-body">
+        <div class="field">
+            <p class="control">
+                <input type="@@type@@" class="input @@hasErrorClass@@" name="@@name@@" id="@@name@@" value="@@columnValue@@" placeholder="" @@properties@@>
+            </p>
+        </div>
+        @@showErrorText@@
+        </div>
+</div>

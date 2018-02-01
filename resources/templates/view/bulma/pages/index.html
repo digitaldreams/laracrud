@@ -1,0 +1,19 @@
+@extends('@@layout@@')
+@section('breadcrumb')
+<li>
+    <a href="" class="is-active">
+        @@table@@
+    </a>
+</li>
+@endsection
+
+@section('tools')
+<a href="{{route('@@createRoute@@')}}">
+    <span class="fa fa-plus"></span> @@table@@
+</a>
+@endsection
+
+@section('content')
+@include('tables.@@partialFilename@@')
+{!! $records->render() !!}
+@endSection

@@ -1,0 +1,47 @@
+@extends('@@layout@@')
+
+@section('breadcrumb')
+<li class="is-active">
+    @@table@@
+</li>
+@endsection
+
+@section('tools')
+<div class="btn-group">
+    <a href="#" href="#"
+       data-toggle="modal"
+       data-target="#@@table@@Modal" class="btn btn-sm btn-default"
+    ><span class="fa fa-plus"></span>
+        Add @@table@@
+    </a>
+</div>
+@endsection
+
+@section('content')
+<section class="content">
+    <div class="card bg-primary filterable">
+
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    @@tableHeader@@
+                </tr>
+                </thead>
+                <tbody>
+                @@tableBody@@
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="">
+                        {{{$records->render()}}}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</section>
+
+@include('@@folderName@@/partial/modal_form')
+@endSection

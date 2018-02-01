@@ -1,0 +1,23 @@
+@extends('@@layout@@')
+@section('breadcrumb')
+<li class="">
+    <a href="{{route('@@indexRoute@@')}}">@@table@@</a>
+</li>
+<li class="is-active">
+    {{$model->id}}
+</li>
+
+@endsection
+
+@section('tools')
+@@buttons@@
+@endsection
+
+@section('content')
+
+<div class="columns">
+    <div class="column">
+        @include('@@folder@@.@@partialFilename@@')
+    </div>
+</div>
+@endSection

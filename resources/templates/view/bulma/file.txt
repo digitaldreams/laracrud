@@ -1,0 +1,16 @@
+<div class="file">
+  <label class="file-label">
+    <input  type="file" name="resume">
+            <input type="file" class="file-input @@hasErrorClass@@"" name="@@name@@" id="@@name@@"  placeholder="">
+
+    <span class="file-cta">
+      <span class="file-icon">
+        <i class="fas fa-upload"></i>
+      </span>
+      <span class="file-label">
+        Choose a file…
+      </span>
+    </span>
+  </label>
+    @@showErrorText@@
+</div>

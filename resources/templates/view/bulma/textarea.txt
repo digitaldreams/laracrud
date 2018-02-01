@@ -1,0 +1,7 @@
+<div class="field">
+    <label for="@@name@@">@@label@@</label>
+     <div class="control">
+        <textarea id="@@name@@" name="@@name@@" class="textarea @@hasErrorClass@@" rows="3">@@columnValue@@</textarea>
+    </div>
+    @@showErrorText@@
+</div> 

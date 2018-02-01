@@ -1,0 +1,8 @@
+    <div class="control @@hasErrorClass@@">
+        <label  class="radio>
+            <input type="radio" name="@@name@@" id="@@name@@">
+             @@label@@
+        </label>
+        @@showErrorText@@
+    </div>
+

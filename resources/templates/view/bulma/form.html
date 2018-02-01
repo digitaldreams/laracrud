@@ -1,0 +1,10 @@
+<form action="{{$route or route('@@routeName@@')}}" method="POST" @@options@@ >
+    {{csrf_field()}}
+    <input type="hidden" name="_method" value="{{$method or 'POST'}}"/>
+    @@formContent@@
+
+    <div class="form-group text-right ">
+        <input type="reset" class="button is-light" value="Clear"/>
+        <input type="submit" class="button is-primary" value="Save"/>
+    </div>
+</form>

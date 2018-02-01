@@ -1,0 +1,32 @@
+@extends('@@layout@@')
+
+@section('breadcrumb')
+<li class="is-active">
+    <a href=""> @@table@@</a>
+</li>
+@endsection
+
+@section('tools')
+<a class="navbar-item" href="{{route('@@createRoute@@')}}">
+    <span class="fa fa-plus"></span> @@table@@
+</a>
+@endsection
+
+@section('content')
+    @foreach($records->chunks(3) as $records)
+        <div class="columns">
+            @foreach($records as $record)
+                <div class="column">
+                    @include('@@folder@@.@@partialFilename@@')
+                </div>
+            @endforeach
+        </div>
+    @endforeach
+</div>
+
+<div class='columns'>
+    <div class="column">
+        {{{$records->render()}}}
+    </div>
+</div>
+@endSection
