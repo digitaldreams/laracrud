@@ -60,6 +60,8 @@ By default Model Name will be based on Table name. But Model name can be specifi
 ```php
 php artisan laracrud:model users MyUser
 ```  
+Video Tutorial : https://www.youtube.com/watch?v=D7P9l19c-fg
+
 ## Create Request
 
  An well structured table validate everything before inserting . You can not insert a illegal date in a birth_date column if its data type set to date.So if we have this logic set on table why we should write it on Request again. Lets use this table logic to create a request class in laravel.
@@ -96,6 +98,7 @@ It will read your controller and create request classes for your Public method
 This will create a controller which have create, edit, save and delete method with codes .
 It also handle your relation syncronization
 
+Video Tutorial: https://www.youtube.com/watch?v=iwEWLH2TiIE
 
 ## Create View 
 
@@ -181,8 +184,6 @@ php artisan laracrud:migration users
 It will create Model, Request, Controller, View.
 Then you just need to run route command to create routes.
 
-Watch tutorial :
-https://www.youtube.com/watch?v=N03bsypA-oc
 NB: only for mysql database
 
 It is recommended to take a look in the generated file before use it.
