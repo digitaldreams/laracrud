@@ -10,7 +10,7 @@
      * @Response(200, body={})
      * @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
      */
-    public function update(@@requestClass@@ $request, $@@modelNameParam@@)
+    public function update(@@requestClass@@ $request, $@@parentModelNameParam@@, $@@modelNameParam@@)
     {
         $@@modelNameParam@@ = @@modelName@@::findOrFail($@@modelNameParam@@);
         $@@modelNameParam@@->fill($request->all());

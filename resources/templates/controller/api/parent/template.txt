@@ -10,7 +10,7 @@ use @@fullmodelName@@;
 /**
  * @@modelName@@
  *
- * @Resource("@@modelName@@", uri="/@@table@@")
+ * @Resource("@@modelName@@", uri="/@@table@@/{@@parentModelNameParam@@}")
  */
 
 class @@controllerName@@ extends ApiController

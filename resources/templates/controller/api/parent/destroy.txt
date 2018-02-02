@@ -11,7 +11,7 @@
     })
      * @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
      */
-    public function destroy(@@requestClass@@ $request, $@@modelNameParam@@)
+    public function destroy(@@requestClass@@ $request, $@@parentModelNameParam@@, $@@modelNameParam@@)
     {
         $@@modelNameParam@@ = @@modelName@@::findOrFail($@@modelNameParam@@);
 

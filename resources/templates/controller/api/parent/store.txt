@@ -10,7 +10,7 @@
      *
      * @Response(200, body={})
      */
-    public function store(@@requestClass@@ $request)
+    public function store(@@requestClass@@ $request, $@@parentModelNameParam@@)
     {
         $model=new @@modelName@@;
         $model->fill($request->all());

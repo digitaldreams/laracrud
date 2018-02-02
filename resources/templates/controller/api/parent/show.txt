@@ -10,7 +10,7 @@
         })
      * @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
      */
-    public function show(@@requestClass@@ $request, $@@modelNameParam@@)
+    public function show(@@requestClass@@ $request, $@@parentModelNameParam@@, $@@modelNameParam@@)
     {
       $@@modelNameParam@@ = @@modelName@@::findOrFail($@@modelNameParam@@);
       return $this->response->item($@@modelNameParam@@, new @@transformer@@());

@@ -9,7 +9,7 @@
        "data": {}
     })
      */
-    public function index(@@requestClass@@ $request)
+    public function index(@@requestClass@@ $request, $@@parentModelNameParam@@)
     {
        return $this->response->paginator(@@modelName@@::paginate(10), new @@transformer@@());
     }
