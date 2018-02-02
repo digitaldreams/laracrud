@@ -3,10 +3,11 @@
      *
      * @param  @@requestClass@@  $request
      * @param  @@modelName@@  $@@modelNameParam@@
+     * @param  @@parentModelName@@ $@@parentModelNameParam@@
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(@@requestClass@@ $request, @@modelName@@ $@@modelNameParam@@)
+    public function destroy(@@requestClass@@ $request, @@parentModelName@@ $@@parentModelNameParam@@, @@modelName@@ $@@modelNameParam@@)
     {
         if ($@@modelNameParam@@->delete()) {
                 session()->flash('app_message', '@@modelName@@ successfully deleted');

@@ -116,15 +116,21 @@ class Controller implements Crud
     protected $transformerName;
 
     /**
+     * @var bool|string
+     */
+    protected $parentModel;
+
+    /**
      * ControllerCrud constructor.
      * @param $model
      * @param string $name
      * @param array|string $only
      * @param bool $api
-     * @throws \Exception
+     * @param bool|\Illuminate\Database\Eloquent\Model $parent
      * @internal param array $except
+     * @throws \Exception
      */
-    public function __construct($model, $name = '', $only = '', $api = false)
+    public function __construct($model, $name = '', $only = '', $api = false, $parent = false)
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         $this->shortModelName = $model;
@@ -141,9 +147,20 @@ class Controller implements Crud
 
         $this->modelName = $this->modelNameSpace . '\\' . $model;
 
+        if (!empty($parent)) {
+            $parentModel = $this->modelNameSpace . '\\' . $parent;
+            if (!class_exists($parentModel)) {
+                throw new \Exception($parent . ' class does not exists');
+            }
+            $this->import[] = $parentModel;
+            $this->parentModel = $parent;
+        }
+
         if (class_exists($this->modelName)) {
             $this->model = $model = new $this->modelName;
             $this->table = $model->getTable();
+        } else {
+            throw new \Exception($model . ' class does not exists');
         }
 
         if (!empty($name)) {
@@ -160,6 +177,8 @@ class Controller implements Crud
             }
         }
         $this->template = !empty($api) ? 'api' : 'web';
+        $this->template = !empty($this->parentModel) ? $this->template . '/parent' : $this->template;
+
         $ns = !empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
         $this->namespace = trim($this->getFullNS($ns), "/") . $this->subNameSpace;
         $this->parseModelName();
@@ -204,6 +223,8 @@ class Controller implements Crud
             'belongsToManyRelationSync' => '',
             'transformer' => $this->transformerName,
             'importNameSpace' => '',
+            'parentModelName' => $this->parentModel,
+            'parentModelNameParam' => strtolower($this->parentModel)
         ];
     }
 
@@ -270,7 +291,7 @@ class Controller implements Crud
         $transformerNs = $this->getFullNS(config('laracrud.transformer.namespace', 'Transformers'));
         $suffiex = config('laracrud.transformer.classSuffix', 'Transformer');
         $transformerName = $this->shortModelName . $suffiex;
-        $fullTransformerNs =  $transformerNs . '\\' . $transformerName;
+        $fullTransformerNs = $transformerNs . '\\' . $transformerName;
         $this->import[] = $fullTransformerNs;
 
         if (class_exists($fullTransformerNs)) {

@@ -1,0 +1,17 @@
+     /**
+     * Show details about a @@modelName@@
+     *
+     * @Get("/{id}")
+     *
+     * @Versions({"v1"})
+     *
+     * @Response(200, body={
+        "data": {}
+        })
+     * @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
+     */
+    public function show(@@requestClass@@ $request, $@@modelNameParam@@)
+    {
+      $@@modelNameParam@@ = @@modelName@@::findOrFail($@@modelNameParam@@);
+      return $this->response->item($@@modelNameParam@@, new @@transformer@@());
+    }

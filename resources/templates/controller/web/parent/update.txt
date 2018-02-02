@@ -3,9 +3,10 @@
      *
      * @param  @@requestClass@@  $request
      * @param  @@modelName@@  $@@modelNameParam@@
+     * @param  @@parentModelName@@ $@@parentModelNameParam@@
      * @return \Illuminate\Http\Response
      */
-    public function update(@@requestClass@@ $request,@@modelName@@ $@@modelNameParam@@)
+    public function update(@@requestClass@@ $request, @@parentModelName@@ $@@parentModelNameParam@@, @@modelName@@ $@@modelNameParam@@)
     {
         $@@modelNameParam@@->fill($request->all());
 

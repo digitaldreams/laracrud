@@ -1,0 +1,24 @@
+    /**
+     * Create a @@modelName@@
+     *
+     *
+     * @Post("/store")
+     *
+     * @Versions({"v1"})
+     *
+     * @Request({"key":"value"})
+     *
+     * @Response(200, body={})
+     */
+    public function store(@@requestClass@@ $request)
+    {
+        $model=new @@modelName@@;
+        $model->fill($request->all());
+
+        if ($model->save()) {
+            session()->flash('app_message', '@@modelName@@ saved successfully');
+            return $this->response->item($model, new @@transformer@@());
+        } else {
+              return $this->response->errorInternal('Error occurred while saving @@modelName@@');
+        }
+    }

@@ -3,13 +3,15 @@
      *
      * @param  @@requestClass@@  $request
      * @param  @@modelName@@  $@@modelNameParam@@
+     * @param  @@parentModelName@@ $@@parentModelNameParam@@
      * @return \Illuminate\Http\Response
      */
-    public function edit(@@requestClass@@ $request, @@modelName@@ $@@modelNameParam@@)
+    public function edit(@@requestClass@@ $request, @@parentModelName@@ $@@parentModelNameParam@@, @@modelName@@ $@@modelNameParam@@)
     {
 @@belongsToRelation@@
         return view('@@viewPath@@.edit', [
             'model' => $@@modelNameParam@@,
+            '@@parentModelNameParam@@' => $@@parentModelNameParam@@,
 @@belongsToRelationVars@@
             ]);
     }

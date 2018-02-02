@@ -1,0 +1,23 @@
+    /**
+     * Delete an existing @@modelName@@
+     *
+     * @Delete("/{id}")
+     *
+     * @Versions({"v1"})
+     *
+     * @Response(200, body={
+       "status": 200,
+       "message": "@@modelName@@ successfully deleted"
+    })
+     * @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
+     */
+    public function destroy(@@requestClass@@ $request, $@@modelNameParam@@)
+    {
+        $@@modelNameParam@@ = @@modelName@@::findOrFail($@@modelNameParam@@);
+
+        if ($@@modelNameParam@@->delete()) {
+            return $this->response->array(['status' => 200, 'message' => '@@modelName@@ successfully deleted']);
+        } else {
+             return $this->response->errorInternal('Error occurred while deleting @@modelName@@');
+        }
+    }

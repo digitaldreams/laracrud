@@ -1,0 +1,15 @@
+    /**
+     * List of @@modelName@@
+     *
+     * @Get("/")
+     *
+     * @Versions({"v1"})
+     *
+     * @Response(200, body={
+       "data": {}
+    })
+     */
+    public function index(@@requestClass@@ $request)
+    {
+       return $this->response->paginator(@@modelName@@::paginate(10), new @@transformer@@());
+    }

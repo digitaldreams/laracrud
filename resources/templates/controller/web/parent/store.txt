@@ -2,9 +2,10 @@
      * Store a newly created resource in storage.
      *
      * @param  @@requestClass@@  $request
+     * @param @@parentModelName@@ $@@parentModelNameParam@@
      * @return \Illuminate\Http\Response
      */
-    public function store(@@requestClass@@ $request)
+    public function store(@@requestClass@@ $request, @@parentModelName@@ $@@parentModelNameParam@@)
     {
         $model=new @@modelName@@;
         $model->fill($request->all());

@@ -1,0 +1,14 @@
+   /**
+     * Display a listing of the resource.
+     *
+     * @param  @@requestClass@@  $request
+     * @param @@parentModelName@@ $@@parentModelNameParam@@
+     * @return \Illuminate\Http\Response
+     */
+    public function index(@@requestClass@@ $request, @@parentModelName@@ $@@parentModelNameParam@@)
+    {
+        return view('@@viewPath@@.index', [
+        'records' => @@modelName@@::paginate(10),
+        '@@parentModelNameParam@@' => $@@parentModelNameParam@@,
+        ]);
+    }
