@@ -40,6 +40,7 @@ class Edit extends Page
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
             'partialFilename' => str_singular($this->table->name()),
+            'indexRoute' => $this->getRouteName('index', $this->table->name()),
             'createRoute' => $this->getRouteName('create', $this->table->name()),
             'showRoute' => $this->getRouteName('show', $this->table->name()),
             'updateRoute' => $this->getRouteName('update', $this->table->name())

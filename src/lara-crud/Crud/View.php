@@ -1,5 +1,8 @@
 <?php
 /**
+ *
+ * This class is just demo. Please see LaraCrud\View\*
+ *
  * Tuhin Bepari <digitaldreams40@gmail.com>
  */
 
