@@ -5,7 +5,7 @@
      *
      * @Versions({"v1"})
      * @Parameters({
-     *      @Parameter("id", description="The primary key of @@modelName@@",type="integer", required=true)
+     *      @Parameter("id", description="The primary key of @@modelName@@", type="integer", required=true)
      * })
      * @Transaction({
      *     @Request(@@apiRequest@@),
