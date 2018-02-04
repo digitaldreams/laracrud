@@ -4,9 +4,11 @@
      * @Get("/")
      *
      * @Versions({"v1"})
-     *
+     * @Parameters({
+     *      @Parameter("page", description="The page of results to view.", type="integer", default=1)
+     * })
      * @Response(200, body={
-       "data": {}
+       "data": {{@@apiResponse@@}}
     })
      */
     public function index(@@requestClass@@ $request)

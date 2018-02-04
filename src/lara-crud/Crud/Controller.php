@@ -49,6 +49,10 @@ class Controller implements Crud
     protected $modelNameSpace = 'App';
 
     /**
+     * @var string
+     */
+    protected $requestFolderNs = '';
+    /**
      * Request Class.
      * Check if any Request Class created for this Model. If so then Use that Request Name otherwise use default Request
      * @var type
@@ -120,6 +124,7 @@ class Controller implements Crud
      */
     protected $parentModel;
 
+
     /**
      * ControllerCrud constructor.
      * @param $model
@@ -133,6 +138,7 @@ class Controller implements Crud
     public function __construct($model, $name = '', $only = '', $api = false, $parent = false)
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
+
         $this->shortModelName = $model;
 
         if (!empty($only) && is_array($only)) {
@@ -186,6 +192,9 @@ class Controller implements Crud
         if (!empty($api)) {
             $this->transformerName = $this->getTransformerClass();
         }
+        $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
+        $requestFolder = !empty($this->table) ? ucfirst($this->table) : $this->modelName;
+        $this->requestFolderNs = $this->getFullNS($requestNs) . "\\" . $requestFolder;
     }
 
     /**
@@ -224,7 +233,9 @@ class Controller implements Crud
             'transformer' => $this->transformerName,
             'importNameSpace' => '',
             'parentModelName' => $this->parentModel,
-            'parentModelNameParam' => strtolower($this->parentModel)
+            'parentModelNameParam' => strtolower($this->parentModel),
+            'apiRequest' =>'{}',
+            'apiResponse' => '{}'
         ];
     }
 
@@ -254,8 +265,10 @@ class Controller implements Crud
         $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', []);
         foreach ($this->only as $method) {
             if ($filePath = $tempMan->getFullPath("controller/" . $this->template . '/' . $method . '.txt')) {
+                $requestClass = $this->getRequestClass($method);
                 $methodTemp = new TemplateManager("controller/" . $this->template . '/' . $method . ".txt", array_merge($this->globalVars(), [
-                    'requestClass' => $this->getRequestClass($method)
+                    'requestClass' => $requestClass,
+                    'apiRequest' => $this->makeApiRequest($requestClass)
                 ]));
                 $retTemp .= $methodTemp->get();
             }
@@ -269,11 +282,7 @@ class Controller implements Crud
      */
     protected function getRequestClass($method)
     {
-        $api = $this->template == 'api' ? true : false;
-        $requestFolder = !empty($this->table) ? ucfirst($this->table) : $this->modelName;
-        $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $fullRequestNs = $this->getFullNS($requestNs) . "\\" . $requestFolder . "\\" . ucfirst($method);
-
+        $fullRequestNs = $this->requestFolderNs . "\\" . ucfirst($method);
         if (class_exists($fullRequestNs)) {
             $requestClass = ucfirst($method);
             $this->import[] = $fullRequestNs;
@@ -301,6 +310,25 @@ class Controller implements Crud
             $transformerCrud->save();
         }
         return $transformerName;
+    }
+
+    /**
+     * @param $requestClass
+     * @return array
+     */
+    protected function makeApiRequest($requestClass)
+    {
+        $rules = [];
+
+        if (!class_exists($requestClass)) {
+            $requestClass = $this->requestFolderNs . "\\" . $requestClass;
+        }
+
+        if (is_subclass_of($requestClass, \Dingo\Api\Http\FormRequest::class)) {
+            $request = new $requestClass;
+            $rules = $request->rules();
+        }
+        return !empty($rules) && is_array($rules) ? json_encode($rules, JSON_PRETTY_PRINT) : '{}';
     }
 
     /**
