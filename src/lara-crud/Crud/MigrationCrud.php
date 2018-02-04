@@ -147,7 +147,7 @@ class MigrationCrud implements Crud
             } elseif (in_array($dataType, ['smallint', 'int', 'mediumint', 'bigint', 'float',
                 'double'])) {
                 if (!empty($column->length())) {
-                    $params = $column->length();
+                    $params = false;
                 }
             } elseif ($dataType == 'decimal') {
 
