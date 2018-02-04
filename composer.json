@@ -22,7 +22,9 @@
 
     },
    "suggest":{
-     "intervention/image": "For Image"
+     "intervention/image": "For Image",
+     "tymon/jwt-auth": "For API authentication",
+     "dingo/api": "To make API"
     },
     "autoload": {
      "psr-4": {
