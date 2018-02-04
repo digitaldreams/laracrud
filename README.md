@@ -30,7 +30,7 @@ Then you can see new commands by running 'php artisan'
 
 *	laracrud:model {tableName} {name?} {--on=} {--off=} (create model based on table)
 *	laracrud:request {tableName} {name?} {--resource=} {--controller=} {--api} (create Request Class/es based on table)
-*	laracrud:Controller {Model} {name?} {--only=} {--api} (Create Controller Class based on Model)
+*	laracrud:Controller {Model} {name?} {--parent=} {--only=} {--api} (Create Controller Class based on Model)
 *	laracrud:mvc {table} {--api} (run above commands into one place)
 *	laracrud:route {controller} {--api} (create routes based on controller method)
 *	laracrud:view {table} {--page=(index|create|edit|show|form|table|panel|modal)} {--type=} {--name=} {--controller=}
