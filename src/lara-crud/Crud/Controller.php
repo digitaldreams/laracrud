@@ -145,9 +145,6 @@ class Controller implements Crud
             $this->only = $only;
         }
 
-        if (substr_compare($modelNamespace, "\\", 0, 1) !== 0) {
-            $modelNamespace = "\\" . $modelNamespace;
-        }
         $this->modelNameSpace = $modelNamespace;
         $this->requestClassSuffix = config('laracrud.request.classSuffix', 'Request');
 
