@@ -157,6 +157,8 @@ abstract Class Page implements Crud
      */
     public static function getRouteName($method, $table = '')
     {
+        $routePrefix = config('laracrud.route.prefix');
+        $table = !empty($routePrefix) ? $routePrefix . $table : $table;
         $action = static::$controller . "@" . $method;
         if (isset(static::$routeMap[$action])) {
             return static::$routeMap[$action];

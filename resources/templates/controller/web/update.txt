@@ -12,7 +12,7 @@
         if ($@@modelNameParam@@->save()) {
             @@belongsToManyRelationSync@@
             session()->flash('app_message', '@@modelName@@ successfully updated');
-            return redirect()->route('@@table@@.index');
+            return redirect()->route('@@routePrefix@@@@table@@.index');
             } else {
                 session()->flash('app_error', 'Something is wrong while updating @@modelName@@');
             }

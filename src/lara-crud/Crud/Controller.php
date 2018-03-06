@@ -231,7 +231,8 @@ class Controller implements Crud
             'importNameSpace' => '',
             'parentModelName' => $this->parentModel,
             'parentModelNameParam' => strtolower($this->parentModel),
-            'apiRequest' =>'{}',
+            'routePrefix' => config('laracrud.route.prefix', ''),
+            'apiRequest' => '{}',
             'apiResponse' => '{}'
         ];
     }
@@ -335,10 +336,15 @@ class Controller implements Crud
     protected function parseModelName()
     {
         $pagePath = config("laracrud.view.page.path");
+        $namespace = config('laracrud.view.namespace');
         $class = new \ReflectionClass($this->modelName);
         $model = $class->newInstance();
         $this->modelNameSpace = $class->getNamespaceName();
         $this->viewPath = !empty($pagePath) ? str_replace("/", ".", $pagePath) . "." . $model->getTable() : $model->getTable();
+
+        if (!empty($namespace)) {
+            $this->viewPath = rtrim($namespace, "::") . "::" . $this->viewPath;
+        }
         $this->controllerName = $class->getShortName();
     }
 

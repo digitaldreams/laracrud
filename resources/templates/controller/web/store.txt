@@ -12,7 +12,7 @@
         if ($model->save()) {
             @@belongsToManyRelationSync@@
             session()->flash('app_message', '@@modelName@@ saved successfully');
-            return redirect()->route('@@table@@.index');
+            return redirect()->route('@@routePrefix@@@@table@@.index');
             } else {
                 session()->flash('app_message', 'Something is wrong while saving @@modelName@@');
             }
