@@ -190,7 +190,7 @@ class Controller implements Crud
             $this->transformerName = $this->getTransformerClass();
         }
         $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $requestFolder = !empty($this->table) ? ucfirst($this->table) : $this->modelName;
+        $requestFolder = !empty($this->table) ? ucfirst(camel_case($this->table)) : $this->modelName;
         $this->requestFolderNs = $this->getFullNS($requestNs) . "\\" . $requestFolder;
     }
 

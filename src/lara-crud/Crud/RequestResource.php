@@ -48,7 +48,7 @@ class RequestResource implements Crud
             $this->methods = $only;
         }
         $ns = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $this->namespace = $this->getFullNS(trim($ns, "/")) . '\\' . ucfirst($table);
+        $this->namespace = $this->getFullNS(trim($ns, "/")) . '\\' . ucfirst(camel_case($table));
         $this->modelName = $this->getModelName($table);
         $this->template = !empty($api) ? 'api' : 'web';
     }
@@ -88,10 +88,10 @@ class RequestResource implements Crud
                 }
                 $isApi = $this->template == 'api' ? true : false;
                 if ($method === 'store') {
-                    $requestStore = new Request($this->table, ucfirst($this->table) . '/Store', $isApi);
+                    $requestStore = new Request($this->table, ucfirst(camel_case($this->table)) . '/Store', $isApi);
                     $requestStore->save();
                 } elseif ($method === 'update') {
-                    $requestUpdate = new Request($this->table, ucfirst($this->table) . '/Update', $isApi);
+                    $requestUpdate = new Request($this->table, ucfirst(camel_case($this->table)) . '/Update', $isApi);
                     $requestUpdate->save();
                 } else {
                     $model = new \SplFileObject($filePath, 'w+');
