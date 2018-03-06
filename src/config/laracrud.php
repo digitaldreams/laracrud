@@ -4,7 +4,7 @@ return [
      * Root Namespace of all the Classes. For example if root namespace is App then controller nas Http|Controllers
      * will be App\Http\Controllers
      */
-    'rootNamespace'=>'App',
+    'rootNamespace' => 'App',
     /**
      * Configure Model settings
      */
@@ -23,7 +23,7 @@ return [
         /**
          * Method definer
          */
-        'methodDefiner' => true,
+        'methodDefiner' => false,
 
         /**
          * Does it generate guarded column. Either guarded or fillable columns should be choose.
@@ -111,6 +111,18 @@ return [
         'bootstrap' => '4',
 
         /**
+         * Only applicable for Package development
+         *
+         * As you know that to access view from a package folder we need to register package view folder by a name.
+         * Below Code taken from boot method of a package ServiceProvider
+         *  $this->loadViewsFrom(__DIR__ . '/../resources/views', 'blog');
+
+         * For above example, all of the view of this package will be start blog::
+         * So Laravel will find that view to package view folder instead of default view folder.
+         */
+        'namespace'=>false,
+
+        /**
          * Protected Columns. There are some column that are internal use only.
          */
         'ignore' => [
@@ -121,11 +133,6 @@ return [
          * Whether add breadcrumb or not. [To DO]
          */
         'breadcrumb' => false,
-
-        /**
-         * Search box on index page.
-         */
-        'search' => false,
 
         'page' => [
             /**
@@ -211,13 +218,19 @@ return [
         'api' => 'routes/api.php',
 
         /**
-         * Sub restful routes
+         * Should use while developing package.
          *
-         * All the other option e.g. Controller, Request will be created according to this.
+         * If you want wrap up all of your route name into your package namespace like blog in that case.
+         * Your all routes name start with blog
+         * This is actuall as paramter of Route::group
+         *
+         * Route::group(['as'=>'blog::', 'namespace' => 'Blog\Http\Controllers'], function () {
+         *     Route::get('posts','PostController@index')->name('posts.index')
+         * });
+         *
+         * Here your route name posts.index will be blog::posts.index
          */
-        'subResource' => [
-            //'child'=>'parent.child' e.g. photos=>posts.photos
-        ]
+        'prefix' => false
     ],
     'transformer' => [
         /**
