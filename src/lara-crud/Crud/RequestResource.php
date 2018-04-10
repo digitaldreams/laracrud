@@ -25,6 +25,12 @@ class RequestResource implements Crud
     protected $namespace;
 
     /**
+     * Name of the folder where Request Classes will be saved.
+     * @var string
+     */
+    protected $folderName = '';
+
+    /**
      * @var array|string
      */
 
@@ -37,18 +43,20 @@ class RequestResource implements Crud
      * @param $table
      * @param string $only
      * @param bool $api
+     * @param string $name
      * @internal param string $controller
      */
 
-    public function __construct($table, $only = '', $api = false)
+    public function __construct($table, $only = '', $api = false, $name = '')
     {
         $this->table = $table;
+        $this->folderName = !empty($name) ? $name : $this->table;
 
         if (!empty($only) && is_array($only)) {
             $this->methods = $only;
         }
         $ns = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $this->namespace = $this->getFullNS(trim($ns, "/")) . '\\' . ucfirst(camel_case($table));
+        $this->namespace = $this->getFullNS(trim($ns, "/")) . '\\' . ucfirst(camel_case($this->folderName));
         $this->modelName = $this->getModelName($table);
         $this->template = !empty($api) ? 'api' : 'web';
     }
@@ -88,10 +96,10 @@ class RequestResource implements Crud
                 }
                 $isApi = $this->template == 'api' ? true : false;
                 if ($method === 'store') {
-                    $requestStore = new Request($this->table, ucfirst(camel_case($this->table)) . '/Store', $isApi);
+                    $requestStore = new Request($this->table, ucfirst(camel_case($this->folderName)) . '/Store', $isApi);
                     $requestStore->save();
                 } elseif ($method === 'update') {
-                    $requestUpdate = new Request($this->table, ucfirst(camel_case($this->table)) . '/Update', $isApi);
+                    $requestUpdate = new Request($this->table, ucfirst(camel_case($this->folderName)) . '/Update', $isApi);
                     $requestUpdate->save();
                 } else {
                     $model = new \SplFileObject($filePath, 'w+');

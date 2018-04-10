@@ -39,7 +39,15 @@ class RequestController implements Crud
      * @var string
      */
     protected $namespace;
+    /**
+     * Name of the folder where Request Classes will be saved.
+     * @var string
+     */
+    protected $folderName = '';
 
+    /**
+     * @var string
+     */
     protected $template;
 
     /**
@@ -52,16 +60,19 @@ class RequestController implements Crud
      * @param $table
      * @param string $controller
      * @param bool $api
+     * @param string $name
      * @throws \Exception
      */
 
-    public function __construct($table, $controller = '', $api = false)
+    public function __construct($table, $controller = '', $api = false, $name = '')
     {
 
         $controllerNs = !empty($api) ? config('laracrud.controller.apiNamespace', 'App\Http\Controllers\Api') : config('laracrud.controller.namespace', 'App\Http\Controllers');
         $this->controllerNs = $this->getFullNS($controllerNs);
         $this->table = $table;
+        $this->folderName = !empty($name) ? $name : $this->table;
         $this->template = !empty($api) ? 'api' : 'web';
+
         if (!empty($controller)) {
             if (!class_exists($controller)) {
                 $this->controllerName = $this->controllerNs . "\\" . $controller;
@@ -73,7 +84,7 @@ class RequestController implements Crud
 
             $this->classInspector = new ClassInspector($this->controllerName);
             $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-            $this->namespace = $this->getFullNS(trim($requestNs, "/")) . '\\' . ucfirst(camel_case($table));
+            $this->namespace = $this->getFullNS(trim($requestNs, "/")) . '\\' . ucfirst(camel_case($this->folderName));
             $this->modelName = $this->getModelName($table);
         }
     }
@@ -113,10 +124,10 @@ class RequestController implements Crud
                 }
                 $isApi = $this->template == 'api' ? true : false;
                 if ($method === 'store') {
-                    $requestStore = new Request($this->table, ucfirst(camel_case($this->table)) . '/Store', $isApi);
+                    $requestStore = new Request($this->table, ucfirst(camel_case($this->folderName)) . '/Store', $isApi);
                     $requestStore->save();
                 } elseif ($method === 'update') {
-                    $requestUpdate = new Request($this->table, ucfirst(camel_case($this->table)) . '/Update', $isApi);
+                    $requestUpdate = new Request($this->table, ucfirst(camel_case($this->folderName)) . '/Update', $isApi);
                     $requestUpdate->save();
                 } else {
                     $model = new \SplFileObject($filePath, 'w+');

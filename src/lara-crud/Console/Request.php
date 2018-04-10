@@ -38,14 +38,14 @@ class Request extends Command
             $api = $this->option('api');
 
             if (!empty($controller)) {
-                $requestController = new RequestControllerCrud($table, $controller, $api);
+                $requestController = new RequestControllerCrud($table, $controller, $api, $name);
                 $requestController->save();
                 $this->info('Request controller classes created successfully');
 
             } elseif (!empty($resource)) {
 
                 $methods = $resource === 'all' ? false : explode(",", $resource);
-                $requestResource = new RequestResourceCrud($table, $methods, $api);
+                $requestResource = new RequestResourceCrud($table, $methods, $api, $name);
                 $requestResource->save();
                 $this->info('Request resource classes created successfully');
 
