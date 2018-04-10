@@ -141,7 +141,7 @@ php artisan laracrud:policy User --controller=UserController
 // create method based on Controller public methods
 ```
 
-##Package
+## Package
 Packages gives us opportunity to create/use components into our existing application. That make our code reusable. 
 Laravel package has similar structure as a Laravel application has.
 ```php
