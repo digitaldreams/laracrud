@@ -141,7 +141,7 @@ php artisan laracrud:policy User --controller=UserController
 // create method based on Controller public methods
 ```
 
-##Package
+## Package
 Packages gives us opportunity to create/use components into our existing application. That make our code reusable. 
 Laravel package has similar structure as a Laravel application has.
 ```php
@@ -149,7 +149,7 @@ php artisan laracrud:package Hello
 ```
 This will create a folder same structure as a Laravel application has into your /packages folder
 
-To use this package you need to change the rootNamespace from config/laracrud to your Package rootNamespace. Then everything will be store into package folder.
+To use this package you need to change the rootNamespace from config/laracrud to your Package rootNamespace and register package root namespace to composer.json. Then everything will be store into package folder.
 
 ## Test
 We need to test our routes endpoints. To create test class based on a controller do the following
