@@ -1,0 +1,4 @@
+
+        if ($request->file('@@imagePropertyName@@')->isValid()) {
+            $@@modelNameParam@@->@@imagePropertyName@@ = $request->@@imagePropertyName@@->store('@@imagePropertyName@@', '@@imageUploadDisk@@');
+        }

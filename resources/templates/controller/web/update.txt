@@ -8,7 +8,7 @@
     public function update(@@requestClass@@ $request,@@modelName@@ $@@modelNameParam@@)
     {
         $@@modelNameParam@@->fill($request->all());
-
+@@saveUpload@@
         if ($@@modelNameParam@@->save()) {
             @@belongsToManyRelationSync@@
             session()->flash('app_message', '@@modelName@@ successfully updated');

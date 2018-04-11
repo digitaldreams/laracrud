@@ -116,11 +116,10 @@ return [
          * As you know that to access view from a package folder we need to register package view folder by a name.
          * Below Code taken from boot method of a package ServiceProvider
          *  $this->loadViewsFrom(__DIR__ . '/../resources/views', 'blog');
-
          * For above example, all of the view of this package will be start blog::
          * So Laravel will find that view to package view folder instead of default view folder.
          */
-        'namespace'=>false,
+        'namespace' => false,
 
         /**
          * Protected Columns. There are some column that are internal use only.
@@ -294,9 +293,9 @@ return [
         ],
 
         /**
-         * Storage folder where images will be saved.
+         * Storage disk where images will be saved. e.g. public, local, s3
          */
-        'saveTo' => 'storage/app/public'
+        'disk' => 'public'
     ],
 
     /**

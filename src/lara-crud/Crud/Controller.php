@@ -233,7 +233,7 @@ class Controller implements Crud
             'parentModelNameParam' => strtolower($this->parentModel),
             'routePrefix' => config('laracrud.route.prefix', ''),
             'apiRequest' => '{}',
-            'apiResponse' => '{}'
+            'apiResponse' => '{}',
         ];
     }
 
@@ -260,13 +260,20 @@ class Controller implements Crud
     protected function buildMethods()
     {
         $retTemp = '';
+        $saveUpload = '';
         $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', []);
         foreach ($this->only as $method) {
             if ($filePath = $tempMan->getFullPath("controller/" . $this->template . '/' . $method . '.txt')) {
+
+                if (in_array($method, ['store', 'update'])) {
+                    $saveUpload = $this->getUploadScript($method);
+                }
+
                 $requestClass = $this->getRequestClass($method);
                 $methodTemp = new TemplateManager("controller/" . $this->template . '/' . $method . ".txt", array_merge($this->globalVars(), [
                     'requestClass' => $requestClass,
-                    'apiRequest' => $this->makeApiRequest($requestClass)
+                    'apiRequest' => $this->makeApiRequest($requestClass),
+                    'saveUpload' => $saveUpload
                 ]));
                 $retTemp .= $methodTemp->get();
             }
@@ -387,6 +394,25 @@ class Controller implements Crud
             $retStr .= 'use ' . $namespace . ';' . PHP_EOL;
         }
         return $retStr;
+    }
+
+    protected function getUploadScript($method = 'store')
+    {
+        $retTemp = '';
+        $modelNameParam = $method == 'store' ? 'model' : strtolower($this->shortModelName);
+        $table = new Table($this->table);
+        if ($table->hasFile()) {
+            $columns = $table->fileColumns();
+            foreach ($columns as $column) {
+                $temp = new TemplateManager('controller/upload.txt', [
+                    'modelNameParam' => $modelNameParam,
+                    'imagePropertyName' => $column,
+                    'imageUploadDisk' => config('laracrud.image.disk', 'public')
+                ]);
+                $retTemp .= $temp->get();
+            }
+        }
+        return $retTemp;
     }
 
 

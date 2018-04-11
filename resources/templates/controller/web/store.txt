@@ -8,7 +8,7 @@
     {
         $model=new @@modelName@@;
         $model->fill($request->all());
-
+@@saveUpload@@
         if ($model->save()) {
             @@belongsToManyRelationSync@@
             session()->flash('app_message', '@@modelName@@ saved successfully');
