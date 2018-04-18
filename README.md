@@ -28,17 +28,17 @@ This version are ready to use in Laravel 5.3 and above. If you are using 5.2  pl
 ## Commands
 Then you can see new commands by running 'php artisan'
 
-*	laracrud:model {tableName} {name?} {--on=} {--off=} (create model based on table)
-*	laracrud:request {tableName} {name?} {--resource=} {--controller=} {--api} (create Request Class/es based on table)
-*	laracrud:Controller {Model} {name?} {--parent=} {--only=} {--api} (Create Controller Class based on Model)
-*	laracrud:mvc {table} {--api} (run above commands into one place)
-*	laracrud:route {controller} {--api} (create routes based on controller method)
-*	laracrud:view {table} {--page=(index|create|edit|show|form|table|panel|modal)} {--type=} {--name=} {--controller=}
-*	laracrud:migration {table} (Create a migration file based on Table structure. Its opposite of normal migration file creation in Laravel)}
-*   laracrud:policy {model} {--controller=} {--name=}
-*   laracrud:package {--name=}
-*   laracrud:transformer {model} {name?} (Create a dingo api transformer for a model)
-*   laracrud:test {controller} {--api} (Create test methods for each of the method of a controller)
+*	`laracrud:model {tableName} {name?} {--on=} {--off=}`: Create model based on table
+*	`laracrud:request {tableName} {name?} {--resource=} {--controller=} {--api}`: Create Request Class/es based on table
+*	`laracrud:Controller {Model} {name?} {--parent=} {--only=} {--api}`: Create Controller Class based on Model
+*	`laracrud:mvc {table} {--api}`: Run above commands into one place
+*	`laracrud:route {controller} {--api}`: Create routes based on controller method
+*	`laracrud:view {table} {--page=(index|create|edit|show|form|table|panel|modal)} {--type=} {--name=} {--controller=}`
+*	`laracrud:migration {table}`: Create a migration file based on Table structure. Its opposite of normal migration file creation in Laravel
+* `laracrud:policy {model} {--controller=} {--name=}`
+* `laracrud:package {--name=}`
+* `laracrud:transformer {model} {name?}`: Create a dingo api transformer for a model
+* `laracrud:test {controller} {--api}`: Create test methods for each of the method of a controller
 
 **N.B: --api option will generate api resource. Like Controller, Request, Route, Test. Dingo API compatible code will be generated**
 
