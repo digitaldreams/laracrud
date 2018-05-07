@@ -94,6 +94,13 @@ return [
             //'users'=>'App\Models\AdminUser::class'
         ]
     ],
+    'templates'=>[
+        /**
+         * Path to the templates folder
+         * @example 'views/vendor/YOUR/templates/' or __DIR__.'/../vendor/YOUR/PACKAGE/src/resources/templates/'
+         */
+        'path'=>null,
+    ],
     'view' => [
         /**
          * Path to the main folder. Folder path are relative to base_path
