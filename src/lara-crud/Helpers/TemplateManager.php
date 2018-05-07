@@ -58,7 +58,14 @@ class TemplateManager
     public function getFullPath($filename)
     {
         $retPath = false;
-        if (file_exists(resource_path('views/vendor/laracrud/templates/' . $filename))) {
+
+        $templatesPath = config('laracrud.templates.path');
+
+        if ($templatesPath && file_exists(resource_path($templatesPath . $filename))) {
+            $retPath = resource_path($templatesPath . $filename);
+        } elseif ($templatesPath && file_exists($templatesPath . $filename)) {
+            $retPath = $templatesPath . $filename;
+        } elseif (file_exists(resource_path('views/vendor/laracrud/templates/' . $filename))) {
             $retPath = resource_path('views/vendor/laracrud/templates/' . $filename);
         } elseif (file_exists(__DIR__ . '/../../../resources/templates/' . $filename)) {
             $retPath = __DIR__ . '/../../../resources/templates/' . $filename;
