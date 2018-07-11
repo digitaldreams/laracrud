@@ -12,6 +12,8 @@
 @endsection
 
 @section('content')
+@foreach($records as $record)
 @include('@@folder@@.@@partialFilename@@')
+@endforeach
 {!! $records->render() !!}
 @endSection

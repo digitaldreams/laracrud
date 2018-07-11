@@ -60,7 +60,7 @@ class Form extends Page
      */
     function template()
     {
-        return (new TemplateManager("view/{$this->version}/form.html", [
+        return (new TemplateManager("view/{$this->version}/forms/form.html", [
             'formContent' => implode("\n", $this->make()),
             'table' => $this->table->name(),
             'options' => $this->makeOptions(),
@@ -112,6 +112,21 @@ class Form extends Page
                 case 'file':
                     $retArr[] = $this->tempMan("file.html", [
                         'type' => 'file'
+                    ], $column);
+                    break;
+                case 'date':
+                case 'datetime':
+                case 'time':
+                    $propertiesText = '';
+                    if (is_array($columnArr['properties'])) {
+                        foreach ($columnArr['properties'] as $name => $value) {
+                            $propertiesText .= $name . '="' . $value . '" ';
+                        }
+                    }
+                    $retArr[] = $this->tempMan("date.html", [
+                        'properties' => $propertiesText,
+                        'type' => $columnArr['type'],
+                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}'
                     ], $column);
                     break;
                 case 'textarea':
@@ -228,9 +243,9 @@ class Form extends Page
             'showErrorText' => $this->showErr($column),
             'name' => $column->name(),
             'label' => $column->label(),
-            'type' => isset($this->inputType[$column->name()]) ? $this->inputType[$column->name()] : 'text'
+            'type' => isset($this->inputType[$column->type()]) ? $this->inputType[$column->type()] : 'text'
         ];
-        return (new TemplateManager("view/{$this->version}/$fileName", array_merge($options, $common)))->get();
+        return (new TemplateManager("view/{$this->version}/forms/$fileName", array_merge($options, $common)))->get();
     }
 
     /**
