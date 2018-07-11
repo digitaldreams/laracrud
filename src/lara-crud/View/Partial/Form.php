@@ -107,15 +107,15 @@ class Form extends Page
                     $retArr[] = $this->checkBox($column);
                     break;
                 case 'radio':
-                    $retArr[] = $this->tempMan("radio.txt", [], $column);
+                    $retArr[] = $this->tempMan("radio.html", [], $column);
                     break;
                 case 'file':
-                    $retArr[] = $this->tempMan("file.txt", [
+                    $retArr[] = $this->tempMan("file.html", [
                         'type' => 'file'
                     ], $column);
                     break;
                 case 'textarea':
-                    $retArr[] = $this->tempMan('textarea.txt', [
+                    $retArr[] = $this->tempMan('textarea.html', [
                         'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}'
                     ], $column);
                     break;
@@ -126,7 +126,7 @@ class Form extends Page
                             $propertiesText .= $name . '="' . $value . '" ';
                         }
                     }
-                    $retArr[] = $this->tempMan('default.txt', [
+                    $retArr[] = $this->tempMan('default.html', [
                         'properties' => $propertiesText,
                         'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}'
 
@@ -147,7 +147,7 @@ class Form extends Page
     {
         $options = '';
         if ($columnObj->isForeign()) {
-            $options = $this->tempMan("select-rel.txt", [
+            $options = $this->tempMan("select-rel.html", [
                 'modelVar' => $columnObj->foreignTable(),
                 'name' => $columnObj->name()
             ], $columnObj);
@@ -160,7 +160,7 @@ class Form extends Page
                 }
             }
         }
-        return $this->tempMan("select.txt", ['options' => $options], $columnObj);
+        return $this->tempMan("select.html", ['options' => $options], $columnObj);
     }
 
     /**
@@ -170,7 +170,7 @@ class Form extends Page
      */
     protected function checkBox($column)
     {
-        return $this->tempMan("checkbox.txt", [
+        return $this->tempMan("checkbox.html", [
             'label' => $column->label(),
             'checked' => ''
         ], $column);

@@ -109,7 +109,7 @@ class Policy implements Crud
         $methodsTemp = [];
         $tempCheck = new TemplateManager('policy/template.txt');
         foreach ($this->only as $method) {
-            $fileName = $tempCheck->getFullPath("policy/$method.txt") ? "policy/$method.txt" : "policy/default.txt";
+            $fileName = $tempCheck->getFullPath("policy/$method.txt") ? "policy/$method.txt" : "policy/default.html";
             $methodsTemp[] = (new TemplateManager($fileName, [
                 'method' => $method,
                 'modelClass' => $this->shortModelName,
