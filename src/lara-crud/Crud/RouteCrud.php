@@ -174,7 +174,8 @@ class RouteCrud implements Crud
      */
     public function appendRoutes($routesCode)
     {
-        $routePath = base_path($this->getRouteFileName());
+        $file = $this->getRouteFileName();
+        $routePath = file_exists($file) ? $file : base_path($file);
         if (file_exists($routePath)) {
             $splFile = new \SplFileObject($routePath, 'a');
             $splFile->fwrite($routesCode);

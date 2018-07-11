@@ -28,11 +28,11 @@ return [
         /**
          * Does it generate guarded column. Either guarded or fillable columns should be choose.
          */
-        'guarded' => true,
+        'guarded' => false,
         /**
          * Does it generate fillable columns. Either guarded or fillable columns should be choose.
          */
-        'fillable' => false,
+        'fillable' => true,
 
         /**
          * Do it generate casts property based on your database column type.
@@ -42,17 +42,17 @@ return [
         /**
          * Whether generator create scopes to all columns except protected columns
          */
-        'scopes' => true,
+        'scopes' => false,
 
         /**
          * Does generator create mutator for date time, string and varchar columns so that data can be converted before save. See getDateFormat options for display format
          */
-        'mutators' => true,
+        'mutators' => false,
 
         /**
          * Does generator create accessors for date column so it can be render as human readable format.
          */
-        'accessors' => true,
+        'accessors' => false,
 
         /**
          * Sometimes relation are not defined on database columns. Add missing rules here
@@ -127,11 +127,6 @@ return [
         'ignore' => [
             //table.column e.g. users.remember_token
         ],
-
-        /**
-         * Whether add breadcrumb or not. [To DO]
-         */
-        'breadcrumb' => false,
 
         'page' => [
             /**
