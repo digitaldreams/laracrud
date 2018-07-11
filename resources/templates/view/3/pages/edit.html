@@ -24,7 +24,7 @@
         <div class='panel panel-default'>
 
             <div class="panel-body">
-                @include('forms.@@partialFilename@@',[
+                @include('@@folder@@.@@partialFilename@@',[
                 'route'=>route('@@updateRoute@@',$model->id),
                 'method'=>'PUT'
                 ])

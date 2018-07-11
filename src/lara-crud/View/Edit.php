@@ -36,9 +36,11 @@ class Edit extends Page
      */
     function template()
     {
+        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
         return (new TemplateManager("view/{$this->version}/pages/edit.html", [
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
+            'folder' => $prefix . $this->form->getFolder(),
             'partialFilename' => str_singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name()),
             'createRoute' => $this->getRouteName('create', $this->table->name()),

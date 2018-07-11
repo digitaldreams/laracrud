@@ -32,10 +32,12 @@ class Index extends Page
     function template()
     {
         $file = '';
+        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
+        $folder = $this->version == 3 ? 'panels' : 'cards';
         $data = [
             'table' => $this->table->name(),
             'layout' => config('laracrud.view.layout'),
-            'folder' => $this->version == 3 ? 'panels' : 'cards',
+            'folder' => $prefix . $folder,
             'searchBox' => '',
             'partialFilename' => str_singular($this->table->name()),
             'createRoute' => $this->getRouteName('create', $this->table->name())

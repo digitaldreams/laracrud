@@ -39,12 +39,15 @@ class Show extends Page
     function template()
     {
         $link = new Link($this->table->name());
+        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
+
         return (new TemplateManager("view/{$this->version}/pages/show.html", [
             'table' => $this->table->name(),
             'layout' => config('laracrud.view.layout'),
-            'folder' => $this->panel->getFolder(),
+            'folder' => $prefix . $this->panel->getFolder(),
             'partialFilename' => str_singular($this->table->name()),
-            'buttons' => PHP_EOL . $link->create() . PHP_EOL . $link->edit() . PHP_EOL . str_replace("@@table@@", $this->table->name(), $link->destroy()) . PHP_EOL
+            'indexRoute' => $this->getRouteName('index', $this->table->name()),
+            'buttons' => PHP_EOL . $link->create() . PHP_EOL . $link->edit() . PHP_EOL . $link->destroy() . PHP_EOL
         ]))->get();
     }
 
