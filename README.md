@@ -40,8 +40,8 @@ Then you can see new commands by running 'php artisan'
 * `laracrud:transformer {model} {name?}`: Create a dingo api transformer for a model
 * `laracrud:test {controller} {--api}`: Create test methods for each of the method of a controller
 
-**N.B: --api option will generate api resource. Like Controller, Request, Route, Test. Dingo API compatible code will be generated**
-
+**N.B: --api option will generate api resource. Like Controller, Request, Route, Test. [Dingo API](https://github.com/dingo/api) compatible code will be generated**
+ . [See API documentation](https://github.com/digitaldreams/laracrud/wiki/API-Development)
 
 ### How to Use
 
@@ -165,7 +165,7 @@ Transformer are a vital part of Dingo API. To expose a model to api endpoint Tra
 ```php
 php artisan laracrud:transformer User
 ```
-
+[See API documentation](https://github.com/digitaldreams/laracrud/wiki/API-Development)
 ## Create everything at once
 
 If we need all of the command to then just to
