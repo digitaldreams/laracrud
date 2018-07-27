@@ -148,8 +148,7 @@ Laravel package has similar structure as a Laravel application has.
 php artisan laracrud:package Hello
 ```
 This will create a folder same structure as a Laravel application has into your /packages folder
-
-To use this package you need to change the rootNamespace from config/laracrud to your Package rootNamespace and register package root namespace to composer.json. Then everything will be store into package folder.
+[See Package documentation](https://github.com/digitaldreams/laracrud/wiki/Package-Development)
 
 ## Test
 We need to test our routes endpoints. To create test class based on a controller do the following
