@@ -60,7 +60,7 @@ By default Model Name will be based on Table name. But Model name can be specifi
 ```php
 php artisan laracrud:model users MyUser
 ```  
-Video Tutorial : https://www.youtube.com/watch?v=D7P9l19c-fg
+[Video Tutorial](https://www.youtube.com/watch?v=TDfsdkPHKf4&list=PLcGdsjZbEjRtxROY7mlHcJQcSwxx9L8NB)
 
 ## Create Request
 
@@ -86,6 +86,8 @@ php artisan laracrud:request users --controller=UserController --api //this will
 ```
 It will read your controller and create request classes for your Public method 
 
+[video tutorial](https://www.youtube.com/watch?v=MGMP9FB2l5g&index=2&list=PLcGdsjZbEjRtxROY7mlHcJQcSwxx9L8NB)
+
 ## Create Controller
 ```php 
     php artisan laracrud:controller User
@@ -99,7 +101,7 @@ It will read your controller and create request classes for your Public method
 This will create a controller which have create, edit, save and delete method with codes .
 It also handle your relation syncronization
 
-Video Tutorial: https://www.youtube.com/watch?v=iwEWLH2TiIE
+[video tutorial](https://youtu.be/MGMP9FB2l5g?t=5m10s)
 
 ## Create View 
 
@@ -149,6 +151,7 @@ php artisan laracrud:package Hello
 ```
 This will create a folder same structure as a Laravel application has into your /packages folder
 [See Package documentation](https://github.com/digitaldreams/laracrud/wiki/Package-Development)
+[Video tutorial](https://www.youtube.com/watch?v=7-mhRjKQPuY&t=2s)
 
 ## Test
 We need to test our routes endpoints. To create test class based on a controller do the following
