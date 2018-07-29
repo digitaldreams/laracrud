@@ -117,6 +117,7 @@ Bootstrap to generate a form . It has error field highlighting if validation fai
 
 This will create a complete users crud view. 
 
+[video tutorial](https://www.youtube.com/watch?v=RjRFWABwXnA&list=PLcGdsjZbEjRtxROY7mlHcJQcSwxx9L8NB&index=5)
 
 ## Create Route
 
