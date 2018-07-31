@@ -138,25 +138,31 @@ class Controller implements Crud
     public function __construct($model, $name = '', $only = '', $api = false, $parent = false)
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
-
-        $this->shortModelName = $model;
-
-        if (!empty($only) && is_array($only)) {
-            $this->only = $only;
-        }
-
         $this->modelNameSpace = $modelNamespace;
-        $this->requestClassSuffix = config('laracrud.request.classSuffix', 'Request');
 
-        $this->modelName = $this->modelNameSpace . '\\' . $model;
-
+        if (!class_exists($model)) {
+            $this->modelName = $this->modelNameSpace . '\\' . $model;
+            $this->shortModelName = $model;
+        } else {
+            $class = new \ReflectionClass($model);
+            $this->modelNameSpace = $class->getNamespaceName();
+            $this->shortModelName = $class->getShortName();
+            $this->modelName = $model;
+        }
         if (!empty($parent)) {
-            $parentModel = $this->modelNameSpace . '\\' . $parent;
-            if (!class_exists($parentModel)) {
-                throw new \Exception($parent . ' class does not exists');
+            if (!class_exists($parent)) {
+                $parentModel = $this->modelNameSpace . '\\' . $parent;
+                if (!class_exists($parentModel)) {
+                    throw new \Exception($parent . ' class does not exists');
+                }
+                $this->import[] = $parentModel;
+                $this->parentModel = $parent;
+            } else {
+                $this->import[] = $parent;
+                $parentClass = new \ReflectionClass($parent);
+                $this->parentModel = $parentClass->getShortName();
             }
-            $this->import[] = $parentModel;
-            $this->parentModel = $parent;
+
         }
 
         if (class_exists($this->modelName)) {
@@ -165,6 +171,11 @@ class Controller implements Crud
         } else {
             throw new \Exception($model . ' class does not exists');
         }
+
+        if (!empty($only) && is_array($only)) {
+            $this->only = $only;
+        }
+        $this->requestClassSuffix = config('laracrud.request.classSuffix', 'Request');
 
         if (!empty($name)) {
             if (strpos($name, "/") !== false) {
