@@ -67,7 +67,7 @@ class Mvc extends Command
                 $this->info('Model class created successfully');
 
             } catch (\Exception $e) {
-                $this->error($e->getMessage());
+
             }
 
             try {
@@ -80,6 +80,7 @@ class Mvc extends Command
 
 
             if ($api) {
+                $this->info('API resources created successfully');
                 return;
             }
 
