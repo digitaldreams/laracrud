@@ -12,8 +12,12 @@
 @endsection
 
 @section('content')
-@foreach($records as $record)
-@include('@@folder@@.@@partialFilename@@')
-@endforeach
+<div class="row">
+    @foreach($records as $record)
+    <div class="col-sm-6">
+        @include('@@folder@@.@@partialFilename@@')
+    </div>
+    @endforeach
+</div>
 {!! $records->render() !!}
 @endSection

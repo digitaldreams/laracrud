@@ -47,6 +47,8 @@ class Table extends Page
         foreach ($columns as $column) {
             if ($column->isIgnore() || $column->isProtected()) {
                 continue;
+            } elseif (in_array($column->type(), ['text', 'longtext', 'mediumtext', 'tinytext', 'json', 'blob'])) {
+                continue;
             }
             $headerhtml .= "\t\t<th>{$column->label()} </th>" . PHP_EOL;
             $bodyhtml .= "\t \t<td> {{" . '$record->' . "{$column->name()} }} </td>" . PHP_EOL;

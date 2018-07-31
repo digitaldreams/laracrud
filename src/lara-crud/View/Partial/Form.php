@@ -29,6 +29,9 @@ class Form extends Page
      */
     public $inputType = [
         'text' => 'textarea',
+        'bigtext' => 'textarea',
+        'tinytext' => 'textarea',
+        'mediumtext' => 'textarea',
         'enum' => 'select',
         'int' => 'number',
         'bigint' => 'number',
@@ -95,6 +98,8 @@ class Form extends Page
 
         foreach ($columns as $column) {
             if ($column->isIgnore() || $column->isProtected()) {
+                continue;
+            } elseif (in_array($column->type(), ['json', 'blob'])) {
                 continue;
             }
             $columnArr = $this->processColumn($column);
