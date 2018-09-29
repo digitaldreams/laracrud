@@ -110,6 +110,12 @@ class Model
     public $dataType;
 
     /**
+     * Guarded columns
+     * @var array
+     */
+    public $guarded = [];
+
+    /**
      * ModelBuilder constructor.
      *
      * @param Column $column
@@ -119,6 +125,7 @@ class Model
     {
         $this->column = $column;
         $this->dataType = new DataType($column);
+        $this->load();
     }
 
     /**
@@ -130,23 +137,40 @@ class Model
 
     }
 
+    protected function load()
+    {
+        $this->propertyDefiner();
+        $this->fillable();
+        $this->methodDefiner();
+        $this->constant();
+        $this->dates();
+        $this->mutators();
+        $this->accessors();
+        $this->scopes();
+        $this->makeSearch();
+        $this->casts();
+        $this->relations();
+        $this->guarded();
+    }
+
     /**
      * It will process all the necessary work
      * @param Model|static $modelBuilder
      */
     public function merge(Model $modelBuilder)
     {
-        $this->propertyDefiners = array_merge($this->propertyDefiner(), $modelBuilder->propertyDefiners);
-        $this->methodDefiners = array_merge($this->methodDefiner(), $modelBuilder->methodDefiners);
-        $this->constants = array_merge($this->constant(), $modelBuilder->constants);
-        $this->dates = array_merge($this->dates(), $modelBuilder->dates);
-        $this->mutators = array_merge($this->mutators(), $modelBuilder->mutators);
-        $this->accessors = array_merge($this->accessors(), $modelBuilder->accessors);
-        $this->scopes = array_merge($this->scopes(), $modelBuilder->scopes);
-        $this->searchScope = array_merge($this->makeSearch(), $modelBuilder->searchScope);
-        $this->casts = array_merge($this->casts(), $modelBuilder->casts);
-        $this->fillable = array_merge($this->fillable(), $modelBuilder->fillable);
-        $this->relations = array_merge($this->relations(), $modelBuilder->relations);
+        $this->propertyDefiners = array_merge($this->propertyDefiners, $modelBuilder->propertyDefiners);
+        $this->methodDefiners = array_merge($this->methodDefiners, $modelBuilder->methodDefiners);
+        $this->constants = array_merge($this->constants, $modelBuilder->constants);
+        $this->dates = array_merge($this->dates, $modelBuilder->dates);
+        $this->mutators = array_merge($this->mutators, $modelBuilder->mutators);
+        $this->accessors = array_merge($this->accessors, $modelBuilder->accessors);
+        $this->scopes = array_merge($this->scopes, $modelBuilder->scopes);
+        $this->searchScope = array_merge($this->searchScope, $modelBuilder->searchScope);
+        $this->casts = array_merge($this->casts, $modelBuilder->casts);
+        $this->fillable = array_merge($this->fillable, $modelBuilder->fillable);
+        $this->relations = array_merge($this->relations, $modelBuilder->relations);
+        $this->guarded = array_merge($this->guarded, $modelBuilder->guarded);
     }
 
     /**
@@ -156,6 +180,14 @@ class Model
     public function foreign()
     {
 
+    }
+
+    public function guarded()
+    {
+        if ($this->dataType->guard()) {
+            $this->guarded[] = '\'' . $this->column->name() . '\'';
+        }
+        return $this->guarded;
     }
 
     /**
@@ -169,7 +201,6 @@ class Model
                     'fielName' => $this->column->name()
                 ]))->get() . "\n";
         }
-
         return $this->scopes;
     }
 
@@ -180,9 +211,6 @@ class Model
     {
         if (null === $this->dataType->cast()) return $this->casts;
         $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->dataType->cast() . "'";
-        /*if (isset($this->converTypes[$this->column->type()])) {
-            $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->converTypes[$this->column->type()] . "'";
-        }*/
         return $this->casts;
     }
 
@@ -201,11 +229,11 @@ class Model
             foreach ($this->column->options() as $value) {
                 $name = strtoupper($col_name . '_' . str_replace([" ",
                         "-", "\"", "/"], "_", $value));
-                $this->constants[] = 'const ' . $name . '=' . "'$value'" . ";" . PHP_EOL;
+                $this->constants[] = 'public const ' . $name . '=' . "'$value'" . ';';
             }
         }
         if ($cColumns) {
-            $this->constants[] = 'const ' . $col_name . ' = \'' . $this->column->name() . '\';'. PHP_EOL;
+            $this->constants[] = 'public const ' . $col_name . ' = \'' . $this->column->name() . '\';';
         }
         return $this->constants;
     }
@@ -215,7 +243,7 @@ class Model
      */
     public function propertyDefiner()
     {
-        $this->propertyDefiners[] = '@property ' . $this->dataType->typeHint() . ' $' . $this->column->name() . ' ' . str_replace("_", " ", $this->column->name());
+        $this->propertyDefiners[] = ' * @property ' . $this->dataType->typeHint() . ' $' . $this->column->name() . ' ' . str_replace("_", " ", $this->column->name());
         return $this->propertyDefiners;
     }
 
@@ -233,7 +261,7 @@ class Model
      */
     public function fillable()
     {
-        if (!in_array($this->column->name(), config('laracrud.model.protectedColumns'))) {
+        if (!$this->dataType->guard() && !in_array($this->column->name(), config('laracrud.model.protectedColumns'))) {
             $this->fillable[] = "'" . $this->column->name() . "'";
         }
         return $this->fillable;

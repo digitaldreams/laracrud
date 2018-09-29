@@ -10,6 +10,7 @@ namespace LaraCrud\Builder;
 
 
 use DbReader\Column;
+use Carbon\Carbon;
 
 class DataType
 {
@@ -71,7 +72,7 @@ class DataType
         if (\in_array($this->column->type(), $this->string, false)) return 'string';
         if (1 === (int)$this->column->length() && 0 === strcmp($this->column->type(), self::TINYINT)) return 'boolean';
         if (\in_array($this->column->type(), $this->int, false)) return 'int';
-        if (!$cast && in_array($this->column->type(), [self::DATETIME, self::DATE, self::TIME, self::TIMESTAMP], false)) return '\Carbon';
+        if (!$cast && in_array($this->column->type(), [self::DATETIME, self::DATE, self::TIME, self::TIMESTAMP], false)) return Carbon::class;
         if (0 === strcmp($this->column->type(), self::DATE)) return 'date' . (($f = config('laracrud.model.setDateFormat.date')) ? ':' . $f : '');
         if (in_array($this->column->type(), [self::DATETIME, self::TIMESTAMP], false)) return 'datetime' . (($f = config('laracrud.model.setDateFormat.datetime')) ? ':' . $f : '');
         if (0 === strcmp($this->column->type(), self::TIME)) return 'time' . (($f = config('laracrud.model.setDateFormat.time')) ? ':' . $f : '');
@@ -92,9 +93,24 @@ class DataType
         if (!is_array($types)) return null;
         if (isset($types[$this->column->name()])) return $types[$this->column->name()];
         foreach ($types as $col => $type) {
-            $regex = str_ireplace('*', '(.*)', $col);
+            $regex = str_ireplace('@', '(.*)', $col);
             if (1 === preg_match('/' . $regex . '/i', $this->column->name())) return $type;
         }
         return null;
+    }
+
+    public function autoIncrements()
+    {
+        return false !== ($extra = $this->column->Extra) && 0 === strcmp(trim($extra), 'auto_increment');
+    }
+
+    public function isVirtual()
+    {
+        return false !== ($extra = $this->column->Extra) && false !== stripos(trim($extra), 'virtual');
+    }
+
+    public function guard()
+    {
+        return $this->autoIncrements() || $this->isVirtual() || (is_array($prot = config('laracrud.model.protectedColumns')) && in_array($this->column->name(), $prot, false));
     }
 }

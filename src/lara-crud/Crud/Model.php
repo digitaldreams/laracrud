@@ -117,7 +117,6 @@ class Model implements Crud
      */
     public function save()
     {
-
         $filePath = $this->checkPath();
         if (file_exists($filePath)) {
             throw new \Exception($this->namespace . '\\' . $this->modelName . ' already exists');
@@ -161,8 +160,8 @@ class Model implements Crud
      */
     protected function guarded()
     {
-        if (config('laracrud.model.guarded')) {
-            $tempMan = new TemplateManager('model/guarded.txt');
+        if (config('laracrud.model.guarded') && !empty($this->modelBuilder->guarded)) {
+            $tempMan = new TemplateManager('model/guarded.txt',['guarded'=>implode(', ',$this->modelBuilder->guarded)]);
             return $tempMan->get();
         }
         return '';
@@ -177,7 +176,7 @@ class Model implements Crud
         if (!config('laracrud.model.fillable')) {
             return '';
         }
-        $tempMan = new TemplateManager('model/fillable.txt', ['columns' => implode(",", array_reverse($this->modelBuilder->fillable()))]);
+        $tempMan = new TemplateManager('model/fillable.txt', ['columns' => implode(",", array_reverse($this->modelBuilder->fillable))]);
         return $tempMan->get();
     }
 
@@ -197,7 +196,7 @@ class Model implements Crud
      */
     protected function casts()
     {
-        $tempMan = new TemplateManager('model/casts.txt', ['columns' => implode(",", array_reverse($this->modelBuilder->casts()))]);
+        $tempMan = new TemplateManager('model/casts.txt', ['columns' => implode(",", array_reverse($this->modelBuilder->casts))]);
         return $tempMan->get();
     }
 
@@ -257,7 +256,7 @@ class Model implements Crud
                 'params' => $param
             ]);
             $temp .= $tempMan->get() . PHP_EOL;
-            array_unshift($this->modelBuilder->propertyDefiners, '@property ' . $relation['model'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
+            array_unshift($this->modelBuilder->propertyDefiners, ' * @property ' . $relation['model'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
         }
         foreach ($otherKeys as $column) {
             $fk = new ForeignKey($column);
@@ -271,7 +270,7 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection' . $fk->modelName() . '[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection' . $fk->modelName() . '[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
             } else {
                 $param = ",'" . $fk->column() . "'";
                 $tempMan = new TemplateManager('model/relationship.txt', [
@@ -281,7 +280,7 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
             }
             $temp .= $tempMan->get();
 
@@ -326,16 +325,13 @@ class Model implements Crud
         $builder = null;
         $columns = $this->table->columnClasses();
 
-        foreach ($columns as $column) {
-            if (empty($builder)) {
-                $builder = new ModelBuilder($column);
-            } else {
-                $newBuilder = new ModelBuilder($column);
-                $newBuilder->merge($builder);
-                $builder = $newBuilder;
-            }
+        $cols = (array)$columns;
+        $builders = new ModelBuilder(array_shift($cols));
+        foreach ($cols as $column) {
+            $b=new ModelBuilder($column);
+            $builders->merge($b);
         }
-        return $builder;
+        return $builders;
     }
 
     public function modelName()

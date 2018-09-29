@@ -2,9 +2,10 @@
 namespace @@namespace@@;
 
 @@imports@@
+
 /**
-   @@propertyDefiner@@
-   @@methodDefiner@@
+@@propertyDefiner@@
+@@methodDefiner@@
  */
 class @@modelName@@ extends @@eloquentbase@@
 {
