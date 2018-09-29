@@ -23,10 +23,22 @@ class Model implements Crud
     protected $namespace;
 
     /**
+     * The Namespace for the trait
+     * @var string
+     */
+    protected $traitSpace;
+
+    /**
      * Name of Model class
      * @var string
      */
     protected $modelName;
+
+    /**
+     * Name of Trait
+     * @var string
+     */
+    protected $traitName;
 
     /**
      * @var Table
@@ -59,7 +71,9 @@ class Model implements Crud
         $this->table = new Table($table);
         $this->modelBuilder = $this->makeModelBuilders();
         $this->namespace = $this->getFullNS(config('laracrud.model.namespace'));
+        $this->traitSpace = $this->getFullNS(config('laracrud.model.traitNamespace'));
         $this->modelName = $this->getModelName($table);
+        $this->traitName = 'Trait' . $this->modelName;
         if (!empty($name)) {
             $this->parseName($name);
         }
@@ -110,7 +124,26 @@ class Model implements Crud
         }
         $model = new \SplFileObject($filePath, 'w+');
         $model->fwrite($this->template());
+        $this->createTrait();
+    }
 
+    public function traitTemplate()
+    {
+        $data = [
+            'modelName' => $this->modelName,
+            'namespace' => $this->traitSpace,
+            'traitName' => $this->traitName,
+        ];
+        return (new TemplateManager('model/trait_template.txt', $data))->get();
+    }
+
+    private function createTrait()
+    {
+        $filePath = $this->traitPath($this->traitSpace);
+        if (!file_exists($filePath)) {
+            $model = new \SplFileObject($filePath, 'w+');
+            $model->fwrite($this->traitTemplate());
+        }
     }
 
     /**
@@ -171,7 +204,7 @@ class Model implements Crud
     protected function setTraits()
     {
         if (!config('laracrud.model.modelTraits')) return;
-        $me = $this->namespace . '\\' . config('laracrud.model.traitNamespace') . '\Trait' . $this->modelName;
+        $me = $this->traitSpace . '\\' . $this->traitName;
         $this->traits[basename($me)] = $me;
         $others = config('laracrud.model.tableUse');
         if (is_array($others) && !empty($others[$this->table->name()])) {
@@ -238,7 +271,7 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection'  . $fk->modelName().'[]'. ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection' . $fk->modelName() . '[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
             } else {
                 $param = ",'" . $fk->column() . "'";
                 $tempMan = new TemplateManager('model/relationship.txt', [
@@ -248,7 +281,7 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName().'[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
             }
             $temp .= $tempMan->get();
 

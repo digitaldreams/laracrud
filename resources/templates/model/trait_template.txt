@@ -1,0 +1,11 @@
+<?php
+
+namespace @@namespace@@;
+
+/**
+* @@traitName@@ for @@modelName@@
+*/
+trait @@traitName@@
+{
+    //TODO something meaningful to extend @@modelName@@
+}

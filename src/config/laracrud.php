@@ -78,7 +78,7 @@ return [
         /**
          * Not Fillable Columns
          */
-        'protectedColumns' => ['id', 'created_at', 'updated_at', 'deleted_at', 'remember_token', 'password'],
+        'protectedColumns' => ['created_at', 'updated_at', 'deleted_at', 'remember_token', 'password'],
 
         /**
          * Get Date Format. Model Date/ Time related column will display date to user in this format

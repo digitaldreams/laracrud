@@ -178,9 +178,11 @@ class Model
      */
     public function casts()
     {
-        if (isset($this->converTypes[$this->column->type()])) {
+        if (null === $this->dataType->cast()) return $this->casts;
+        $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->dataType->cast() . "'";
+        /*if (isset($this->converTypes[$this->column->type()])) {
             $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->converTypes[$this->column->type()] . "'";
-        }
+        }*/
         return $this->casts;
     }
 
@@ -213,7 +215,7 @@ class Model
      */
     public function propertyDefiner()
     {
-        $this->propertyDefiners[] = '@property ' . $this->dataType->cast() . ' $' . $this->column->name() . ' ' . str_replace("_", " ", $this->column->name());
+        $this->propertyDefiners[] = '@property ' . $this->dataType->typeHint() . ' $' . $this->column->name() . ' ' . str_replace("_", " ", $this->column->name());
         return $this->propertyDefiners;
     }
 
@@ -264,7 +266,7 @@ class Model
     {
         //Check if it is a data time column. If so then add it to $protected $dates=[]
         if (in_array($this->column->type(), ['time', 'date', 'datetime', 'timestamp'])
-            && !in_array($this->column->name(), config('laracrud.model.protectedColumns'))
+            // && !in_array($this->column->name(), config('laracrud.model.protectedColumns'))
         ) {
             $this->dates[] = "'" . $this->column->name() . "'";
         }

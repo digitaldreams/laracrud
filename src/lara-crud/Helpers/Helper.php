@@ -85,9 +85,25 @@ trait Helper
     public function checkPath($extension = ".php")
     {
         //If model path does not exists then create model path.
-        $fullPath = base_path($this->toPath($this->namespace));
+        $this->ensurePath($this->namespace);
+        return base_path($this->toPath($this->namespace) . '/' . $this->modelName . $extension);
+    }
+
+    public function traitPath($namespace, $extension = '.php')
+    {
+        $this->ensurePath($namespace);
+        return base_path($this->toPath($namespace) . '/' . $this->traitName . $extension);
+    }
+
+    /**
+     * Create dir from namespace
+     * @param $namespace
+     */
+    public function ensurePath($namespace)
+    {
+        $fullPath = base_path($this->toPath($namespace));
         if (!file_exists($fullPath)) {
-            $relPath = $this->toPath($this->namespace);
+            $relPath = $this->toPath($namespace);
             $nextPath = '';
             $folders = explode("/", $relPath);
             foreach ($folders as $folder) {
@@ -97,7 +113,6 @@ trait Helper
                 }
             }
         }
-        return base_path($this->toPath($this->namespace) . '/' . $this->modelName . $extension);
     }
 
     /**
@@ -137,7 +152,7 @@ trait Helper
     {
         $rootNs = config('laracrud.rootNamespace', 'App');
         if (substr_compare($namespace, $rootNs, 0, strlen($rootNs)) !== 0) {
-            return trim($rootNs, "\\") ."\\". $namespace;
+            return trim($rootNs, "\\") . "\\" . $namespace;
         }
         return $namespace;
     }
