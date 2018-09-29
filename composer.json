@@ -1,13 +1,13 @@
 {
-    "name": "digitaldream/laracrud",
+    "name": "angujo/laracrud",
     "type": "library",
     "description": "CRUD means CREATE, READ, UPDATE AND DELTE are common work in almost every web application. Laravel has also CRUD. We use Model, View, Controller, Request, Route's for CRUD. A well structured database are the blueprint of a web application. So We can create Model, View, Controller, Request from a database table",
     "keywords": ["Laravel","CRUD","Laravel Code Generator","Code Generator"],
-    "homepage": "https://github.com/digitaldreams/laracrud",
+    "homepage": "https://github.com/angujo/laracrud",
     "license": "MIT",
     "authors": [
         {
-            "name": "Tuhin Bepari",
+            "name": "Angujo",
             "email": "digitaldreams40@gmail.com",
             "homepage": "http://www.tuhinbepari.com",
             "role": "Developer"

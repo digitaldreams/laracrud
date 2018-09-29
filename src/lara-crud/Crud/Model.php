@@ -34,9 +34,20 @@ class Model implements Crud
     protected $table;
 
     /**
+     * @var array
+     */
+    protected $traits = [];
+
+    /**
      * @var ModelBuilder
      */
     protected $modelBuilder;
+
+    /**
+     * Parent Eloquent class
+     * @var string
+     */
+    protected $eloquent;
 
     /**
      * Model constructor.
@@ -60,8 +71,12 @@ class Model implements Crud
      */
     public function template()
     {
+        $this->setTraits();
         $relations = $this->relations();
         $data = [
+            'imports' => $this->imports(),
+            'eloquentbase' => $this->eloquentBase(),
+            'uses' => $this->uses(),
             'namespace' => $this->namespace,
             'modelName' => $this->modelName,
             'propertyDefiner' => config('laracrud.model.propertyDefiner') ? implode("\n", array_reverse($this->modelBuilder->propertyDefiners)) : '',
@@ -153,6 +168,43 @@ class Model implements Crud
         return $tempMan->get();
     }
 
+    protected function setTraits()
+    {
+        if (!config('laracrud.model.modelTraits')) return;
+        $me = $this->namespace . '\\' . config('laracrud.model.traitNamespace') . '\Trait' . $this->modelName;
+        $this->traits[basename($me)] = $me;
+        $others = config('laracrud.model.tableUse');
+        if (is_array($others) && !empty($others[$this->table->name()])) {
+            if (is_array($others[$this->table->name()])) {
+                foreach ($others[$this->table->name()] as $trait) {
+                    $this->traits[basename($trait)] = $trait;
+                }
+            } else {
+                $this->traits[basename($others[$this->table->name()])] = $others[$this->table->name()];
+            }
+        }
+    }
+
+    protected function eloquentBase()
+    {
+        return basename(config('laracrud.model.eloquent'));
+    }
+
+    protected function imports()
+    {
+        $uses[] = (new TemplateManager('model/imports.txt', ['path' => config('laracrud.model.eloquent')]))->get();
+        foreach ($this->traits as $trait) {
+            $uses[] = (new TemplateManager('model/imports.txt', ['path' => $trait]))->get();
+        }
+        return implode(PHP_EOL, $uses);
+    }
+
+    protected function uses()
+    {
+        if (empty($this->traits)) return '';
+        return 'use ' . implode(', ', array_keys($this->traits)) . ';';
+    }
+
     /**
      * Making relationship code
      * @return string
@@ -172,7 +224,7 @@ class Model implements Crud
                 'params' => $param
             ]);
             $temp .= $tempMan->get() . PHP_EOL;
-            array_unshift($this->modelBuilder->propertyDefiners,'@property ' . $relation['model'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
+            array_unshift($this->modelBuilder->propertyDefiners, '@property ' . $relation['model'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
         }
         foreach ($otherKeys as $column) {
             $fk = new ForeignKey($column);
@@ -186,7 +238,7 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners,'@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection'  . $fk->modelName().'[]'. ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
             } else {
                 $param = ",'" . $fk->column() . "'";
                 $tempMan = new TemplateManager('model/relationship.txt', [
@@ -196,13 +248,12 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners,'@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName().'[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
             }
             $temp .= $tempMan->get();
 
         }
         return $temp;
-
     }
 
     /**

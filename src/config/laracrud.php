@@ -16,6 +16,11 @@ return [
         'namespace' => 'Models',
 
         /**
+         * Parent Eloquent to Extend
+         */
+        'eloquent' => Illuminate\Database\Eloquent\Model::class,
+
+        /**
          * Use Property Definer.
          */
         'propertyDefiner' => true,
@@ -38,6 +43,15 @@ return [
          * Do it generate casts property based on your database column type.
          */
         'casts' => false,
+
+        /**
+         * Casting based on column name extensions
+         * Use @ for any character or any regex expression
+         */
+        'castTypes' => [
+            '@_json' => 'array',
+            '@_array' => 'array',
+        ],
 
         /**
          * Whether generator create scopes to all columns except protected columns
@@ -92,6 +106,31 @@ return [
          */
         'map' => [
             //'users'=>'App\Models\AdminUser::class'
+        ],
+        /**
+         * Make Column names as Constants E.g. const ID = 'id';
+         */
+        'constantColumns' => false,
+
+        /**
+         * Auto create Traits for the models to allow custom extension without breaking code
+         */
+        'modelTraits' => false,
+
+        /**
+         * Path to the Traits
+         * App/ModelTraits
+         */
+        'traitNamespace' => 'ModelTraits',
+
+        /**
+         * Set a custom Trait to be added to the model.
+         * Helpful if you need to extend the model without having to create another class.
+         * If [modelTraits] = TRUE then will be appended
+         */
+        'tableUse' => [
+            //'users'=>'App\Models\Traits\TraitUser::class',
+            //'passwords'=>['App\Models\Traits\TraitUser::class',...,...],
         ]
     ],
     'view' => [

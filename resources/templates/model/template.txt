@@ -1,13 +1,14 @@
 <?php
 namespace @@namespace@@;
 
-use Illuminate\Database\Eloquent\Model;
+@@imports@@
 /**
    @@propertyDefiner@@
    @@methodDefiner@@
  */
-class @@modelName@@ extends Model 
+class @@modelName@@ extends @@eloquentbase@@
 {
+    @@uses@@
     @@constants@@
     /**
     * Database table name

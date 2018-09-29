@@ -104,6 +104,12 @@ class Model
     public $searchScope = [];
 
     /**
+     * To get data type and assist in casting
+     * @var DataType
+     */
+    public $dataType;
+
+    /**
      * ModelBuilder constructor.
      *
      * @param Column $column
@@ -112,6 +118,7 @@ class Model
     public function __construct(Column $column)
     {
         $this->column = $column;
+        $this->dataType = new DataType($column);
     }
 
     /**
@@ -156,7 +163,7 @@ class Model
      */
     public function scopes()
     {
-        if (!in_array($this->column->name(), config('laracrud.model.protectedColumns')) && !in_array($this->column->type(),['text', 'tinytext', 'bigtext']) ) {
+        if (!in_array($this->column->name(), config('laracrud.model.protectedColumns')) && !in_array($this->column->type(), ['text', 'tinytext', 'bigtext'])) {
             $this->scopes[] = (new TemplateManager('model/scope.txt', [
                     'methodName' => ucfirst($this->column->camelCase()),
                     'fielName' => $this->column->name()
@@ -178,18 +185,25 @@ class Model
     }
 
     /**
-     * @return array|void
+     * @return array
      */
     public function constant()
     {
-        if ($this->column->type() !== 'enum') {
+        $cColumns = config('laracrud.model.constantColumns');
+        if (!$cColumns && $this->column->type() !== 'enum') {
             return $this->constants;
         }
 
-        foreach ($this->column->options() as $value) {
-            $name = strtoupper($this->column->name() . '_' . str_replace([" ",
-                    "-", "\"", "/"], "_", $value));
-            $this->constants[] = 'const ' . $name . '=' . "'$value'" . ";" . PHP_EOL;
+        $col_name = strtoupper(preg_replace('/[^a-zA-Z0-9]+/', '_', $this->column->name()));
+        if (0 === strcmp('enum', $this->column->type())) {
+            foreach ($this->column->options() as $value) {
+                $name = strtoupper($col_name . '_' . str_replace([" ",
+                        "-", "\"", "/"], "_", $value));
+                $this->constants[] = 'const ' . $name . '=' . "'$value'" . ";" . PHP_EOL;
+            }
+        }
+        if ($cColumns) {
+            $this->constants[] = 'const ' . $col_name . ' = \'' . $this->column->name() . '\'';
         }
         return $this->constants;
     }
@@ -199,7 +213,7 @@ class Model
      */
     public function propertyDefiner()
     {
-        $this->propertyDefiners[] = '@property ' . $this->column->type() . ' $' . $this->column->name() . ' ' . str_replace("_", " ", $this->column->name());
+        $this->propertyDefiners[] = '@property ' . $this->dataType->cast() . ' $' . $this->column->name() . ' ' . str_replace("_", " ", $this->column->name());
         return $this->propertyDefiners;
     }
 
