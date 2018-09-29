@@ -205,7 +205,7 @@ class Model
             }
         }
         if ($cColumns) {
-            $this->constants[] = 'const ' . $col_name . ' = \'' . $this->column->name() . '\'';
+            $this->constants[] = 'const ' . $col_name . ' = \'' . $this->column->name() . '\';'. PHP_EOL;
         }
         return $this->constants;
     }

@@ -53,14 +53,14 @@ class LaraCrudServiceProvider extends ServiceProvider
         ], 'laracrud-config');
 
         // Publish Templates to view/vendor folder so user can customize this own templates
-        $this->publishes([
+        /*$this->publishes([
             __DIR__ . '/../../resources/templates' => resource_path('views/vendor/laracrud/templates')
         ], 'laracrud-template');
 
         $this->publishes([
             __DIR__ . '/../../resources/assets' => public_path('laracrud'),
             __DIR__ . '/../../resources/views' => resource_path('views/laracrud')
-        ], 'laracrud-assets');
+        ], 'laracrud-assets');*/
 
     }
 
