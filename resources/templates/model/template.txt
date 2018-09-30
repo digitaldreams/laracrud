@@ -15,6 +15,11 @@ class @@modelName@@ extends @@eloquentbase@@
     * Database table name
     */
     protected $table = '@@tableName@@';
+
+    /**
+    * It has timestamps
+    */
+    public $timestamps = @@timestamp@@;
 @@guarded@@
 @@fillable@@
 @@casts@@

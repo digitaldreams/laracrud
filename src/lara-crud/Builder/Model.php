@@ -84,6 +84,11 @@ class Model
     public $accessors = [];
 
     /**
+     * @var array
+     */
+    public $timestampColumns=[];
+
+    /**
      * Database Type => PHP data types
      * @var array
      */
@@ -159,6 +164,7 @@ class Model
      */
     public function merge(Model $modelBuilder)
     {
+        $this->timestampColumns=array_merge($this->timestampColumns,$modelBuilder->timestampColumns);
         $this->propertyDefiners = array_merge($this->propertyDefiners, $modelBuilder->propertyDefiners);
         $this->methodDefiners = array_merge($this->methodDefiners, $modelBuilder->methodDefiners);
         $this->constants = array_merge($this->constants, $modelBuilder->constants);
@@ -171,6 +177,11 @@ class Model
         $this->fillable = array_merge($this->fillable, $modelBuilder->fillable);
         $this->relations = array_merge($this->relations, $modelBuilder->relations);
         $this->guarded = array_merge($this->guarded, $modelBuilder->guarded);
+    }
+
+    public function enableTimestamps()
+    {
+        return in_array('created_at',$this->timestampColumns,false) && in_array('updated_at',$this->timestampColumns,false);
     }
 
     /**

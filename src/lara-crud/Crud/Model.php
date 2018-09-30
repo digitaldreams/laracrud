@@ -92,6 +92,7 @@ class Model implements Crud
             'eloquentbase' => $this->eloquentBase(),
             'uses' => $this->uses(),
             'namespace' => $this->namespace,
+            'timestamp' => var_export($this->modelBuilder->enableTimestamps(), true),
             'modelName' => $this->modelName,
             'propertyDefiner' => config('laracrud.model.propertyDefiner') ? implode("\n", array_reverse($this->modelBuilder->propertyDefiners)) : '',
             'methodDefiner' => config('laracrud.model.methodDefiner') ? implode("\n", array_reverse($this->modelBuilder->methodDefiners)) : '',
@@ -161,7 +162,7 @@ class Model implements Crud
     protected function guarded()
     {
         if (config('laracrud.model.guarded') && !empty($this->modelBuilder->guarded)) {
-            $tempMan = new TemplateManager('model/guarded.txt',['guarded'=>implode(', ',$this->modelBuilder->guarded)]);
+            $tempMan = new TemplateManager('model/guarded.txt', ['guarded' => implode(', ', $this->modelBuilder->guarded)]);
             return $tempMan->get();
         }
         return '';
@@ -328,7 +329,7 @@ class Model implements Crud
         $cols = (array)$columns;
         $builders = new ModelBuilder(array_shift($cols));
         foreach ($cols as $column) {
-            $b=new ModelBuilder($column);
+            $b = new ModelBuilder($column);
             $builders->merge($b);
         }
         return $builders;
