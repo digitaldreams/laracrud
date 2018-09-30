@@ -271,7 +271,7 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection' . $fk->modelName() . '[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection' . $fk->modelName() . '[]' . ' $' . str_plural(lcfirst($fk->modelName())) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
             } else {
                 $param = ",'" . $fk->column() . "'";
                 $tempMan = new TemplateManager('model/relationship.txt', [
@@ -281,7 +281,7 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . str_plural(lcfirst($fk->modelName())) . ' ' . ForeignKey::RELATION_HAS_MANY);
             }
             $temp .= $tempMan->get();
 

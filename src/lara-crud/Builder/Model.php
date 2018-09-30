@@ -86,7 +86,7 @@ class Model
     /**
      * @var array
      */
-    public $timestampColumns=[];
+    public $timestampColumns = [];
 
     /**
      * Database Type => PHP data types
@@ -156,6 +156,14 @@ class Model
         $this->casts();
         $this->relations();
         $this->guarded();
+        $this->setTimestamps();
+    }
+
+    protected function setTimestamps()
+    {
+        if (in_array($this->column->name(), ['created_at', 'updated_at'], false) && in_array($this->column->type(), [DataType::TIMESTAMP, DataType::DATETIME], false)) {
+            $this->timestampColumns[] = $this->column->name();
+        }
     }
 
     /**
@@ -164,7 +172,7 @@ class Model
      */
     public function merge(Model $modelBuilder)
     {
-        $this->timestampColumns=array_merge($this->timestampColumns,$modelBuilder->timestampColumns);
+        $this->timestampColumns = array_merge($this->timestampColumns, $modelBuilder->timestampColumns);
         $this->propertyDefiners = array_merge($this->propertyDefiners, $modelBuilder->propertyDefiners);
         $this->methodDefiners = array_merge($this->methodDefiners, $modelBuilder->methodDefiners);
         $this->constants = array_merge($this->constants, $modelBuilder->constants);
@@ -181,7 +189,7 @@ class Model
 
     public function enableTimestamps()
     {
-        return in_array('created_at',$this->timestampColumns,false) && in_array('updated_at',$this->timestampColumns,false);
+        return in_array('created_at', $this->timestampColumns, false) && in_array('updated_at', $this->timestampColumns, false);
     }
 
     /**
