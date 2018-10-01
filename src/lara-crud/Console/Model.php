@@ -48,7 +48,14 @@ class Model extends Command
                 }
             }
             if (0 === strcmp($table, 'all') || 0 === strcmp($table, '*')) {
-                ModelCrud::loopTables(function ($table) { $this->implementTable($table); });
+                ModelCrud::loopTables(function ($table) {
+                    try {
+                        $this->implementTable($table);
+                        $this->info($table . ': ' . 'Model class successfully created');
+                    } catch (\Exception $ex) {
+                        $this->error($table . ': ' . $ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
+                    }
+                });
             } else {
                 if (strripos($table, ",")) {
                     $table = explode(",", $table);
@@ -61,9 +68,9 @@ class Model extends Command
                     $this->implementTable($table, $modelName);
                 }
 
+                $this->info('Model class successfully created');
             }
 
-            $this->info('Model class successfully created');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
@@ -71,7 +78,11 @@ class Model extends Command
 
     private function implementTable($table, $modelName = '')
     {
-        $modelCrud = new ModelCrud($table, $modelName);
-        $modelCrud->save();
+        try {
+            $modelCrud = new ModelCrud($table, $modelName);
+            $modelCrud->save();
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
