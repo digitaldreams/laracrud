@@ -1,4 +1,5 @@
 <?php
+
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
@@ -46,20 +47,18 @@ class Model extends Command
                     config(["laracrud.model.$option" => false]);
                 }
             }
-            if ($table == 'all') {
-                $modelCrud = new ModelCrud();
+            if (0 === strcmp($table, 'all') || 0 === strcmp($table, '*')) {
+                ModelCrud::loopTables(function ($table) { $this->implementTable($table); });
             } else {
                 if (strripos($table, ",")) {
                     $table = explode(",", $table);
                     ModelCrud::checkMissingTable($table);
                     foreach ($table as $tb) {
-                        $modelCrud = new ModelCrud($table);
-                        $modelCrud->save();
+                        $this->implementTable($tb);
                     }
                 } else {
                     ModelCrud::checkMissingTable($table);
-                    $modelCrud = new ModelCrud($table, $modelName);
-                    $modelCrud->save();
+                    $this->implementTable($table, $modelName);
                 }
 
             }
@@ -68,5 +67,11 @@ class Model extends Command
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
+    }
+
+    private function implementTable($table, $modelName = '')
+    {
+        $modelCrud = new ModelCrud($table, $modelName);
+        $modelCrud->save();
     }
 }

@@ -33,6 +33,14 @@ trait Helper
 
     }
 
+    public static function loopTables(\Closure $closure)
+    {
+        $availableTables = (new Database())->tables();
+        foreach ($availableTables as $availableTable) {
+            $closure($availableTable);
+        }
+    }
+
     /**
      * Parse user defined model name and extract namespace and class name
      * @param $name

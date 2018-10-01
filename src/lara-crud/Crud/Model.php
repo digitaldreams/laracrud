@@ -339,6 +339,4 @@ class Model implements Crud
     {
         return $this->modelName;
     }
-
-
 }
