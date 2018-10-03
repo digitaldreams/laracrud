@@ -1,0 +1,15 @@
+<?php
+
+use Faker\Generator as Faker;
+
+/*
+|--------------------------------------------------------------------------
+| @@modelClass@@ Factories
+|--------------------------------------------------------------------------
+*/
+
+$factory->define(@@modelClass@@::class, function (Faker $faker) {
+    return [
+@@columns@@
+    ];
+});

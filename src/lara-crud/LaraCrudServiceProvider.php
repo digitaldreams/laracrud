@@ -6,6 +6,7 @@ namespace LaraCrud;
 use DbReader\Database;
 use Illuminate\Support\ServiceProvider;
 use LaraCrud\Console\Controller;
+use LaraCrud\Console\Factory;
 use LaraCrud\Console\Migration;
 use LaraCrud\Console\Model;
 use LaraCrud\Console\Mvc;
@@ -31,6 +32,7 @@ class LaraCrudServiceProvider extends ServiceProvider
      */
     protected $commands = [
         Model::class,
+        Factory::class,
         Request::class,
         Controller::class,
         Route::class,

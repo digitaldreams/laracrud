@@ -94,6 +94,10 @@ return [
             //'users'=>'App\Models\AdminUser::class'
         ]
     ],
+    'factory' => [
+        'path' => base_path('database/factories'),
+        'suffix' => 'Factory'
+    ],
     'view' => [
         /**
          * Path to the main folder. Folder path are relative to base_path
