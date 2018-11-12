@@ -124,7 +124,7 @@ trait Helper
     }
 
     /**
-     * @param $namespace Full Qualified namespace e.g. App\Http\Controllers
+     * @param $namespace string Full Qualified namespace e.g. App\Http\Controllers
      * @return string will be return like app/Http/Controllers
      */
     public function toPath($namespace)
@@ -141,7 +141,7 @@ trait Helper
     /**
      * Get Controller File and Class Name
      * @param string $name Default Name. It will be used if user does not provide any name.
-     * @return type
+     * @return string
      */
     public function getFileName($name)
     {

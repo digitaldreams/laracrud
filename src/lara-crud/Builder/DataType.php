@@ -72,7 +72,7 @@ class DataType
         if (\in_array($this->column->type(), $this->string, false)) return 'string';
         if (1 === (int)$this->column->length() && 0 === strcmp($this->column->type(), self::TINYINT)) return 'boolean';
         if (\in_array($this->column->type(), $this->int, false)) return 'int';
-        if (!$cast && in_array($this->column->type(), [self::DATETIME, self::DATE, self::TIME, self::TIMESTAMP], false)) return Carbon::class;
+        if (!$cast && in_array($this->column->type(), [self::DATETIME, self::DATE, self::TIME, self::TIMESTAMP], false)) return '\\'.Carbon::class;
         if (0 === strcmp($this->column->type(), self::DATE)) return 'date' . (($f = config('laracrud.model.setDateFormat.date')) ? ':' . $f : '');
         if (in_array($this->column->type(), [self::DATETIME, self::TIMESTAMP], false)) return 'datetime' . (($f = config('laracrud.model.setDateFormat.datetime')) ? ':' . $f : '');
         if (0 === strcmp($this->column->type(), self::TIME)) return 'time' . (($f = config('laracrud.model.setDateFormat.time')) ? ':' . $f : '');
