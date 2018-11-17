@@ -136,7 +136,7 @@ class MigrationCrud implements Crud
             }
             //for enum data type we will use in validator.
             if ($dataType == 'enum') {
-                $retVals = str_replace(",", "','", $column->options());
+                $retVals = join("', '", $column->options());
                 $params = '[\'' . $retVals . '\']';
             } elseif ($dataType == 'varchar') {
                 $params = $column->length();
