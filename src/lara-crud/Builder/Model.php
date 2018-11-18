@@ -121,6 +121,12 @@ class Model
     public $guarded = [];
 
     /**
+     * SoftDelete trait to be used
+     * @var bool
+     */
+    public $softDeletes = false;
+
+    /**
      * ModelBuilder constructor.
      *
      * @param Column $column
@@ -144,6 +150,7 @@ class Model
 
     protected function load()
     {
+        $this->softDeletes = $this->softDeletes();
         $this->propertyDefiner();
         $this->fillable();
         $this->methodDefiner();
@@ -173,6 +180,7 @@ class Model
     public function merge(Model $modelBuilder)
     {
         $this->timestampColumns = array_merge($this->timestampColumns, $modelBuilder->timestampColumns);
+        $this->softDeletes = $this->softDeletes ?: $modelBuilder->softDeletes;
         $this->propertyDefiners = array_merge($this->propertyDefiners, $modelBuilder->propertyDefiners);
         $this->methodDefiners = array_merge($this->methodDefiners, $modelBuilder->methodDefiners);
         $this->constants = array_merge($this->constants, $modelBuilder->constants);
@@ -185,6 +193,11 @@ class Model
         $this->fillable = array_merge($this->fillable, $modelBuilder->fillable);
         $this->relations = array_merge($this->relations, $modelBuilder->relations);
         $this->guarded = array_merge($this->guarded, $modelBuilder->guarded);
+    }
+
+    public function softDeletes()
+    {
+        return in_array('deleted_at', $this->timestampColumns, false);
     }
 
     public function enableTimestamps()

@@ -6,6 +6,7 @@
 namespace LaraCrud\Crud;
 
 use DbReader\Table;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use LaraCrud\Builder\Model as ModelBuilder;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\ForeignKey;
@@ -85,6 +86,7 @@ class Model implements Crud
      */
     public function template()
     {
+        $this->softDeletion();
         $this->setTraits();
         $relations = $this->relations();
         $data = [
@@ -153,6 +155,13 @@ class Model implements Crud
     protected function constants()
     {
         return implode("\n", $this->modelBuilder->constants);
+    }
+
+    protected function softDeletion()
+    {
+        if (!$this->modelBuilder->softDeletes) return;
+        $cls = SoftDeletes::class;
+        $this->traits[basename($cls)] = $cls;
     }
 
     /**
