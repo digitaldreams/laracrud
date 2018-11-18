@@ -131,7 +131,12 @@ return [
         'tableUse' => [
             //'users'=>'App\Models\Traits\TraitUser::class',
             //'passwords'=>['App\Models\Traits\TraitUser::class',...,...],
-        ]
+        ],
+        /**
+         * Indicate whether the model classes can be overwritten.
+         * Alternatively you can delete the model class and new one will be created
+         */
+        'overwriteFiles' => false,
     ],
     'view' => [
         /**

@@ -119,7 +119,7 @@ class Model implements Crud
     public function save()
     {
         $filePath = $this->checkPath();
-        if (file_exists($filePath)) {
+        if (file_exists($filePath) && !config('laracrud.model.overwriteFiles')) {
             throw new \Exception($this->namespace . '\\' . $this->modelName . ' already exists');
         }
         $model = new \SplFileObject($filePath, 'w+');
