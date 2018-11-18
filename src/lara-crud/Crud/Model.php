@@ -86,7 +86,6 @@ class Model implements Crud
      */
     public function template()
     {
-        $this->softDeletion();
         $this->setTraits();
         $relations = $this->relations();
         $data = [
@@ -159,7 +158,7 @@ class Model implements Crud
 
     protected function softDeletion()
     {
-        if (!$this->modelBuilder->softDeletes) return;
+        if (!$this->modelBuilder->softDeletes()) return;
         $cls = SoftDeletes::class;
         $this->traits[basename($cls)] = $cls;
     }
@@ -225,6 +224,7 @@ class Model implements Crud
                 $this->traits[basename($others[$this->table->name()])] = $others[$this->table->name()];
             }
         }
+        if ($this->modelBuilder->softDeletes()) $this->softDeletion();
     }
 
     protected function eloquentBase()

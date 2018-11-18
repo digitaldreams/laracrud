@@ -121,12 +121,6 @@ class Model
     public $guarded = [];
 
     /**
-     * SoftDelete trait to be used
-     * @var bool
-     */
-    public $softDeletes = false;
-
-    /**
      * ModelBuilder constructor.
      *
      * @param Column $column
@@ -150,7 +144,6 @@ class Model
 
     protected function load()
     {
-        $this->softDeletes = $this->softDeletes();
         $this->propertyDefiner();
         $this->fillable();
         $this->methodDefiner();
@@ -168,7 +161,7 @@ class Model
 
     protected function setTimestamps()
     {
-        if (in_array($this->column->name(), ['created_at', 'updated_at'], false) && in_array($this->column->type(), [DataType::TIMESTAMP, DataType::DATETIME], false)) {
+        if (in_array($this->column->name(), ['created_at', 'updated_at', 'deleted_at'], false) && in_array($this->column->type(), [DataType::TIMESTAMP, DataType::DATETIME], false)) {
             $this->timestampColumns[] = $this->column->name();
         }
     }
@@ -180,7 +173,6 @@ class Model
     public function merge(Model $modelBuilder)
     {
         $this->timestampColumns = array_merge($this->timestampColumns, $modelBuilder->timestampColumns);
-        $this->softDeletes = $this->softDeletes ?: $modelBuilder->softDeletes;
         $this->propertyDefiners = array_merge($this->propertyDefiners, $modelBuilder->propertyDefiners);
         $this->methodDefiners = array_merge($this->methodDefiners, $modelBuilder->methodDefiners);
         $this->constants = array_merge($this->constants, $modelBuilder->constants);
