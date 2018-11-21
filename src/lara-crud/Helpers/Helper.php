@@ -136,8 +136,11 @@ trait Helper
     public function getFullNS($namespace)
     {
         $rootNs = config('laracrud.rootNamespace', 'App');
+        if (empty($namespace)) {
+            return $rootNs;
+        }
         if (substr_compare($namespace, $rootNs, 0, strlen($rootNs)) !== 0) {
-            return trim($rootNs, "\\") ."\\". $namespace;
+            return trim($rootNs, "\\") . "\\" . $namespace;
         }
         return $namespace;
     }
