@@ -1,0 +1,19 @@
+    /**
+     * Delete an existing @@modelName@@
+     *
+     * @Delete("/{id}")
+     *
+     * @Versions({"v1"})
+     * @Parameters({
+     *      @Parameter("id", description="The primary key of @@modelName@@",type="integer", required=true)
+     * })
+     * @Transaction({
+     *      @Response(200, body={
+     *           "status": 200,
+     *           "message": "@@modelName@@ successfully deleted"
+     *       }),
+     *      @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."}),
+     *      @Response(500, body={"message": "Error occurred while deleting @@modelName@@"})
+     * })
+     */
+

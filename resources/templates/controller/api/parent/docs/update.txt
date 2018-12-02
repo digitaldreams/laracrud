@@ -1,0 +1,16 @@
+    /**
+     * Update a existing @@modelName@@
+     *
+     * @Put("/{id}")
+     *
+     * @Versions({"v1"})
+     * @Parameters({
+     *      @Parameter("@@parentModelNameParam@@", description="The primary key of @@parentModelNameParam@@", type="integer", required=true),
+     *      @Parameter("id", description="The primary key of @@modelName@@", type="integer", required=true)
+     * })
+     * @Transaction({
+     *     @Request(@@apiRequest@@),
+     *     @Response(200, body=@@apiResponse@@),
+     *     @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
+     * })
+     */

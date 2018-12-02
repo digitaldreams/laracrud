@@ -1,22 +1,5 @@
-     /**
-     * Show details about a @@modelName@@
-     *
-     * @Get("/{id}")
-     *
-     * @Versions({"v1"})
-     * @Parameters({
-     *      @Parameter("@@parentModelNameParam@@", description="The primary key of @@parentModelNameParam@@", type="integer", required=true),
-     *      @Parameter("id", description="The primary key of @@modelName@@", type="integer", required=true)
-     * })
-     * @Transaction({
-     *      @Response(200, body={
-                "data": {}
-            }),
-     *      @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
-     * })
-     */
-    public function show(@@requestClass@@ $request, $@@parentModelNameParam@@, $@@modelNameParam@@)
+@@documentation@@
+    public function show(@@requestClass@@ $request, $@@parentModelNameParam@@, @@modelName@@ $@@modelNameParam@@)
     {
-      $@@modelNameParam@@ = @@modelName@@::findOrFail($@@modelNameParam@@);
       return $this->response->item($@@modelNameParam@@, new @@transformer@@());
     }

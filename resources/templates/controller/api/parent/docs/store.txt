@@ -1,0 +1,16 @@
+    /**
+     * Create a @@modelName@@
+     *
+     *
+     * @Post("/store")
+     *
+     * @Versions({"v1"})
+     * @Parameters({
+     *      @Parameter("@@parentModelNameParam@@", description="The primary key of @@parentModelNameParam@@", type="integer", required=true)
+     * })
+     * @Transaction({
+     *      @Request(@@apiRequest@@),
+     *      @Response(200, body=@@apiResponse@@),
+     *      @Response(500, body={"message": "Error occurred while saving @@modelName@@"})
+     * })
+     */

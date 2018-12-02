@@ -173,6 +173,11 @@ return [
         'apiNamespace' => 'Http\Controllers\Api',
 
         /**
+         * API documentation
+         */
+        'documentation' => false,
+
+        /**
          * After every request class name this world will be added. For example, User will be UserController
          */
         'classSuffix' => 'Controller'

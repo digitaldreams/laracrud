@@ -1,17 +1,4 @@
-    /**
-     * List of @@modelName@@
-     *
-     * @Get("/")
-     *
-     * @Versions({"v1"})
-     * @Parameters({
-     *      @Parameter("@@parentModelNameParam@@", description="The primary key of @@parentModelNameParam@@", type="integer", required=true),
-     *      @Parameter("page", description="The page of results to view.", type="integer", default=1)
-     * })
-     * @Response(200, body={
-       "data": {}
-    })
-     */
+@@documentation@@
     public function index(@@requestClass@@ $request, $@@parentModelNameParam@@)
     {
        return $this->response->paginator(@@modelName@@::paginate(10), new @@transformer@@());

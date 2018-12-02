@@ -1,0 +1,17 @@
+     /**
+     * Show details about a @@modelName@@
+     *
+     * @Get("/{id}")
+     *
+     * @Versions({"v1"})
+     * @Parameters({
+     *      @Parameter("id", description="The primary key of @@modelName@@",type="integer", required=true)
+     * })
+     * @Transaction({
+     *      @Response(200, body={
+     *           "data": {@@apiResponse@@}
+     *         }),
+     *      @Response(404, body={"message": "No query results for model [@@fullmodelName@@]."})
+     * })
+     */
+

@@ -144,21 +144,8 @@ class Controller implements Crud
             $this->modelName = $model;
         }
         if (!empty($parent)) {
-            if (!class_exists($parent)) {
-                $parentModel = $this->modelNameSpace . '\\' . $parent;
-                if (!class_exists($parentModel)) {
-                    throw new \Exception($parent . ' class does not exists');
-                }
-                $this->import[] = $parentModel;
-                $this->parentModel = $parent;
-            } else {
-                $this->import[] = $parent;
-                $parentClass = new \ReflectionClass($parent);
-                $this->parentModel = $parentClass->getShortName();
-            }
-
+            $this->setParent($parent);
         }
-
         if (class_exists($this->modelName)) {
             $this->model = $model = new $this->modelName;
             $this->table = $model->getTable();
@@ -268,18 +255,24 @@ class Controller implements Crud
         $saveUpload = '';
         $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', []);
         foreach ($this->only as $method) {
+            $documentation = '';
+            $requestClass = $this->getRequestClass($method);
             if ($filePath = $tempMan->getFullPath("controller/" . $this->template . '/' . $method . '.txt')) {
 
                 if (in_array($method, ['store', 'update'])) {
                     $saveUpload = $this->getUploadScript($method);
                 }
-
-                $requestClass = $this->getRequestClass($method);
-                $methodTemp = new TemplateManager("controller/" . $this->template . '/' . $method . ".txt", array_merge($this->globalVars(), [
+                $vars = array_merge($this->globalVars(), [
                     'requestClass' => $requestClass,
                     'apiRequest' => $this->makeApiRequest($requestClass),
-                    'saveUpload' => $saveUpload
-                ]));
+                    'saveUpload' => $saveUpload,
+                ]);
+                if (config('laracrud.controller.documentation') == true && $this->template !== 'web') {
+                    $documentation = (new TemplateManager("controller/" . $this->template . "/docs/" . $method . '.txt', $vars));
+                }
+
+                $vars['documentation'] = $documentation;
+                $methodTemp = new TemplateManager("controller/" . $this->template . '/' . $method . ".txt", $vars);
                 $retTemp .= $methodTemp->get();
             }
         }
@@ -407,5 +400,20 @@ class Controller implements Crud
         return $retTemp;
     }
 
+    private function setParent($parent)
+    {
+        if (!class_exists($parent)) {
+            $parentModel = $this->modelNameSpace . '\\' . $parent;
+            if (!class_exists($parentModel)) {
+                throw new \Exception($parent . ' class does not exists');
+            }
+            $this->import[] = $parentModel;
+            $this->parentModel = $parent;
+        } else {
+            $this->import[] = $parent;
+            $parentClass = new \ReflectionClass($parent);
+            $this->parentModel = $parentClass->getShortName();
+        }
+    }
 
 }
