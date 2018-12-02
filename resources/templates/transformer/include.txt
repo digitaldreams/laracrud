@@ -1,10 +1,9 @@
 
     /**
      * Include @@relation@@
-     *
+     * @param @@model@@ $@@modelParam@@
      * @return \League\Fractal\Resource\@@response@@;
      */
-
     public function include@@method@@(@@model@@ $@@modelParam@@, ParamBag $paramBag = null)
     {
         return $this->@@response@@($@@modelParam@@->@@relation@@, new @@includeTransformer@@($paramBag->get('fields')));

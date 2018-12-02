@@ -52,7 +52,17 @@ class Transformer extends Command
             }
             $transformerCrud = new TransformerCrud($modelObj, $name);
             $transformerCrud->save();
-            $this->info('Transformer class successfully created');
+            foreach ($transformerCrud->getIncludedModels() as $incModel) {
+                try {
+                    $incTc = new TransformerCrud($incModel);
+                    $incTc->save();
+                    $this->warn($incTc->getName() . ' created successfully');
+
+                } catch (\Exception $e) {
+                    continue;
+                }
+            }
+            $this->info($transformerCrud->getName() . ' created successfully');
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }

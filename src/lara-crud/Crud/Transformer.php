@@ -44,6 +44,8 @@ class Transformer implements Crud
 
     protected $includeArr = [];
 
+    protected $includedModels = [];
+
     /**
      * Transformer constructor.
      * @param Model $model
@@ -102,8 +104,12 @@ class Transformer implements Crud
         $modelName = lcfirst($this->reflectionClass->getShortName());
         $table = $this->model->getTable();
         $tableLib = new Table($table);
+        $hiddenArray = $this->model->getHidden();
         $columnClasses = $tableLib->columnClasses();
         foreach ($columnClasses as $columnClass) {
+            if (is_array($hiddenArray) && in_array($columnClass->name(), $hiddenArray)) {
+                continue;
+            }
             $retStr .= "\t\t\t" . '"' . $columnClass->name() . '" => $' . $modelName . '->' . $columnClass->name() . "," . PHP_EOL;
         }
         return $retStr;
@@ -138,25 +144,23 @@ class Transformer implements Crud
     {
         $shortName = $modelRef->getShortName();
         $transformerName = $shortName . config('laracrud.transformer.classSuffix');
-        return $transformerClass = $this->getFullNS(config('laracrud.transformer.namespace') . '\\' . $transformerName);
-
-        if (!class_exists($transformerClass)) {
-            $transformerCrud = new Transformer($class);
-            $transformerCrud->save();
-        }
-        return $transformerClass;
+        $transformerClass = $this->getFullNS(config('laracrud.transformer.namespace') . '\\' . $transformerName);
+        $this->import[] = $transformerClass;
+        return $transformerName;
     }
 
 
     protected function makeIncludeArr($response, $method, $relationResponse)
     {
         $class = $relationResponse->getQuery()->getModel();
+        $this->includedModels[] = $class;
         $modelRef = new \ReflectionClass(get_class($class));
         $transformerClass = $this->makeTransformer($class, $modelRef);
+        $this->availableIncludes .= '"' . strtolower($method->name) . '",';
         $this->includeArr[] = [
             'relation' => $method->name,
             'response' => $response,
-            'method' => $modelRef->getShortName(),
+            'method' => ucfirst($method->name),
             'includeTransformer' => $transformerClass
         ];
     }
@@ -203,4 +207,16 @@ class Transformer implements Crud
         return $temp;
     }
 
+    /**
+     * @return array
+     */
+    public function getIncludedModels()
+    {
+        return $this->includedModels;
+    }
+
+    public function getName()
+    {
+        return $this->modelName;
+    }
 }
