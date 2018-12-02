@@ -3,6 +3,14 @@
 namespace LaraCrud\Crud;
 
 use DbReader\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
@@ -12,7 +20,7 @@ class Transformer implements Crud
 {
     use Helper;
     /**
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var Model
      */
     protected $model;
 
@@ -32,18 +40,24 @@ class Transformer implements Crud
      */
     protected $reflectionClass;
 
+    protected $availableIncludes = '';
+
+    protected $includeArr = [];
+
     /**
      * Transformer constructor.
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      * @param bool $name
+     * @throws \ReflectionException
      */
-    public function __construct(\Illuminate\Database\Eloquent\Model $model, $name = false)
+    public function __construct(Model $model, $name = false)
     {
         $this->model = $model;
         $this->name = $name;
         $this->namespace = $this->getFullNS(config('laracrud.transformer.namespace'));
         $this->reflectionClass = new \ReflectionClass(get_class($model));
         $this->modelName = !empty($name) ? $name : $this->reflectionClass->getShortName() . config('laracrud.transformer.classSuffix', 'Transformer');
+        $this->makeIncludes();
     }
 
     /**
@@ -52,16 +66,19 @@ class Transformer implements Crud
      */
     public function template()
     {
-        return (new TemplateManager('transformer/template.txt', [
+        $vars = [
             'namespace' => $this->namespace,
             'modelFullName' => get_class($this->model),
             'model' => $this->reflectionClass->getShortName(),
             'properties' => $this->makeProperties(),
             'modelParam' => lcfirst($this->reflectionClass->getShortName()),
             'className' => $this->modelName,
-            'availableInclude' => '',
-            'defaultInclude' => ''
-        ]))->get();
+            'availableInclude' => $this->availableIncludes,
+            'defaultInclude' => '',
+            'importNameSpace' => ''
+        ];
+        $vars['includes'] = $this->generateIncludeCode($vars);
+        return (new TemplateManager('transformer/template.txt', $vars))->get();
     }
 
     /**
@@ -87,8 +104,103 @@ class Transformer implements Crud
         $tableLib = new Table($table);
         $columnClasses = $tableLib->columnClasses();
         foreach ($columnClasses as $columnClass) {
-            $retStr .= "\t\t\t".'"' . $columnClass->name() . '" => $' . $modelName . '->' . $columnClass->name() . "," . PHP_EOL;
+            $retStr .= "\t\t\t" . '"' . $columnClass->name() . '" => $' . $modelName . '->' . $columnClass->name() . "," . PHP_EOL;
         }
         return $retStr;
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    protected function makeIncludes()
+    {
+        $methods = $this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
+        foreach ($methods as $method) {
+            if ($method->getNumberOfParameters() == 0 && $method->class == get_class($this->model)) {
+                $response = $method->invoke($this->model);
+                $responseClass = get_class($response);
+                if ($this->isItem($responseClass)) {
+                    $this->makeIncludeArr('item', $method, $response);
+                } elseif ($this->isCollection($responseClass)) {
+                    $this->makeIncludeArr('collection', $method, $response);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $class
+     * @return string
+     * @throws \ReflectionException
+     *
+     */
+    private function makeTransformer($class, $modelRef)
+    {
+        $shortName = $modelRef->getShortName();
+        $transformerName = $shortName . config('laracrud.transformer.classSuffix');
+        return $transformerClass = $this->getFullNS(config('laracrud.transformer.namespace') . '\\' . $transformerName);
+
+        if (!class_exists($transformerClass)) {
+            $transformerCrud = new Transformer($class);
+            $transformerCrud->save();
+        }
+        return $transformerClass;
+    }
+
+
+    protected function makeIncludeArr($response, $method, $relationResponse)
+    {
+        $class = $relationResponse->getQuery()->getModel();
+        $modelRef = new \ReflectionClass(get_class($class));
+        $transformerClass = $this->makeTransformer($class, $modelRef);
+        $this->includeArr[] = [
+            'relation' => $method->name,
+            'response' => $response,
+            'method' => $modelRef->getShortName(),
+            'includeTransformer' => $transformerClass
+        ];
+    }
+
+    /**
+     * @param $responseClass
+     * @return bool
+     */
+    private function isItem($responseClass)
+    {
+        $item = [
+            HasOne::class,
+            BelongsTo::class,
+            MorphOne::class
+        ];
+        return in_array($responseClass, $item);
+    }
+
+    /**
+     * @param $responseClass
+     * @return bool
+     */
+    private function isCollection($responseClass)
+    {
+        $collection = [
+            HasMany::class,
+            BelongsToMany::class,
+            HasManyThrough::class,
+            MorphMany::class,
+        ];
+        return in_array($responseClass, $collection);
+    }
+
+    /**
+     * @param $vars
+     * @return string
+     */
+    protected function generateIncludeCode($vars)
+    {
+        $temp = '';
+        foreach ($this->includeArr as $inc) {
+            $temp .= (new TemplateManager('transformer/include.txt', array_merge($vars, $inc)))->get();
+        }
+        return $temp;
+    }
+
 }

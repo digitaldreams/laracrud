@@ -1,20 +1,18 @@
 <?php
 namespace @@namespace@@;
 
-use League\Fractal\TransformerAbstract;
+use LaraCrud\Helpers\TransformerAbstract;
+use League\Fractal\ParamBag;
 use @@modelFullName@@;
+@@importNameSpace@@
+
 
 class @@className@@ extends TransformerAbstract
 {
-    public function __construct()
-    {
-
-    }
-
-    /**
+     /**
      * @var array
      */
-    private $validParams = ['q', 'limit', 'page'];
+    private $validParams = ['q', 'limit', 'page','fields'];
 
     /**
      * @var array
@@ -29,9 +27,12 @@ class @@className@@ extends TransformerAbstract
 
     public function transform(@@model@@ $@@modelParam@@)
     {
-        return [
+        $data= [
 @@properties@@
         ];
+        return $this->filterFields($data);
 
     }
+
+    @@includes@@
 }

@@ -10,6 +10,16 @@ use DbReader\Database;
 
 trait Helper
 {
+
+    /**
+     * Import Namespace for Usages
+     * @var array
+     */
+    public $import = [];
+
+    /**
+     * @var array
+     */
     public $errors = [];
 
     /**
@@ -143,6 +153,19 @@ trait Helper
             return trim($rootNs, "\\") . "\\" . $namespace;
         }
         return $namespace;
+    }
+
+    /**
+     * @return string
+     */
+    protected function makeNamespaceUseString()
+    {
+        $retStr = '';
+        $ns = array_unique($this->import);
+        foreach ($ns as $namespace) {
+            $retStr .= 'use ' . $namespace . ';' . PHP_EOL;
+        }
+        return $retStr;
     }
 
 }

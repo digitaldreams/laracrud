@@ -63,6 +63,7 @@ class ClassInspector
     /**
      * @param $method
      * @return array
+     * @throws \ReflectionException
      */
     public function prepareMethodArgs($method)
     {

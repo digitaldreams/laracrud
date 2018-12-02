@@ -1,10 +1,11 @@
 
     /**
-     * Include all photos
+     * Include @@relation@@
      *
-     * @return \League\Fractal\Resource\Collection;
+     * @return \League\Fractal\Resource\@@response@@;
      */
-    public function includePhotos(PlaceDB $place)
+
+    public function include@@method@@(@@model@@ $@@modelParam@@, ParamBag $paramBag = null)
     {
-        return $this->item($place->leadPhoto(), new PhotoTransformer());
+        return $this->@@response@@($@@modelParam@@->@@relation@@, new @@includeTransformer@@($paramBag->get('fields')));
     }

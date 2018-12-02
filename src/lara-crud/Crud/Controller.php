@@ -90,12 +90,6 @@ class Controller implements Crud
     public $namespace;
 
     /**
-     * Import Namespace for Usages
-     * @var array
-     */
-    public $import = [];
-
-    /**
      * Namespace version of subpath
      * @var type
      */
@@ -392,19 +386,6 @@ class Controller implements Crud
             $retArr['belongsToRelationVars'] = $relVars;
         }
         return $retArr;
-    }
-
-    /**
-     * @return string
-     */
-    protected function makeNamespaceUseString()
-    {
-        $retStr = '';
-        $ns = array_unique($this->import);
-        foreach ($ns as $namespace) {
-            $retStr .= 'use ' . $namespace . ';' . PHP_EOL;
-        }
-        return $retStr;
     }
 
     protected function getUploadScript($method = 'store')
