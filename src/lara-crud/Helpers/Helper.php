@@ -168,4 +168,12 @@ trait Helper
         return $retStr;
     }
 
+    /**
+     * Get full newly created fully qualified Class namespace
+     */
+    public function getFullName()
+    {
+        return $this->namespace . '\\' . $this->fileName;
+    }
+
 }

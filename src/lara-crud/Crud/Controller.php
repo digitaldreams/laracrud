@@ -416,4 +416,13 @@ class Controller implements Crud
         }
     }
 
+    /**
+     * Get full newly created fully qualified Class namespace
+     */
+    public function getFullName()
+    {
+        $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) : $this->controllerName . 'Controller';
+        return $this->namespace . '\\' . $fileName;
+    }
+
 }
