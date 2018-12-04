@@ -124,6 +124,9 @@ class Transformer implements Crud
         foreach ($methods as $method) {
             if ($method->getNumberOfParameters() == 0 && $method->class == get_class($this->model)) {
                 $response = $method->invoke($this->model);
+                if (!is_object($response)) {
+                    continue;
+                }
                 $responseClass = get_class($response);
                 if ($this->isItem($responseClass)) {
                     $this->makeIncludeArr('item', $method, $response);
