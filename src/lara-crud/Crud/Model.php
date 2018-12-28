@@ -165,6 +165,7 @@ class Model implements Crud
 
     private function createTrait()
     {
+        if (!config('laracrud.model.modelTraits')) return;
         $filePath = $this->traitPath($this->traitSpace);
         if (!file_exists($filePath)) {
             $model = new \SplFileObject($filePath, 'w+');
