@@ -10,6 +10,11 @@ return [
      */
     'model' => [
         /**
+         * We need to optimize for various versions
+         */
+        'phpVersion' => phpversion(),
+
+        /**
          * Default Model Namespace.
          * So full namespace will be App\Models
          */
@@ -122,6 +127,26 @@ return [
          * App/ModelTraits
          */
         'traitNamespace' => 'ModelTraits',
+
+        /**
+         * Tables will be created as abstracts,
+         * while actual models will extend this for customization.
+         */
+        'modelAbstracts' => false,
+
+        /**
+         * Path to where to setup the abstracts.
+         * App/ModelAbstracts
+         */
+        'abstractNamespace' => 'ModelAbstracts',
+
+        /**
+         * Use column names to set relationships.
+         * This will assume column name format of columnname_id.
+         * the **_id extension will be removed and the columnname pluralized where possible.
+         * ** WE'LL RE-VISIT THIS. DON'T USE. SET TO FALSE FOR NOW**
+         */
+        # 'columnRelations' => false,
 
         /**
          * Set a custom Trait to be added to the model.

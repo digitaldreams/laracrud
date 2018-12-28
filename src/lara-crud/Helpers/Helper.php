@@ -97,10 +97,23 @@ trait Helper
         return base_path($this->toPath($this->namespace) . '/' . $this->modelName . $extension);
     }
 
+    public function modelPath($namespace, $extension = ".php")
+    {
+        //If model path does not exists then create model path.
+        $this->ensurePath($namespace);
+        return base_path($this->toPath($namespace) . '/' . $this->modelName . $extension);
+    }
+
     public function traitPath($namespace, $extension = '.php')
     {
         $this->ensurePath($namespace);
         return base_path($this->toPath($namespace) . '/' . $this->traitName . $extension);
+    }
+
+    public function abstractPath($namespace, $extension = '.php')
+    {
+        $this->ensurePath($namespace);
+        return base_path($this->toPath($namespace) . '/' . $this->abstractName . $extension);
     }
 
     /**

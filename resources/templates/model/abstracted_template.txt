@@ -1,0 +1,13 @@
+<?php
+
+namespace @@namespace@@;
+
+use @@abstractSpace@@;
+
+/**
+* @@modelName@@ for @@abstractName@@
+*/
+class @@modelName@@ extends @@abstractName@@
+{
+    //TODO something meaningful to extend @@modelName@@
+}

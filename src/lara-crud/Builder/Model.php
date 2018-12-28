@@ -46,7 +46,7 @@ class Model
 
     /**
      * Contains all the possible relations
-     * @var array
+     * @var ForeignKey[]|array
      */
     public $relations = [];
 
@@ -120,6 +120,8 @@ class Model
      */
     public $guarded = [];
 
+    public $php_version;
+
     /**
      * ModelBuilder constructor.
      *
@@ -129,6 +131,7 @@ class Model
     public function __construct(Column $column)
     {
         $this->column = $column;
+        $this->php_version = config('laracrud.model.phpVersion') ?: phpversion();
         $this->dataType = new DataType($column);
         $this->load();
     }
@@ -251,15 +254,24 @@ class Model
         $col_name = strtoupper(preg_replace('/[^a-zA-Z0-9]+/', '_', $this->column->name()));
         if (0 === strcmp('enum', $this->column->type())) {
             foreach ($this->column->options() as $value) {
-                $name = strtoupper($col_name . '_' . str_replace([" ",
-                        "-", "\"", "/"], "_", $value));
-                $this->constants[] = 'public const ' . $name . '=' . "'$value'" . ';';
+                $name = strtoupper($col_name . '_' . str_replace([' ', '-', '"', '/'], '_', $value));
+                $this->constants[] = $this->setConstant($name, $value);
             }
         }
         if ($cColumns) {
-            $this->constants[] = 'public const ' . $col_name . ' = \'' . $this->column->name() . '\';';
+            $this->constants[] = $this->setConstant($col_name, $this->column->name());
         }
-        return $this->constants;
+        return array_filter($this->constants, 'trim');
+    }
+
+    private function setConstant($name, $value)
+    {
+        $txt = '';
+        if (version_compare($this->php_version, '7.1.0') >= 0) {
+            $txt = 'public ';
+        }
+        $txt .= 'const ' . $name . '=' . "'$value'" . ';';
+        return $txt;
     }
 
     /**
@@ -299,13 +311,14 @@ class Model
         if (!$this->column->isForeign()) {
             return [];
         }
-        $fk = new ForeignKey($this->column->foreign);
-        $this->relations[] = [
-            'name' => ForeignKey::RELATION_BELONGS_TO,
-            'foreign_key' => $fk->column(),
-            'model' => $this->getModelName($fk->foreignTable()),
-            'other_key' => $fk->foreignColumn()
-        ];
+        /*$fk = new ForeignKey($this->column->foreign);
+       $this->relations[] = [
+           'name' => ForeignKey::RELATION_BELONGS_TO,
+           'foreign_key' => $fk->column(),
+           'model' => $this->getModelName($fk->foreignTable()),
+           'other_key' => $fk->foreignColumn(),
+       ];*/
+        $this->relations[] = new ForeignKey($this->column->foreign);
         return $this->relations;
     }
 

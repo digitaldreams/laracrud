@@ -80,6 +80,14 @@ class ForeignKey
     }
 
     /**
+     * @return string
+     */
+    public function methodName()
+    {
+        return preg_replace('/_id$/i','',$this->column());
+    }
+
+    /**
      * Name of the Foreign Table name
      *
      * @return string|bool
@@ -122,7 +130,7 @@ class ForeignKey
     {
         $name = '';
         if ($this->isPivot) {
-            $name = str_replace([$this->getSingular($this->foreignTable()), "_"], "", $this->table());
+            $name = str_replace([$this->getSingular($this->foreignTable()), '_'], '_', $this->table());
         } else {
             $name = $this->table();
         }

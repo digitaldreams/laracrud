@@ -1,0 +1,31 @@
+<?php
+namespace @@namespace@@;
+
+@@imports@@
+
+/**
+@@propertyDefiner@@
+@@methodDefiner@@
+ */
+abstract class @@modelName@@ extends @@eloquentbase@@
+{
+    @@uses@@
+    @@constants@@
+    /**
+    * Database table name
+    */
+    protected $table = '@@tableName@@';
+
+    /**
+    * It has timestamps
+    */
+    public $timestamps = @@timestamp@@;
+@@guarded@@
+@@fillable@@
+@@casts@@
+@@dateColumns@@
+@@relationShips@@
+@@mutators@@
+@@accessors@@
+@@scopes@@
+}

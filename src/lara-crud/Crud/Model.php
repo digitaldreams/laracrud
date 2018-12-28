@@ -30,6 +30,12 @@ class Model implements Crud
     protected $traitSpace;
 
     /**
+     * The Namespace for the abstract classes
+     * @var string
+     */
+    protected $abstractSpace;
+
+    /**
      * Name of Model class
      * @var string
      */
@@ -40,6 +46,12 @@ class Model implements Crud
      * @var string
      */
     protected $traitName;
+
+    /**
+     * Name of Abstract
+     * @var string
+     */
+    protected $abstractName;
 
     /**
      * @var Table
@@ -63,6 +75,11 @@ class Model implements Crud
     protected $eloquent;
 
     /**
+     * @var array
+     */
+    protected $imports = [];
+
+    /**
      * Model constructor.
      * @param $table
      * @param $name  user define model and namespace. E.g. Models/MyUser will be saved as App\Models\MyUser
@@ -73,8 +90,10 @@ class Model implements Crud
         $this->modelBuilder = $this->makeModelBuilders();
         $this->namespace = $this->getFullNS(config('laracrud.model.namespace'));
         $this->traitSpace = $this->getFullNS(config('laracrud.model.traitNamespace'));
+        $this->abstractSpace = $this->getFullNS(config('laracrud.model.abstractNamespace'));
         $this->modelName = $this->getModelName($table);
         $this->traitName = 'Trait' . $this->modelName;
+        $this->abstractName = $this->modelName . 'Abstract';
         if (!empty($name)) {
             $this->parseName($name);
         }
@@ -92,9 +111,9 @@ class Model implements Crud
             'imports' => $this->imports(),
             'eloquentbase' => $this->eloquentBase(),
             'uses' => $this->uses(),
-            'namespace' => $this->namespace,
+            'namespace' => config('laracrud.model.modelAbstracts') ? $this->abstractSpace : $this->namespace,
             'timestamp' => var_export($this->modelBuilder->enableTimestamps(), true),
-            'modelName' => $this->modelName,
+            'modelName' => config('laracrud.model.modelAbstracts') ? $this->abstractName : $this->modelName,
             'propertyDefiner' => config('laracrud.model.propertyDefiner') ? implode("\n", array_reverse($this->modelBuilder->propertyDefiners)) : '',
             'methodDefiner' => config('laracrud.model.methodDefiner') ? implode("\n", array_reverse($this->modelBuilder->methodDefiners)) : '',
             'tableName' => $this->table->name(),
@@ -108,8 +127,13 @@ class Model implements Crud
             'accessors' => config('laracrud.model.accessors') ? $this->accessors() : '',
             'scopes' => config('laracrud.model.scopes') ? $this->scopes() : ''
         ];
-        $tempMan = new TemplateManager('model/template.txt', $data);
+        $tempMan = new TemplateManager($this->coreTemplateStub(), $data);
         return $tempMan->get();
+    }
+
+    private function coreTemplateStub()
+    {
+        return config('laracrud.model.modelAbstracts') ? 'model/abstract_template.txt' : 'model/template.txt';
     }
 
     /**
@@ -119,13 +143,14 @@ class Model implements Crud
      */
     public function save()
     {
-        $filePath = $this->checkPath();
+        $filePath = config('laracrud.model.modelAbstracts') ? $this->abstractPath($this->abstractSpace) : $this->checkPath();
         if (file_exists($filePath) && !config('laracrud.model.overwriteFiles')) {
             throw new \Exception($this->namespace . '\\' . $this->modelName . ' already exists');
         }
         $model = new \SplFileObject($filePath, 'w+');
         $model->fwrite($this->template());
         $this->createTrait();
+        $this->createAbstracted();
     }
 
     public function traitTemplate()
@@ -144,6 +169,27 @@ class Model implements Crud
         if (!file_exists($filePath)) {
             $model = new \SplFileObject($filePath, 'w+');
             $model->fwrite($this->traitTemplate());
+        }
+    }
+
+    public function abstractTemplate()
+    {
+        $data = [
+            'modelName' => $this->modelName,
+            'namespace' => $this->namespace,
+            'abstractName' => $this->abstractName,
+            'abstractSpace' => $this->abstractSpace . '\\' . $this->abstractName,
+        ];
+        return (new TemplateManager('model/abstracted_template.txt', $data))->get();
+    }
+
+    private function createAbstracted()
+    {
+        if (!config('laracrud.model.modelAbstracts')) return;
+        $filePath = $this->checkPath();
+        if (!file_exists($filePath)) {
+            $model = new \SplFileObject($filePath, 'w+');
+            $model->fwrite($this->abstractTemplate());
         }
     }
 
@@ -238,7 +284,10 @@ class Model implements Crud
         foreach ($this->traits as $trait) {
             $uses[] = (new TemplateManager('model/imports.txt', ['path' => $trait]))->get();
         }
-        return implode(PHP_EOL, $uses);
+        foreach ($this->imports as $path) {
+            $uses[] = (new TemplateManager('model/imports.txt', ['path' => $path]))->get();
+        }
+        return implode(PHP_EOL, array_unique($uses));
     }
 
     protected function uses()
@@ -255,47 +304,57 @@ class Model implements Crud
     {
         $temp = '';
         $otherKeys = $this->table->references();
-        //print_r($this->modelBuilder->relations);
         foreach ($this->modelBuilder->relations as $relation) {
-            $param = ",'" . $relation['foreign_key'] . "'";
+            // $param = ",'" . $relation['foreign_key'] . "'";
+            $param = ",'" . $relation->column() . "'";
             $tempMan = new TemplateManager('model/relationship.txt', [
-                'relationShip' => $relation['name'],
-                'modelName' => $relation['model'],
-                'methodName' => lcfirst($relation['model']),
-                'returnType' => ucfirst($relation['name']),
+                'relationShip' => ForeignKey::RELATION_BELONGS_TO,// $relation['name'],
+                'modelName' => $this->getModelName($relation->foreignTable()),// $relation['model'],
+                'methodName' => $propName = $this->relationshipMethodName($relation->column(), $relation->foreignTable()),// lcfirst($relation['model']),
+                'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO),
                 'params' => $param
             ]);
             $temp .= $tempMan->get() . PHP_EOL;
-            array_unshift($this->modelBuilder->propertyDefiners, ' * @property ' . $relation['model'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
+            //array_unshift($this->modelBuilder->propertyDefiners, ' * @property ' . $relation['model'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
+            $this->imports[] = $this->namespace . '\\' . $this->getModelName($relation->foreignTable());
+            array_unshift($this->modelBuilder->propertyDefiners, ' * @property ' . $this->getModelName($relation->foreignTable()) . ' $' . $propName . ' ' . ForeignKey::RELATION_BELONGS_TO);
         }
         foreach ($otherKeys as $column) {
             $fk = new ForeignKey($column);
 
-            if ($fk->isPivot) {
+            /*if ($fk->isPivot) {
                 $param = ",'" . $fk->table() . "'";
                 $tempMan = new TemplateManager('model/relationship.txt', [
                     'relationShip' => ForeignKey::RELATION_BELONGS_TO_MANY,
                     'modelName' => $fk->modelName(),
-                    'methodName' => str_plural(lcfirst($fk->modelName())),
+                    'methodName' => $propName = str_plural($this->relationshipMethodName($fk->foreignColumn(), $fk->table())),//  str_plural(lcfirst($fk->modelName())),
                     'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection' . $fk->modelName() . '[]' . ' $' . str_plural(lcfirst($fk->modelName())) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
-            } else {
-                $param = ",'" . $fk->column() . "'";
+                $this->imports[] = $this->namespace . '\\' . $fk->modelName();
+                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . $propName . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
+            } else {*/
+                $param = ",'" .$fk->column(). "'";
                 $tempMan = new TemplateManager('model/relationship.txt', [
                     'relationShip' => ForeignKey::RELATION_HAS_MANY,
                     'modelName' => $fk->modelName(),
-                    'methodName' => str_plural(lcfirst($fk->modelName())),
+                    'methodName' => $propName =str_plural(lcfirst(camel_case($fk->modelName()))),// $this->relationshipMethodName($fk->column(),$fk->table()), //
                     'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . str_plural(lcfirst($fk->modelName())) . ' ' . ForeignKey::RELATION_HAS_MANY);
-            }
+                $this->imports[] = $this->namespace . '\\' . $fk->modelName();
+                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . $propName . ' ' . ForeignKey::RELATION_HAS_MANY);
+           // }
             $temp .= $tempMan->get();
 
         }
         return $temp;
+    }
+
+    private function relationshipMethodName($column, $tableName)
+    {
+        $name = config('laracrud.model.columnRelations') ? preg_replace('/_id$/i', '', $column) : $this->getModelName($tableName);
+        return lcfirst(camel_case($name));
     }
 
     /**
