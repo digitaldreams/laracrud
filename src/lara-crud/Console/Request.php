@@ -14,7 +14,7 @@ class Request extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:request {table} {name?} {--controller=} {--resource=} {--api}';
+    protected $signature = 'laracrud:request {table} {name?} {--controller=} {--resource=} {--model=} {--api}';
 
     /**
      * The console command description.
@@ -35,6 +35,7 @@ class Request extends Command
             $name = $this->argument('name');
             $controller = $this->option('controller');
             $resource = $this->option('resource');
+            $model = $this->option('model');
             $api = $this->option('api');
 
             if (!empty($controller)) {
@@ -46,6 +47,7 @@ class Request extends Command
 
                 $methods = $resource === 'all' ? false : explode(",", $resource);
                 $requestResource = new RequestResourceCrud($table, $methods, $api, $name);
+                $requestResource->setModel($model);
                 $requestResource->save();
                 $this->info('Request resource classes created successfully');
 

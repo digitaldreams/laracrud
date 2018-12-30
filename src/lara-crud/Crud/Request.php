@@ -38,6 +38,8 @@ class Request implements Crud
      */
     protected $template;
 
+    protected $authorization = 'true';
+
     /**
      * RequestCrud constructor.
      * @param $table
@@ -80,6 +82,7 @@ class Request implements Crud
         $tempMan = new TemplateManager('request/' . $this->template . '/template.txt', [
             'namespace' => $this->namespace,
             'requestClassName' => $this->modelName,
+            'authorization' => $this->authorization,
             'rules' => implode("\n", $this->makeRules())
         ]);
         return $tempMan->get();
@@ -138,5 +141,15 @@ class Request implements Crud
             $rules[] = "string";
         }
         return $rules;
+    }
+
+    /**
+     * @param $auth
+     * @return $this
+     */
+    public function setAuthorization($auth)
+    {
+        $this->authorization = $auth;
+        return $this;
     }
 }

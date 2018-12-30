@@ -9,6 +9,7 @@ namespace LaraCrud\Crud;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
+use Illuminate\Support\Facades\Gate;
 
 class RequestResource implements Crud
 {
@@ -34,9 +35,19 @@ class RequestResource implements Crud
      * @var array|string
      */
 
-    protected $methods = ['index', 'show', 'create', 'store', 'update', 'destroy'];
+    protected $methods = ['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'];
 
     protected $template = '';
+
+    /**
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $model;
+
+    /**
+     * @var
+     */
+    protected $policy;
 
     /**
      * RequestControllerCrud constructor.
@@ -63,13 +74,15 @@ class RequestResource implements Crud
 
     /**
      * Process template and return complete code
+     * @param string $authorization
      * @return mixed
      */
-    public function template()
+    public function template($authorization = 'true')
     {
         $tempMan = new TemplateManager('request/' . $this->template . '/template.txt', [
             'namespace' => $this->namespace,
             'requestClassName' => $this->modelName,
+            'authorization' => $authorization,
             'rules' => implode("\n", [])
         ]);
         return $tempMan->get();
@@ -95,17 +108,73 @@ class RequestResource implements Crud
                     continue;
                 }
                 $isApi = $this->template == 'api' ? true : false;
+
                 if ($method === 'store') {
                     $requestStore = new Request($this->table, ucfirst(camel_case($this->folderName)) . '/Store', $isApi);
+                    $requestStore->setAuthorization($this->getAuthCode('create'));
                     $requestStore->save();
                 } elseif ($method === 'update') {
                     $requestUpdate = new Request($this->table, ucfirst(camel_case($this->folderName)) . '/Update', $isApi);
+                    $requestUpdate->setAuthorization($this->getAuthCode('update'));
                     $requestUpdate->save();
                 } else {
+                    $auth = 'true';
+                    if ($method === 'edit') {
+                        $auth = $this->getAuthCode('update');
+                    } elseif ($method === 'show') {
+                        $auth = $this->getAuthCode('view');
+                    } elseif ($method === 'destroy') {
+                        $auth = $this->getAuthCode('delete');
+                    } else {
+                        $auth = $this->getAuthCode($method);
+                    }
                     $model = new \SplFileObject($filePath, 'w+');
-                    $model->fwrite($this->template());
+                    $model->fwrite($this->template($auth));
                 }
             }
         }
+    }
+
+    /**
+     * @param string $model
+     * @return $this
+     */
+    public function setModel($model = '')
+    {
+        if (empty($model)) {
+            return $this;
+        }
+
+        if (!class_exists($model)) {
+
+            $modelNS = $this->getFullNS(config('laracrud.model.namespace'));
+            $fullClass = $modelNS . '\\' . $model;
+
+            if (class_exists($fullClass)) {
+                $this->model = $fullClass;
+            }
+        } else {
+            $this->model = $model;
+        }
+        if (class_exists($this->model)) {
+            $policies = Gate::policies();
+            $this->policy = $policies[$this->model] ?? false;
+        }
+        return $this;
+    }
+
+    private function getAuthCode($methodName)
+    {
+        $auth = 'true';
+        if (class_exists($this->policy) && method_exists($this->policy, $methodName)) {
+            if (in_array($methodName, ['create', 'store'])) {
+                $code = '\\' . $this->model . '::class)';
+            } else {
+                $modelName = (new \ReflectionClass($this->model))->getShortName();
+                $code = '$this->route(\'' . strtolower($modelName) . '\'))';
+            }
+            $auth = 'auth()->user()->can(\'' . $methodName . '\', ' . $code;
+        }
+        return $auth;
     }
 }
