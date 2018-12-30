@@ -10,13 +10,15 @@
 @endsection
 
 @section('tools')
+<div class="btn-group">
 @@buttons@@
+</div>
 @endsection
 
 @section('content')
 
 <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-4">
         @include('@@folder@@.@@partialFilename@@')
     </div>
 </div>

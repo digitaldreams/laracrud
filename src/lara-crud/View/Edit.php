@@ -41,6 +41,7 @@ class Edit extends Page
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
             'folder' => $prefix . $this->form->getFolder(),
+            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'partialFilename' => str_singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name()),
             'createRoute' => $this->getRouteName('create', $this->table->name()),

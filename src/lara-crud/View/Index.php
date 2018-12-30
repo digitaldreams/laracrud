@@ -38,6 +38,7 @@ class Index extends Page
             'table' => $this->table->name(),
             'layout' => config('laracrud.view.layout'),
             'folder' => $prefix . $folder,
+            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'searchBox' => '',
             'partialFilename' => str_singular($this->table->name()),
             'createRoute' => $this->getRouteName('create', $this->table->name())

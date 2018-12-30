@@ -59,6 +59,7 @@ class Panel extends Page
         $tempMan = new TemplateManager("view/{$this->version}/panel.html", [
             'headline' => '{{$record->id}}',
             'table' => $this->table->name(),
+            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'showLink' => $link->show(),
             'showRoute' => Page::getRouteName('show', $this->table->name()),
             'editLink' => $this->editedBy == 'form' ? $link->edit() : $link->editModal($this->table),

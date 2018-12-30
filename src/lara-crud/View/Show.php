@@ -5,6 +5,7 @@ namespace LaraCrud\View;
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>
  */
+
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Link;
@@ -40,14 +41,15 @@ class Show extends Page
     {
         $link = new Link($this->table->name());
         $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
-
+        $routeKey = $this->dataStore['routeModelKey'] ?? 'id';
         return (new TemplateManager("view/{$this->version}/pages/show.html", [
             'table' => $this->table->name(),
             'layout' => config('laracrud.view.layout'),
             'folder' => $prefix . $this->panel->getFolder(),
+            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'partialFilename' => str_singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name()),
-            'buttons' => PHP_EOL . $link->create() . PHP_EOL . $link->edit() . PHP_EOL . $link->destroy() . PHP_EOL
+            'buttons' => PHP_EOL . $link->create() . PHP_EOL . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . PHP_EOL
         ]))->get();
     }
 

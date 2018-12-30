@@ -35,13 +35,15 @@ class Link
 
     /**
      * Edit link for Resourceful Route
+     * @param string $routeModelKey
      * @return string
      */
-    public function edit()
+    public function edit($routeModelKey = 'id')
     {
         $version = config('laracrud.view.bootstrap');
         $temMan = new TemplateManager("view/$version/link/edit.html", [
             'table' => $this->table,
+            'routeModelKey' => $routeModelKey,
             'editRoute' => Page::getRouteName('edit', $this->table)
         ]);
         return $temMan->get();
@@ -73,13 +75,15 @@ class Link
     }
 
     /**
+     * @param string $routeModelKey
      * @return string
      */
-    public function show()
+    public function show($routeModelKey = 'id')
     {
         $version = config('laracrud.view.bootstrap');
         $temMan = new TemplateManager("view/$version/link/show.html", [
             'table' => $this->table,
+            'routeModelKey' => $routeModelKey,
             'showRoute' => Page::getRouteName('show', $this->table)
         ]);
         return $temMan->get();
@@ -87,12 +91,14 @@ class Link
 
     /**
      * Delete from for Resourceful Route
+     * @param string $routeModelKey
      * @return string
      */
-    public function destroy()
+    public function destroy($routeModelKey = 'id')
     {
         $version = config('laracrud.view.bootstrap');
         $temMan = new TemplateManager("view/$version/link/destroy.html", [
+            'routeModelKey' => $routeModelKey,
             'destroyRoute' => Page::getRouteName('destroy', $this->table)
         ]);
         return $temMan->get();

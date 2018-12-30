@@ -55,11 +55,13 @@ class Table extends Page
         }
         $headerhtml .= "\t\t<th>&nbsp;</th>";
         $link = new Link($this->table->name());
-        $bodyhtml .= "\t<td>" . $link->show() . $link->edit() . PHP_EOL . $link->destroy() . "</td></tr>" . PHP_EOL;
+        $routeKey = $this->dataStore['routeModelKey'] ?? 'id';
+        $bodyhtml .= "\t<td>" . $link->show($routeKey) . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . "</td></tr>" . PHP_EOL;
         $bodyhtml = str_replace('@@table@@', $this->table->name(), $bodyhtml);
         return [
             'table' => $this->table->name(),
             'tableHeader' => $headerhtml,
+            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'tableBody' => $bodyhtml
         ];
     }

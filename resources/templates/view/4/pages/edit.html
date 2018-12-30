@@ -4,7 +4,7 @@
     <a href="{{route('@@indexRoute@@')}}">@@table@@</a>
 </li>
 <li class="breadcrumb-item">
-    <a href="{{route('@@showRoute@@',$model->id)}}">{{$model->id}}</a>
+    <a href="{{route('@@showRoute@@',$model->@@routeModelKey@@)}}">{{$model->id}}</a>
 </li>
 <li class="breadcrumb-item">
     Edit
@@ -23,7 +23,7 @@
         <div class='card'>
             <div class="card-body">
                 @include('@@folder@@.@@partialFilename@@',[
-                'route'=>route('@@updateRoute@@',$model->id),
+                'route'=>route('@@updateRoute@@',$model->@@routeModelKey@@),
                 'method'=>'PUT'
                 ])
             </div>

@@ -6,6 +6,8 @@
 namespace LaraCrud\View;
 
 use DbReader\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use Route;
@@ -65,6 +67,21 @@ abstract Class Page implements Crud
     public static $controller;
 
     /**
+     * @var Model
+     */
+    public static $model;
+
+    /**
+     * @var
+     */
+    public static $policy;
+
+    /**
+     * @var array
+     */
+    protected $dataStore = [];
+
+    /**
      * Page constructor.
      */
     public function __construct()
@@ -73,6 +90,10 @@ abstract Class Page implements Crud
         $this->resource_path = config('laracrud.view.path');
 
         $this->filePath = rtrim($this->resource_path, "/") . "/" . $this->folder . "/" . $this->name . ".blade.php";
+        if (class_exists(static::$model)) {
+            $model = new static::$model;
+            $this->dataStore['routeModelKey'] = $model->getRouteKeyName();
+        }
     }
 
     /**

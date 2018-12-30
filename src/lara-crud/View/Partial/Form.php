@@ -65,6 +65,7 @@ class Form extends Page
     {
         return (new TemplateManager("view/{$this->version}/forms/form.html", [
             'formContent' => implode("\n", $this->make()),
+            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'table' => $this->table->name(),
             'options' => $this->makeOptions(),
             'routeName' => $this->getRouteName('store', $this->table->name())

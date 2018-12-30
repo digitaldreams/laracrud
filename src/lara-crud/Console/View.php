@@ -16,6 +16,7 @@ use LaraCrud\View\Partial\Modal;
 use LaraCrud\View\Partial\Panel;
 use LaraCrud\View\Partial\Table;
 use LaraCrud\View\Show;
+use Illuminate\Support\Facades\Gate;
 
 class View extends Command
 {
@@ -25,7 +26,7 @@ class View extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:view {table} {--page=} {--type=} {--name=} {--controller=}';
+    protected $signature = 'laracrud:view {table} {--page=} {--type=} {--name=} {--controller=} {--model=}';
 
     /**
      * The console command description.
@@ -46,11 +47,12 @@ class View extends Command
             $page = $this->option('page');
             $type = $this->option('type');
             $name = $this->option('name');
+            $model = $this->option('model');
             $controller = $this->option('controller');
 
             Page::$controller = $this->getControllerNs($controller);
             Page::fetchRoute();
-
+            $this->setModel($model);
             $tables = explode(",", $table);
             foreach ($tables as $tb) {
                 Model::checkMissingTable($tb);
@@ -70,7 +72,7 @@ class View extends Command
 
                         if (count($viewController->errors) > 0) {
                             $this->error(implode("\n", $viewController->errors));
-                        }else{
+                        } else {
                             $this->info('Controller views saved successfully');
                         }
                     }
@@ -147,13 +149,41 @@ class View extends Command
     protected function getControllerNs($controller)
     {
         $namespace = config('laracrud.controller.namespace');
-        $fullNs = $this->getFullNS(rtrim($namespace, "\\") . "\\" . $controller);
+        return $this->getFullNamespace($namespace, $controller);
+    }
 
-        if (class_exists($controller)) {
-            return $controller;
+    private function getFullNamespace($namespace, $class)
+    {
+        if (class_exists($class)) {
+            return $class;
         }
+        $fullNs = $this->getFullNS(rtrim($namespace, "\\") . "\\" . $class);
         if (class_exists($fullNs)) {
             return $fullNs;
+        }
+        return false;
+    }
+
+    private function setModel($model = '')
+    {
+        if (empty($model)) {
+            return false;
+        }
+
+        if (!class_exists($model)) {
+
+            $modelNS = $this->getFullNS(config('laracrud.model.namespace'));
+            $fullClass = $modelNS . '\\' . $model;
+
+            if (class_exists($fullClass)) {
+                Page::$model = $fullClass;
+            }
+        } else {
+            Page::$model = $model;
+        }
+        if (class_exists(Page::$model)) {
+            $policies = Gate::policies();
+            Page::$policy = $policies[Page::$model] ?? false;
         }
         return false;
     }
