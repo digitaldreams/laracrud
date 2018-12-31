@@ -110,7 +110,7 @@ return [
         'layout' => 'layouts.app',
 
         /**
-         * Which bootstrap version you like to use in your view code. Available version are 3 and 4
+         * Which bootstrap/theme  you like to use in your view code. Available version are 4 and bulma
          */
         'bootstrap' => '4',
 
