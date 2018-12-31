@@ -167,7 +167,7 @@ class RequestResource implements Crud
     {
         $auth = 'true';
         if (class_exists($this->policy) && method_exists($this->policy, $methodName)) {
-            if (in_array($methodName, ['create', 'store'])) {
+            if (in_array($methodName, ['index', 'create', 'store'])) {
                 $code = '\\' . $this->model . '::class)';
             } else {
                 $modelName = (new \ReflectionClass($this->model))->getShortName();
