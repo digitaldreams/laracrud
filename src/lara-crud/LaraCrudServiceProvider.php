@@ -6,6 +6,7 @@ namespace LaraCrud;
 use DbReader\Database;
 use Illuminate\Support\ServiceProvider;
 use LaraCrud\Console\Controller;
+use LaraCrud\Console\ControllerMethod;
 use LaraCrud\Console\Factory;
 use LaraCrud\Console\Migration;
 use LaraCrud\Console\Model;

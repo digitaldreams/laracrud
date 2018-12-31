@@ -3,6 +3,7 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
+use LaraCrud\Crud\ModelFactory;
 
 class Factory extends Command
 {
@@ -31,7 +32,7 @@ class Factory extends Command
             $model = $this->argument('model');
             $name = $this->option('name');
 
-            $factoryCrud = new \LaraCrud\Crud\ModelFactory($model, $name);
+            $factoryCrud = new ModelFactory($model, $name);
             $factoryCrud->save();
             $this->info('Factory class created successfully');
         } catch (\Exception $ex) {

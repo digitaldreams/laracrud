@@ -55,6 +55,7 @@ class Controller extends Command
                 if (class_exists($modelFullName)) {
                     $modelObj = new $modelFullName;
                     $requestResource = new RequestResourceCrud($modelObj->getTable(), false, $api);
+                    $requestResource->setModel($modelFullName);
                     $requestResource->save();
                     $this->info('Request controller classes created successfully');
                 }

@@ -11,6 +11,7 @@ namespace LaraCrud\Crud;
 use DbReader\Table;
 use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Contracts\Crud;
+use LaraCrud\Helpers\FakerColumn;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
@@ -85,7 +86,10 @@ class ModelFactory implements Crud
             if ($column->isProtected()) {
                 continue;
             }
-            $arr .= "\t\t" . '"' . $column->name() . '"=>\'\',' . PHP_EOL;
+            $fakerColumn = new FakerColumn($column);
+            $default = $fakerColumn->default();
+            $columnValue = !empty($default) ? $default.',' : '\'\',';
+            $arr .= "\t\t" . '"' . $column->name() . '" => ' . $columnValue . PHP_EOL;
         };
         return $arr;
     }
