@@ -1,0 +1,12 @@
+@can('delete',$record)
+<form onsubmit="return confirm('Are you sure you want to delete?')"
+      action="{{route('@@destroyRoute@@',$record->@@routeModelKey@@)}}"
+      method="post"
+      style="display: inline">
+    {{csrf_field()}}
+    {{method_field('DELETE')}}
+    <button type="submit" class="btn btn-secondary cursor-pointer">
+        <i class="text-danger fa fa-remove"></i>
+    </button>
+</form>
+@endcan

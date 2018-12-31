@@ -5,9 +5,11 @@ namespace LaraCrud\View;
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>
  */
+
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Form;
+use LaraCrud\View\Partial\Link;
 
 class Edit extends Page
 {
@@ -37,6 +39,7 @@ class Edit extends Page
     function template()
     {
         $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
+        $link = new Link($this->table->name());
         return (new TemplateManager("view/{$this->version}/pages/edit.html", [
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
@@ -44,7 +47,7 @@ class Edit extends Page
             'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'partialFilename' => str_singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name()),
-            'createRoute' => $this->getRouteName('create', $this->table->name()),
+            'createLink' => $link->create(),
             'showRoute' => $this->getRouteName('show', $this->table->name()),
             'updateRoute' => $this->getRouteName('update', $this->table->name())
         ]))->get();

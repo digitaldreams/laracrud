@@ -4,6 +4,7 @@ namespace LaraCrud\View;
 
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
+use LaraCrud\View\Partial\Link;
 use LaraCrud\View\Partial\Panel;
 use LaraCrud\View\Partial\Table as TableView;
 
@@ -34,6 +35,7 @@ class Index extends Page
         $file = '';
         $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
         $folder = $this->version == 3 ? 'panels' : 'cards';
+        $link = new Link($this->table->name());
         $data = [
             'table' => $this->table->name(),
             'layout' => config('laracrud.view.layout'),
@@ -41,7 +43,7 @@ class Index extends Page
             'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'searchBox' => '',
             'partialFilename' => str_singular($this->table->name()),
-            'createRoute' => $this->getRouteName('create', $this->table->name())
+            'createLink' => $link->create()
         ];
         switch ($this->type) {
             case 'panel':
