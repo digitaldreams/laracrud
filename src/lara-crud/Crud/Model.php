@@ -129,7 +129,7 @@ class Model implements Crud
         if (!config('laracrud.model.fillable')) {
             return '';
         }
-        $tempMan = new TemplateManager('model/fillable.txt', ['columns' => implode(",", array_reverse($this->modelBuilder->fillable()))]);
+        $tempMan = new TemplateManager('model/fillable.txt', ['columns' => implode(",\n", array_reverse($this->modelBuilder->fillable()))]);
         return $tempMan->get();
     }
 
@@ -139,7 +139,7 @@ class Model implements Crud
      */
     protected function dates()
     {
-        $tempMan = new TemplateManager('model/dates.txt', ['columns' => implode(",", array_reverse($this->modelBuilder->dates))]);
+        $tempMan = new TemplateManager('model/dates.txt', ['columns' => implode(",\n", array_reverse($this->modelBuilder->dates))]);
         return $tempMan->get();
     }
 
@@ -149,7 +149,7 @@ class Model implements Crud
      */
     protected function casts()
     {
-        $tempMan = new TemplateManager('model/casts.txt', ['columns' => implode(",", array_reverse($this->modelBuilder->casts()))]);
+        $tempMan = new TemplateManager('model/casts.txt', ['columns' => implode(",\n", array_reverse($this->modelBuilder->casts()))]);
         return $tempMan->get();
     }
 
@@ -172,7 +172,7 @@ class Model implements Crud
                 'params' => $param
             ]);
             $temp .= $tempMan->get() . PHP_EOL;
-            array_unshift($this->modelBuilder->propertyDefiners,'@property ' . $relation['model'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
+            array_unshift($this->modelBuilder->propertyDefiners, '@property ' . $relation['model'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
         }
         foreach ($otherKeys as $column) {
             $fk = new ForeignKey($column);
@@ -186,7 +186,7 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners,'@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
             } else {
                 $param = ",'" . $fk->column() . "'";
                 $tempMan = new TemplateManager('model/relationship.txt', [
@@ -196,7 +196,7 @@ class Model implements Crud
                     'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
                     'params' => $param
                 ]);
-                array_unshift($this->modelBuilder->propertyDefiners,'@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
+                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
             }
             $temp .= $tempMan->get();
 

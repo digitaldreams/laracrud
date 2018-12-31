@@ -98,7 +98,7 @@ class Form extends Page
         $columns = $this->table->columnClasses();
 
         foreach ($columns as $column) {
-            if ($column->isIgnore() || $column->isProtected()) {
+            if ($this->isIgnoreAble($column)) {
                 continue;
             } elseif (in_array($column->type(), ['json', 'blob'])) {
                 continue;
@@ -170,6 +170,7 @@ class Form extends Page
         if ($columnObj->isForeign()) {
             $options = $this->tempMan("select-rel.html", [
                 'modelVar' => $columnObj->foreignTable(),
+                'foreignColumn'=>$columnObj->name(),
                 'name' => $columnObj->name()
             ], $columnObj);
         } else {

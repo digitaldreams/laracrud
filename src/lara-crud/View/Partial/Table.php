@@ -45,7 +45,7 @@ class Table extends Page
         $bodyhtml = '<tr>';
         $columns = $this->table->columnClasses();
         foreach ($columns as $column) {
-            if ($column->isIgnore() || $column->isProtected()) {
+            if ($this->isIgnoreAble($column)) {
                 continue;
             } elseif (in_array($column->type(), ['text', 'longtext', 'mediumtext', 'tinytext', 'json', 'blob'])) {
                 continue;
@@ -65,5 +65,7 @@ class Table extends Page
             'tableBody' => $bodyhtml
         ];
     }
+
+
 
 }

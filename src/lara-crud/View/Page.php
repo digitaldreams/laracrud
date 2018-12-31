@@ -5,6 +5,7 @@
 
 namespace LaraCrud\View;
 
+use DbReader\Column;
 use DbReader\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
@@ -198,5 +199,18 @@ abstract Class Page implements Crud
             static::$routeMap[$route->getActionName()] = $route->getName();
         }
         return static::$routeMap;
+    }
+    protected function isIgnoreAble(Column $column)
+    {
+        if ($column->isIgnore() || $column->isProtected()) {
+            return true;
+        } elseif (class_exists(static::$model)) {
+            $model = new static::$model;
+            $hidden = $model->getHidden();
+            if (is_array($hidden) && !empty($hidden) && in_array($column->name(), $hidden)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
