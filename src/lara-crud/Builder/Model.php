@@ -330,7 +330,7 @@ class Model
     public function dates()
     {
         //Check if it is a data time column. If so then add it to $protected $dates=[]
-        if (in_array($this->column->type(), ['time', 'date', 'datetime', 'timestamp'])
+        if (in_array($this->column->type(), [ 'date', 'datetime', 'timestamp'])
             // && !in_array($this->column->name(), config('laracrud.model.protectedColumns'))
         ) {
             $this->dates[] = "'" . $this->column->name() . "'";
