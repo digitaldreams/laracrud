@@ -89,8 +89,8 @@ class Model implements Crud
         $this->table = new Table($table);
         $this->modelBuilder = $this->makeModelBuilders();
         $this->namespace = $this->getFullNS(config('laracrud.model.namespace'));
-        $this->traitSpace = $this->getFullNS(config('laracrud.model.traitNamespace'));
-        $this->abstractSpace = $this->getFullNS(config('laracrud.model.abstractNamespace'));
+        if (config('laracrud.model.modelTraits')) $this->traitSpace = $this->getFullNS(config('laracrud.model.traitNamespace'));
+        if (config('laracrud.model.modelAbstracts')) $this->abstractSpace = $this->getFullNS(config('laracrud.model.abstractNamespace'));
         $this->modelName = $this->getModelName($table);
         $this->traitName = 'Trait' . $this->modelName;
         $this->abstractName = $this->modelName . 'Abstract';
@@ -335,17 +335,17 @@ class Model implements Crud
                 $this->imports[] = $this->namespace . '\\' . $fk->modelName();
                 array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . $propName . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
             } else {*/
-                $param = ",'" .$fk->column(). "'";
-                $tempMan = new TemplateManager('model/relationship.txt', [
-                    'relationShip' => ForeignKey::RELATION_HAS_MANY,
-                    'modelName' => $fk->modelName(),
-                    'methodName' => $propName =str_plural(lcfirst(camel_case($fk->modelName()))),// $this->relationshipMethodName($fk->column(),$fk->table()), //
-                    'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
-                    'params' => $param
-                ]);
-                $this->imports[] = $this->namespace . '\\' . $fk->modelName();
-                array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . $propName . ' ' . ForeignKey::RELATION_HAS_MANY);
-           // }
+            $param = ",'" . $fk->column() . "'";
+            $tempMan = new TemplateManager('model/relationship.txt', [
+                'relationShip' => ForeignKey::RELATION_HAS_MANY,
+                'modelName' => $fk->modelName(),
+                'methodName' => $propName = str_plural(lcfirst(camel_case($fk->modelName()))),// $this->relationshipMethodName($fk->column(),$fk->table()), //
+                'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
+                'params' => $param
+            ]);
+            $this->imports[] = $this->namespace . '\\' . $fk->modelName();
+            array_unshift($this->modelBuilder->propertyDefiners, ' * @property \Illuminate\Database\Eloquent\Collection|' . $fk->modelName() . '[]' . ' $' . $propName . ' ' . ForeignKey::RELATION_HAS_MANY);
+            // }
             $temp .= $tempMan->get();
 
         }
