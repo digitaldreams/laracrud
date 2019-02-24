@@ -1,7 +1,7 @@
 # Laravel Code Generator
 
 Do you have a well structed database and you want to make a Laravel Application on top of it.
-By using this tools you can generate Models which have necessary methods and property, Request class with rules, generate route from controllers method and its parameter and full features form with validation error message and more with a single line of command. So lets start. [See demo](https://github.com/digitaldreams/laracrud-demo)
+By using this tools you can generate Models which have necessary methods and property, Request class with rules, generate route from controllers method and its parameter and full features form with validation error message and more with a single line of command. So lets start. [See demo](https://github.com/digitaldreams/laracrud-demo) code and [slides](https://slides.com/tuhinbepari/laracrud/fullscreen#/) 
 
 ### Installation ###
 ```javascript
@@ -29,11 +29,11 @@ This version are ready to use in Laravel 5.3 and above. If you are using 5.2  pl
 Then you can see new commands by running 'php artisan'
 
 *	`laracrud:model {tableName} {name?} {--on=} {--off=}`: Create model based on table
-*	`laracrud:request {tableName} {name?} {--resource=} {--controller=} {--api}`: Create Request Class/es based on table
+*	`laracrud:request {tableName} {name?} {--resource=} {--controller=} {--model=} {--api}`: Create Request Class/es based on table
 *	`laracrud:Controller {Model} {name?} {--parent=} {--only=} {--api}`: Create Controller Class based on Model
 *	`laracrud:mvc {table} {--api}`: Run above commands into one place
 *	`laracrud:route {controller} {--api}`: Create routes based on controller method
-*	`laracrud:view {table} {--page=(index|create|edit|show|form|table|panel|modal)} {--type=} {--name=} {--controller=}`
+*	`laracrud:view {table} {--page=(index|create|edit|show|form|table|panel|modal)} {--type=} {--name=} {--controller=} {--model=}`
 *	`laracrud:migration {table}`: Create a migration file based on Table structure. Its opposite of normal migration file creation in Laravel
 * `laracrud:policy {model} {--controller=} {--name=}`
 * `laracrud:package {--name=}`
