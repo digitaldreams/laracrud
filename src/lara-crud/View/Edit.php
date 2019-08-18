@@ -7,6 +7,7 @@ namespace LaraCrud\View;
  */
 
 use DbReader\Table;
+use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Form;
 use LaraCrud\View\Partial\Link;
@@ -21,15 +22,16 @@ class Edit extends Page
 
     /**
      * Edit constructor.
-     * @param Table $table
+     * @param Model $model
      * @param string $name
      */
-    public function __construct(Table $table, $name = '')
+    public function __construct(Model $model, $name = '')
     {
-        $this->table = $table;
+        $this->model = $model;
+        $this->table = new Table($this->model->getTable());
         $this->setFolderName();
         $this->name = !empty($name) ? $name : config('laracrud.view.page.edit.name');
-        $this->form = new Form($this->table);
+        $this->form = new Form($this->model);
 
         parent::__construct();
     }
@@ -48,7 +50,7 @@ class Edit extends Page
             'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'partialFilename' => Str::singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name()),
-            'createLink' => $link->create(),
+            'createLink' => $link->create(get_class($this->model)),
             'showRoute' => $this->getRouteName('show', $this->table->name()),
             'updateRoute' => $this->getRouteName('update', $this->table->name())
         ]))->get();

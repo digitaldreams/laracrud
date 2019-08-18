@@ -3,6 +3,7 @@
 namespace LaraCrud\View;
 
 use DbReader\Table;
+use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Link;
 use LaraCrud\View\Partial\Panel;
@@ -17,14 +18,15 @@ class Index extends Page
     protected $tableView;
     protected $panel;
 
-    public function __construct(Table $table, $name = '', $type = '')
+    public function __construct(Model $model, $name = '', $type = '')
     {
-        $this->table = $table;
+        $this->model = $model;
+        $this->table = new Table($this->model->getTable());
         $this->setFolderName();
         $this->name = !empty($name) ? $name : config('laracrud.view.page.index.name');
         $this->type = !empty($type) ? $type : config('laracrud.view.page.index.type');
-        $this->tableView = new TableView($this->table);
-        $this->panel = new Panel($this->table);
+        $this->tableView = new TableView($this->model);
+        $this->panel = new Panel($this->model);
         parent::__construct();
     }
 
@@ -41,10 +43,10 @@ class Index extends Page
             'table' => $this->table->name(),
             'layout' => config('laracrud.view.layout'),
             'folder' => $prefix . $folder,
-            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
+            'routeModelKey' => $this->model->getRouteKeyName(),
             'searchBox' => '',
             'partialFilename' => Str::singular($this->table->name()),
-            'createLink' => $link->create()
+            'createLink' => $link->create(get_class($this->model))
         ];
         switch ($this->type) {
             case 'panel':

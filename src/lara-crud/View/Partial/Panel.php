@@ -7,6 +7,7 @@ namespace LaraCrud\View\Partial;
 
 
 use DbReader\Table;
+use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
 use Illuminate\Support\Str;
@@ -25,14 +26,14 @@ class Panel extends Page
 
     /**
      * Panel constructor.
-     * @param Table $table
+     * @param Model $model
      * @param string $name
      * @param string $editedBy
      */
-    public function __construct(Table $table, $name = '', $editedBy = '')
+    public function __construct(Model $model, $name = '', $editedBy = '')
     {
-
-        $this->table = $table;
+        $this->model = $model;
+        $this->table = new Table($model->getTable());
         $this->folder = $this->version == 3 ? 'panels' : 'cards';
         $this->name = !empty($name) ? $name : Str::singular($this->table->name());
         $this->editedBy = !empty($editedBy) ? $editedBy : 'form';
@@ -57,11 +58,11 @@ class Panel extends Page
                 "\t\t" . '</tr>' . PHP_EOL;
         }
         $link = new Link($this->table->name());
-        $routeKey = $this->dataStore['routeModelKey'] ?? 'id';
+        $routeKey = $this->model->getRouteKeyName();
         $tempMan = new TemplateManager("view/{$this->version}/panel.html", [
             'headline' => '{{$record->id}}',
             'table' => $this->table->name(),
-            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
+            'routeModelKey' =>$routeKey,
             'showLink' => $link->show($routeKey),
             'showRoute' => Page::getRouteName('show', $this->table->name()),
             'editLink' => $this->editedBy == 'form' ? $link->edit($routeKey) : $link->editModal($this->table),

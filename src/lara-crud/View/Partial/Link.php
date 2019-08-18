@@ -14,6 +14,7 @@ class Link
 {
     protected $table;
 
+
     public function __construct($table)
     {
         $this->table = $table;
@@ -21,16 +22,17 @@ class Link
 
     /**
      * Create link for Resourceful Route
+     * @param string $model
      * @return string
      */
-    public function create()
+    public function create($model = '')
     {
         $version = config('laracrud.view.bootstrap');
         if (class_exists(Page::$policy) && method_exists(Page::$policy, 'create')) {
             $temMan = new TemplateManager("view/$version/link/policy/create.html", [
                 'table' => $this->table,
                 'createRoute' => Page::getRouteName('create', $this->table),
-                'modelName' => Page::$model.'::class'
+                'modelName' => $model . '::class'
             ]);
         } else {
             $temMan = new TemplateManager("view/$version/link/create.html", [

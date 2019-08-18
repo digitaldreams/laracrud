@@ -5,6 +5,7 @@ namespace LaraCrud\Console;
 use DbReader\Table as TableReader;
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Model;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use LaraCrud\Crud\ViewController;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\View\Create;
@@ -17,6 +18,8 @@ use LaraCrud\View\Partial\Panel;
 use LaraCrud\View\Partial\Table;
 use LaraCrud\View\Show;
 use Illuminate\Support\Facades\Gate;
+use mysql_xdevapi\Exception;
+
 
 class View extends Command
 {
@@ -43,57 +46,61 @@ class View extends Command
     public function handle()
     {
         try {
-            $table = $this->argument('table');
+            $model = $this->argument('model');
             $page = $this->option('page');
             $type = $this->option('type');
             $name = $this->option('name');
-            $model = $this->option('model');
             $controller = $this->option('controller');
 
             Page::$controller = $this->getControllerNs($controller);
             Page::fetchRoute();
-            $this->setModel($model);
-            $tables = explode(",", $table);
-            foreach ($tables as $tb) {
-                Model::checkMissingTable($tb);
-                $tableReader = new TableReader($tb);
-                if (!empty($page)) {
-                    $pageMaker = $this->pageMaker($page, $tableReader, $name, $type);
-                    if (!empty($pageMaker)) {
-                        $pageMaker->save();
-                        $this->info($page . ' page created successfully');
-                    }
-                } elseif (!empty($controller)) {
-                    $controllerFullNs = $this->getControllerNs($controller);
+            $modelFulNs = $this->getModelFullNs($model);
 
-                    if (class_exists($controllerFullNs)) {
-                        $viewController = new ViewController($controllerFullNs, $tableReader);
-                        $viewController->save();
+            if (!class_exists($modelFulNs)) {
+                $this->error($model . ' does not exists');
+                return false;
+            }
+            $modelObj = new $modelFulNs;
+            $policies = Gate::policies();
+            Page::$policy = $policies[$modelFulNs] ?? false;
 
-                        if (count($viewController->errors) > 0) {
-                            $this->error(implode("\n", $viewController->errors));
-                        } else {
-                            $this->info('Controller views saved successfully');
-                        }
-                    }
-                } else {
-                    $indexPage = new Index($tableReader, $name, $type);
-                    $indexPage->save();
-                    $this->info('Index page created successfully');
-
-                    $showPage = new Show($tableReader, $name, $type);
-                    $showPage->save();
-                    $this->info('Show page created successfully');
-
-                    $createPage = new Create($tableReader, $name);
-                    $createPage->save();
-                    $this->info('Create page created successfully');
-
-                    $edit = new Edit($tableReader, $name);
-                    $edit->save();
-                    $this->info('Edit page created successfully');
-
+            $tableReader = new TableReader($modelObj->getTable());
+            if (!empty($page)) {
+                $pageMaker = $this->pageMaker($page, $modelObj, $name, $type);
+                if (!empty($pageMaker)) {
+                    $pageMaker->save();
+                    $this->info($page . ' page created successfully');
                 }
+            } elseif (!empty($controller)) {
+                $controllerFullNs = $this->getControllerNs($controller);
+
+                if (class_exists($controllerFullNs)) {
+                    $viewController = new ViewController($controllerFullNs, $tableReader);
+                    $viewController->save();
+
+                    if (count($viewController->errors) > 0) {
+                        $this->error(implode("\n", $viewController->errors));
+                    } else {
+                        $this->info('Controller views saved successfully');
+                    }
+                }
+            } else {
+                $indexPage = new Index($modelObj, $name, $type);
+                $indexPage->save();
+                $this->info('Index page created successfully');
+
+                $showPage = new Show($modelObj, $name, $type);
+                $showPage->save();
+                $this->info('Show page created successfully');
+
+                $createPage = new Create($modelObj, $name);
+                $createPage->save();
+                $this->info('Create page created successfully');
+
+                $edit = new Edit($modelObj, $name);
+                $edit->save();
+                $this->info('Edit page created successfully');
+
             }
 
         } catch (\Exception $ex) {
@@ -103,37 +110,38 @@ class View extends Command
 
     /**
      * @param $page
+     * @param EloquentModel $model
      * @param TableReader $tableReader
      * @param string $name
      * @param string $type
      * @return bool|Form|Modal|Panel|Table
      */
-    private function pageMaker($page, TableReader $tableReader, $name = '', $type = '')
+    private function pageMaker($page, EloquentModel $model, $name = '', $type = '')
     {
         switch ($page) {
             case 'form':
-                $pageMaker = new Form($tableReader, $name);
+                $pageMaker = new Form($model, $name);
                 break;
             case 'table':
-                $pageMaker = new Table($tableReader, $name);
+                $pageMaker = new Table($model, $name);
                 break;
             case 'modal':
-                $pageMaker = new Modal($tableReader, $name);
+                $pageMaker = new Modal($model, $name);
                 break;
             case 'panel':
-                $pageMaker = new Panel($tableReader, $name);
+                $pageMaker = new Panel($model, $name);
                 break;
             case 'create':
-                $pageMaker = new Create($tableReader, $name);
+                $pageMaker = new Create($model, $name);
                 break;
             case 'edit':
-                $pageMaker = new Edit($tableReader, $name);
+                $pageMaker = new Edit($model, $name);
                 break;
             case 'show':
-                $pageMaker = new Show($tableReader, $name, $type);
+                $pageMaker = new Show($model, $name, $type);
                 break;
             case 'index':
-                $pageMaker = new Index($tableReader, $name, $type);
+                $pageMaker = new Index($model, $name, $type);
                 break;
             default:
                 $pageMaker = false;
@@ -164,27 +172,16 @@ class View extends Command
         return false;
     }
 
-    private function setModel($model = '')
+    private function getModelFullNs($model = '')
     {
         if (empty($model)) {
             return false;
         }
 
         if (!class_exists($model)) {
-
             $modelNS = $this->getFullNS(config('laracrud.model.namespace'));
-            $fullClass = $modelNS . '\\' . $model;
-
-            if (class_exists($fullClass)) {
-                Page::$model = $fullClass;
-            }
-        } else {
-            Page::$model = $model;
+            return $fullClass = $modelNS . '\\' . $model;
         }
-        if (class_exists(Page::$model)) {
-            $policies = Gate::policies();
-            Page::$policy = $policies[Page::$model] ?? false;
-        }
-        return false;
+        return $model;
     }
 }

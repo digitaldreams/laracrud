@@ -70,7 +70,8 @@ abstract Class Page implements Crud
     /**
      * @var Model
      */
-    public static $model;
+    public $model;
+
 
     /**
      * @var
@@ -91,10 +92,6 @@ abstract Class Page implements Crud
         $this->resource_path = config('laracrud.view.path');
 
         $this->filePath = rtrim($this->resource_path, "/") . "/" . $this->folder . "/" . $this->name . ".blade.php";
-        if (class_exists(static::$model)) {
-            $model = new static::$model;
-            $this->dataStore['routeModelKey'] = $model->getRouteKeyName();
-        }
     }
 
     /**
@@ -200,16 +197,17 @@ abstract Class Page implements Crud
         }
         return static::$routeMap;
     }
+
     protected function isIgnoreAble(Column $column)
     {
         if ($column->isIgnore() || $column->isProtected()) {
             return true;
-        } elseif (class_exists(static::$model)) {
-            $model = new static::$model;
-            $hidden = $model->getHidden();
-            if (is_array($hidden) && !empty($hidden) && in_array($column->name(), $hidden)) {
-                return true;
-            }
+        }
+        $fillable = $this->model->getFillable();
+        $guarded = $this->model->getGuarded();
+
+        if (!in_array($column->name(), $fillable) || in_array($column->name(), $guarded)) {
+            return true;
         }
         return false;
     }

@@ -7,6 +7,7 @@ namespace LaraCrud\View;
  */
 
 use DbReader\Table;
+use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Form;
 use Illuminate\Support\Str;
@@ -15,12 +16,13 @@ class Create extends Page
 {
     protected $form;
 
-    public function __construct(Table $table, $name = '')
+    public function __construct(Model $model, $name = '')
     {
-        $this->table = $table;
+        $this->model = $model;
+        $this->table = new Table($this->model->getTable());
         $this->setFolderName();
         $this->name = !empty($name) ? $name : config('laracrud.view.page.create.name');
-        $this->form = new Form($this->table);
+        $this->form = new Form($this->model);
         parent::__construct();
     }
 
@@ -34,7 +36,7 @@ class Create extends Page
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
             'folder' => $prefix . $this->form->getFolder(),
-            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
+            'routeModelKey' => $this->model->getRouteKeyName(),
             'partialFilename' => Str::singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name())
         ]))->get();

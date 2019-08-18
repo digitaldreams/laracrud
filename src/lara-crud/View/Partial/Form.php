@@ -4,6 +4,7 @@ namespace LaraCrud\View\Partial;
 
 use DbReader\Column;
 use DbReader\Table;
+use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
 use Illuminate\Support\Str;
@@ -47,12 +48,13 @@ class Form extends Page
 
     /**
      * Form constructor.
-     * @param Table $table
+     * @param Model $model
      * @param string $name
      */
-    public function __construct(Table $table, $name = '')
+    public function __construct(Model $model, $name = '')
     {
-        $this->table = $table;
+        $this->model = $model;
+        $this->table = new Table($model->getTable());
         $this->folder = 'forms';
         $this->name = !empty($name) ? $name : Str::singular($this->table->name());
         parent::__construct();
@@ -66,7 +68,7 @@ class Form extends Page
     {
         return (new TemplateManager("view/{$this->version}/forms/form.html", [
             'formContent' => implode("\n", $this->make()),
-            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
+            'routeModelKey' => $this->model->getRouteKeyName(),
             'table' => $this->table->name(),
             'options' => $this->makeOptions(),
             'routeName' => $this->getRouteName('store', $this->table->name())

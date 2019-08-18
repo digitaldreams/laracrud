@@ -3,6 +3,7 @@
 namespace LaraCrud\View\Partial;
 
 use DbReader\Table;
+use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
 use Illuminate\Support\Str;
@@ -14,12 +15,13 @@ class Modal extends Page
 {
     /**
      * Modal constructor.
-     * @param Table $table
+     * @param Model $model
      * @param string $name
      */
-    public function __construct(Table $table, $name = '')
+    public function __construct(Model $model, $name = '')
     {
-        $this->table = $table;
+        $this->model = $model;
+        $this->table = new Table($model->getTable());
         $this->folder = 'modals';
         $this->name = !empty($name) ? $name : Str::singular($this->table->name());
         parent::__construct();
@@ -36,23 +38,20 @@ class Modal extends Page
         $columns = $this->table->columnClasses();
 
         foreach ($columns as $column) {
-            $modalShowOnError .= ' $errors->has("' . $column->name() . '") ||';
-
-            if (!$column->isProtected() || $column->name() == 'id') {
-                $modalInputFill .= 'jq("#' . $column->name() . '").val(btn.attr(\'data-' . $column->name() . '\'));' . PHP_EOL;
-                $modalInputClean .= 'jq("#' . $column->name() . '").val(\'\');' . PHP_EOL;
+            if ($this->isIgnoreAble($column)) {
+                continue;
             }
-
+            $modalShowOnError .= ' $errors->has("' . $column->name() . '") ||';
+            $modalInputFill .= 'jq("#' . $column->name() . '").val(btn.attr(\'data-' . $column->name() . '\'));' . PHP_EOL;
+            $modalInputClean .= 'jq("#' . $column->name() . '").val(\'\');' . PHP_EOL;
         }
         $modalShowOnError = rtrim($modalShowOnError, "||");
-        return (new TemplateManager('view/modal.html', [
-            'modalName' => $this->table->name() . "Modal",
-            'form' => implode("\n", (new Form($this->table))->make()),
+        return (new TemplateManager('view/modal.html', ['modalName' => $this->table->name() . "Modal",
+            'form' => implode("\n", (new Form($this->model))->make()),
             'table' => $this->table->name(),
             'showModalOnError' => $modalShowOnError,
             'modalInputFillUp' => $modalInputFill,
-            'modalInputCleanUp' => $modalInputClean
-        ]))->get();
+            'modalInputCleanUp' => $modalInputClean]))->get();
     }
 
 }
