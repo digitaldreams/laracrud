@@ -21,6 +21,11 @@ class Request implements Crud
     protected $table;
 
     /**
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $model;
+
+    /**
      * Request Class name. Defaut is single version of database table
      * @var string
      */
@@ -42,16 +47,17 @@ class Request implements Crud
 
     /**
      * RequestCrud constructor.
-     * @param $table
+     * @param \Illuminate\Database\Eloquent\Model $model
      * @param string $name
      * @param bool $api
      */
-    public function __construct($table, $name = '', $api = false)
+    public function __construct(\Illuminate\Database\Eloquent\Model $model, $name = '', $api = false)
     {
-        $this->table = new Table($table);
+        $this->model = $model;
+        $this->table = new Table($model->getTable());
         $this->namespace = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
         $this->namespace = $this->getFullNS($this->namespace);
-        $this->modelName = $this->getModelName($table);
+        $this->modelName = $this->getModelName($model->getTable());
         if (!empty($name)) {
             $this->parseName($name);
         } else {
@@ -95,8 +101,12 @@ class Request implements Crud
     {
         $rules = [];
         $columns = $this->table->columnClasses();
+        $fillable = $this->model->getFillable();
+        $guarded = $this->model->getGuarded();
         foreach ($columns as $column) {
             if (in_array($column->name(), config('laracrud.model.protectedColumns'))) {
+                continue;
+            } elseif (!in_array($column->name(), $fillable) || in_array($column->name(), $guarded)) {
                 continue;
             }
             $rules[] = "\t\t\t'{$column->name()}' => '" . implode("|", $this->rule($column)) . "',";

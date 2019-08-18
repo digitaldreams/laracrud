@@ -6,22 +6,24 @@ use Illuminate\Console\Command;
 use LaraCrud\Crud\Request as RequestCrud;
 use LaraCrud\Crud\RequestController as RequestControllerCrud;
 use LaraCrud\Crud\RequestResource as RequestResourceCrud;
+use LaraCrud\Helpers\Helper;
 
 class Request extends Command
 {
+    use Helper;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'laracrud:request {table} {name?} {--controller=} {--resource=} {--model=} {--api}';
+    protected $signature = 'laracrud:request {model} {name?} {--controller=} {--resource=} {--api}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a request class based on table';
+    protected $description = 'Create a request class based on Model';
 
     /**
      * Execute the console command.
@@ -31,44 +33,42 @@ class Request extends Command
     public function handle()
     {
         try {
-            $table = $this->argument('table');
+            $modelName = $this->argument('model');
+            $modelFullName = $this->modelFullName($modelName);
+            $modelObj = new $modelFullName;
             $name = $this->argument('name');
             $controller = $this->option('controller');
             $resource = $this->option('resource');
-            $model = $this->option('model');
             $api = $this->option('api');
 
             if (!empty($controller)) {
-                $requestController = new RequestControllerCrud($table, $controller, $api, $name);
+                $requestController = new RequestControllerCrud($modelObj, $controller, $api, $name);
                 $requestController->save();
                 $this->info('Request controller classes created successfully');
 
             } elseif (!empty($resource)) {
-
                 $methods = $resource === 'all' ? false : explode(",", $resource);
-                $requestResource = new RequestResourceCrud($table, $methods, $api, $name);
-                $requestResource->setModel($model);
+                $requestResource = new RequestResourceCrud($modelObj, $methods, $api, $name);
                 $requestResource->save();
                 $this->info('Request resource classes created successfully');
 
             } else {
-                if (strripos($table, ",")) {
-                    $table = explode(",", $table);
-                    RequestCrud::checkMissingTable($table);
-                    foreach ($table as $tb) {
-                        $requestCrud = new RequestCrud($tb, '', $api);
-                        $requestCrud->save();
-                    }
-                } else {
-                    $requestCrud = new RequestCrud($table, $name, $api);
-                    $requestCrud->save();
-                }
+                $requestCrud = new RequestCrud($modelObj, $name, $api);
+                $requestCrud->save();
                 $this->info('Request class created successfully');
             }
-
 
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
+    }
+
+    private function modelFullName($model)
+    {
+        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
+        if (!class_exists($model)) {
+            return $modelNamespace . '\\' . $model;
+        }
+        return false;
     }
 }

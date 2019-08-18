@@ -10,13 +10,14 @@ use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 class RequestResource implements Crud
 {
     use Helper;
 
     /**
-     * @var
+     * @var string
      */
     protected $table;
     /**
@@ -51,24 +52,27 @@ class RequestResource implements Crud
 
     /**
      * RequestControllerCrud constructor.
-     * @param $table
+     * @param \Illuminate\Database\Eloquent\Model $model
      * @param string $only
      * @param bool $api
      * @param string $name
      * @internal param string $controller
      */
 
-    public function __construct($table, $only = '', $api = false, $name = '')
+    public function __construct(\Illuminate\Database\Eloquent\Model $model, $only = '', $api = false, $name = '')
     {
-        $this->table = $table;
+        $this->table = $model->getTable();
+        $this->model = $model;
+        $policies = Gate::policies();
+        $this->policy = $policies[get_class($this->model)] ?? false;
         $this->folderName = !empty($name) ? $name : $this->table;
 
         if (!empty($only) && is_array($only)) {
             $this->methods = $only;
         }
         $ns = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $this->namespace = $this->getFullNS(trim($ns, "/")) . '\\' . ucfirst(camel_case($this->folderName));
-        $this->modelName = $this->getModelName($table);
+        $this->namespace = $this->getFullNS(trim($ns, "/")) . '\\' . ucfirst(Str::camel($this->folderName));
+        $this->modelName = $this->getModelName($this->table);
         $this->template = !empty($api) ? 'api' : 'web';
     }
 
@@ -110,11 +114,11 @@ class RequestResource implements Crud
                 $isApi = $this->template == 'api' ? true : false;
 
                 if ($method === 'store') {
-                    $requestStore = new Request($this->table, ucfirst(camel_case($this->folderName)) . '/Store', $isApi);
+                    $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/Store', $isApi);
                     $requestStore->setAuthorization($this->getAuthCode('create'));
                     $requestStore->save();
                 } elseif ($method === 'update') {
-                    $requestUpdate = new Request($this->table, ucfirst(camel_case($this->folderName)) . '/Update', $isApi);
+                    $requestUpdate = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/Update', $isApi);
                     $requestUpdate->setAuthorization($this->getAuthCode('update'));
                     $requestUpdate->save();
                 } else {
@@ -168,7 +172,7 @@ class RequestResource implements Crud
         $auth = 'true';
         if (class_exists($this->policy) && method_exists($this->policy, $methodName)) {
             if (in_array($methodName, ['index', 'create', 'store'])) {
-                $code = '\\' . $this->model . '::class)';
+                $code = '\\' . get_class($this->model) . '::class)';
             } else {
                 $modelName = (new \ReflectionClass($this->model))->getShortName();
                 $code = '$this->route(\'' . strtolower($modelName) . '\'))';
