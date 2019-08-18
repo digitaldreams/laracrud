@@ -9,6 +9,7 @@ namespace LaraCrud\View\Partial;
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
+use Illuminate\Support\Str;
 
 class Panel extends Page
 {
@@ -33,7 +34,7 @@ class Panel extends Page
 
         $this->table = $table;
         $this->folder = $this->version == 3 ? 'panels' : 'cards';
-        $this->name = !empty($name) ? $name : str_singular($this->table->name());
+        $this->name = !empty($name) ? $name : Str::singular($this->table->name());
         $this->editedBy = !empty($editedBy) ? $editedBy : 'form';
         parent::__construct();
     }

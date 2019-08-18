@@ -1,9 +1,11 @@
 <?php
+
 namespace LaraCrud\View\Partial;
 
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
+use Illuminate\Support\Str;
 
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>
@@ -19,7 +21,7 @@ class Modal extends Page
     {
         $this->table = $table;
         $this->folder = 'modals';
-        $this->name = !empty($name) ? $name : str_singular($this->table->name());
+        $this->name = !empty($name) ? $name : Str::singular($this->table->name());
         parent::__construct();
     }
 

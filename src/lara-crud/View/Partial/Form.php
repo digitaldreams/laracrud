@@ -6,6 +6,7 @@ use DbReader\Column;
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
+use Illuminate\Support\Str;
 
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>
@@ -53,7 +54,7 @@ class Form extends Page
     {
         $this->table = $table;
         $this->folder = 'forms';
-        $this->name = !empty($name) ? $name : str_singular($this->table->name());
+        $this->name = !empty($name) ? $name : Str::singular($this->table->name());
         parent::__construct();
     }
 
@@ -170,7 +171,7 @@ class Form extends Page
         if ($columnObj->isForeign()) {
             $options = $this->tempMan("select-rel.html", [
                 'modelVar' => $columnObj->foreignTable(),
-                'foreignColumn'=>$columnObj->name(),
+                'foreignColumn' => $columnObj->name(),
                 'name' => $columnObj->name()
             ], $columnObj);
         } else {

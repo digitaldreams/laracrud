@@ -26,14 +26,14 @@ class View extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:view {table} {--page=} {--type=} {--name=} {--controller=} {--model=}';
+    protected $signature = 'laracrud:view {model} {--page=} {--type=} {--name=} {--controller=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create view based on table';
+    protected $description = 'Create view based on Model';
 
     /**
      * Execute the console command.

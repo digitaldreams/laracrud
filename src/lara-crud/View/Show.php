@@ -10,6 +10,7 @@ use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Link;
 use LaraCrud\View\Partial\Panel;
+use Illuminate\Support\Str;
 
 class Show extends Page
 {
@@ -47,7 +48,7 @@ class Show extends Page
             'layout' => config('laracrud.view.layout'),
             'folder' => $prefix . $this->panel->getFolder(),
             'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
-            'partialFilename' => str_singular($this->table->name()),
+            'partialFilename' => Str::singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name()),
             'buttons' => PHP_EOL . $link->create() . PHP_EOL . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . PHP_EOL
         ]))->get();

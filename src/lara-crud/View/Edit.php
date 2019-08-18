@@ -10,6 +10,7 @@ use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Form;
 use LaraCrud\View\Partial\Link;
+use Illuminate\Support\Str;
 
 class Edit extends Page
 {
@@ -45,7 +46,7 @@ class Edit extends Page
             'table' => $this->table->name(),
             'folder' => $prefix . $this->form->getFolder(),
             'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
-            'partialFilename' => str_singular($this->table->name()),
+            'partialFilename' => Str::singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name()),
             'createLink' => $link->create(),
             'showRoute' => $this->getRouteName('show', $this->table->name()),

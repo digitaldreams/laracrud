@@ -9,6 +9,7 @@ namespace LaraCrud\View;
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Form;
+use Illuminate\Support\Str;
 
 class Create extends Page
 {
@@ -34,7 +35,7 @@ class Create extends Page
             'table' => $this->table->name(),
             'folder' => $prefix . $this->form->getFolder(),
             'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
-            'partialFilename' => str_singular($this->table->name()),
+            'partialFilename' => Str::singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name())
         ]))->get();
     }

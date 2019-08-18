@@ -7,6 +7,7 @@ use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Link;
 use LaraCrud\View\Partial\Panel;
 use LaraCrud\View\Partial\Table as TableView;
+use Illuminate\Support\Str;
 
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>
@@ -42,7 +43,7 @@ class Index extends Page
             'folder' => $prefix . $folder,
             'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'searchBox' => '',
-            'partialFilename' => str_singular($this->table->name()),
+            'partialFilename' => Str::singular($this->table->name()),
             'createLink' => $link->create()
         ];
         switch ($this->type) {
