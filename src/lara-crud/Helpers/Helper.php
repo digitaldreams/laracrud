@@ -25,7 +25,7 @@ trait Helper
     /**
      * If table name mistyped and then tell user that table not found and show him a list of table.
      *
-     * @param type $table
+     * @param string $table
      * @return boolean
      * @throws \Exception
      */

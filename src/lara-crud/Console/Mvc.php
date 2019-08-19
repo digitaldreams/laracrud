@@ -47,31 +47,33 @@ class Mvc extends Command
     public function handle()
     {
         try {
+
             $table = $this->argument('table');
             $api = $this->option('api');
-
             Request::checkMissingTable($table);
-            $tableReader = new TableReader($table);
+            try {
+                $modelCrud = new Model($table);
+                $modelCrud->save();
+                $modelNs = $modelCrud->getFullModelName();
+                $model = new $modelNs;
+                $this->info('Model class created successfully');
+
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+                exit();
+            }
 
             try {
-                $requestCrud = new RequestResource($table, false, $api);
+                $requestCrud = new RequestResource($model, false, $api);
                 $requestCrud->save();
                 $this->info('Request classes created successfully');
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
             }
 
-            try {
-                $modelCrud = new Model($table);
-                $modelCrud->save();
-                $this->info('Model class created successfully');
-
-            } catch (\Exception $e) {
-
-            }
 
             try {
-                $controllerCrud = new Controller($modelCrud->modelName(), false, false, $api);
+                $controllerCrud = new Controller($modelNs, false, false, $api);
                 $controllerCrud->save();
                 $this->info('Controller class created successfully');
             } catch (\Exception $e) {
@@ -86,19 +88,19 @@ class Mvc extends Command
 
             $this->warn('Creating views files');
             try {
-                $indexPage = new Index($tableReader);
+                $indexPage = new Index($model);
                 $indexPage->save();
                 $this->info('Index page created successfully');
 
-                $showPage = new Show($tableReader);
+                $showPage = new Show($model);
                 $showPage->save();
                 $this->info('Show page created successfully');
 
-                $createPage = new Create($tableReader);
+                $createPage = new Create($model);
                 $createPage->save();
                 $this->info('Create page created successfully');
 
-                $edit = new Edit($tableReader);
+                $edit = new Edit($model);
                 $edit->save();
                 $this->info('Edit page created successfully');
             } catch (\Exception $e) {

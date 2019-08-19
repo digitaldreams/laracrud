@@ -11,7 +11,7 @@ use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\ForeignKey;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-
+use Illuminate\Support\Str;
 
 class Model implements Crud
 {
@@ -167,12 +167,12 @@ class Model implements Crud
             $tempMan = new TemplateManager('model/relationship.txt', [
                 'relationShip' => $relation['name'],
                 'modelName' => $relation['model'],
-                'methodName' => lcfirst($relation['model']),
+                'methodName' => lcfirst($relation['methodName']),
                 'returnType' => ucfirst($relation['name']),
                 'params' => $param
             ]);
             $temp .= $tempMan->get() . PHP_EOL;
-            array_unshift($this->modelBuilder->propertyDefiners, '@property ' . $relation['model'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
+            array_unshift($this->modelBuilder->propertyDefiners, '@property ' . $relation['methodName'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
         }
         foreach ($otherKeys as $column) {
             $fk = new ForeignKey($column);
@@ -182,7 +182,7 @@ class Model implements Crud
                 $tempMan = new TemplateManager('model/relationship.txt', [
                     'relationShip' => ForeignKey::RELATION_BELONGS_TO_MANY,
                     'modelName' => $fk->modelName(),
-                    'methodName' => str_plural(lcfirst($fk->modelName())),
+                    'methodName' => Str::plural(lcfirst($fk->modelName())),
                     'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY),
                     'params' => $param
                 ]);
@@ -192,7 +192,7 @@ class Model implements Crud
                 $tempMan = new TemplateManager('model/relationship.txt', [
                     'relationShip' => ForeignKey::RELATION_HAS_MANY,
                     'modelName' => $fk->modelName(),
-                    'methodName' => str_plural(lcfirst($fk->modelName())),
+                    'methodName' => Str::plural(lcfirst($fk->modelName())),
                     'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
                     'params' => $param
                 ]);
@@ -254,9 +254,20 @@ class Model implements Crud
         return $builder;
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Model
+     */
     public function modelName()
     {
         return $this->modelName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullModelName()
+    {
+        return $this->namespace . '\\' . $this->modelName;
     }
 
 

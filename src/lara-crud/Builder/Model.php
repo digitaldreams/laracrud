@@ -156,7 +156,7 @@ class Model
      */
     public function scopes()
     {
-        if (!in_array($this->column->name(), config('laracrud.model.protectedColumns')) && !in_array($this->column->type(),['text', 'tinytext', 'bigtext']) ) {
+        if (!in_array($this->column->name(), config('laracrud.model.protectedColumns')) && !in_array($this->column->type(), ['text', 'tinytext', 'bigtext'])) {
             $this->scopes[] = (new TemplateManager('model/scope.txt', [
                     'methodName' => ucfirst($this->column->camelCase()),
                     'fielName' => $this->column->name()
@@ -236,6 +236,7 @@ class Model
             'name' => ForeignKey::RELATION_BELONGS_TO,
             'foreign_key' => $fk->column(),
             'model' => $this->getModelName($fk->foreignTable()),
+            'methodName' => $this->getModelName(str_replace("_id", "", $fk->column())),
             'other_key' => $fk->foreignColumn()
         ];
         return $this->relations;
