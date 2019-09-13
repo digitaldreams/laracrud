@@ -7,14 +7,16 @@
     Create
 </li>
 @endsection
+@section('header')
+<h3><i class="fa fa-plus"></i> Create New @@table@@</h3>
+@endSection
+@section('tools')
+
+@endSection
 @section('content')
 <div class="row">
     <div class='col-md-12'>
-        <div class='card bg-white'>
-            <div class="card-body">
-                @include('@@folder@@.@@partialFilename@@')
-            </div>
-        </div>
+        @include('@@folder@@.@@partialFilename@@')
     </div>
 </div>
 @endSection

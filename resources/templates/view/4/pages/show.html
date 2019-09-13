@@ -4,14 +4,16 @@
     <a href="{{route('@@indexRoute@@')}}">@@table@@</a>
 </li>
 <li class="breadcrumb-item">
-    {{$record->id}}
+    {{$record->@@tableTitle@@}}
 </li>
 
 @endsection
-
+@section('header')
+<h3><i class="fa fa-eye"></i> {{$record->@@tableTitle@@}}</h3>
+@endsection
 @section('tools')
 <div class="btn-group">
-@@buttons@@
+    @@buttons@@
 </div>
 @endsection
 

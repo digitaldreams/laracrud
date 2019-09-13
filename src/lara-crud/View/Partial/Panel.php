@@ -60,9 +60,9 @@ class Panel extends Page
         $link = new Link($this->table->name());
         $routeKey = $this->model->getRouteKeyName();
         $tempMan = new TemplateManager("view/{$this->version}/panel.html", [
-            'headline' => '{{$record->id}}',
+            'headline' => $this->getTitleColumn(),
             'table' => $this->table->name(),
-            'routeModelKey' =>$routeKey,
+            'routeModelKey' => $routeKey,
             'showLink' => $link->show($routeKey),
             'showRoute' => Page::getRouteName('show', $this->table->name()),
             'editLink' => $this->editedBy == 'form' ? $link->edit($routeKey) : $link->editModal($this->table),

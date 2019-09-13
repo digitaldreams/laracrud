@@ -100,6 +100,12 @@ return [
     ],
     'view' => [
         /**
+         * There are one column that used as title for that table. For example title column in posts table. name column in categories table etc
+         */
+        'titles' => [
+            //table=>column e.g categories=>name
+        ],
+        /**
          * Path to the main folder. Folder path are relative to base_path
          */
         'path' => resource_path('views'),

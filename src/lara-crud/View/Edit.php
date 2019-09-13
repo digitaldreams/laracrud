@@ -46,6 +46,7 @@ class Edit extends Page
         return (new TemplateManager("view/{$this->version}/pages/edit.html", [
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
+            'tableTitle' => $this->getTitleColumn(),
             'folder' => $prefix . $this->form->getFolder(),
             'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
             'partialFilename' => Str::singular($this->table->name()),

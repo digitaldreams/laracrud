@@ -47,6 +47,7 @@ class Show extends Page
         $routeKey = $this->dataStore['routeModelKey'] ?? 'id';
         return (new TemplateManager("view/{$this->version}/pages/show.html", [
             'table' => $this->table->name(),
+            'tableTitle' => $this->getTitleColumn(),
             'layout' => config('laracrud.view.layout'),
             'folder' => $prefix . $this->panel->getFolder(),
             'routeModelKey' => $this->model->getRouteKeyName(),

@@ -4,12 +4,15 @@
     <a href="{{route('@@indexRoute@@')}}">@@table@@</a>
 </li>
 <li class="breadcrumb-item">
-    <a href="{{route('@@showRoute@@',$model->@@routeModelKey@@)}}">{{$model->id}}</a>
+    <a href="{{route('@@showRoute@@',$model->@@routeModelKey@@)}}">{{$model->@@tableTitle@@}}</a>
 </li>
 <li class="breadcrumb-item">
     Edit
 </li>
 @endsection
+@section('header')
+<h3><i class="fa fa-pencil"></i> Edit {{$model->@@tableTitle@@}}</h3>
+@endSection
 
 @section('tools')
 @@createLink@@

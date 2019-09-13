@@ -211,4 +211,10 @@ abstract Class Page implements Crud
         }
         return false;
     }
+
+    public function getTitleColumn()
+    {
+        $titles = config('laracrud.view.titles', []);
+        return isset($titles[$this->table->name()]) ? $titles[$this->table->name()] : 'id';
+    }
 }
