@@ -6,7 +6,7 @@ By using this tools you can generate Models which have necessary methods and pro
 ### Installation ###
 ```javascript
   "require": { 
-     "digitaldream/laracrud": "3.*"
+     "digitaldream/laracrud": "4.*"
 }
 ```
 
@@ -29,11 +29,11 @@ This version are ready to use in Laravel 5.3 and above. If you are using 5.2  pl
 Then you can see new commands by running 'php artisan'
 
 *	`laracrud:model {tableName} {name?} {--on=} {--off=}`: Create model based on table
-*	`laracrud:request {tableName} {name?} {--resource=} {--controller=} {--model=} {--api}`: Create Request Class/es based on table
+*	`laracrud:request {Model} {name?} {--resource=} {--controller=} {--api}`: Create Request Class/es based on table
 *	`laracrud:Controller {Model} {name?} {--parent=} {--only=} {--api}`: Create Controller Class based on Model
 *	`laracrud:mvc {table} {--api}`: Run above commands into one place
 *	`laracrud:route {controller} {--api}`: Create routes based on controller method
-*	`laracrud:view {table} {--page=(index|create|edit|show|form|table|panel|modal)} {--type=} {--name=} {--controller=} {--model=}`
+*	`laracrud:view {Model} {--page=(index|create|edit|show|form|table|panel|modal)} {--type=} {--name=} {--controller=}`
 *	`laracrud:migration {table}`: Create a migration file based on Table structure. Its opposite of normal migration file creation in Laravel
 * `laracrud:policy {model} {--controller=} {--name=}`
 * `laracrud:package {--name=}`
@@ -66,22 +66,25 @@ php artisan laracrud:model users MyUser
 
  An well structured table validate everything before inserting . You can not insert a illegal date in a birth_date column if its data type set to date.So if we have this logic set on table why we should write it on Request again. Lets use this table logic to create a request class in laravel.
  
-    php artisan laracrud:request users
+    php artisan laracrud:request MyUser
+   
+
+ Here **MyUser** is Eloquent Model. From LaraCrud version 4.* this command accept Model Name instead of Table
 
 Like Model Name we can also specify a custom request name.
 ```php
-php artisan laracrud:request users RegisterRequest
+php artisan laracrud:request User RegisterRequest
 ```  
 Also If you like to create multiple request for your resourceful controller then 
 ```php
-php artisan laracrud:request users –-resource=index,show,create,update,destroy
+php artisan laracrud:request User –-resource=index,show,create,update,destroy
 ```
 
 It will create a folder users on app/Http/Requests folder and create these request classes. 
 Sometimes you may like to create individual request class for each of your controller method then. 
 ```php
-php artisan laracrud:request users –-controller=UserController
-php artisan laracrud:request users --controller=UserController --api //this will generated Request for API usages
+php artisan laracrud:request User –-controller=UserController
+php artisan laracrud:request User --controller=UserController --api //this will generated Request for API usages
 
 ```
 It will read your controller and create request classes for your Public method 
@@ -109,11 +112,12 @@ A typical form represent a database table.
 E.g. for a Registration form it has all the input field which is necessary for users table. Most of the time we use 
 Bootstrap to generate a form . It has error field highlighting if validation fails. Also display value. This all can be done by
 ```php  
- php artisan laracrud:view users --page=form
- php artisan laracrud:view users --page=index --type=panel //There are three type of layout for index page panel,table and tabpan
- php artisan laracrud:view users --controller=UserController // Create all the views which is not created yet for this controller
+ php artisan laracrud:view User --page=form
+ php artisan laracrud:view User --page=index --type=panel //There are three type of layout for index page panel,table and tabpan
+ php artisan laracrud:view User --controller=UserController // Create all the views which is not created yet for this controller
  
  ```
+ Here **User** is Eloquent Model. From LaraCrud version 4.* this command accept Model Name instead of Table
 
 This will create a complete users crud view. 
 
