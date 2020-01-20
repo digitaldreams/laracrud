@@ -7,6 +7,7 @@ namespace LaraCrud\Helpers;
 
 
 use DbReader\Database;
+use Illuminate\Support\Str;
 
 trait Helper
 {
@@ -73,7 +74,7 @@ trait Helper
     public function getModelName($name)
     {
         $name = $this->getSingular($name);
-        return ucfirst(camel_case($name));
+        return ucfirst(Str::camel($name));
     }
 
     /**
@@ -84,7 +85,7 @@ trait Helper
      */
     public function getSingular($words)
     {
-        return str_singular($words);
+        return Str::singular($words);
     }
 
     /**

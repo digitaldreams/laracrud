@@ -10,6 +10,7 @@ use DbReader\Table;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
+use Illuminate\Support\Str;
 
 class Controller implements Crud
 {
@@ -126,8 +127,8 @@ class Controller implements Crud
      * @param array|string $only
      * @param bool $api
      * @param bool|\Illuminate\Database\Eloquent\Model $parent
-     * @internal param array $except
      * @throws \Exception
+     * @internal param array $except
      */
     public function __construct($model, $name = '', $only = '', $api = false, $parent = false)
     {
@@ -182,7 +183,7 @@ class Controller implements Crud
             $this->transformerName = $this->getTransformerClass();
         }
         $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $requestFolder = !empty($this->table) ? ucfirst(camel_case($this->table)) : $this->modelName;
+        $requestFolder = !empty($this->table) ? ucfirst(Str::camel($this->table)) : $this->modelName;
         $this->requestFolderNs = $this->getFullNS($requestNs) . "\\" . $requestFolder;
     }
 

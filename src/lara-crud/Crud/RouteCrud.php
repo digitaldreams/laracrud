@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-
+use Illuminate\Support\Str;
 /**
  * Create Routes based on controller method and its parameters
  * We will use ReflectionClass to inspect Controller and its method to generate routes based on it
@@ -227,7 +227,7 @@ class RouteCrud implements Crud
 
 
         $actionName = $controllerName . '@' . $method;
-        $routeName .= str_plural(strtolower($controllerShortName)) . '.' . strtolower($method);
+        $routeName .= Str::plural(strtolower($controllerShortName)) . '.' . strtolower($method);
 
         $tempObj = new TemplateManager('route/' . $this->template . '/template.txt', [
             'method' => $routeMethodName,
@@ -297,7 +297,7 @@ class RouteCrud implements Crud
 
             if (count($resourceMethods) == count($resources)) {
                 $newRouteMethods = array_diff($newRouteMethods, $resources);
-                $tableName = str_plural(strtolower(str_replace("Controller", "", $ctr['shortName'])));
+                $tableName = Str::plural(strtolower(str_replace("Controller", "", $ctr['shortName'])));
                 $resourceRTempObj = new TemplateManager('route/' . $this->template . '/resource.txt', [
                     'table' => $tableName,
                     'controller' => $ctr['shortName']
@@ -317,7 +317,7 @@ class RouteCrud implements Crud
             $routeGroupTempObj = new TemplateManager('route/' . $this->template . '/group.txt', [
                 'namespace' => $subNameSpace,
                 'routes' => $controllerRoutes,
-                'prefix' => str_plural($controllerShortName)
+                'prefix' => Str::plural($controllerShortName)
             ]);
             $routeGroupTemp = $routeGroupTempObj->get();
             $retRoutes .= $routeGroupTemp;
