@@ -1,12 +1,6 @@
 <?php
-/**
- * User: Tuhin
- * Date: 1/25/2018
- * Time: 10:38 PM
- */
 
 namespace LaraCrud\Crud;
-
 
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\ClassInspector;
@@ -79,7 +73,6 @@ class ViewController extends RouteCrud
                         } catch (\Exception $e) {
                             continue;
                         }
-
                     }
                 }
             }
@@ -161,5 +154,4 @@ class ViewController extends RouteCrud
         }
         return $pageMaker;
     }
-
 }

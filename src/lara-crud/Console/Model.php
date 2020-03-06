@@ -65,7 +65,6 @@ class Model extends Command
                     $modelCrud = new ModelCrud($table, $modelName);
                     $modelCrud->save();
                 }
-
             }
 
             $this->info('Model class successfully created');

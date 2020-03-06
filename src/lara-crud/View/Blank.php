@@ -24,7 +24,7 @@ class Blank extends Page
     /**
      * @return string
      */
-    function template()
+    public function template()
     {
         return (new TemplateManager("view/{$this->version}/pages/blank.html", [
             'layout' => config('laracrud.view.layout'),

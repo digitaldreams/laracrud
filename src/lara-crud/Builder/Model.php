@@ -2,7 +2,6 @@
 
 namespace LaraCrud\Builder;
 
-
 use LaraCrud\Helpers\ForeignKey;
 use DbReader\Column;
 use LaraCrud\Helpers\Helper;
@@ -120,7 +119,6 @@ class Model
      */
     public function build()
     {
-
     }
 
     /**
@@ -148,7 +146,6 @@ class Model
      */
     public function foreign()
     {
-
     }
 
     /**
@@ -162,7 +159,6 @@ class Model
                     'fielName' => $this->column->name()
                 ]))->get() . "\n";
         }
-
         return $this->scopes;
     }
 
@@ -289,7 +285,6 @@ class Model
         $label = str_replace(" ", "", ucwords(str_replace("_", " ", $this->column->name())));
 
         if (in_array($this->column->type(), ['time', 'date', 'datetime', 'timestamp'])) {
-
             $setDateFormat = isset($setTimeFormats[$this->column->type()]) ? $setTimeFormats[$this->column->type()] : "Y-m-d";
 
             $tempMan = new TemplateManager('model/setAttributeDate.txt', [
@@ -299,14 +294,12 @@ class Model
             ]);
             $this->mutators[] = $tempMan->get();
         } elseif (in_array($this->column->type(), ['varchar', 'text', 'tinytext', 'bigtext'])) {
-
             $tempMan = new TemplateManager('model/setAttributeText.txt', [
                 'columnLabel' => $label,
                 'column' => $this->column->name()
             ]);
             $this->mutators[] = $tempMan->get();
         }
-
         return $this->mutators;
     }
 
@@ -329,6 +322,4 @@ class Model
         }
         return $this->accessors;
     }
-
-
 }

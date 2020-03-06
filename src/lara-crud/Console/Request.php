@@ -50,19 +50,16 @@ class Request extends Command
                 $requestController = new RequestControllerCrud($modelObj, $controller, $api, $name);
                 $requestController->save();
                 $this->info('Request controller classes created successfully');
-
             } elseif (!empty($resource)) {
                 $methods = $resource === 'all' ? false : explode(",", $resource);
                 $requestResource = new RequestResourceCrud($modelObj, $methods, $api, $name);
                 $requestResource->save();
                 $this->info('Request resource classes created successfully');
-
             } else {
                 $requestCrud = new RequestCrud($modelObj, $name, $api);
                 $requestCrud->save();
                 $this->info('Request class created successfully');
             }
-
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }

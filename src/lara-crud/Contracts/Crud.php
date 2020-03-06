@@ -1,5 +1,7 @@
 <?php
+
 namespace LaraCrud\Contracts;
+
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>
  */

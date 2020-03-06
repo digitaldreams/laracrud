@@ -15,7 +15,6 @@ use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
-
 class Transformer implements Crud
 {
     use Helper;

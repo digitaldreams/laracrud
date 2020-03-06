@@ -1,6 +1,5 @@
 <?php
 
-
 namespace LaraCrud\Crud;
 
 use LaraCrud\Contracts\Crud;
@@ -150,7 +149,6 @@ class MigrationCrud implements Crud
                     $params = false;
                 }
             } elseif ($dataType == 'decimal') {
-
                 $startBrace = stripos($column->Type, "(");
                 $endBrace = stripos($column->Type, ")");
                 $pm = substr($column->Type, $startBrace, ($endBrace - $startBrace));

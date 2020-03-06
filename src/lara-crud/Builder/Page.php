@@ -1,15 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Tuhin
- * Date: 4/27/2017
- * Time: 3:15 PM
- */
 
 namespace LaraCrud\Builder;
 
-
-abstract class  Page
+abstract class Page
 {
     public $name;
     protected $data;
@@ -20,11 +13,10 @@ abstract class  Page
 
     public function __construct($data)
     {
-        $this->data=$data;
+        $this->data = $data;
     }
 
-    public abstract function render();
+    abstract public function render();
 
-    public abstract function save();
-
+    abstract public function save();
 }

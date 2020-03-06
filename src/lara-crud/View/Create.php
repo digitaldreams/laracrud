@@ -29,7 +29,7 @@ class Create extends Page
     /**
      * @return string
      */
-    function template()
+    public function template()
     {
         $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
         return (new TemplateManager("view/{$this->version}/pages/create.html", [
@@ -53,5 +53,4 @@ class Create extends Page
         }
         parent::save();
     }
-
 }

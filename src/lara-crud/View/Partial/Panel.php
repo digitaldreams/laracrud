@@ -5,7 +5,6 @@
 
 namespace LaraCrud\View\Partial;
 
-
 use DbReader\Table;
 use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Helpers\TemplateManager;
@@ -71,5 +70,4 @@ class Panel extends Page
         ]);
         return $tempMan->get();
     }
-
 }

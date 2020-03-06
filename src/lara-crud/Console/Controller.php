@@ -15,7 +15,6 @@ use LaraCrud\Crud\RequestController as RequestControllerCrud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Crud\RequestResource as RequestResourceCrud;
 
-
 class Controller extends Command
 {
     use Helper;

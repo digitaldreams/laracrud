@@ -1,8 +1,6 @@
 <?php
 
-
 namespace LaraCrud\Helpers;
-
 
 /**
  * Class TemplateManager
@@ -145,5 +143,4 @@ class TemplateManager
         $file = new \SplFileObject(base_path($filepath . $relativePath), 'w+');
         return $file->fwrite($this->template);
     }
-
 }

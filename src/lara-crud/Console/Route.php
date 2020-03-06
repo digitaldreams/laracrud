@@ -53,12 +53,9 @@ class Route extends Command
                 $path = $this->toPath($namespace);
                 $dirIt = new \RecursiveDirectoryIterator(base_path($path));
                 $rit = new \RecursiveIteratorIterator($dirIt);
-
                 while ($rit->valid()) {
-
                     if (!$rit->isDot()) {
-                        $controllers[] = rtrim($namespace, "\\") . "\\" . str_replace(".php",
-                                "", str_replace("/", "\\", $rit->getSubPathName()));
+                        $controllers[] = rtrim($namespace, "\\") . "\\" . str_replace("", str_replace("/", "\\", $rit->getSubPathName()));
                     }
                     $rit->next();
                 }

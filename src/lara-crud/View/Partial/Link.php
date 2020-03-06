@@ -1,10 +1,6 @@
 <?php
-/**
- * Tuhin Bepari <digitaldreams40@gmail.com>
- */
 
 namespace LaraCrud\View\Partial;
-
 
 use DbReader\Table;
 use LaraCrud\Helpers\TemplateManager;
@@ -14,7 +10,11 @@ class Link
 {
     protected $table;
 
-
+    /**
+     * Link constructor.
+     *
+     * @param $table
+     */
     public function __construct($table)
     {
         $this->table = $table;
@@ -40,7 +40,6 @@ class Link
                 'createRoute' => Page::getRouteName('create', $this->table)
             ]);
         }
-
         return $temMan->get();
     }
 
@@ -67,7 +66,6 @@ class Link
         }
         return $temMan->get();
     }
-
 
     /**
      * Edit link for Modal

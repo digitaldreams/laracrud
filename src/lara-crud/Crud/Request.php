@@ -1,10 +1,6 @@
 <?php
-/**
- * Tuhin Bepari <digitaldreams40@gmail.com>
- */
 
 namespace LaraCrud\Crud;
-
 
 use DbReader\Column;
 use DbReader\Table;

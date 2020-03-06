@@ -1,7 +1,4 @@
 <?php
-/**
- * Tuhin Bepari <digitaldreams40@gmail.com>
- */
 
 namespace LaraCrud\View;
 
@@ -13,7 +10,7 @@ use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use Route;
 
-abstract Class Page implements Crud
+abstract class Page implements Crud
 {
     use Helper;
     /**
@@ -183,7 +180,6 @@ abstract Class Page implements Crud
             return static::$routeMap[$action];
         }
         return $table . "." . $method;
-
     }
 
     /**

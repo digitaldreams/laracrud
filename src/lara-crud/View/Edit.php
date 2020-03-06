@@ -39,7 +39,7 @@ class Edit extends Page
     /**
      * @return string
      */
-    function template()
+    public function template()
     {
         $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
         $link = new Link($this->table->name());

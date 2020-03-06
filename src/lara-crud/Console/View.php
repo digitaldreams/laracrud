@@ -18,8 +18,6 @@ use LaraCrud\View\Partial\Panel;
 use LaraCrud\View\Partial\Table;
 use LaraCrud\View\Show;
 use Illuminate\Support\Facades\Gate;
-use mysql_xdevapi\Exception;
-
 
 class View extends Command
 {
@@ -104,9 +102,7 @@ class View extends Command
                 $edit = new Edit($modelObj, $name);
                 $edit->save();
                 $this->info('Edit page created successfully');
-
             }
-
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }

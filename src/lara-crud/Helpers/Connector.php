@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Tuhin
- * Date: 4/29/2017
- * Time: 11:10 AM
- */
 
 namespace LaraCrud\Helpers;
-
 
 class Connector
 {
@@ -23,17 +16,14 @@ class Connector
         if (function_exists('app')) {
             $laravel = app();
             if (is_object($laravel)) {
-
                 $db = app('db');
                 $this->pdo = $db->connection()->getPdo();
                 $isLaravel = true;
             }
-
         }
         if (!$isLaravel) {
             $this->pdo = new \PDO($dsn, $username, $password, $options);
         }
-
     }
 
     public function pdo()
@@ -44,6 +34,4 @@ class Connector
         }
         throw new \Exception(' PDO connection is not defined');
     }
-
-
 }

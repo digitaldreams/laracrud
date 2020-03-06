@@ -1,10 +1,6 @@
 <?php
-/**
- * Tuhin Bepari <digitaldreams40@gmail.com>
- */
 
 namespace LaraCrud\Crud;
-
 
 use Illuminate\Support\Facades\Gate;
 use LaraCrud\Contracts\Crud;
@@ -129,8 +125,8 @@ class RequestController implements Crud
     {
         $this->checkPath("");
         $publicMethods = $this->classInspector->publicMethods;
-        if (!empty($publicMethods)) {
 
+        if (!empty($publicMethods)) {
             foreach ($publicMethods as $method) {
                 $folderPath = base_path($this->toPath($this->namespace));
                 $this->modelName = $this->getModelName($method);
@@ -160,7 +156,6 @@ class RequestController implements Crud
                     $model = new \SplFileObject($filePath, 'w+');
                     $model->fwrite($this->template($auth));
                 }
-
             }
         }
     }

@@ -7,6 +7,7 @@ use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 use Illuminate\Support\Str;
+
 /**
  * Create Routes based on controller method and its parameters
  * We will use ReflectionClass to inspect Controller and its method to generate routes based on it
@@ -87,8 +88,6 @@ class RouteCrud implements Crud
         $this->template = !empty($api) ? 'api' : 'web';
         $this->namespace = $api == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
         $this->namespace = rtrim($this->getFullNS($this->namespace), "\\") . "\\";
-
-
     }
 
 
@@ -256,7 +255,7 @@ class RouteCrud implements Crud
             if ($param->getClass()) {
                 continue;
             }
-            $optional = $param->isOptional() == TRUE ? '?' : "";
+            $optional = $param->isOptional() == true ? '?' : "";
             $params .= '/{' . $param->getName() . $optional . '}';
         }
         return $params;

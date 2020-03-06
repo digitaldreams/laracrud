@@ -1,7 +1,4 @@
 <?php
-/**
- * Tuhin Bepari <digitaldreams40@gmail.com>
- */
 
 namespace LaraCrud\Helpers;
 
@@ -55,7 +52,6 @@ class ForeignKey
         $this->data = $data;
         $this->db = (new Connector())->pdo();
         $this->isPivot = $this->isPivot();
-
     }
 
     /**
@@ -66,7 +62,6 @@ class ForeignKey
     public function table()
     {
         return isset($this->data->TABLE_NAME) ? $this->data->TABLE_NAME : false;
-
     }
 
     /**
@@ -156,5 +151,4 @@ class ForeignKey
         }
         return $relation;
     }
-
 }

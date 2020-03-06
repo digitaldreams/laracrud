@@ -1,10 +1,6 @@
 <?php
-/**
- * Tuhin Bepari <digitaldreams40@gmail.com>
- */
 
 namespace LaraCrud\Crud;
-
 
 use DbReader\Table;
 use LaraCrud\Contracts\Crud;
@@ -259,7 +255,6 @@ class Controller implements Crud
             $documentation = '';
             $requestClass = $this->getRequestClass($method);
             if ($filePath = $tempMan->getFullPath("controller/" . $this->template . '/' . $method . '.txt')) {
-
                 if (in_array($method, ['store', 'update'])) {
                     $saveUpload = $this->getUploadScript($method);
                 }
@@ -425,5 +420,4 @@ class Controller implements Crud
         $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) : $this->controllerName . 'Controller';
         return $this->namespace . '\\' . $fileName;
     }
-
 }

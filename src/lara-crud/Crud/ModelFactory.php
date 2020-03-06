@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Tuhin
- * Date: 10/3/2018
- * Time: 9:07 PM
- */
 
 namespace LaraCrud\Crud;
 
@@ -88,7 +82,7 @@ class ModelFactory implements Crud
             }
             $fakerColumn = new FakerColumn($column);
             $default = $fakerColumn->default();
-            $columnValue = !empty($default) ? $default.',' : '\'\',';
+            $columnValue = !empty($default) ? $default . ',' : '\'\',';
             $arr .= "\t\t" . '"' . $column->name() . '" => ' . $columnValue . PHP_EOL;
         };
         return $arr;

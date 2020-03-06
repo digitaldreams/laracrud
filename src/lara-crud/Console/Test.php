@@ -55,10 +55,12 @@ class Test extends Command
                 $rit = new \RecursiveIteratorIterator($dirIt);
 
                 while ($rit->valid()) {
-
                     if (!$rit->isDot()) {
-                        $controllers[] = rtrim($namespace, "\\") . "\\" . str_replace(".php",
-                                "", str_replace("/", "\\", $rit->getSubPathName()));
+                        $controllers[] = rtrim($namespace, "\\") . "\\" . str_replace(
+                            ".php",
+                            "",
+                            str_replace("/", "\\", $rit->getSubPathName())
+                        );
                     }
                     $rit->next();
                 }

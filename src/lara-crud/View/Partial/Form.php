@@ -15,7 +15,6 @@ use Illuminate\Support\Str;
 class Form extends Page
 {
 
-
     /**
      * @var array
      */
@@ -64,7 +63,7 @@ class Form extends Page
      * Return fully completed form code as string
      * @return string
      */
-    function template()
+    public function template()
     {
         return (new TemplateManager("view/{$this->version}/forms/form.html", [
             'formContent' => implode("\n", $this->make()),
@@ -246,7 +245,7 @@ class Form extends Page
      * @param Column $column
      * @return string
      */
-    protected function tempMan($fileName, $options = [], Column $column)
+    protected function tempMan($fileName, $options, Column $column)
     {
         $common = [
             'hasErrorClass' => $this->hasErr($column),
@@ -275,5 +274,4 @@ class Form extends Page
     {
         return (new TemplateManager("view/{$this->version}/showErrorText.txt", ['column' => $column->name()]))->get();
     }
-
 }

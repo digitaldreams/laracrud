@@ -1,8 +1,6 @@
 <?php
 
-
 namespace LaraCrud\Helpers;
-
 
 class ClassInspector
 {
@@ -39,7 +37,6 @@ class ClassInspector
         $this->privateMethods = $this->filterMethod($this->reflection->getMethods(\ReflectionMethod::IS_PRIVATE));
         $this->publicMethods = $this->filterMethod($this->reflection->getMethods(\ReflectionMethod::IS_PUBLIC));
         return $this;
-
     }
 
     /**

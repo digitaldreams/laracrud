@@ -30,7 +30,7 @@ class Modal extends Page
     /**
      * @return string
      */
-    function template()
+    public function template()
     {
         $modalInputFill = '';
         $modalInputClean = '';
@@ -53,5 +53,4 @@ class Modal extends Page
             'modalInputFillUp' => $modalInputFill,
             'modalInputCleanUp' => $modalInputClean]))->get();
     }
-
 }

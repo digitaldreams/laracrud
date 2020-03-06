@@ -49,7 +49,7 @@ class Test extends RouteCrud implements Crud
      */
     public function hasRoute($controller, $method)
     {
-        return (isset($this->methodNames[$controller]) && in_array($method,$this->methodNames[$controller]));
+        return (isset($this->methodNames[$controller]) && in_array($method, $this->methodNames[$controller]));
     }
 
     /**
@@ -64,7 +64,6 @@ class Test extends RouteCrud implements Crud
             'className' => $this->fileName,
             'methods' => $this->getMethodTestCode()
         ]))->get();
-
     }
 
     public function getMethodTestCode()
@@ -72,9 +71,8 @@ class Test extends RouteCrud implements Crud
         $testCodes = '';
 
         foreach ($this->controllerInfo['methods'] as $method) {
-
             if ($this->hasRoute($this->controllerInfo['full_name'], $method)) {
-                $routeInfo = $this->getRouteInfo($this->controllerInfo['full_name'],$method);
+                $routeInfo = $this->getRouteInfo($this->controllerInfo['full_name'], $method);
                 if (!empty($routeInfo)) {
                     $testCodes .= (new TestMethod($routeInfo, $this->api))->template();
                 }
@@ -117,6 +115,5 @@ class Test extends RouteCrud implements Crud
     public function saveFile($fileName, $content)
     {
         $fileName = $this->namespace . '/' . $fileName . $this->suffix . '.php';
-
     }
 }

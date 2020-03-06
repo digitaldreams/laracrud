@@ -68,6 +68,4 @@ class Table extends Page
             'tableBody' => $bodyhtml
         ];
     }
-
-
 }

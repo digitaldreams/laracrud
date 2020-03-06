@@ -1,10 +1,6 @@
 <?php
-/**
- * Tuhin Bepari <digitaldreams40@gmail.com>
- */
 
 namespace LaraCrud\Crud;
-
 
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
@@ -101,8 +97,8 @@ class RequestResource implements Crud
     {
         $this->checkPath("");
         $publicMethods = $this->methods;
-        if (!empty($publicMethods)) {
 
+        if (!empty($publicMethods)) {
             foreach ($publicMethods as $method) {
                 $folderPath = base_path($this->toPath($this->namespace));
                 $this->modelName = $this->getModelName($method);
@@ -150,7 +146,6 @@ class RequestResource implements Crud
         }
 
         if (!class_exists($model)) {
-
             $modelNS = $this->getFullNS(config('laracrud.model.namespace'));
             $fullClass = $modelNS . '\\' . $model;
 

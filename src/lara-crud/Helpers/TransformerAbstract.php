@@ -2,7 +2,6 @@
 
 namespace LaraCrud\Helpers;
 
-
 use Illuminate\Database\Eloquent\Model;
 use League\Fractal\TransformerAbstract as RootTransformer;
 
@@ -37,5 +36,4 @@ class TransformerAbstract extends RootTransformer
         }
         return $this;
     }
-
 }

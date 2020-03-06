@@ -1,6 +1,7 @@
 <?php
 
 namespace LaraCrud\Helpers;
+
 trait DatabaseHelper
 {
 
@@ -30,10 +31,10 @@ trait DatabaseHelper
     public function tables()
     {
         $tableNames = [];
-        $result     =  $this->db->query('SHOW TABLES')->fetchAll(\PDO::FETCH_OBJ);
+        $result = $this->db->query('SHOW TABLES')->fetchAll(\PDO::FETCH_OBJ);
         foreach ($result as $tb) {
-            $tb           = (array) $tb;
-            $tableName    = array_values($tb);
+            $tb = (array)$tb;
+            $tableName = array_values($tb);
             $tableNames[] = array_shift($tableName);
         }
         return $tableNames;

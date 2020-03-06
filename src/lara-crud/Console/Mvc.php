@@ -47,7 +47,6 @@ class Mvc extends Command
     public function handle()
     {
         try {
-
             $table = $this->argument('table');
             $api = $this->option('api');
             Request::checkMissingTable($table);
@@ -57,7 +56,6 @@ class Mvc extends Command
                 $modelNs = $modelCrud->getFullModelName();
                 $model = new $modelNs;
                 $this->info('Model class created successfully');
-
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
                 exit();
@@ -106,7 +104,6 @@ class Mvc extends Command
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
             }
-
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }

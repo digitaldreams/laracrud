@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Tuhin
- * Date: 12/18/2017
- * Time: 11:19 AM
- */
 
 namespace LaraCrud\Helpers;
-
 
 class TestMethod
 {
@@ -52,7 +45,6 @@ class TestMethod
         }
         $this->reflection = new \ReflectionMethod($this->controller, $this->method);
         $this->template = !empty($api) ? 'api' : 'web';
-
     }
 
     /**
@@ -73,7 +65,7 @@ class TestMethod
             if ($param->getClass()) {
                 continue;
             }
-            $optional = $param->isOptional() == TRUE ? '?' : "";
+            $optional = $param->isOptional() == true ? '?' : "";
             $params .= '/{' . $param->getName() . $optional . '}';
         }
         return $params;
@@ -108,5 +100,4 @@ class TestMethod
         }
         return $this;
     }
-
 }

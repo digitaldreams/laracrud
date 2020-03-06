@@ -1,7 +1,4 @@
 <?php
-/**
- * Tuhin Bepari <digitaldreams40@gmail.com>
- */
 
 namespace LaraCrud\Crud;
 
@@ -88,14 +85,12 @@ class Model implements Crud
      */
     public function save()
     {
-
         $filePath = $this->checkPath();
         if (file_exists($filePath)) {
             throw new \Exception($this->namespace . '\\' . $this->modelName . ' already exists');
         }
         $model = new \SplFileObject($filePath, 'w+');
         $model->fwrite($this->template());
-
     }
 
     /**
@@ -199,10 +194,8 @@ class Model implements Crud
                 array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
             }
             $temp .= $tempMan->get();
-
         }
         return $temp;
-
     }
 
     /**
@@ -269,6 +262,4 @@ class Model implements Crud
     {
         return $this->namespace . '\\' . $this->modelName;
     }
-
-
 }

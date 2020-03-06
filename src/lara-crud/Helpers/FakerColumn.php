@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Tuhin
- * Date: 10/4/2018
- * Time: 9:50 AM
- */
 
 namespace LaraCrud\Helpers;
-
 
 use DbReader\Column;
 
@@ -101,7 +94,6 @@ class FakerColumn
 
     public function get()
     {
-
     }
 
     public function default()

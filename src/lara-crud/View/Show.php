@@ -40,7 +40,7 @@ class Show extends Page
     /**
      * @return string
      */
-    function template()
+    public function template()
     {
         $link = new Link($this->table->name());
         $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';

@@ -1,12 +1,10 @@
 <?php
 
-
 namespace LaraCrud;
 
 use DbReader\Database;
 use Illuminate\Support\ServiceProvider;
 use LaraCrud\Console\Controller;
-use LaraCrud\Console\ControllerMethod;
 use LaraCrud\Console\Factory;
 use LaraCrud\Console\Migration;
 use LaraCrud\Console\Model;
@@ -64,7 +62,6 @@ class LaraCrudServiceProvider extends ServiceProvider
             __DIR__ . '/../../resources/assets' => public_path('laracrud'),
             __DIR__ . '/../../resources/views' => resource_path('views/laracrud')
         ], 'laracrud-assets');
-
     }
 
     /**
@@ -73,7 +70,8 @@ class LaraCrudServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/laracrud.php', 'laracrud'
+            __DIR__ . '/../config/laracrud.php',
+            'laracrud'
         );
         if ($this->app->runningInConsole()) {
             //DbReader\Database settings
@@ -86,7 +84,6 @@ class LaraCrudServiceProvider extends ServiceProvider
             ]);
             $this->commands($this->commands);
         }
-
     }
 
     /**

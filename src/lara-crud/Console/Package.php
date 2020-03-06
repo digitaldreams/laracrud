@@ -11,7 +11,6 @@ namespace LaraCrud\Console;
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Package as PackageCrud;
 
-
 class Package extends Command
 {
     /**

@@ -8,7 +8,6 @@
 
 namespace LaraCrud\Crud;
 
-
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
@@ -72,7 +71,6 @@ class Package
         }
 
         foreach ($this->dirTree as $name => $splFileinfo) {
-
             if ($splFileinfo->isDir()) {
                 if (!file_exists($this->packagePath . "/" . $name)) {
                     mkdir($this->packagePath . "/" . $name);
@@ -93,13 +91,11 @@ class Package
      */
     protected function globalVars()
     {
-
         $data = [
             'packageNamespace' => $this->namespace,
             'packageName' => $this->name
         ];
         return $data;
-
     }
 
     /**
@@ -113,7 +109,6 @@ class Package
                 continue;
             }
             $dirTree[$this->getRelativeDirectoryName($it) . $it->getBasename()] = $it;
-
         }
         return $dirTree;
     }
@@ -135,7 +130,7 @@ class Package
      */
     protected function saveFile($filePath, $content)
     {
-        $filePath=$this->processFileName($filePath);
+        $filePath = $this->processFileName($filePath);
 
         $fullPath = $this->packagePath . "/" . $filePath;
         if (file_exists($fullPath)) {
@@ -168,10 +163,9 @@ class Package
 
     protected function processFileName($filename)
     {
-        if(strripos($filename,".php.txt")){
-          return str_replace(".txt","",$filename);
+        if (strripos($filename, ".php.txt")) {
+            return str_replace(".txt", "", $filename);
         }
         return $filename;
     }
-
 }

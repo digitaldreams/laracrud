@@ -5,7 +5,6 @@
 
 namespace LaraCrud\Helpers;
 
-
 use DbReader\Database;
 use Illuminate\Support\Str;
 
@@ -41,7 +40,6 @@ trait Helper
             throw new \Exception($message);
         }
         return true;
-
     }
 
     /**
@@ -51,7 +49,7 @@ trait Helper
      */
     public function parseName($name)
     {
-        if (strpos($name, "/", 1) !== FALSE) {
+        if (strpos($name, "/", 1) !== false) {
             $narr = explode("/", trim($name, "/"));
             $this->modelName = $this->getModelName(array_pop($narr));
 
@@ -176,5 +174,4 @@ trait Helper
     {
         return $this->namespace . '\\' . $this->fileName;
     }
-
 }

@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Tuhin
- * Date: 9/19/2017
- * Time: 12:28 PM
- */
 
 namespace LaraCrud\Crud;
-
 
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\ClassInspector;
@@ -116,7 +109,6 @@ class Policy implements Crud
                 'modelFullClass' => $this->modelFullClass,
                 'modelClassVar' => lcfirst($this->shortModelName),
             ]))->get();
-
         }
         $userClass = !empty(config('auth.providers.users.model')) ? config('auth.providers.users.model') : config("laracrud.model.namespace") . "\\User";
 
@@ -184,5 +176,4 @@ class Policy implements Crud
     {
         return !empty($this->name) ? $this->name : $this->shortModelName . config('laracrud.policy.classSuffix');
     }
-
 }

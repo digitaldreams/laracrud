@@ -12,7 +12,6 @@ use Illuminate\Console\Command;
 use LaraCrud\Crud\Transformer as TransformerCrud;
 use LaraCrud\Helpers\Helper;
 
-
 class Transformer extends Command
 {
     use Helper;
@@ -59,7 +58,6 @@ class Transformer extends Command
                     $incTc = new TransformerCrud($incModel);
                     $incTc->save();
                     $this->warn($incTc->getName() . ' created successfully');
-
                 } catch (\Exception $e) {
                     continue;
                 }
