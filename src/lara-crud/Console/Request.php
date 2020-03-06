@@ -16,7 +16,12 @@ class Request extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:request {model} {name?} {--controller=} {--resource=} {--api}';
+    protected $signature = 'laracrud:request 
+        {model : Eloquent Model name} 
+        {name? : Custom name of your Request. e.g. MyPostRequest } 
+        {--c|controller= : Create individual Request class for each public method of this controller.} 
+        {--r|resource= : Pass list of Resource method name e.g. --resource=index,show or pass --resource=all for a all of Resourceful method} 
+        {--api : whether its an API Request}';
 
     /**
      * The console command description.

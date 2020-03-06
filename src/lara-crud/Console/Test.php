@@ -14,7 +14,9 @@ class Test extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:test {controller} {--api}';
+    protected $signature = 'laracrud:test 
+        {controller : Controller Name} 
+        {--api : Whether its an API Controller Test}';
 
     /**
      * The console command description.

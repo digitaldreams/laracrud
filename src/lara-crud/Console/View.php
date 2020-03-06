@@ -29,7 +29,11 @@ class View extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:view {model} {--page=} {--type=} {--name=} {--controller=}';
+    protected $signature = 'laracrud:view 
+        {model : Eloquent Model Name. E.g. Post} 
+        {--p|page= : Any of this (index|create|edit|show|form|table|panel|modal). Ignore this option will create a complete CRUD views.} 
+        {--name= : Name of the view file.} 
+        {--c|controller= : Create view files by reading Public GET method response}';
 
     /**
      * The console command description.

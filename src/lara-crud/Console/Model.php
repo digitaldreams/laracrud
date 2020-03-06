@@ -11,7 +11,11 @@ class Model extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:model {table} {name?} {--on=} {--off=}";
+    protected $signature = "laracrud:model 
+        {table : MySQl Table name} 
+        {name? : Custom Model Name. e.g. MyPost}
+        {--on= : Config options of model from config/laracrud.php you want to switch on. For example --on=mutators will activate mutators for your model.}
+        {--off= : Config options from config/laracrud.php you want to switch of}";
 
     /**
      * The console command description.

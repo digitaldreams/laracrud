@@ -19,7 +19,7 @@ class Package extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:package {name}";
+    protected $signature = "laracrud:package {name : Name of the Package e.g. Post}";
 
     /**
      * The console command description.

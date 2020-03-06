@@ -14,7 +14,9 @@ class Route extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:route {controller} {--api}';
+    protected $signature = 'laracrud:route 
+        {controller : Controller name} 
+        {--api : Whether its an API controller}';
 
     /**
      * The console command description.

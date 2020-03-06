@@ -24,7 +24,13 @@ class Controller extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:controller {model} {name?} {--only=} {--api} {--parent=} {--with=}";
+    protected $signature = "laracrud:controller 
+      {model : Name of the Eloquent Model.} 
+      {name? : Custom Controller Name}
+      {--o|only= : If you want to create partial resourceful controller. e.g. --only=index,show}
+      {--api : whether its an API controller or now} 
+      {--p|parent= : Generate a nested resource controller class. Give the Parent Eloquent Model name. e.g --parent=Post} 
+      {--w|with= : Create Custom Request Classes or Policy along with Newly created Controller. e.g --with=request,policy }";
 
     /**
      * The console command description.

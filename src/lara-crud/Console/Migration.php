@@ -12,7 +12,7 @@ class Migration extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:migration {table}";
+    protected $signature = "laracrud:migration {table : MySQl Table name}";
 
     /**
      * The console command description.

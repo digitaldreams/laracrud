@@ -21,7 +21,9 @@ class Transformer extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:transformer {model} {name?}";
+    protected $signature = "laracrud:transformer 
+        {model : Eloquent Model name. e.g Post} 
+        {name? : Custom name of the Transformer. e.g. MyPostTransformer}";
 
     /**
      * The console command description.
