@@ -1,20 +1,20 @@
 <?php
 /**
- * Tuhin Bepari <digitaldreams40@gmail.com>
+ * Tuhin Bepari <digitaldreams40@gmail.com>.
  */
 
 namespace LaraCrud\View\Partial;
 
 use DbReader\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
-use Illuminate\Support\Str;
 
 class Panel extends Page
 {
     /**
-     * @var integer
+     * @var int
      */
     protected $version;
 
@@ -25,7 +25,8 @@ class Panel extends Page
 
     /**
      * Panel constructor.
-     * @param Model $model
+     *
+     * @param Model  $model
      * @param string $name
      * @param string $editedBy
      */
@@ -33,7 +34,7 @@ class Panel extends Page
     {
         $this->model = $model;
         $this->table = new Table($model->getTable());
-        $this->folder = $this->version == 3 ? 'panels' : 'cards';
+        $this->folder = 3 == $this->version ? 'panels' : 'cards';
         $this->name = !empty($name) ? $name : Str::singular($this->table->name());
         $this->editedBy = !empty($editedBy) ? $editedBy : 'form';
         parent::__construct();
@@ -64,10 +65,11 @@ class Panel extends Page
             'routeModelKey' => $routeKey,
             'showLink' => $link->show($routeKey),
             'showRoute' => Page::getRouteName('show', $this->table->name()),
-            'editLink' => $this->editedBy == 'form' ? $link->edit($routeKey) : $link->editModal($this->table),
+            'editLink' => 'form' == $this->editedBy ? $link->edit($routeKey) : $link->editModal($this->table),
             'deleteLink' => $link->destroy($routeKey),
-            'tableBody' => $bodyHtml
+            'tableBody' => $bodyHtml,
         ]);
+
         return $tempMan->get();
     }
 }

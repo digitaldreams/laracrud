@@ -3,11 +3,11 @@
 namespace LaraCrud\Crud;
 
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\ClassInspector;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-use Illuminate\Support\Str;
 
 class RequestController implements Crud
 {
@@ -39,11 +39,13 @@ class RequestController implements Crud
 
     /**
      * Request Class parent Namespace.
+     *
      * @var string
      */
     protected $namespace;
     /**
      * Name of the folder where Request Classes will be saved.
+     *
      * @var string
      */
     protected $folderName = '';
@@ -65,13 +67,14 @@ class RequestController implements Crud
 
     /**
      * RequestControllerCrud constructor.
+     *
      * @param \Illuminate\Database\Eloquent\Model $model
-     * @param string $controller
-     * @param bool $api
-     * @param string $name
+     * @param string                              $controller
+     * @param bool                                $api
+     * @param string                              $name
+     *
      * @throws \Exception
      */
-
     public function __construct(\Illuminate\Database\Eloquent\Model $model, $controller = '', $api = false, $name = '')
     {
         $this->model = $model;
@@ -86,7 +89,7 @@ class RequestController implements Crud
 
         if (!empty($controller)) {
             if (!class_exists($controller)) {
-                $this->controllerName = $this->controllerNs . "\\" . $controller;
+                $this->controllerName = $this->controllerNs . '\\' . $controller;
             }
 
             if (!class_exists($this->controllerName)) {
@@ -95,14 +98,16 @@ class RequestController implements Crud
 
             $this->classInspector = new ClassInspector($this->controllerName);
             $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-            $this->namespace = $this->getFullNS(trim($requestNs, "/")) . '\\' . ucfirst(Str::camel($this->folderName));
+            $this->namespace = $this->getFullNS(trim($requestNs, '/')) . '\\' . ucfirst(Str::camel($this->folderName));
             $this->modelName = $this->getModelName($this->table);
         }
     }
 
     /**
-     * Process template and return complete code
+     * Process template and return complete code.
+     *
      * @param string $authorization
+     *
      * @return mixed
      */
     public function template($authorization = 'true')
@@ -111,31 +116,34 @@ class RequestController implements Crud
             'namespace' => $this->namespace,
             'requestClassName' => $this->modelName,
             'authorization' => $authorization,
-            'rules' => implode("\n", [])
+            'rules' => implode("\n", []),
         ]);
+
         return $tempMan->get();
     }
 
     /**
-     * Get code and save to disk
+     * Get code and save to disk.
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function save()
     {
-        $this->checkPath("");
+        $this->checkPath('');
         $publicMethods = $this->classInspector->publicMethods;
 
         if (!empty($publicMethods)) {
             foreach ($publicMethods as $method) {
                 $folderPath = base_path($this->toPath($this->namespace));
                 $this->modelName = $this->getModelName($method);
-                $filePath = $folderPath . "/" . $this->modelName . ".php";
+                $filePath = $folderPath . '/' . $this->modelName . '.php';
 
                 if (file_exists($filePath)) {
                     continue;
                 }
-                $isApi = $this->template == 'api' ? true : false;
+                $isApi = 'api' == $this->template ? true : false;
                 if (in_array($method, ['create', 'store'])) {
                     $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/' . $this->modelName, $isApi);
                     $requestStore->setAuthorization($this->getAuthCode('create'));
@@ -146,9 +154,9 @@ class RequestController implements Crud
                     $requestUpdate->save();
                 } else {
                     $auth = 'true';
-                    if ($method === 'show') {
+                    if ('show' === $method) {
                         $auth = $this->getAuthCode('view');
-                    } elseif ($method === 'destroy') {
+                    } elseif ('destroy' === $method) {
                         $auth = $this->getAuthCode('delete');
                     } else {
                         $auth = $this->getAuthCode($method);
@@ -172,6 +180,7 @@ class RequestController implements Crud
             }
             $auth = 'auth()->user()->can(\'' . $methodName . '\', ' . $code;
         }
+
         return $auth;
     }
 }

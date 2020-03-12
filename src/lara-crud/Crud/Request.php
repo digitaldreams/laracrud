@@ -22,19 +22,22 @@ class Request implements Crud
     protected $model;
 
     /**
-     * Request Class name. Defaut is single version of database table
+     * Request Class name. Defaut is single version of database table.
+     *
      * @var string
      */
     protected $modelName;
 
     /**
      * Request Class parent Namespace.
+     *
      * @var string
      */
     protected $namespace;
 
     /**
-     * Template path either api or web
+     * Template path either api or web.
+     *
      * @var string
      */
     protected $template;
@@ -43,9 +46,10 @@ class Request implements Crud
 
     /**
      * RequestCrud constructor.
+     *
      * @param \Illuminate\Database\Eloquent\Model $model
-     * @param string $name
-     * @param bool $api
+     * @param string                              $name
+     * @param bool                                $api
      */
     public function __construct(\Illuminate\Database\Eloquent\Model $model, $name = '', $api = false)
     {
@@ -63,7 +67,7 @@ class Request implements Crud
     }
 
     /**
-     * Save code to file
+     * Save code to file.
      */
     public function save()
     {
@@ -77,6 +81,7 @@ class Request implements Crud
 
     /**
      * Generate complete code.
+     *
      * @return string
      */
     public function template()
@@ -85,8 +90,9 @@ class Request implements Crud
             'namespace' => $this->namespace,
             'requestClassName' => $this->modelName,
             'authorization' => $this->authorization,
-            'rules' => implode("\n", $this->makeRules())
+            'rules' => implode("\n", $this->makeRules()),
         ]);
+
         return $tempMan->get();
     }
 
@@ -105,14 +111,17 @@ class Request implements Crud
             } elseif (!in_array($column->name(), $fillable) || in_array($column->name(), $guarded)) {
                 continue;
             }
-            $rules[] = "\t\t\t'{$column->name()}' => '" . implode("|", $this->rule($column)) . "',";
+            $rules[] = "\t\t\t'{$column->name()}' => '" . implode('|', $this->rule($column)) . "',";
         }
+
         return $rules;
     }
 
     /**
-     * Make rules for Request Class
+     * Make rules for Request Class.
+     *
      * @param Column $column
+     *
      * @return array
      */
     public function rule(Column $column)
@@ -129,33 +138,36 @@ class Request implements Crud
         if ($column->isForeign()) {
             $rules[] = "exists:{$column->foreignTable()},{$column->foreignColumn()}";
         }
-        if ($column->type() == 'enum') {
-            $rules[] = "in:" . implode(",", $column->options());
+        if ('enum' == $column->type()) {
+            $rules[] = 'in:' . implode(',', $column->options());
         } elseif ($column->isFile()) {
             $rules[] = 'file';
         } elseif (in_array($column->type(), ['varchar'])) {
-            $rules[] = "max:" . $column->length();
-        } elseif ($column->type() == 'tinyint' && $column->length() == 1) {
+            $rules[] = 'max:' . $column->length();
+        } elseif ('tinyint' == $column->type() && 1 == $column->length()) {
             $rules[] = 'boolean';
         } elseif (in_array($column->type(), ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float', 'double'])) {
             $rules[] = 'numeric';
         } elseif (in_array($column->type(), ['date', 'time', 'datetime', 'timestamp'])) {
-            $rules[] = "date";
+            $rules[] = 'date';
         }
 
         if (in_array($column->type(), ['text', 'tinytext', 'mediumtext', 'longtext'])) {
-            $rules[] = "string";
+            $rules[] = 'string';
         }
+
         return $rules;
     }
 
     /**
      * @param $auth
+     *
      * @return $this
      */
     public function setAuthorization($auth)
     {
         $this->authorization = $auth;
+
         return $this;
     }
 }

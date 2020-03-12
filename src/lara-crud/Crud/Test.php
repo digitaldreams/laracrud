@@ -9,13 +9,17 @@ use LaraCrud\Helpers\TestMethod;
 
 /**
  * Create Routes based on controller method and its parameters
- * We will use ReflectionClass to inspect Controller and its method to generate routes based on it
+ * We will use ReflectionClass to inspect Controller and its method to generate routes based on it.
  *
  * @author Tuhin
  */
 class Test extends RouteCrud implements Crud
 {
     use Helper;
+
+    /**
+     * @var array
+     */
     protected $params = [];
 
     /**
@@ -27,11 +31,22 @@ class Test extends RouteCrud implements Crud
      * @var
      */
     protected $namespace;
-
+    /**
+     * @var mixed
+     */
     protected $controllerInfo;
+
+    /**
+     * @var string
+     */
     protected $fileName;
 
-
+    /**
+     * Test constructor.
+     *
+     * @param string $controller
+     * @param bool   $api
+     */
     public function __construct($controller = '', $api = false)
     {
         parent::__construct($controller, $api);
@@ -45,15 +60,17 @@ class Test extends RouteCrud implements Crud
     /**
      * @param $controller
      * @param $method
+     *
      * @return bool
      */
     public function hasRoute($controller, $method)
     {
-        return (isset($this->methodNames[$controller]) && in_array($method, $this->methodNames[$controller]));
+        return isset($this->methodNames[$controller]) && in_array($method, $this->methodNames[$controller]);
     }
 
     /**
-     * Process template and return complete code
+     * Process template and return complete code.
+     *
      * @return mixed
      */
     public function template()
@@ -62,7 +79,7 @@ class Test extends RouteCrud implements Crud
             'namespace' => $this->namespace,
             'import' => '',
             'className' => $this->fileName,
-            'methods' => $this->getMethodTestCode()
+            'methods' => $this->getMethodTestCode(),
         ]))->get();
     }
 
@@ -78,28 +95,33 @@ class Test extends RouteCrud implements Crud
                 }
             }
         }
+
         return $testCodes;
     }
 
     /**
      * @param $controller
      * @param $method
+     *
      * @return array
      */
     protected function getRouteInfo($controller, $method)
     {
         $action = $controller . '@' . $method;
+
         return isset($this->routes[$action]) ? $this->routes[$action] : [];
     }
 
     /**
-     * Get code and save to disk
+     * Get code and save to disk.
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function save()
     {
-        $fullPath = $this->toPath($this->namespace . "\\" . $this->fileName) . ".php";
+        $fullPath = $this->toPath($this->namespace . '\\' . $this->fileName) . '.php';
         if (file_exists($fullPath)) {
             throw new \Exception('TestClass already exists');
         }
@@ -110,6 +132,7 @@ class Test extends RouteCrud implements Crud
     /**
      * @param $fileName
      * @param $content
+     *
      * @throws \Exception
      */
     public function saveFile($fileName, $content)

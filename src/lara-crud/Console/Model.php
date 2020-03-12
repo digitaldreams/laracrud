@@ -1,4 +1,5 @@
 <?php
+
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
@@ -11,11 +12,11 @@ class Model extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:model 
+    protected $signature = 'laracrud:model 
         {table : MySQl Table name} 
         {name? : Custom Model Name. e.g. MyPost}
         {--on= : Config options of model from config/laracrud.php you want to switch on. For example --on=mutators will activate mutators for your model.}
-        {--off= : Config options from config/laracrud.php you want to switch of}";
+        {--off= : Config options from config/laracrud.php you want to switch of}';
 
     /**
      * The console command description.
@@ -39,22 +40,22 @@ class Model extends Command
 
             //Overwrite existing Configuration file for this Model Instance
             if (!empty($on)) {
-                $ons = explode(",", $on);
+                $ons = explode(',', $on);
                 foreach ($ons as $option) {
                     config(["laracrud.model.$option" => true]);
                 }
             }
             if (!empty($off)) {
-                $offs = explode(",", $off);
+                $offs = explode(',', $off);
                 foreach ($offs as $option) {
                     config(["laracrud.model.$option" => false]);
                 }
             }
-            if ($table == 'all') {
+            if ('all' == $table) {
                 $modelCrud = new ModelCrud();
             } else {
-                if (strripos($table, ",")) {
-                    $table = explode(",", $table);
+                if (strripos($table, ',')) {
+                    $table = explode(',', $table);
                     ModelCrud::checkMissingTable($table);
                     foreach ($table as $tb) {
                         $modelCrud = new ModelCrud($table);

@@ -5,7 +5,6 @@ namespace LaraCrud\View;
 use DbReader\Column;
 use DbReader\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Gate;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use Route;
@@ -13,6 +12,7 @@ use Route;
 abstract class Page implements Crud
 {
     use Helper;
+
     /**
      * @var Table
      */
@@ -24,19 +24,22 @@ abstract class Page implements Crud
     protected $name;
 
     /**
-     * Type of page e.g. modal, table, tabpan
+     * Type of page e.g. modal, table, tabpan.
+     *
      * @var string
      */
     protected $type;
 
     /**
      * Name of the parent folder where file will be saved.
+     *
      * @var
      */
     protected $folder;
 
     /**
-     * Bootstrap Version
+     * Bootstrap Version.
+     *
      * @var
      */
     protected $version;
@@ -52,14 +55,15 @@ abstract class Page implements Crud
     protected $resource_path;
 
     /**
-     * Routes Map
+     * Routes Map.
      *
      * @var
      */
     public static $routeMap = [];
 
     /**
-     * Current Controller Name
+     * Current Controller Name.
+     *
      * @var string
      */
     public static $controller;
@@ -68,7 +72,6 @@ abstract class Page implements Crud
      * @var Model
      */
     public $model;
-
 
     /**
      * @var
@@ -88,7 +91,7 @@ abstract class Page implements Crud
         $this->version = config('laracrud.view.bootstrap');
         $this->resource_path = config('laracrud.view.path');
 
-        $this->filePath = rtrim($this->resource_path, "/") . "/" . $this->folder . "/" . $this->name . ".blade.php";
+        $this->filePath = rtrim($this->resource_path, '/') . '/' . $this->folder . '/' . $this->name . '.blade.php';
     }
 
     /**
@@ -99,7 +102,7 @@ abstract class Page implements Crud
         if (file_exists($this->filePath)) {
             throw  new \Exception($this->name . ' already exists');
         }
-        $folder = rtrim($this->resource_path, "/") . "/" . $this->folder;
+        $folder = rtrim($this->resource_path, '/') . '/' . $this->folder;
         if (!file_exists($folder)) {
             mkdir($folder);
         }
@@ -108,17 +111,17 @@ abstract class Page implements Crud
     }
 
     /**
-     *  Assign Folder Name
+     *  Assign Folder Name.
      */
     public function setFolderName()
     {
         $pagePath = config('laracrud.view.page.path');
         if (!empty($pagePath)) {
-            $folder = rtrim(config('laracrud.view.path'), "/") . "/" . $pagePath;
+            $folder = rtrim(config('laracrud.view.path'), '/') . '/' . $pagePath;
             if (!file_exists($folder)) {
                 mkdir($folder);
             }
-            $this->folder = trim($pagePath, "/") . "/" . $this->table->name();
+            $this->folder = trim($pagePath, '/') . '/' . $this->table->name();
         } else {
             $this->folder = $this->table->name();
         }
@@ -142,11 +145,13 @@ abstract class Page implements Crud
 
     /**
      * @param $filePath full path
+     *
      * @return $this
      */
     public function setFilePath($filePath)
     {
         $this->filePath = $filePath;
+
         return $this;
     }
 
@@ -169,17 +174,19 @@ abstract class Page implements Crud
     /**
      * @param $method
      * @param string $table
+     *
      * @return mixed|string
      */
     public static function getRouteName($method, $table = '')
     {
         $routePrefix = config('laracrud.route.prefix');
         $table = !empty($routePrefix) ? $routePrefix . $table : $table;
-        $action = static::$controller . "@" . $method;
+        $action = static::$controller . '@' . $method;
         if (isset(static::$routeMap[$action])) {
             return static::$routeMap[$action];
         }
-        return $table . "." . $method;
+
+        return $table . '.' . $method;
     }
 
     /**
@@ -191,6 +198,7 @@ abstract class Page implements Crud
         foreach ($routes as $route) {
             static::$routeMap[$route->getActionName()] = $route->getName();
         }
+
         return static::$routeMap;
     }
 
@@ -205,12 +213,14 @@ abstract class Page implements Crud
         if (!in_array($column->name(), $fillable) || in_array($column->name(), $guarded)) {
             return true;
         }
+
         return false;
     }
 
     public function getTitleColumn()
     {
         $titles = config('laracrud.view.titles', []);
+
         return isset($titles[$this->table->name()]) ? $titles[$this->table->name()] : 'id';
     }
 }

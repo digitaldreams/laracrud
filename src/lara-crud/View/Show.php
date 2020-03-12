@@ -2,16 +2,16 @@
 
 namespace LaraCrud\View;
 
-/**
+/*
  * Tuhin Bepari <digitaldreams40@gmail.com>
  */
 
 use DbReader\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Link;
 use LaraCrud\View\Partial\Panel;
-use Illuminate\Support\Str;
 
 class Show extends Page
 {
@@ -22,7 +22,8 @@ class Show extends Page
 
     /**
      * Show constructor.
-     * @param Model $model
+     *
+     * @param Model  $model
      * @param string $name
      * @param string $type
      */
@@ -45,6 +46,7 @@ class Show extends Page
         $link = new Link($this->table->name());
         $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
         $routeKey = $this->dataStore['routeModelKey'] ?? 'id';
+
         return (new TemplateManager("view/{$this->version}/pages/show.html", [
             'table' => $this->table->name(),
             'tableTitle' => $this->getTitleColumn(),
@@ -53,7 +55,7 @@ class Show extends Page
             'routeModelKey' => $this->model->getRouteKeyName(),
             'partialFilename' => Str::singular($this->table->name()),
             'indexRoute' => $this->getRouteName('index', $this->table->name()),
-            'buttons' => PHP_EOL . $link->create(get_class($this->model)) . PHP_EOL . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . PHP_EOL
+            'buttons' => PHP_EOL . $link->create(get_class($this->model)) . PHP_EOL . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . PHP_EOL,
         ]))->get();
     }
 

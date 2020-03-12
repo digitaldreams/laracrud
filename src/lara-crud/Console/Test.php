@@ -49,26 +49,26 @@ class Test extends Command
             $namespace = $api == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
             $namespace = $this->getFullNS($namespace);
 
-            if ($controller == 'all') {
+            if ('all' == $controller) {
                 $path = $this->toPath($namespace);
                 $dirIt = new \RecursiveDirectoryIterator(base_path($path));
                 $rit = new \RecursiveIteratorIterator($dirIt);
 
                 while ($rit->valid()) {
                     if (!$rit->isDot()) {
-                        $controllers[] = rtrim($namespace, "\\") . "\\" . str_replace(
-                            ".php",
-                            "",
-                            str_replace("/", "\\", $rit->getSubPathName())
+                        $controllers[] = rtrim($namespace, '\\') . '\\' . str_replace(
+                            '.php',
+                            '',
+                            str_replace('/', '\\', $rit->getSubPathName())
                         );
                     }
                     $rit->next();
                 }
                 $testCrud = new TestCrud($controllers, $api);
             } else {
-                $controller = str_replace("/", "\\", $controller);
-                if (!stripos(rtrim($namespace, "\\") . "\\", $controller)) {
-                    $controller = rtrim($namespace, "\\") . '\\' . $controller;
+                $controller = str_replace('/', '\\', $controller);
+                if (!stripos(rtrim($namespace, '\\') . '\\', $controller)) {
+                    $controller = rtrim($namespace, '\\') . '\\' . $controller;
                 }
 
                 $testCrud = new TestCrud($controller, $api);
@@ -76,7 +76,7 @@ class Test extends Command
 
             $testCrud->save();
             if (!empty($testCrud->errors)) {
-                $this->error(implode(", ", $testCrud->errors));
+                $this->error(implode(', ', $testCrud->errors));
             } else {
                 $this->info('Test created successfully');
             }

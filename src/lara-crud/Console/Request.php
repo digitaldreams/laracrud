@@ -40,7 +40,7 @@ class Request extends Command
         try {
             $modelName = $this->argument('model');
             $modelFullName = $this->modelFullName($modelName);
-            $modelObj = new $modelFullName;
+            $modelObj = new $modelFullName();
             $name = $this->argument('name');
             $controller = $this->option('controller');
             $resource = $this->option('resource');
@@ -51,7 +51,7 @@ class Request extends Command
                 $requestController->save();
                 $this->info('Request controller classes created successfully');
             } elseif (!empty($resource)) {
-                $methods = $resource === 'all' ? false : explode(",", $resource);
+                $methods = 'all' === $resource ? false : explode(',', $resource);
                 $requestResource = new RequestResourceCrud($modelObj, $methods, $api, $name);
                 $requestResource->save();
                 $this->info('Request resource classes created successfully');
@@ -71,6 +71,7 @@ class Request extends Command
         if (!class_exists($model)) {
             return $modelNamespace . '\\' . $model;
         }
+
         return false;
     }
 }

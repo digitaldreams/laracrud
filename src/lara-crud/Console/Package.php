@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Tuhin
  * Date: 9/10/2017
- * Time: 5:37 PM
+ * Time: 5:37 PM.
  */
 
 namespace LaraCrud\Console;
@@ -18,7 +18,7 @@ class Package extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:package {name : Name of the Package e.g. Post}";
+    protected $signature = 'laracrud:package {name : Name of the Package e.g. Post}';
 
     /**
      * The console command description.

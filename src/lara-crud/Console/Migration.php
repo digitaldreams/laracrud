@@ -12,7 +12,7 @@ class Migration extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:migration {table : MySQl Table name}";
+    protected $signature = 'laracrud:migration {table : MySQl Table name}';
 
     /**
      * The console command description.
@@ -40,8 +40,8 @@ class Migration extends Command
     {
         try {
             $table = $this->argument('table');
-            if (strripos($table, ",")) {
-                $tables = explode(",", $table);
+            if (strripos($table, ',')) {
+                $tables = explode(',', $table);
                 foreach ($tables as $table) {
                     $migrationCrud = new MigrationCrud($table);
                     $migrationCrud->save();
@@ -53,7 +53,7 @@ class Migration extends Command
                 $migrationCrud->save();
 
                 if (!empty($migrationCrud->errors)) {
-                    $this->error(implode(", ", $migrationCrud->errors));
+                    $this->error(implode(', ', $migrationCrud->errors));
                 } else {
                     $this->info('Migration class successfully created');
                 }

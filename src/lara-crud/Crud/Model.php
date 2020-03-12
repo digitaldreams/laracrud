@@ -3,24 +3,26 @@
 namespace LaraCrud\Crud;
 
 use DbReader\Table;
+use Illuminate\Support\Str;
 use LaraCrud\Builder\Model as ModelBuilder;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\ForeignKey;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-use Illuminate\Support\Str;
 
 class Model implements Crud
 {
     use Helper;
     /**
      * Model Namespace. If not specified then default namespace will be used.
+     *
      * @var string
      */
     protected $namespace;
 
     /**
-     * Name of Model class
+     * Name of Model class.
+     *
      * @var string
      */
     protected $modelName;
@@ -37,8 +39,9 @@ class Model implements Crud
 
     /**
      * Model constructor.
+     *
      * @param $table
-     * @param $name  user define model and namespace. E.g. Models/MyUser will be saved as App\Models\MyUser
+     * @param $name string  user define model and namespace. E.g. Models/MyUser will be saved as App\Models\MyUser
      */
     public function __construct($table, $name = '')
     {
@@ -52,7 +55,8 @@ class Model implements Crud
     }
 
     /**
-     * Done all processing work and make the final code that is ready to save as php file
+     * Done all processing work and make the final code that is ready to save as php file.
+     *
      * @return string
      */
     public function template()
@@ -72,15 +76,18 @@ class Model implements Crud
             'relationShips' => $relations,
             'mutators' => config('laracrud.model.mutators') ? $this->mutators() : '',
             'accessors' => config('laracrud.model.accessors') ? $this->accessors() : '',
-            'scopes' => config('laracrud.model.scopes') ? $this->scopes() : ''
+            'scopes' => config('laracrud.model.scopes') ? $this->scopes() : '',
         ];
         $tempMan = new TemplateManager('model/template.txt', $data);
+
         return $tempMan->get();
     }
 
     /**
-     * Save code as php file
+     * Save code as php file.
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function save()
@@ -94,7 +101,8 @@ class Model implements Crud
     }
 
     /**
-     * Make constant code
+     * Make constant code.
+     *
      * @return mixed
      */
     protected function constants()
@@ -103,20 +111,24 @@ class Model implements Crud
     }
 
     /**
-     * Generate guarded code
+     * Generate guarded code.
+     *
      * @return string
      */
     protected function guarded()
     {
         if (config('laracrud.model.guarded')) {
             $tempMan = new TemplateManager('model/guarded.txt');
+
             return $tempMan->get();
         }
+
         return '';
     }
 
     /**
-     * Make fillable property
+     * Make fillable property.
+     *
      * @return string
      */
     protected function fillable()
@@ -125,31 +137,37 @@ class Model implements Crud
             return '';
         }
         $tempMan = new TemplateManager('model/fillable.txt', ['columns' => implode(",\n", array_reverse($this->modelBuilder->fillable()))]);
+
         return $tempMan->get();
     }
 
     /**
-     * Making of dates property
+     * Making of dates property.
+     *
      * @return string
      */
     protected function dates()
     {
         $tempMan = new TemplateManager('model/dates.txt', ['columns' => implode(",\n", array_reverse($this->modelBuilder->dates))]);
+
         return $tempMan->get();
     }
 
     /**
-     * Making of casts property
+     * Making of casts property.
+     *
      * @return string
      */
     protected function casts()
     {
         $tempMan = new TemplateManager('model/casts.txt', ['columns' => implode(",\n", array_reverse($this->modelBuilder->casts()))]);
+
         return $tempMan->get();
     }
 
     /**
-     * Making relationship code
+     * Making relationship code.
+     *
      * @return string
      */
     protected function relations()
@@ -164,7 +182,7 @@ class Model implements Crud
                 'modelName' => $relation['model'],
                 'methodName' => lcfirst($relation['methodName']),
                 'returnType' => ucfirst($relation['name']),
-                'params' => $param
+                'params' => $param,
             ]);
             $temp .= $tempMan->get() . PHP_EOL;
             array_unshift($this->modelBuilder->propertyDefiners, '@property ' . $relation['methodName'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
@@ -179,7 +197,7 @@ class Model implements Crud
                     'modelName' => $fk->modelName(),
                     'methodName' => Str::plural(lcfirst($fk->modelName())),
                     'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY),
-                    'params' => $param
+                    'params' => $param,
                 ]);
                 array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
             } else {
@@ -189,28 +207,32 @@ class Model implements Crud
                     'modelName' => $fk->modelName(),
                     'methodName' => Str::plural(lcfirst($fk->modelName())),
                     'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
-                    'params' => $param
+                    'params' => $param,
                 ]);
                 array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
             }
             $temp .= $tempMan->get();
         }
+
         return $temp;
     }
 
     /**
-     * making of scopes methods code
+     * making of scopes methods code.
+     *
      * @return string
      */
     protected function scopes()
     {
         $tempMan = new TemplateManager('model/search_scope.txt', ['whereClause' => implode("\n", $this->modelBuilder->makeSearch())]);
         $scopes = implode("\n", array_reverse($this->modelBuilder->scopes));
+
         return $scopes . PHP_EOL . $tempMan->get();
     }
 
     /**
-     * Making of mutators code
+     * Making of mutators code.
+     *
      * @return string
      */
     protected function mutators()
@@ -219,7 +241,8 @@ class Model implements Crud
     }
 
     /**
-     * Making of accessors method code
+     * Making of accessors method code.
+     *
      * @return string
      */
     protected function accessors()
@@ -227,9 +250,6 @@ class Model implements Crud
         return implode("\n", array_reverse($this->modelBuilder->accessors));
     }
 
-    /**
-     *
-     */
     public function makeModelBuilders()
     {
         $builder = null;
@@ -244,6 +264,7 @@ class Model implements Crud
                 $builder = $newBuilder;
             }
         }
+
         return $builder;
     }
 

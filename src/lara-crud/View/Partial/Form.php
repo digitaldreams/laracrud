@@ -5,12 +5,12 @@ namespace LaraCrud\View\Partial;
 use DbReader\Column;
 use DbReader\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
-use Illuminate\Support\Str;
 
 /**
- * Tuhin Bepari <digitaldreams40@gmail.com>
+ * Tuhin Bepari <digitaldreams40@gmail.com>.
  */
 class Form extends Page
 {
@@ -21,7 +21,8 @@ class Form extends Page
     protected $viewRules = [];
 
     /**
-     * Where this form will be used. Possible option are modal or page
+     * Where this form will be used. Possible option are modal or page.
+     *
      * @var
      */
     protected $modal = false;
@@ -47,7 +48,8 @@ class Form extends Page
 
     /**
      * Form constructor.
-     * @param Model $model
+     *
+     * @param Model  $model
      * @param string $name
      */
     public function __construct(Model $model, $name = '')
@@ -60,7 +62,8 @@ class Form extends Page
     }
 
     /**
-     * Return fully completed form code as string
+     * Return fully completed form code as string.
+     *
      * @return string
      */
     public function template()
@@ -70,12 +73,12 @@ class Form extends Page
             'routeModelKey' => $this->model->getRouteKeyName(),
             'table' => $this->table->name(),
             'options' => $this->makeOptions(),
-            'routeName' => $this->getRouteName('store', $this->table->name())
+            'routeName' => $this->getRouteName('store', $this->table->name()),
         ]))->get();
     }
 
     /**
-     * Form Tag may have some options. E.g. enctype when uploading file
+     * Form Tag may have some options. E.g. enctype when uploading file.
      */
     protected function makeOptions()
     {
@@ -87,11 +90,13 @@ class Form extends Page
         foreach ($options as $prop => $value) {
             $retStr .= $prop . '="' . $value . '" ';
         }
+
         return $retStr;
     }
 
     /**
-     * Making form code
+     * Making form code.
+     *
      * @return string
      */
     public function make()
@@ -115,11 +120,11 @@ class Form extends Page
                     $retArr[] = $this->checkBox($column);
                     break;
                 case 'radio':
-                    $retArr[] = $this->tempMan("radio.html", [], $column);
+                    $retArr[] = $this->tempMan('radio.html', [], $column);
                     break;
                 case 'file':
-                    $retArr[] = $this->tempMan("file.html", [
-                        'type' => 'file'
+                    $retArr[] = $this->tempMan('file.html', [
+                        'type' => 'file',
                     ], $column);
                     break;
                 case 'date':
@@ -131,15 +136,15 @@ class Form extends Page
                             $propertiesText .= $name . '="' . $value . '" ';
                         }
                     }
-                    $retArr[] = $this->tempMan("date.html", [
+                    $retArr[] = $this->tempMan('date.html', [
                         'properties' => $propertiesText,
                         'type' => $columnArr['type'],
-                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}'
+                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}',
                     ], $column);
                     break;
                 case 'textarea':
                     $retArr[] = $this->tempMan('textarea.html', [
-                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}'
+                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}',
                     ], $column);
                     break;
                 default:
@@ -151,76 +156,81 @@ class Form extends Page
                     }
                     $retArr[] = $this->tempMan('default.html', [
                         'properties' => $propertiesText,
-                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}'
-
+                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}',
                     ], $column);
                     break;
             }
         }
+
         return $retArr;
     }
 
     /**
-     * Generate select field
-     * @param array $column
+     * Generate select field.
+     *
+     * @param array  $column
      * @param Column $columnObj
+     *
      * @return string
      */
     protected function select($column, Column $columnObj)
     {
         $options = '';
         if ($columnObj->isForeign()) {
-            $options = $this->tempMan("select-rel.html", [
+            $options = $this->tempMan('select-rel.html', [
                 'modelVar' => $columnObj->foreignTable(),
                 'foreignColumn' => $columnObj->name(),
-                'name' => $columnObj->name()
+                'name' => $columnObj->name(),
             ], $columnObj);
         } else {
             if (isset($column['options']) && is_array($column['options'])) {
                 foreach ($column['options'] as $opt) {
                     $selectedText = '{{old(\'' . $column['name'] . '\',$model->' . $column['name'] . ')==\'' . $opt . '\'?"selected":""}}';
-                    $label = ucwords(str_replace("_", " ", $opt));
+                    $label = ucwords(str_replace('_', ' ', $opt));
                     $options .= '<option value="' . $opt . '" ' . $selectedText . ' >' . $label . '</option>' . "\n";
                 }
             }
         }
-        return $this->tempMan("select.html", ['options' => $options], $columnObj);
+
+        return $this->tempMan('select.html', ['options' => $options], $columnObj);
     }
 
     /**
-     * Generate Checkbox
+     * Generate Checkbox.
+     *
      * @param Column $column
+     *
      * @return string
      */
     protected function checkBox($column)
     {
-        return $this->tempMan("checkbox.html", [
+        return $this->tempMan('checkbox.html', [
             'label' => $column->label(),
-            'checked' => ''
+            'checked' => '',
         ], $column);
     }
 
     /**
-     *
      * @param Column $column
-     * [
-     * type=> any valid input type e.g text,email,number,url,date,time,datetime,textarea,select
-     * properties => if any property found e.g maxlength, max, min, required,placeholder
-     * label=> Label of the input field
-     * name=> name of the column
-     * options=> for checkox, radio and select
+     *                       [
+     *                       type=> any valid input type e.g text,email,number,url,date,time,datetime,textarea,select
+     *                       properties => if any property found e.g maxlength, max, min, required,placeholder
+     *                       label=> Label of the input field
+     *                       name=> name of the column
+     *                       options=> for checkox, radio and select
+     *
      * @return array
-     * ]
+     *               ]
      */
     protected function processColumn(Column $column)
     {
         $options = [];
         $options['properties'] = [];
 
-        if ($column->type() == 'enum') {
+        if ('enum' == $column->type()) {
             $options['options'] = $column->options();
-        } elseif ($column->type() == 'varchar') {
-            $options['properties']['maxlength'] = (int)$column->length();
+        } elseif ('varchar' == $column->type()) {
+            $options['properties']['maxlength'] = (int) $column->length();
         }
 
         if (!$column->isNull()) {
@@ -235,14 +245,17 @@ class Form extends Page
             $options['type'] = isset($this->inputType[$column->type()]) ? $this->inputType[$column->type()] : 'text';
         }
         $options['name'] = $column->name();
+
         return $options;
     }
 
     /**
-     * For internal use only. For easy use of TempManager class
+     * For internal use only. For easy use of TempManager class.
+     *
      * @param $fileName
-     * @param array $options
+     * @param array  $options
      * @param Column $column
+     *
      * @return string
      */
     protected function tempMan($fileName, $options, Column $column)
@@ -252,13 +265,15 @@ class Form extends Page
             'showErrorText' => $this->showErr($column),
             'name' => $column->name(),
             'label' => $column->label(),
-            'type' => isset($this->inputType[$column->type()]) ? $this->inputType[$column->type()] : 'text'
+            'type' => isset($this->inputType[$column->type()]) ? $this->inputType[$column->type()] : 'text',
         ];
+
         return (new TemplateManager("view/{$this->version}/forms/$fileName", array_merge($options, $common)))->get();
     }
 
     /**
      * @param $column
+     *
      * @return string
      */
     protected function hasErr(Column $column)
@@ -268,6 +283,7 @@ class Form extends Page
 
     /**
      * @param $column
+     *
      * @return string
      */
     protected function showErr($column)

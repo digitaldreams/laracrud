@@ -12,7 +12,9 @@ class Factory extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:factory {model : Name of the Eloquent Model} {--name= : Custom Name of the Factory. e.g. --name=MyPostFactory}";
+    protected $signature = 'laracrud:factory 
+    {model : Name of the Eloquent Model} 
+    {--name= : Custom Name of the Factory. e.g. --name=MyPostFactory}';
 
     /**
      * The console command description.

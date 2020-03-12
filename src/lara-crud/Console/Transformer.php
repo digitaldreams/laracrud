@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Tuhin
  * Date: 9/10/2017
- * Time: 5:37 PM
+ * Time: 5:37 PM.
  */
 
 namespace LaraCrud\Console;
@@ -20,9 +20,9 @@ class Transformer extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:transformer 
+    protected $signature = 'laracrud:transformer 
         {model : Eloquent Model name. e.g Post} 
-        {name? : Custom name of the Transformer. e.g. MyPostTransformer}";
+        {name? : Custom name of the Transformer. e.g. MyPostTransformer}';
 
     /**
      * The console command description.
@@ -42,14 +42,14 @@ class Transformer extends Command
             $model = $this->argument('model');
             $name = $this->argument('name');
             if (class_exists($model)) {
-                $modelObj = new $model;
+                $modelObj = new $model();
             } else {
                 $namespace = $this->getFullNS(config('laracrud.model.namespace'));
                 $model = $namespace . '\\' . $model;
                 if (!class_exists($model)) {
                     $this->warn($model . ' class does not exists');
                 }
-                $modelObj = new $model;
+                $modelObj = new $model();
             }
             $transformerCrud = new TransformerCrud($modelObj, $name);
             $transformerCrud->save();

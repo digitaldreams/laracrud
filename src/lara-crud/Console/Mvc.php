@@ -2,7 +2,6 @@
 
 namespace LaraCrud\Console;
 
-use DbReader\Table as TableReader;
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Controller;
 use LaraCrud\Crud\Model;
@@ -54,7 +53,7 @@ class Mvc extends Command
                 $modelCrud = new Model($table);
                 $modelCrud->save();
                 $modelNs = $modelCrud->getFullModelName();
-                $model = new $modelNs;
+                $model = new $modelNs();
                 $this->info('Model class created successfully');
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
@@ -69,7 +68,6 @@ class Mvc extends Command
                 $this->error($e->getMessage());
             }
 
-
             try {
                 $controllerCrud = new Controller($modelNs, false, false, $api);
                 $controllerCrud->save();
@@ -78,9 +76,9 @@ class Mvc extends Command
                 $this->error($e->getMessage());
             }
 
-
             if ($api) {
                 $this->info('API resources created successfully');
+
                 return;
             }
 

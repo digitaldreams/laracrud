@@ -2,8 +2,8 @@
 
 namespace LaraCrud\Builder;
 
-use LaraCrud\Helpers\ForeignKey;
 use DbReader\Column;
+use LaraCrud\Helpers\ForeignKey;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
@@ -23,7 +23,7 @@ class Model
 
     /**
      * It will be added as comments before the class.
-     * It will auto suggest property name and its data type while you are trying to insert values
+     * It will auto suggest property name and its data type while you are trying to insert values.
      *
      * @var array
      */
@@ -31,38 +31,43 @@ class Model
 
     /**
      * It will be added as comments before the class.
-     * It will auto suggest method name and its return type while you are trying to use it
+     * It will auto suggest method name and its return type while you are trying to use it.
      *
      * @var array
      */
     public $methodDefiners = [];
 
     /**
-     * Will contains all scopeable columns
+     * Will contains all scopeable columns.
+     *
      * @var array
      */
     public $scopes = [];
 
     /**
-     * Contains all the possible relations
+     * Contains all the possible relations.
+     *
      * @var array
      */
     public $relations = [];
 
     /**
-     * All the casting columns
+     * All the casting columns.
+     *
      * @var array
      */
     public $casts = [];
 
     /**
-     * ALl the contstants
+     * ALl the contstants.
+     *
      * @var array
      */
     public $constants = [];
 
     /**
-     * Date time columns
+     * Date time columns.
+     *
      * @var array
      */
     public $dates = [];
@@ -83,7 +88,8 @@ class Model
     public $accessors = [];
 
     /**
-     * Database Type => PHP data types
+     * Database Type => PHP data types.
+     *
      * @var array
      */
     private $converTypes = [
@@ -93,11 +99,12 @@ class Model
         'int' => 'int',
         'double' => 'double',
         'bigint' => 'int',
-        'tinyint' => 'int'
+        'tinyint' => 'int',
     ];
 
     /**
-     * Make search scope
+     * Make search scope.
+     *
      * @var array
      */
     public $searchScope = [];
@@ -106,6 +113,7 @@ class Model
      * ModelBuilder constructor.
      *
      * @param Column $column
+     *
      * @internal param Model $modelBuilder
      */
     public function __construct(Column $column)
@@ -114,15 +122,15 @@ class Model
     }
 
     /**
-     * It will process all the necessary work
-     *
+     * It will process all the necessary work.
      */
     public function build()
     {
     }
 
     /**
-     * It will process all the necessary work
+     * It will process all the necessary work.
+     *
      * @param Model|static $modelBuilder
      */
     public function merge(Model $modelBuilder)
@@ -142,34 +150,36 @@ class Model
 
     /**
      * Check if current column isForeign
-     * if so then add a row to foreignkeys columns also add builder foreign keys then return
+     * if so then add a row to foreignkeys columns also add builder foreign keys then return.
      */
     public function foreign()
     {
     }
 
     /**
-     * Check if current column is scopeable if so then make a scope
+     * Check if current column is scopeable if so then make a scope.
      */
     public function scopes()
     {
         if (!in_array($this->column->name(), config('laracrud.model.protectedColumns')) && !in_array($this->column->type(), ['text', 'tinytext', 'bigtext'])) {
             $this->scopes[] = (new TemplateManager('model/scope.txt', [
                     'methodName' => ucfirst($this->column->camelCase()),
-                    'fielName' => $this->column->name()
+                    'fielName' => $this->column->name(),
                 ]))->get() . "\n";
         }
+
         return $this->scopes;
     }
 
     /**
-     * return a entry to the casts array
+     * return a entry to the casts array.
      */
     public function casts()
     {
         if (isset($this->converTypes[$this->column->type()])) {
             $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->converTypes[$this->column->type()] . "'";
         }
+
         return $this->casts;
     }
 
@@ -178,44 +188,48 @@ class Model
      */
     public function constant()
     {
-        if ($this->column->type() !== 'enum') {
+        if ('enum' !== $this->column->type()) {
             return $this->constants;
         }
 
         foreach ($this->column->options() as $value) {
-            $name = strtoupper($this->column->name() . '_' . str_replace([" ",
-                    "-", "\"", "/"], "_", $value));
-            $this->constants[] = 'const ' . $name . '=' . "'$value'" . ";" . PHP_EOL;
+            $name = strtoupper($this->column->name() . '_' . str_replace([' ',
+                    '-', '"', '/', ], '_', $value));
+            $this->constants[] = 'const ' . $name . '=' . "'$value'" . ';' . PHP_EOL;
         }
+
         return $this->constants;
     }
 
     /**
-     *  return a line to property definer array
+     *  return a line to property definer array.
      */
     public function propertyDefiner()
     {
-        $this->propertyDefiners[] = '@property ' . $this->column->type() . ' $' . $this->column->name() . ' ' . str_replace("_", " ", $this->column->name());
+        $this->propertyDefiners[] = '@property ' . $this->column->type() . ' $' . $this->column->name() . ' ' . str_replace('_', ' ', $this->column->name());
+
         return $this->propertyDefiners;
     }
 
     /**
-     *  return a line to method definer array
+     *  return a line to method definer array.
      */
     public function methodDefiner()
     {
-        $this->methodDefiners[] = '@method \Illuminate\Database\Eloquent\Builder ' . lcfirst($this->getModelName($this->column->name())) . '(' . $this->column->type() . ' $' . $this->column->name() . ')' . str_replace("_", " ", $this->column->name());
+        $this->methodDefiners[] = '@method \Illuminate\Database\Eloquent\Builder ' . lcfirst($this->getModelName($this->column->name())) . '(' . $this->column->type() . ' $' . $this->column->name() . ')' . str_replace('_', ' ', $this->column->name());
+
         return $this->methodDefiners;
     }
 
     /**
-     *  If its applicable to fill then return it otherwise return empty
+     *  If its applicable to fill then return it otherwise return empty.
      */
     public function fillable()
     {
         if (!in_array($this->column->name(), config('laracrud.model.protectedColumns'))) {
             $this->fillable[] = "'" . $this->column->name() . "'";
         }
+
         return $this->fillable;
     }
 
@@ -232,17 +246,18 @@ class Model
             'name' => ForeignKey::RELATION_BELONGS_TO,
             'foreign_key' => $fk->column(),
             'model' => $this->getModelName($fk->foreignTable()),
-            'methodName' => $this->getModelName(str_replace("_id", "", $fk->column())),
-            'other_key' => $fk->foreignColumn()
+            'methodName' => $this->getModelName(str_replace('_id', '', $fk->column())),
+            'other_key' => $fk->foreignColumn(),
         ];
+
         return $this->relations;
     }
 
     /**
-     * Date type column processing
+     * Date type column processing.
+     *
      * @return array
      */
-
     public function dates()
     {
         //Check if it is a data time column. If so then add it to $protected $dates=[]
@@ -251,11 +266,13 @@ class Model
         ) {
             $this->dates[] = "'" . $this->column->name() . "'";
         }
+
         return $this->dates;
     }
 
     /**
-     * Make a line to Table wise search
+     * Make a line to Table wise search.
+     *
      * @return array|void
      */
     public function makeSearch()
@@ -270,11 +287,12 @@ class Model
         } elseif (in_array($this->column->type(), ['int', 'bigint'])) {
             $this->searchScope[] = "\t" . "->orWhere('" . $this->column->name() . "',\$q)" . PHP_EOL;
         }
+
         return $this->searchScope;
     }
 
     /**
-     * making of mutator code
+     * making of mutator code.
      */
     public function mutators()
     {
@@ -282,24 +300,25 @@ class Model
         if (in_array($this->column->name(), config('laracrud.model.protectedColumns'))) {
             return $this->mutators;
         }
-        $label = str_replace(" ", "", ucwords(str_replace("_", " ", $this->column->name())));
+        $label = str_replace(' ', '', ucwords(str_replace('_', ' ', $this->column->name())));
 
         if (in_array($this->column->type(), ['time', 'date', 'datetime', 'timestamp'])) {
-            $setDateFormat = isset($setTimeFormats[$this->column->type()]) ? $setTimeFormats[$this->column->type()] : "Y-m-d";
+            $setDateFormat = isset($setTimeFormats[$this->column->type()]) ? $setTimeFormats[$this->column->type()] : 'Y-m-d';
 
             $tempMan = new TemplateManager('model/setAttributeDate.txt', [
                 'format' => $setDateFormat,
                 'columnLabel' => $label,
-                'column' => $this->column->name()
+                'column' => $this->column->name(),
             ]);
             $this->mutators[] = $tempMan->get();
         } elseif (in_array($this->column->type(), ['varchar', 'text', 'tinytext', 'bigtext'])) {
             $tempMan = new TemplateManager('model/setAttributeText.txt', [
                 'columnLabel' => $label,
-                'column' => $this->column->name()
+                'column' => $this->column->name(),
             ]);
             $this->mutators[] = $tempMan->get();
         }
+
         return $this->mutators;
     }
 
@@ -314,12 +333,13 @@ class Model
         if (in_array($this->column->type(), ['time', 'date', 'datetime', 'timestamp'])) {
             $getTimeFormats = config('laracrud.model.getDateFormat', []);
             $tempMan = new TemplateManager('model/getAttributeDate.txt', [
-                'format' => isset($getTimeFormats[$this->column->type()]) ? $getTimeFormats[$this->column->type()] : "d M Y",
-                'columnLabel' => str_replace(" ", "", ucwords(str_replace("_", " ", $this->column->name()))),
-                'column' => $this->column->name()
+                'format' => isset($getTimeFormats[$this->column->type()]) ? $getTimeFormats[$this->column->type()] : 'd M Y',
+                'columnLabel' => str_replace(' ', '', ucwords(str_replace('_', ' ', $this->column->name()))),
+                'column' => $this->column->name(),
             ]);
             $this->accessors[] = $tempMan->get();
         }
+
         return $this->accessors;
     }
 }

@@ -3,14 +3,14 @@
 namespace LaraCrud\Crud;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-use Illuminate\Support\Str;
 
 /**
  * Create Routes based on controller method and its parameters
- * We will use ReflectionClass to inspect Controller and its method to generate routes based on it
+ * We will use ReflectionClass to inspect Controller and its method to generate routes based on it.
  *
  * @author Tuhin
  */
@@ -18,7 +18,8 @@ class RouteCrud implements Crud
 {
     use Helper;
     /**
-     * Save all register routes name. To avoid name conficts for new routes
+     * Save all register routes name. To avoid name conficts for new routes.
+     *
      * @var array
      */
     public $routesName = [];
@@ -34,26 +35,27 @@ class RouteCrud implements Crud
      * All registerd Laravel Routes will be stored here.
      *
      * @var array
-     * here is a single route example
-     * [
-     * 'name'=>'get.user.profile',
-     * 'path'=>'',
-     * 'controller'=>UserController,
-     * 'action'=>'profile',
-     * 'method'=>'GET'
-     * ]
+     *            here is a single route example
+     *            [
+     *            'name'=>'get.user.profile',
+     *            'path'=>'',
+     *            'controller'=>UserController,
+     *            'action'=>'profile',
+     *            'method'=>'GET'
+     *            ]
      */
     public $routes = [];
 
     /**
-     * List of available controllers
+     * List of available controllers.
+     *
      * @var array
      */
     public $controllers = [];
 
     /**
      * Save all methods name group by controller name
-     * To check which method have no route defined yet by comparing to $methodNames
+     * To check which method have no route defined yet by comparing to $methodNames.
      *
      * @var array
      */
@@ -61,6 +63,7 @@ class RouteCrud implements Crud
 
     /**
      * It is possible to have Controller under Admin folder with the namespae of Admin.
+     *
      * @var string
      */
     public $subNameSpace = '';
@@ -86,10 +89,9 @@ class RouteCrud implements Crud
         $this->fetchControllerMethods();
 
         $this->template = !empty($api) ? 'api' : 'web';
-        $this->namespace = $api == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
-        $this->namespace = rtrim($this->getFullNS($this->namespace), "\\") . "\\";
+        $this->namespace = true == $api ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
+        $this->namespace = rtrim($this->getFullNS($this->namespace), '\\') . '\\';
     }
-
 
     /**
      * This will get all defined routes.
@@ -110,7 +112,7 @@ class RouteCrud implements Crud
 
         foreach ($routes as $route) {
             $controllerName = strstr($route->getActionName(), '@', true);
-            $methodName = str_replace("@", "", strstr($route->getActionName(), '@'));
+            $methodName = str_replace('@', '', strstr($route->getActionName(), '@'));
             $this->routes[$route->getActionName()] = [
                 'name' => $route->getName(),
                 'path' => $route->uri(),
@@ -118,7 +120,7 @@ class RouteCrud implements Crud
                 'method' => $methodName,
                 'http_verbs' => $route->methods(),
                 'action' => $route->getActionName(),
-                'parameters' => $route->parameterNames()
+                'parameters' => $route->parameterNames(),
             ];
 
             if (!empty($controllerName)) {
@@ -132,7 +134,7 @@ class RouteCrud implements Crud
     }
 
     /**
-     * Get all controller methods which is public
+     * Get all controller methods which is public.
      */
     public function fetchControllerMethods()
     {
@@ -140,12 +142,12 @@ class RouteCrud implements Crud
             $reflectionClass = new \ReflectionClass($controller);
             $methods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
 
-            $this->controllerMethods[$controller] = array(
+            $this->controllerMethods[$controller] = [
                 'full_name' => $controller,
                 'shortName' => $reflectionClass->getShortName(),
                 'description' => $reflectionClass->getDocComment(),
-                'methods' => $this->filterMethod($controller, $methods)
-            );
+                'methods' => $this->filterMethod($controller, $methods),
+            ];
         }
     }
 
@@ -154,21 +156,24 @@ class RouteCrud implements Crud
      *
      * @param string $controllerName
      * @param string $reflectionMethods
+     *
      * @return array
      */
     protected function filterMethod($controllerName, $reflectionMethods)
     {
         $retMethods = [];
         foreach ($reflectionMethods as $method) {
-            if (substr_compare($method->name, '__', 0, 2) != 0 && $method->class == $controllerName) {
+            if (0 != substr_compare($method->name, '__', 0, 2) && $method->class == $controllerName) {
                 $retMethods[] = $method->name;
             }
         }
+
         return $retMethods;
     }
 
     /**
-     * Append route to routes.php file
+     * Append route to routes.php file.
+     *
      * @param string $routesCode
      */
     public function appendRoutes($routesCode)
@@ -182,23 +187,24 @@ class RouteCrud implements Crud
     }
 
     /**
-     * Get route file name based on web or api
+     * Get route file name based on web or api.
      *
      * @return string
      */
     protected function getRouteFileName()
     {
-        return $this->api == true ? config('laracrud.route.api') : config('laracrud.route.web');
+        return true == $this->api ? config('laracrud.route.api') : config('laracrud.route.web');
     }
 
     /**
-     * Generate an idividual routes
+     * Generate an idividual routes.
      *
      * @param string $controllerName e.g. UserController
-     * @param string $method e.g. GET,PUT,POST,DELETE based on the prefix of method name.
-     * If a controller method name is postSave then its method will be post
+     * @param string $method         e.g. GET,PUT,POST,DELETE based on the prefix of method name.
+     *                               If a controller method name is postSave then its method will be post
      * @param string $fullClassName
      * @param string $subNameSpace
+     *
      * @return string
      */
     public function generateRoute($controllerName, $method, $fullClassName = '', $subNameSpace = '')
@@ -211,7 +217,7 @@ class RouteCrud implements Crud
         $routeMethodName = 'get';
 
         if (!empty($subNameSpace)) {
-            $routeName = strtolower($subNameSpace) . ".";
+            $routeName = strtolower($subNameSpace) . '.';
         }
 
         $path .= strtolower($method);
@@ -222,8 +228,7 @@ class RouteCrud implements Crud
 
         $path .= $this->addParams($fullClassName, $method);
 
-        $controllerShortName = str_replace("Controller", "", $controllerName);
-
+        $controllerShortName = str_replace('Controller', '', $controllerName);
 
         $actionName = $controllerName . '@' . $method;
         $routeName .= Str::plural(strtolower($controllerShortName)) . '.' . strtolower($method);
@@ -232,18 +237,21 @@ class RouteCrud implements Crud
             'method' => $routeMethodName,
             'path' => $path,
             'routeName' => $routeName,
-            'action' => $actionName
+            'action' => $actionName,
         ]);
+
         return $tempObj->get();
     }
 
     /**
      * One method may have several params are some may have default values and some may not have.
-     * we will inspect this params and define in routes respectively
+     * we will inspect this params and define in routes respectively.
      *
      * @param string $controller
      * @param string $method
+     *
      * @return string
+     * @throws \ReflectionException
      */
     public function addParams($controller, $method)
     {
@@ -255,14 +263,16 @@ class RouteCrud implements Crud
             if ($param->getClass()) {
                 continue;
             }
-            $optional = $param->isOptional() == true ? '?' : "";
+            $optional = true == $param->isOptional() ? '?' : '';
             $params .= '/{' . $param->getName() . $optional . '}';
         }
+
         return $params;
     }
 
     /**
-     * Process template and return complete code
+     * Process template and return complete code.
+     *
      * @return mixed
      */
     public function template()
@@ -279,13 +289,13 @@ class RouteCrud implements Crud
             $subNameSpace = '';
             $resourceRTemp = '';
 
-            $path = str_replace([$this->namespace, $ctr['shortName']], "", $ctr['full_name']);
-            $path = trim($path, "\\");
-            $controllerShortName = strtolower(str_replace("Controller", "", $ctr['shortName']));
+            $path = str_replace([$this->namespace, $ctr['shortName']], '', $ctr['full_name']);
+            $path = trim($path, '\\');
+            $controllerShortName = strtolower(str_replace('Controller', '', $ctr['shortName']));
 
             if (!empty($path)) {
                 $subNameSpace = ',' . "'namespace'=>'" . $path . "'";
-                $controllerShortName = strtolower($path) . "/" . $controllerShortName;
+                $controllerShortName = strtolower($path) . '/' . $controllerShortName;
             }
 
             $routesMethods = isset($this->methodNames[$controllerName]) ? $this->methodNames[$controllerName] : [];
@@ -296,10 +306,10 @@ class RouteCrud implements Crud
 
             if (count($resourceMethods) == count($resources)) {
                 $newRouteMethods = array_diff($newRouteMethods, $resources);
-                $tableName = Str::plural(strtolower(str_replace("Controller", "", $ctr['shortName'])));
+                $tableName = Str::plural(strtolower(str_replace('Controller', '', $ctr['shortName'])));
                 $resourceRTempObj = new TemplateManager('route/' . $this->template . '/resource.txt', [
                     'table' => $tableName,
-                    'controller' => $ctr['shortName']
+                    'controller' => $ctr['shortName'],
                 ]);
                 $resourceRTemp = $resourceRTempObj->get();
             }
@@ -316,17 +326,19 @@ class RouteCrud implements Crud
             $routeGroupTempObj = new TemplateManager('route/' . $this->template . '/group.txt', [
                 'namespace' => $subNameSpace,
                 'routes' => $controllerRoutes,
-                'prefix' => Str::plural($controllerShortName)
+                'prefix' => Str::plural($controllerShortName),
             ]);
             $routeGroupTemp = $routeGroupTempObj->get();
             $retRoutes .= $routeGroupTemp;
             $retRoutes .= $resourceRTemp;
         }
+
         return $retRoutes;
     }
 
     /**
-     * Get code and save to disk
+     * Get code and save to disk.
+     *
      * @return mixed
      */
     public function save()

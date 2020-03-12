@@ -4,8 +4,9 @@ namespace LaraCrud\Console;
 
 use DbReader\Table as TableReader;
 use Illuminate\Console\Command;
-use LaraCrud\Crud\Model;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Support\Facades\Gate;
+use LaraCrud\Crud\Model;
 use LaraCrud\Crud\ViewController;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\View\Create;
@@ -17,7 +18,6 @@ use LaraCrud\View\Partial\Modal;
 use LaraCrud\View\Partial\Panel;
 use LaraCrud\View\Partial\Table;
 use LaraCrud\View\Show;
-use Illuminate\Support\Facades\Gate;
 
 class View extends Command
 {
@@ -60,9 +60,10 @@ class View extends Command
 
             if (!class_exists($modelFulNs)) {
                 $this->error($model . ' does not exists');
+
                 return false;
             }
-            $modelObj = new $modelFulNs;
+            $modelObj = new $modelFulNs();
             $policies = Gate::policies();
             Page::$policy = $policies[$modelFulNs] ?? false;
 
@@ -111,9 +112,9 @@ class View extends Command
     /**
      * @param $page
      * @param EloquentModel $model
-     * @param TableReader $tableReader
-     * @param string $name
-     * @param string $type
+     * @param string        $name
+     * @param string        $type
+     *
      * @return bool|Form|Modal|Panel|Table
      */
     private function pageMaker($page, EloquentModel $model, $name = '', $type = '')
@@ -147,16 +148,19 @@ class View extends Command
                 $pageMaker = false;
                 break;
         }
+
         return $pageMaker;
     }
 
     /**
      * @param $controller
+     *
      * @return string
      */
     protected function getControllerNs($controller)
     {
         $namespace = config('laracrud.controller.namespace');
+
         return $this->getFullNamespace($namespace, $controller);
     }
 
@@ -165,10 +169,11 @@ class View extends Command
         if (class_exists($class)) {
             return $class;
         }
-        $fullNs = $this->getFullNS(rtrim($namespace, "\\") . "\\" . $class);
+        $fullNs = $this->getFullNS(rtrim($namespace, '\\') . '\\' . $class);
         if (class_exists($fullNs)) {
             return $fullNs;
         }
+
         return false;
     }
 
@@ -180,8 +185,10 @@ class View extends Command
 
         if (!class_exists($model)) {
             $modelNS = $this->getFullNS(config('laracrud.model.namespace'));
+
             return $fullClass = $modelNS . '\\' . $model;
         }
+
         return $model;
     }
 }

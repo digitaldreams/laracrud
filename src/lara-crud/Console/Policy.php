@@ -11,10 +11,10 @@ class Policy extends Command
      *
      * @var string
      */
-    protected $signature = "laracrud:policy 
+    protected $signature = 'laracrud:policy 
         {model  : Eloquent model name} 
         {--c|controller= : Create policy for all of the public method of this controller. e.g. --controller=PostController} 
-        {--name= : Custom Name of the Policy. e.g. --name=MyPostPolicy}";
+        {--name= : Custom Name of the Policy. e.g. --name=MyPostPolicy}';
 
     /**
      * The console command description.
@@ -32,7 +32,7 @@ class Policy extends Command
     {
         try {
             $model = $this->argument('model');
-            $controller = str_replace("/", "\\", $this->option('controller'));
+            $controller = str_replace('/', '\\', $this->option('controller'));
             $name = $this->option('name');
 
             $policyCrud = new \LaraCrud\Crud\Policy($model, $controller, $name);

@@ -3,10 +3,10 @@
 namespace LaraCrud\Crud;
 
 use DbReader\Table;
+use Illuminate\Support\Str;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-use Illuminate\Support\Str;
 
 class Controller implements Crud
 {
@@ -14,13 +14,14 @@ class Controller implements Crud
     /**
      * Controller Name prefix.
      * If Model Name is User and no controller name is supplier then it will be User and then Controller will be appended.
-     * Its name will be UserController
+     * Its name will be UserController.
+     *
      * @var string
      */
     protected $controllerName;
 
     /**
-     * Model Name
+     * Model Name.
      *
      * @var string
      */
@@ -34,6 +35,7 @@ class Controller implements Crud
     /**
      * View Path of the Controller.
      * This will be lower case of model name.
+     *
      * @var type
      */
     protected $viewPath;
@@ -41,6 +43,7 @@ class Controller implements Crud
     /**
      * Default Model Namespace. So if not namespace is specified on
      *  Model then this namespace will be added and check if model exists.
+     *
      * @var type
      */
     protected $modelNameSpace = 'App';
@@ -51,20 +54,23 @@ class Controller implements Crud
     protected $requestFolderNs = '';
     /**
      * Request Class.
-     * Check if any Request Class created for this Model. If so then Use that Request Name otherwise use default Request
+     * Check if any Request Class created for this Model. If so then Use that Request Name otherwise use default Request.
+     *
      * @var type
      */
     protected $requestClass = 'Request';
 
     /**
      * Generally all Request class are suffix with Request.
-     * So for Model User it will search UserRequest in Request folder
+     * So for Model User it will search UserRequest in Request folder.
+     *
      * @var string
      */
     protected $requestClassSuffix = 'Request';
 
     /**
-     * Name of the Model Table
+     * Name of the Model Table.
+     *
      * @var string
      */
     protected $table;
@@ -77,6 +83,7 @@ class Controller implements Crud
     /**
      * Sub Path of the Controller.
      * Generally Controller are stored in Controllers folder. But for grouping Controller may be put into folders.
+     *
      * @var type
      */
     public $path = '';
@@ -87,13 +94,15 @@ class Controller implements Crud
     public $namespace;
 
     /**
-     * Namespace version of subpath
+     * Namespace version of subpath.
+     *
      * @var type
      */
     protected $subNameSpace = '';
 
     /**
-     * Model Name without Namespace
+     * Model Name without Namespace.
+     *
      * @var type
      */
     protected $shortModelName;
@@ -115,15 +124,17 @@ class Controller implements Crud
      */
     protected $parentModel;
 
-
     /**
      * ControllerCrud constructor.
+     *
      * @param $model
-     * @param string $name
-     * @param array|string $only
-     * @param bool $api
+     * @param string                                   $name
+     * @param array|string                             $only
+     * @param bool                                     $api
      * @param bool|\Illuminate\Database\Eloquent\Model $parent
+     *
      * @throws \Exception
+     *
      * @internal param array $except
      */
     public function __construct($model, $name = '', $only = '', $api = false, $parent = false)
@@ -144,7 +155,7 @@ class Controller implements Crud
             $this->setParent($parent);
         }
         if (class_exists($this->modelName)) {
-            $this->model = $model = new $this->modelName;
+            $this->model = $model = new $this->modelName();
             $this->table = $model->getTable();
         } else {
             throw new \Exception($model . ' class does not exists');
@@ -156,8 +167,8 @@ class Controller implements Crud
         $this->requestClassSuffix = config('laracrud.request.classSuffix', 'Request');
 
         if (!empty($name)) {
-            if (strpos($name, "/") !== false) {
-                $narr = explode("/", $name);
+            if (false !== strpos($name, '/')) {
+                $narr = explode('/', $name);
                 $this->fileName = array_pop($narr);
 
                 foreach ($narr as $p) {
@@ -172,7 +183,7 @@ class Controller implements Crud
         $this->template = !empty($this->parentModel) ? $this->template . '/parent' : $this->template;
 
         $ns = !empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
-        $this->namespace = trim($this->getFullNS($ns), "/") . $this->subNameSpace;
+        $this->namespace = trim($this->getFullNS($ns), '/') . $this->subNameSpace;
         $this->parseModelName();
 
         if (!empty($api)) {
@@ -180,11 +191,12 @@ class Controller implements Crud
         }
         $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
         $requestFolder = !empty($this->table) ? ucfirst(Str::camel($this->table)) : $this->modelName;
-        $this->requestFolderNs = $this->getFullNS($requestNs) . "\\" . $requestFolder;
+        $this->requestFolderNs = $this->getFullNS($requestNs) . '\\' . $requestFolder;
     }
 
     /**
-     * Process template and return complete code
+     * Process template and return complete code.
+     *
      * @return mixed
      */
     public function template()
@@ -193,8 +205,9 @@ class Controller implements Crud
         $methods = $this->buildMethods();
         $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', array_merge($globalVars, [
             'methods' => $methods,
-            'importNameSpace' => $this->makeNamespaceUseString()
+            'importNameSpace' => $this->makeNamespaceUseString(),
         ]));
+
         return $tempMan->get();
     }
 
@@ -204,6 +217,7 @@ class Controller implements Crud
     protected function globalVars()
     {
         $rel = $this->makeRelation();
+
         return [
             'controllerName' => $this->getFileName($this->controllerName . 'Controller'),
             'modelName' => $this->shortModelName,
@@ -212,7 +226,7 @@ class Controller implements Crud
             'viewPath' => $this->viewPath,
             'requestClass' => $this->requestClass,
             'table' => $this->table,
-            'namespace' => trim($this->namespace, "/"),
+            'namespace' => trim($this->namespace, '/'),
             'belongsToRelation' => $rel['belongsToRelation'],
             'belongsToRelationVars' => $rel['belongsToRelationVars'],
             'belongsToManyRelationSync' => '',
@@ -227,15 +241,17 @@ class Controller implements Crud
     }
 
     /**
-     * Get code and save to disk
+     * Get code and save to disk.
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function save()
     {
-        $this->checkPath("");
-        $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) . ".php" : $this->controllerName . 'Controller' . '.php';
-        $filePath = base_path($this->toPath($this->namespace)) . "/" . $fileName;
+        $this->checkPath('');
+        $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) . '.php' : $this->controllerName . 'Controller' . '.php';
+        $filePath = base_path($this->toPath($this->namespace)) . '/' . $fileName;
         if (file_exists($filePath)) {
             throw new \Exception($filePath . ' already exists');
         }
@@ -254,7 +270,7 @@ class Controller implements Crud
         foreach ($this->only as $method) {
             $documentation = '';
             $requestClass = $this->getRequestClass($method);
-            if ($filePath = $tempMan->getFullPath("controller/" . $this->template . '/' . $method . '.txt')) {
+            if ($filePath = $tempMan->getFullPath('controller/' . $this->template . '/' . $method . '.txt')) {
                 if (in_array($method, ['store', 'update'])) {
                     $saveUpload = $this->getUploadScript($method);
                 }
@@ -263,36 +279,39 @@ class Controller implements Crud
                     'apiRequest' => $this->makeApiRequest($requestClass),
                     'saveUpload' => $saveUpload,
                 ]);
-                if (config('laracrud.controller.documentation') == true && $this->template !== 'web') {
-                    $documentation = (new TemplateManager("controller/" . $this->template . "/docs/" . $method . '.txt', $vars));
+                if (true == config('laracrud.controller.documentation') && 'web' !== $this->template) {
+                    $documentation = (new TemplateManager('controller/' . $this->template . '/docs/' . $method . '.txt', $vars));
                 }
 
                 $vars['documentation'] = $documentation;
-                $methodTemp = new TemplateManager("controller/" . $this->template . '/' . $method . ".txt", $vars);
+                $methodTemp = new TemplateManager('controller/' . $this->template . '/' . $method . '.txt', $vars);
                 $retTemp .= $methodTemp->get();
             }
         }
+
         return $retTemp;
     }
 
     /**
      * @param $method
+     *
      * @return string
      */
     protected function getRequestClass($method)
     {
-        $fullRequestNs = $this->requestFolderNs . "\\" . ucfirst($method);
+        $fullRequestNs = $this->requestFolderNs . '\\' . ucfirst($method);
         if (class_exists($fullRequestNs)) {
             $requestClass = ucfirst($method);
             $this->import[] = $fullRequestNs;
         } else {
             $requestClass = 'Request';
         }
+
         return $requestClass;
     }
 
     /**
-     * Get Transformer Class
+     * Get Transformer Class.
      */
     protected function getTransformerClass()
     {
@@ -304,15 +323,17 @@ class Controller implements Crud
 
         if (class_exists($fullTransformerNs)) {
             return $transformerName;
-        } else if (is_object($this->model)) {
+        } elseif (is_object($this->model)) {
             $transformerCrud = new Transformer($this->model);
             $transformerCrud->save();
         }
+
         return $transformerName;
     }
 
     /**
      * @param $requestClass
+     *
      * @return array
      */
     protected function makeApiRequest($requestClass)
@@ -320,31 +341,32 @@ class Controller implements Crud
         $rules = [];
 
         if (!class_exists($requestClass)) {
-            $requestClass = $this->requestFolderNs . "\\" . $requestClass;
+            $requestClass = $this->requestFolderNs . '\\' . $requestClass;
         }
 
         if (is_subclass_of($requestClass, \Dingo\Api\Http\FormRequest::class)) {
-            $request = new $requestClass;
+            $request = new $requestClass();
             $rules = $request->rules();
         }
+
         return !empty($rules) && is_array($rules) ? json_encode($rules, JSON_PRETTY_PRINT) : '{}';
     }
 
     /**
      * Analyze Model and get extract information from there
-     * Like Get folder Name of the view, Controller Short Name etc
+     * Like Get folder Name of the view, Controller Short Name etc.
      */
     protected function parseModelName()
     {
-        $pagePath = config("laracrud.view.page.path");
+        $pagePath = config('laracrud.view.page.path');
         $namespace = config('laracrud.view.namespace');
         $class = new \ReflectionClass($this->modelName);
         $model = $class->newInstance();
         $this->modelNameSpace = $class->getNamespaceName();
-        $this->viewPath = !empty($pagePath) ? str_replace("/", ".", $pagePath) . "." . $model->getTable() : $model->getTable();
+        $this->viewPath = !empty($pagePath) ? str_replace('/', '.', $pagePath) . '.' . $model->getTable() : $model->getTable();
 
         if (!empty($namespace)) {
-            $this->viewPath = rtrim($namespace, "::") . "::" . $this->viewPath;
+            $this->viewPath = rtrim($namespace, '::') . '::' . $this->viewPath;
         }
         $this->controllerName = $class->getShortName();
     }
@@ -356,7 +378,7 @@ class Controller implements Crud
     {
         $retArr = [
             'belongsToRelation' => '',
-            'belongsToRelationVars' => ''
+            'belongsToRelationVars' => '',
         ];
         if (!empty($this->table)) {
             $tableReader = new Table($this->table);
@@ -374,6 +396,7 @@ class Controller implements Crud
             $retArr['belongsToRelation'] = $rel;
             $retArr['belongsToRelationVars'] = $relVars;
         }
+
         return $retArr;
     }
 
@@ -388,11 +411,12 @@ class Controller implements Crud
                 $temp = new TemplateManager('controller/upload.txt', [
                     'modelNameParam' => $modelNameParam,
                     'imagePropertyName' => $column,
-                    'imageUploadDisk' => config('laracrud.image.disk', 'public')
+                    'imageUploadDisk' => config('laracrud.image.disk', 'public'),
                 ]);
                 $retTemp .= $temp->get();
             }
         }
+
         return $retTemp;
     }
 
@@ -413,11 +437,12 @@ class Controller implements Crud
     }
 
     /**
-     * Get full newly created fully qualified Class namespace
+     * Get full newly created fully qualified Class namespace.
      */
     public function getFullName()
     {
         $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) : $this->controllerName . 'Controller';
+
         return $this->namespace . '\\' . $fileName;
     }
 }

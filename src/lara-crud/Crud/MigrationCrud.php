@@ -2,13 +2,13 @@
 
 namespace LaraCrud\Crud;
 
+use DbReader\Table;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-use DbReader\Table;
 
 /**
- * Description of MigrationCrud
+ * Description of MigrationCrud.
  *
  * @author Tuhin
  */
@@ -51,6 +51,7 @@ class MigrationCrud implements Crud
 
     /**
      * MigrationCrud constructor.
+     *
      * @param $table
      */
     public function __construct($table)
@@ -59,7 +60,8 @@ class MigrationCrud implements Crud
     }
 
     /**
-     * Process template and return complete code
+     * Process template and return complete code.
+     *
      * @return mixed
      */
     public function template()
@@ -74,7 +76,7 @@ class MigrationCrud implements Crud
                     $retContent .= '->' . $om['name'] . '(' . $om['params'] . ')';
                 }
             }
-            $retContent .= ";" . PHP_EOL;
+            $retContent .= ';' . PHP_EOL;
         }
         if (!empty($this->fk)) {
             foreach ($this->fk as $column => $rel) {
@@ -82,7 +84,7 @@ class MigrationCrud implements Crud
                     $fkTemp = new TemplateManager('migration/foreign.txt', [
                         'column' => $column,
                         'references' => $rel['references'],
-                        'on' => $rel['on']
+                        'on' => $rel['on'],
                     ]);
                     $retContent .= $fkTemp->get() . PHP_EOL;
                 }
@@ -92,19 +94,20 @@ class MigrationCrud implements Crud
         $mtemp = new TemplateManager('migration/template.txt', [
             'className' => $this->generateClassName($this->table->name()),
             'table' => $this->table->name(),
-            'content' => $retContent
+            'content' => $retContent,
         ]);
 
         return $mtemp->get();
     }
 
     /**
-     * Get code and save to disk
+     * Get code and save to disk.
+     *
      * @return mixed
      */
     public function save()
     {
-        $fullPath = config("laracrud.migrationPath", 'database/migrations/') . $this->generateName($this->table->name()) . ".php";
+        $fullPath = config('laracrud.migrationPath', 'database/migrations/') . $this->generateName($this->table->name()) . '.php';
         $migrationFile = new \SplFileObject($fullPath, 'w+');
         $migrationFile->fwrite($this->template());
     }
@@ -125,36 +128,36 @@ class MigrationCrud implements Crud
             $dataType = $column->type();
 
             if ($column->isPk()) {
-                if ($dataType == 'int') {
+                if ('int' == $dataType) {
                     $arr['methodName'] = 'increments';
-                } elseif ($dataType == 'bigint') {
+                } elseif ('bigint' == $dataType) {
                     $arr['methodName'] = 'bigIncrements';
                 }
             } else {
                 $arr['methodName'] = isset($this->columnMap[$dataType]) ? $this->columnMap[$dataType] : '';
             }
             //for enum data type we will use in validator.
-            if ($dataType == 'enum') {
+            if ('enum' == $dataType) {
                 $retVals = join("', '", $column->options());
                 $params = '[\'' . $retVals . '\']';
-            } elseif ($dataType == 'varchar') {
+            } elseif ('varchar' == $dataType) {
                 $params = $column->length();
-            } elseif ($dataType == 'tinyint') {
-                if ($column->length() == 1) {
+            } elseif ('tinyint' == $dataType) {
+                if (1 == $column->length()) {
                     $arr['methodName'] = 'boolean';
                 }
             } elseif (in_array($dataType, ['smallint', 'int', 'mediumint', 'bigint', 'float',
-                'double'])) {
+                'double', ])) {
                 if (!empty($column->length())) {
                     $params = false;
                 }
-            } elseif ($dataType == 'decimal') {
-                $startBrace = stripos($column->Type, "(");
-                $endBrace = stripos($column->Type, ")");
+            } elseif ('decimal' == $dataType) {
+                $startBrace = stripos($column->Type, '(');
+                $endBrace = stripos($column->Type, ')');
                 $pm = substr($column->Type, $startBrace, ($endBrace - $startBrace));
 
                 if (!empty($pm)) {
-                    $params = str_replace(["(", ")"], "", $pm);
+                    $params = str_replace(['(', ')'], '', $pm);
                 }
             }
 
@@ -162,29 +165,29 @@ class MigrationCrud implements Crud
             if (!empty($defaultValue)) {
                 $otherMethods[] = [
                     'name' => 'default',
-                    'params' => "'" . $defaultValue . "'"
+                    'params' => "'" . $defaultValue . "'",
                 ];
             }
             if ($column->isUnique()) {
                 $otherMethods[] = [
                     'name' => 'unique',
-                    'params' => ''
+                    'params' => '',
                 ];
             }
             if ($column->isForeign()) {
                 $otherMethods[] = [
                     'name' => 'unsigned',
-                    'params' => ''
+                    'params' => '',
                 ];
                 $this->fk[$column->name()] = [
                     'references' => $column->foreignColumn(),
-                    'on' => $column->foreignTable()
+                    'on' => $column->foreignTable(),
                 ];
             }
             if ($column->isNull()) {
                 $otherMethods[] = [
                     'name' => 'nullable',
-                    'params' => ''
+                    'params' => '',
                 ];
             }
 
@@ -194,13 +197,15 @@ class MigrationCrud implements Crud
 
             $retArr[$columnName] = $arr;
         }
+
         return $retArr;
     }
 
     /**
-     * Generate Migration file name
+     * Generate Migration file name.
      *
      * @param $table
+     *
      * @return string
      */
     public function generateName($table)
@@ -209,10 +214,12 @@ class MigrationCrud implements Crud
     }
 
     /**
-     * Generate Class Name
+     * Generate Class Name.
      *
      * @param $table
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function generateClassName($table)
@@ -222,6 +229,7 @@ class MigrationCrud implements Crud
         if (class_exists($class)) {
             throw new \Exception('Migration for table ' . $table . ' already exists');
         }
+
         return $class;
     }
 }

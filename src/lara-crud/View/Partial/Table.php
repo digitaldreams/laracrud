@@ -4,19 +4,20 @@ namespace LaraCrud\View\Partial;
 
 use DbReader\Table as TableReader;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
-use Illuminate\Support\Str;
 
 /**
- * Tuhin Bepari <digitaldreams40@gmail.com>
+ * Tuhin Bepari <digitaldreams40@gmail.com>.
  */
 class Table extends Page
 {
 
     /**
      * Table constructor.
-     * @param Model $model
+     *
+     * @param Model  $model
      * @param string $name
      */
     public function __construct(Model $model, $name = '')
@@ -29,17 +30,20 @@ class Table extends Page
     }
 
     /**
-     * Return the full table code
+     * Return the full table code.
+     *
      * @return string
      */
     public function template()
     {
-        $temMan = new TemplateManager("view/table.html", $this->make());
+        $temMan = new TemplateManager('view/table.html', $this->make());
+
         return $temMan->get();
     }
 
     /**
-     * Making Html code for Table Header and Body
+     * Making Html code for Table Header and Body.
+     *
      * @return array
      */
     public function make()
@@ -59,13 +63,14 @@ class Table extends Page
         $headerhtml .= "\t\t<th>&nbsp;</th>";
         $link = new Link($this->table->name());
         $routeKey = $this->model->getRouteKeyName();
-        $bodyhtml .= "\t<td>" . $link->show($routeKey) . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . "</td></tr>" . PHP_EOL;
+        $bodyhtml .= "\t<td>" . $link->show($routeKey) . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . '</td></tr>' . PHP_EOL;
         $bodyhtml = str_replace('@@table@@', $this->table->name(), $bodyhtml);
+
         return [
             'table' => $this->table->name(),
             'tableHeader' => $headerhtml,
             'routeModelKey' => $routeKey,
-            'tableBody' => $bodyhtml
+            'tableBody' => $bodyhtml,
         ];
     }
 }

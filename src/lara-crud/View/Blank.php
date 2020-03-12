@@ -2,7 +2,7 @@
 
 namespace LaraCrud\View;
 
-/**
+/*
  * Tuhin Bepari <digitaldreams40@gmail.com>
  */
 
@@ -29,7 +29,7 @@ class Blank extends Page
         return (new TemplateManager("view/{$this->version}/pages/blank.html", [
             'layout' => config('laracrud.view.layout'),
             'table' => $this->table->name(),
-            'indexRoute' => $this->getRouteName('index', $this->table->name())
+            'indexRoute' => $this->getRouteName('index', $this->table->name()),
         ]))->get();
     }
 }

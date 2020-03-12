@@ -12,10 +12,12 @@ use LaraCrud\Helpers\TemplateManager;
 class ModelFactory implements Crud
 {
     use Helper;
+
     /**
      * @var Model
      */
     protected $model;
+
     /**
      * @var Table
      */
@@ -28,13 +30,14 @@ class ModelFactory implements Crud
 
     /**
      * ModelFactory constructor.
-     * @param Model $model
+     *
+     * @param Model  $model
      * @param string $name
+     *
      * @throws \Exception
      */
     public function __construct($model, $name = '')
     {
-
         $this->name = $name;
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         if (!class_exists($model)) {
@@ -43,7 +46,7 @@ class ModelFactory implements Crud
         if (!class_exists($model)) {
             throw new \Exception('Model ' . $model . ' is not exists');
         }
-        $this->model = new $model;
+        $this->model = new $model();
         $this->table = new Table($this->model->getTable());
     }
 
@@ -65,7 +68,7 @@ class ModelFactory implements Crud
     {
         return (new TemplateManager('factory/template.txt', [
             'modelClass' => get_class($this->model),
-            'columns' => $this->makeColumns()
+            'columns' => $this->makeColumns(),
         ]))->get();
     }
 
@@ -84,12 +87,14 @@ class ModelFactory implements Crud
             $default = $fakerColumn->default();
             $columnValue = !empty($default) ? $default . ',' : '\'\',';
             $arr .= "\t\t" . '"' . $column->name() . '" => ' . $columnValue . PHP_EOL;
-        };
+        }
+
         return $arr;
     }
 
     /**
      * @return string
+     *
      * @throws \ReflectionException
      */
     protected function getName()
@@ -97,6 +102,7 @@ class ModelFactory implements Crud
         $suffix = config('laracrud.factory.suffix', 'Factory');
         $class = new \ReflectionClass($this->model);
         $shortModelName = $class->getShortName();
+
         return !empty($this->name) ? $this->name : $shortModelName . $suffix;
     }
 }

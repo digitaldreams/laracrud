@@ -18,7 +18,7 @@ use LaraCrud\Console\Transformer;
 use LaraCrud\Console\View;
 
 /**
- * Description of LaraCrudServiceProvider
+ * Description of LaraCrudServiceProvider.
  *
  * @author Tuhin
  */
@@ -27,6 +27,7 @@ class LaraCrudServiceProvider extends ServiceProvider
     protected $defer = true;
     /**
      * List of command which will be registered.
+     *
      * @var array
      */
     protected $commands = [
@@ -41,31 +42,31 @@ class LaraCrudServiceProvider extends ServiceProvider
         Policy::class,
         Transformer::class,
         Test::class,
-        Package::class
+        Package::class,
     ];
 
     /**
-     * Run on application loading
+     * Run on application loading.
      */
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../config/laracrud.php' => config_path('laracrud.php')
+            __DIR__ . '/../config/laracrud.php' => config_path('laracrud.php'),
         ], 'laracrud-config');
 
         // Publish Templates to view/vendor folder so user can customize this own templates
         $this->publishes([
-            __DIR__ . '/../../resources/templates' => resource_path('views/vendor/laracrud/templates')
+            __DIR__ . '/../../resources/templates' => resource_path('views/vendor/laracrud/templates'),
         ], 'laracrud-template');
 
         $this->publishes([
             __DIR__ . '/../../resources/assets' => public_path('laracrud'),
-            __DIR__ . '/../../resources/views' => resource_path('views/laracrud')
+            __DIR__ . '/../../resources/views' => resource_path('views/laracrud'),
         ], 'laracrud-assets');
     }
 
     /**
-     * Run after all boot method completed
+     * Run after all boot method completed.
      */
     public function register()
     {
@@ -80,14 +81,14 @@ class LaraCrudServiceProvider extends ServiceProvider
                 'manualRelations' => config('laracrud.model.relations', []),
                 'ignore' => config('laracrud.view.ignore', []),
                 'protectedColumns' => config('laracrud.model.protectedColumns', []),
-                'files' => config('laracrud.image.columns', [])
+                'files' => config('laracrud.image.columns', []),
             ]);
             $this->commands($this->commands);
         }
     }
 
     /**
-     * To register laracrud as first level command. E.g. laracrud:model
+     * To register laracrud as first level command. E.g. laracrud:model.
      *
      * @return array
      */

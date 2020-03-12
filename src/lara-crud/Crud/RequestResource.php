@@ -2,11 +2,11 @@
 
 namespace LaraCrud\Crud;
 
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 
 class RequestResource implements Crud
 {
@@ -18,12 +18,14 @@ class RequestResource implements Crud
     protected $table;
     /**
      * Request Class parent Namespace.
+     *
      * @var string
      */
     protected $namespace;
 
     /**
      * Name of the folder where Request Classes will be saved.
+     *
      * @var string
      */
     protected $folderName = '';
@@ -31,7 +33,6 @@ class RequestResource implements Crud
     /**
      * @var array|string
      */
-
     protected $methods = ['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'];
 
     protected $template = '';
@@ -48,13 +49,14 @@ class RequestResource implements Crud
 
     /**
      * RequestControllerCrud constructor.
+     *
      * @param \Illuminate\Database\Eloquent\Model $model
-     * @param string $only
-     * @param bool $api
-     * @param string $name
+     * @param string                              $only
+     * @param bool                                $api
+     * @param string                              $name
+     *
      * @internal param string $controller
      */
-
     public function __construct(\Illuminate\Database\Eloquent\Model $model, $only = '', $api = false, $name = '')
     {
         $this->table = $model->getTable();
@@ -67,14 +69,16 @@ class RequestResource implements Crud
             $this->methods = $only;
         }
         $ns = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $this->namespace = $this->getFullNS(trim($ns, "/")) . '\\' . ucfirst(Str::camel($this->folderName));
+        $this->namespace = $this->getFullNS(trim($ns, '/')) . '\\' . ucfirst(Str::camel($this->folderName));
         $this->modelName = $this->getModelName($this->table);
         $this->template = !empty($api) ? 'api' : 'web';
     }
 
     /**
-     * Process template and return complete code
+     * Process template and return complete code.
+     *
      * @param string $authorization
+     *
      * @return mixed
      */
     public function template($authorization = 'true')
@@ -83,47 +87,50 @@ class RequestResource implements Crud
             'namespace' => $this->namespace,
             'requestClassName' => $this->modelName,
             'authorization' => $authorization,
-            'rules' => implode("\n", [])
+            'rules' => implode("\n", []),
         ]);
+
         return $tempMan->get();
     }
 
     /**
-     * Get code and save to disk
+     * Get code and save to disk.
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function save()
     {
-        $this->checkPath("");
+        $this->checkPath('');
         $publicMethods = $this->methods;
 
         if (!empty($publicMethods)) {
             foreach ($publicMethods as $method) {
                 $folderPath = base_path($this->toPath($this->namespace));
                 $this->modelName = $this->getModelName($method);
-                $filePath = $folderPath . "/" . $this->modelName . ".php";
+                $filePath = $folderPath . '/' . $this->modelName . '.php';
 
                 if (file_exists($filePath)) {
                     continue;
                 }
-                $isApi = $this->template == 'api' ? true : false;
+                $isApi = 'api' == $this->template ? true : false;
 
-                if ($method === 'store') {
+                if ('store' === $method) {
                     $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/Store', $isApi);
                     $requestStore->setAuthorization($this->getAuthCode('create'));
                     $requestStore->save();
-                } elseif ($method === 'update') {
+                } elseif ('update' === $method) {
                     $requestUpdate = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/Update', $isApi);
                     $requestUpdate->setAuthorization($this->getAuthCode('update'));
                     $requestUpdate->save();
                 } else {
                     $auth = 'true';
-                    if ($method === 'edit') {
+                    if ('edit' === $method) {
                         $auth = $this->getAuthCode('update');
-                    } elseif ($method === 'show') {
+                    } elseif ('show' === $method) {
                         $auth = $this->getAuthCode('view');
-                    } elseif ($method === 'destroy') {
+                    } elseif ('destroy' === $method) {
                         $auth = $this->getAuthCode('delete');
                     } else {
                         $auth = $this->getAuthCode($method);
@@ -137,6 +144,7 @@ class RequestResource implements Crud
 
     /**
      * @param string $model
+     *
      * @return $this
      */
     public function setModel($model = '')
@@ -159,6 +167,7 @@ class RequestResource implements Crud
             $policies = Gate::policies();
             $this->policy = $policies[$this->model] ?? false;
         }
+
         return $this;
     }
 
@@ -174,6 +183,7 @@ class RequestResource implements Crud
             }
             $auth = 'auth()->user()->can(\'' . $methodName . '\', ' . $code;
         }
+
         return $auth;
     }
 }

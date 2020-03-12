@@ -4,18 +4,19 @@ namespace LaraCrud\View\Partial;
 
 use DbReader\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Page;
-use Illuminate\Support\Str;
 
 /**
- * Tuhin Bepari <digitaldreams40@gmail.com>
+ * Tuhin Bepari <digitaldreams40@gmail.com>.
  */
 class Modal extends Page
 {
     /**
      * Modal constructor.
-     * @param Model $model
+     *
+     * @param Model  $model
      * @param string $name
      */
     public function __construct(Model $model, $name = '')
@@ -45,12 +46,13 @@ class Modal extends Page
             $modalInputFill .= 'jq("#' . $column->name() . '").val(btn.attr(\'data-' . $column->name() . '\'));' . PHP_EOL;
             $modalInputClean .= 'jq("#' . $column->name() . '").val(\'\');' . PHP_EOL;
         }
-        $modalShowOnError = rtrim($modalShowOnError, "||");
-        return (new TemplateManager('view/modal.html', ['modalName' => $this->table->name() . "Modal",
+        $modalShowOnError = rtrim($modalShowOnError, '||');
+
+        return (new TemplateManager('view/modal.html', ['modalName' => $this->table->name() . 'Modal',
             'form' => implode("\n", (new Form($this->model))->make()),
             'table' => $this->table->name(),
             'showModalOnError' => $modalShowOnError,
             'modalInputFillUp' => $modalInputFill,
-            'modalInputCleanUp' => $modalInputClean]))->get();
+            'modalInputCleanUp' => $modalInputClean, ]))->get();
     }
 }

@@ -4,14 +4,14 @@ namespace LaraCrud\View;
 
 use DbReader\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\View\Partial\Link;
 use LaraCrud\View\Partial\Panel;
 use LaraCrud\View\Partial\Table as TableView;
-use Illuminate\Support\Str;
 
 /**
- * Tuhin Bepari <digitaldreams40@gmail.com>
+ * Tuhin Bepari <digitaldreams40@gmail.com>.
  */
 class Index extends Page
 {
@@ -30,14 +30,11 @@ class Index extends Page
         parent::__construct();
     }
 
-    /**
-     *
-     */
     public function template()
     {
         $file = '';
         $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
-        $folder = $this->version == 3 ? 'panels' : 'cards';
+        $folder = 3 == $this->version ? 'panels' : 'cards';
         $link = new Link($this->table->name());
         $data = [
             'table' => $this->table->name(),
@@ -46,7 +43,7 @@ class Index extends Page
             'routeModelKey' => $this->model->getRouteKeyName(),
             'searchBox' => '',
             'partialFilename' => Str::singular($this->table->name()),
-            'createLink' => $link->create(get_class($this->model))
+            'createLink' => $link->create(get_class($this->model)),
         ];
         switch ($this->type) {
             case 'panel':
@@ -63,12 +60,13 @@ class Index extends Page
                 break;
         }
         $tempMan = new TemplateManager($file, $data);
+
         return $tempMan->get();
     }
 
     /**
-     *
      * @return string
+     *
      * @throws \Exception
      */
     protected function tableView()
@@ -78,9 +76,6 @@ class Index extends Page
         }
     }
 
-    /**
-     *
-     */
     protected function panel()
     {
         if (!$this->panel->isExists()) {
@@ -88,9 +83,6 @@ class Index extends Page
         }
     }
 
-    /**
-     *
-     */
     protected function searchBox()
     {
         return '';

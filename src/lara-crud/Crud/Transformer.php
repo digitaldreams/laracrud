@@ -29,7 +29,8 @@ class Transformer implements Crud
     protected $modelName;
 
     /**
-     * parent namespace of the Transformer
+     * parent namespace of the Transformer.
+     *
      * @var string
      */
     protected $namespace;
@@ -47,8 +48,10 @@ class Transformer implements Crud
 
     /**
      * Transformer constructor.
+     *
      * @param Model $model
-     * @param bool $name
+     * @param bool  $name
+     *
      * @throws \ReflectionException
      */
     public function __construct(Model $model, $name = false)
@@ -62,7 +65,8 @@ class Transformer implements Crud
     }
 
     /**
-     * Process template and return complete code
+     * Process template and return complete code.
+     *
      * @return mixed
      */
     public function template()
@@ -76,15 +80,18 @@ class Transformer implements Crud
             'className' => $this->modelName,
             'availableInclude' => $this->availableIncludes,
             'defaultInclude' => '',
-            'importNameSpace' => ''
+            'importNameSpace' => '',
         ];
         $vars['includes'] = $this->generateIncludeCode($vars);
+
         return (new TemplateManager('transformer/template.txt', $vars))->get();
     }
 
     /**
-     * Get code and save to disk
+     * Get code and save to disk.
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function save()
@@ -109,8 +116,9 @@ class Transformer implements Crud
             if (is_array($hiddenArray) && in_array($columnClass->name(), $hiddenArray)) {
                 continue;
             }
-            $retStr .= "\t\t\t" . '"' . $columnClass->name() . '" => $' . $modelName . '->' . $columnClass->name() . "," . PHP_EOL;
+            $retStr .= "\t\t\t" . '"' . $columnClass->name() . '" => $' . $modelName . '->' . $columnClass->name() . ',' . PHP_EOL;
         }
+
         return $retStr;
     }
 
@@ -121,7 +129,7 @@ class Transformer implements Crud
     {
         $methods = $this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
-            if ($method->getNumberOfParameters() == 0 && $method->class == get_class($this->model)) {
+            if (0 == $method->getNumberOfParameters() && $method->class == get_class($this->model)) {
                 $response = $method->invoke($this->model);
                 if (!is_object($response)) {
                     continue;
@@ -138,9 +146,10 @@ class Transformer implements Crud
 
     /**
      * @param $class
-     * @return string
-     * @throws \ReflectionException
      *
+     * @return string
+     *
+     * @throws \ReflectionException
      */
     private function makeTransformer($class, $modelRef)
     {
@@ -148,9 +157,9 @@ class Transformer implements Crud
         $transformerName = $shortName . config('laracrud.transformer.classSuffix');
         $transformerClass = $this->getFullNS(config('laracrud.transformer.namespace') . '\\' . $transformerName);
         $this->import[] = $transformerClass;
+
         return $transformerName;
     }
-
 
     protected function makeIncludeArr($response, $method, $relationResponse)
     {
@@ -163,12 +172,13 @@ class Transformer implements Crud
             'relation' => $method->name,
             'response' => $response,
             'method' => ucfirst($method->name),
-            'includeTransformer' => $transformerClass
+            'includeTransformer' => $transformerClass,
         ];
     }
 
     /**
      * @param $responseClass
+     *
      * @return bool
      */
     private function isItem($responseClass)
@@ -176,13 +186,15 @@ class Transformer implements Crud
         $item = [
             HasOne::class,
             BelongsTo::class,
-            MorphOne::class
+            MorphOne::class,
         ];
+
         return in_array($responseClass, $item);
     }
 
     /**
      * @param $responseClass
+     *
      * @return bool
      */
     private function isCollection($responseClass)
@@ -193,11 +205,13 @@ class Transformer implements Crud
             HasManyThrough::class,
             MorphMany::class,
         ];
+
         return in_array($responseClass, $collection);
     }
 
     /**
      * @param $vars
+     *
      * @return string
      */
     protected function generateIncludeCode($vars)
@@ -206,6 +220,7 @@ class Transformer implements Crud
         foreach ($this->includeArr as $inc) {
             $temp .= (new TemplateManager('transformer/include.txt', array_merge($vars, $inc)))->get();
         }
+
         return $temp;
     }
 
