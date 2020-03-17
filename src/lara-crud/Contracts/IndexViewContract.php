@@ -3,8 +3,7 @@
 
 namespace LaraCrud\Contracts;
 
-
-interface IndexContract
+interface IndexViewContract extends PageViewContract
 {
     /**
      * @return string
@@ -34,5 +33,4 @@ interface IndexContract
      * @return string
      */
     public function displayType(): string;
-
 }

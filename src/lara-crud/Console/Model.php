@@ -3,6 +3,7 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
+use LaraCrud\Contracts\DatabaseContract;
 use LaraCrud\Crud\Model as ModelCrud;
 
 class Model extends Command
@@ -37,7 +38,7 @@ class Model extends Command
             $modelName = $this->argument('name');
             $on = $this->option('on');
             $off = $this->option('off');
-
+            $databaseRepository = app()->make(DatabaseContract::class);
             //Overwrite existing Configuration file for this Model Instance
             if (!empty($on)) {
                 $ons = explode(',', $on);
@@ -51,21 +52,17 @@ class Model extends Command
                     config(["laracrud.model.$option" => false]);
                 }
             }
-            if ('all' == $table) {
-                $modelCrud = new ModelCrud();
-            } else {
-                if (strripos($table, ',')) {
-                    $table = explode(',', $table);
-                    ModelCrud::checkMissingTable($table);
-                    foreach ($table as $tb) {
-                        $modelCrud = new ModelCrud($table);
-                        $modelCrud->save();
-                    }
-                } else {
-                    ModelCrud::checkMissingTable($table);
-                    $modelCrud = new ModelCrud($table, $modelName);
+            if (strripos($table, ',')) {
+                $table = explode(',', $table);
+                $databaseRepository->tableExists($table);
+                foreach ($table as $tb) {
+                    $modelCrud = new ModelCrud($tb);
                     $modelCrud->save();
                 }
+            } else {
+                $databaseRepository->tableExists($table);
+                $modelCrud = new ModelCrud($table, $modelName);
+                $modelCrud->save();
             }
 
             $this->info('Model class successfully created');

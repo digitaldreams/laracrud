@@ -2,7 +2,7 @@
 
 namespace LaraCrud\Contracts;
 
-interface FormContract
+interface FormViewContract extends PageViewContract
 {
     /**
      * @return string

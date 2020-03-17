@@ -3,7 +3,6 @@
 
 namespace LaraCrud\Contracts;
 
-
 interface HtmlTableContract
 {
     public function model(): ModelContract;
@@ -17,5 +16,4 @@ interface HtmlTableContract
     public function editLinkContent(): ?string;
 
     public function deleteLinkContent(): ?string;
-
 }

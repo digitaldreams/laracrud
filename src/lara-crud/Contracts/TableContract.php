@@ -1,11 +1,24 @@
 <?php
 
-
 namespace LaraCrud\Contracts;
-
 
 interface TableContract
 {
+    /**
+     * Find whether or not this table exists.
+     *
+     * @param $name
+     * @return bool
+     */
+    public function exists($name):bool;
+
+    /**
+     * @param $name
+     *
+     * @return TableContract
+     */
+    public function find($name): TableContract;
+
     /**
      * @return string
      */
@@ -55,5 +68,4 @@ interface TableContract
      * @return bool
      */
     public function hasFile(): bool;
-
 }

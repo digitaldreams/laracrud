@@ -3,7 +3,6 @@
 
 namespace LaraCrud\Contracts;
 
-
 interface ForeignKeyContract
 {
     public function name(): string;
@@ -13,5 +12,4 @@ interface ForeignKeyContract
     public function foreignTable(): string;
 
     public function column(): ColumnContract;
-
 }

@@ -3,7 +3,6 @@
 
 namespace LaraCrud\Contracts;
 
-
 interface ModelContract
 {
     /**
@@ -55,5 +54,4 @@ interface ModelContract
      * @return array
      */
     public function getProtected(): array;
-
 }

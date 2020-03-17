@@ -6,6 +6,7 @@ use DbReader\Table;
 use Illuminate\Support\Str;
 use LaraCrud\Builder\Model as ModelBuilder;
 use LaraCrud\Contracts\Crud;
+use LaraCrud\Contracts\TableContract;
 use LaraCrud\Helpers\ForeignKey;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
@@ -45,7 +46,8 @@ class Model implements Crud
      */
     public function __construct($table, $name = '')
     {
-        $this->table = new Table($table);
+        $tableRepo= app()->make(TableContract::class);
+        $this->table = $tableRepo->find($table);
         $this->modelBuilder = $this->makeModelBuilders();
         $this->namespace = $this->getFullNS(config('laracrud.model.namespace'));
         $this->modelName = $this->getModelName($table);

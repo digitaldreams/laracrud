@@ -312,4 +312,12 @@ return [
      * Name of the INFORMATION SCHEMA that mysql use internally to tracks foreign keys etc
      */
     'informationSchema' => 'INFORMATION_SCHEMA',
+
+    'binds'=>[
+        \LaraCrud\Contracts\DatabaseContract::class=>\LaraCrud\Repositories\DatabaseRepository::class,
+        \LaraCrud\Contracts\TableContract::class=>\LaraCrud\Repositories\TableRepository::class,
+        \LaraCrud\Contracts\ColumnContract::class=>\LaraCrud\Repositories\ColumnRepository::class,
+        \LaraCrud\Contracts\FormViewContract::class=>\LaraCrud\Repositories\FormRepository::class,
+        \LaraCrud\Contracts\ForeignKeyContract::class=>\LaraCrud\Repositories\ForeignKeyRepository::class,
+    ]
 ];

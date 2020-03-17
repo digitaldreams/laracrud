@@ -74,6 +74,9 @@ class LaraCrudServiceProvider extends ServiceProvider
             __DIR__ . '/../config/laracrud.php',
             'laracrud'
         );
+        foreach (config('laracrud.binds') as $contract => $repository) {
+            $this->app->bind($contract, $repository);
+        }
         if ($this->app->runningInConsole()) {
             //DbReader\Database settings
             Database::settings([

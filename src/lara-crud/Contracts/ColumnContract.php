@@ -5,6 +5,14 @@ namespace LaraCrud\Contracts;
 interface ColumnContract
 {
     /**
+     * @param $name
+     * @param string $table
+     *
+     * @return ColumnContract
+     */
+    public function find($name, $table = ''): ColumnContract;
+
+    /**
      * @return bool
      */
     public function isPk(): bool;
