@@ -43,6 +43,7 @@ class Model implements Crud
      *
      * @param $table
      * @param $name string  user define model and namespace. E.g. Models/MyUser will be saved as App\Models\MyUser
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function __construct($table, $name = '')
     {

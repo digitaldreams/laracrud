@@ -8,16 +8,10 @@ interface TableContract
      * Find whether or not this table exists.
      *
      * @param $name
+     *
      * @return bool
      */
-    public function exists($name):bool;
-
-    /**
-     * @param $name
-     *
-     * @return TableContract
-     */
-    public function find($name): TableContract;
+    public function exists(): bool;
 
     /**
      * @return string

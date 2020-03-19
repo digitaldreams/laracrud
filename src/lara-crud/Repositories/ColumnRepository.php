@@ -3,6 +3,7 @@
 namespace LaraCrud\Repositories;
 
 use DbReader\Column;
+use DbReader\Table;
 use LaraCrud\Contracts\ColumnContract;
 use LaraCrud\Contracts\ForeignKeyContract;
 use LaraCrud\Contracts\TableContract;
@@ -15,20 +16,25 @@ class ColumnRepository implements ColumnContract
     protected $column;
 
     /**
-     * @var TableRepository
+     * @var TableContract
      */
     protected $table;
 
     /**
-     * @param $name
-     * @param string $table
-     * @return ColumnContract
+     * @param mixed        $data
+     * @param string|Table $table
      */
-    public function find($name, $table = ''): ColumnContract
+    public function __construct($data, $table)
     {
-        $this->column = new Column($name, [], $table);
-        $this->table = (new TableRepository())->find($table);
-        return $this;
+        $this->table = $table instanceof Table ? $table : new Table($table);
+        $this->column = new Column($data, [], $table);
+
+        $files = $this->table->fileColumns();
+        $file = isset($files[$this->column->name()]) ? $files[$this->column->name()] : '';
+        $this->column->setFile($file);
+
+        $relations = $this->table->relations();
+        $this->column->foreign = isset($relations[$this->column->name()]) ? $relations[$this->column->name()] : [];
     }
 
     /**
@@ -172,10 +178,11 @@ class ColumnRepository implements ColumnContract
     /**
      * @return ForeignKeyContract|null
      */
-    public function foreignKey(): ?ForeignKeyContract
+    public function foreignKey()
     {
         if ($this->column->isForeign()) {
-            return '';
+            return $this->column;
         }
+        return null;
     }
 }
