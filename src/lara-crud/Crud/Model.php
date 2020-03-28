@@ -2,12 +2,9 @@
 
 namespace LaraCrud\Crud;
 
-use DbReader\Table;
-use Illuminate\Support\Str;
 use LaraCrud\Builder\Model as ModelBuilder;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Contracts\TableContract;
-use LaraCrud\Helpers\ForeignKey;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
@@ -29,7 +26,7 @@ class Model implements Crud
     protected $modelName;
 
     /**
-     * @var Table
+     * @var TableContract
      */
     protected $table;
 
@@ -43,15 +40,16 @@ class Model implements Crud
      *
      * @param $table
      * @param $name string  user define model and namespace. E.g. Models/MyUser will be saved as App\Models\MyUser
+     *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function __construct($table, $name = '')
     {
-        $tableRepo= app()->make(TableContract::class);
-        $this->table = $tableRepo->find($table);
+        $this->table = app()->make(TableContract::class, ['table' => $table]);
         $this->modelBuilder = $this->makeModelBuilders();
         $this->namespace = $this->getFullNS(config('laracrud.model.namespace'));
         $this->modelName = $this->getModelName($table);
+
         if (!empty($name)) {
             $this->parseName($name);
         }
@@ -61,6 +59,8 @@ class Model implements Crud
      * Done all processing work and make the final code that is ready to save as php file.
      *
      * @return string
+     *
+     * @throws \Exception
      */
     public function template()
     {
@@ -70,13 +70,16 @@ class Model implements Crud
             'modelName' => $this->modelName,
             'propertyDefiner' => config('laracrud.model.propertyDefiner') ? implode("\n", array_reverse($this->modelBuilder->propertyDefiners)) : '',
             'methodDefiner' => config('laracrud.model.methodDefiner') ? implode("\n", array_reverse($this->modelBuilder->methodDefiners)) : '',
+
             'tableName' => $this->table->name(),
             'constants' => $this->constants(),
             'guarded' => config('laracrud.model.guarded') ? $this->guarded() : '',
             'fillable' => config('laracrud.model.fillable') ? $this->fillable() : '',
+
             'dateColumns' => $this->dates(),
             'casts' => config('laracrud.model.casts') ? $this->casts() : '',
             'relationShips' => $relations,
+
             'mutators' => config('laracrud.model.mutators') ? $this->mutators() : '',
             'accessors' => config('laracrud.model.accessors') ? $this->accessors() : '',
             'scopes' => config('laracrud.model.scopes') ? $this->scopes() : '',
@@ -139,7 +142,9 @@ class Model implements Crud
         if (!config('laracrud.model.fillable')) {
             return '';
         }
-        $tempMan = new TemplateManager('model/fillable.txt', ['columns' => implode(",\n", array_reverse($this->modelBuilder->fillable()))]);
+        $tempMan = new TemplateManager('model/fillable.txt', [
+            'columns' => implode(",\n", array_reverse($this->modelBuilder->fillable())),
+        ]);
 
         return $tempMan->get();
     }
@@ -151,7 +156,9 @@ class Model implements Crud
      */
     protected function dates()
     {
-        $tempMan = new TemplateManager('model/dates.txt', ['columns' => implode(",\n", array_reverse($this->modelBuilder->dates))]);
+        $tempMan = new TemplateManager('model/dates.txt', [
+            'columns' => implode(",\n", array_reverse($this->modelBuilder->dates)),
+        ]);
 
         return $tempMan->get();
     }
@@ -163,7 +170,9 @@ class Model implements Crud
      */
     protected function casts()
     {
-        $tempMan = new TemplateManager('model/casts.txt', ['columns' => implode(",\n", array_reverse($this->modelBuilder->casts()))]);
+        $tempMan = new TemplateManager('model/casts.txt', [
+            'columns' => implode(",\n", array_reverse($this->modelBuilder->casts())),
+        ]);
 
         return $tempMan->get();
     }
@@ -172,49 +181,24 @@ class Model implements Crud
      * Making relationship code.
      *
      * @return string
+     *
+     * @throws \Exception
      */
     protected function relations()
     {
         $temp = '';
-        $otherKeys = $this->table->references();
-        //print_r($this->modelBuilder->relations);
-        foreach ($this->modelBuilder->relations as $relation) {
-            $param = ",'" . $relation['foreign_key'] . "'";
+        $relations = $this->table->relations();
+
+        foreach ($relations as $relation) {
             $tempMan = new TemplateManager('model/relationship.txt', [
-                'relationShip' => $relation['name'],
-                'modelName' => $relation['model'],
-                'methodName' => lcfirst($relation['methodName']),
-                'returnType' => ucfirst($relation['name']),
-                'params' => $param,
+                'relationShip' => $relation['relationShip'],
+                'modelName' => $relation['modelName'],
+                'methodName' => $relation['methodName'],
+                'returnType' => $relation['returnType'],
+                'params' => $relation['params'],
             ]);
             $temp .= $tempMan->get() . PHP_EOL;
-            array_unshift($this->modelBuilder->propertyDefiners, '@property ' . $relation['methodName'] . ' $' . lcfirst($relation['model']) . ' ' . $relation['name']);
-        }
-        foreach ($otherKeys as $column) {
-            $fk = new ForeignKey($column);
-
-            if ($fk->isPivot) {
-                $param = ",'" . $fk->table() . "'";
-                $tempMan = new TemplateManager('model/relationship.txt', [
-                    'relationShip' => ForeignKey::RELATION_BELONGS_TO_MANY,
-                    'modelName' => $fk->modelName(),
-                    'methodName' => Str::plural(lcfirst($fk->modelName())),
-                    'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY),
-                    'params' => $param,
-                ]);
-                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_BELONGS_TO_MANY);
-            } else {
-                $param = ",'" . $fk->column() . "'";
-                $tempMan = new TemplateManager('model/relationship.txt', [
-                    'relationShip' => ForeignKey::RELATION_HAS_MANY,
-                    'modelName' => $fk->modelName(),
-                    'methodName' => Str::plural(lcfirst($fk->modelName())),
-                    'returnType' => ucfirst(ForeignKey::RELATION_HAS_MANY),
-                    'params' => $param,
-                ]);
-                array_unshift($this->modelBuilder->propertyDefiners, '@property \Illuminate\Database\Eloquent\Collection' . ' $' . lcfirst($fk->modelName()) . ' ' . ForeignKey::RELATION_HAS_MANY);
-            }
-            $temp .= $tempMan->get();
+            array_unshift($this->modelBuilder->propertyDefiners, $relation['propertyDefiners']);
         }
 
         return $temp;
@@ -227,7 +211,9 @@ class Model implements Crud
      */
     protected function scopes()
     {
-        $tempMan = new TemplateManager('model/search_scope.txt', ['whereClause' => implode("\n", $this->modelBuilder->makeSearch())]);
+        $tempMan = new TemplateManager('model/search_scope.txt', [
+            'whereClause' => implode("\n", $this->modelBuilder->makeSearch()),
+        ]);
         $scopes = implode("\n", array_reverse($this->modelBuilder->scopes));
 
         return $scopes . PHP_EOL . $tempMan->get();
@@ -253,10 +239,13 @@ class Model implements Crud
         return implode("\n", array_reverse($this->modelBuilder->accessors));
     }
 
+    /**
+     * @return \LaraCrud\Builder\Model
+     */
     public function makeModelBuilders()
     {
         $builder = null;
-        $columns = $this->table->columnClasses();
+        $columns = $this->table->columns();
 
         foreach ($columns as $column) {
             if (empty($builder)) {
@@ -272,7 +261,7 @@ class Model implements Crud
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return string
      */
     public function modelName()
     {

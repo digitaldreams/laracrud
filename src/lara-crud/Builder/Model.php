@@ -3,7 +3,7 @@
 namespace LaraCrud\Builder;
 
 use DbReader\Column;
-use LaraCrud\Helpers\ForeignKey;
+use LaraCrud\Contracts\ColumnContract;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
@@ -17,7 +17,7 @@ class Model
     protected $modelBuilder;
 
     /**
-     * @var Column
+     * @var ColumnContract
      */
     protected $column;
 
@@ -112,48 +112,37 @@ class Model
     /**
      * ModelBuilder constructor.
      *
-     * @param Column $column
-     *
-     * @internal param Model $modelBuilder
+     * @param \LaraCrud\Contracts\ColumnContract $column
      */
-    public function __construct(Column $column)
+    public function __construct(ColumnContract $column)
     {
         $this->column = $column;
     }
 
     /**
      * It will process all the necessary work.
-     */
-    public function build()
-    {
-    }
-
-    /**
-     * It will process all the necessary work.
      *
      * @param Model|static $modelBuilder
+     *
+     * @return \LaraCrud\Builder\Model
      */
     public function merge(Model $modelBuilder)
     {
         $this->propertyDefiners = array_merge($this->propertyDefiner(), $modelBuilder->propertyDefiners);
         $this->methodDefiners = array_merge($this->methodDefiner(), $modelBuilder->methodDefiners);
+
         $this->constants = array_merge($this->constant(), $modelBuilder->constants);
-        $this->dates = array_merge($this->dates(), $modelBuilder->dates);
-        $this->mutators = array_merge($this->mutators(), $modelBuilder->mutators);
-        $this->accessors = array_merge($this->accessors(), $modelBuilder->accessors);
-        $this->scopes = array_merge($this->scopes(), $modelBuilder->scopes);
-        $this->searchScope = array_merge($this->makeSearch(), $modelBuilder->searchScope);
         $this->casts = array_merge($this->casts(), $modelBuilder->casts);
         $this->fillable = array_merge($this->fillable(), $modelBuilder->fillable);
-        $this->relations = array_merge($this->relations(), $modelBuilder->relations);
-    }
+        $this->dates = array_merge($this->dates(), $modelBuilder->dates);
 
-    /**
-     * Check if current column isForeign
-     * if so then add a row to foreignkeys columns also add builder foreign keys then return.
-     */
-    public function foreign()
-    {
+        $this->mutators = array_merge($this->mutators(), $modelBuilder->mutators);
+        $this->accessors = array_merge($this->accessors(), $modelBuilder->accessors);
+
+        $this->scopes = array_merge($this->scopes(), $modelBuilder->scopes);
+        $this->searchScope = array_merge($this->makeSearch(), $modelBuilder->searchScope);
+
+        return $this;
     }
 
     /**
@@ -161,9 +150,9 @@ class Model
      */
     public function scopes()
     {
-        if (!in_array($this->column->name(), config('laracrud.model.protectedColumns')) && !in_array($this->column->type(), ['text', 'tinytext', 'bigtext'])) {
+        if (!in_array($this->column->name(), config('laracrud.model.protectedColumns')) && !in_array($this->column->dataType(), ['text', 'tinytext', 'bigtext'])) {
             $this->scopes[] = (new TemplateManager('model/scope.txt', [
-                    'methodName' => ucfirst($this->column->camelCase()),
+                    'methodName' => ucfirst($this->column->name()),
                     'fielName' => $this->column->name(),
                 ]))->get() . "\n";
         }
@@ -176,8 +165,8 @@ class Model
      */
     public function casts()
     {
-        if (isset($this->converTypes[$this->column->type()])) {
-            $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->converTypes[$this->column->type()] . "'";
+        if (isset($this->converTypes[$this->column->dataType()])) {
+            $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->converTypes[$this->column->dataType()] . "'";
         }
 
         return $this->casts;
@@ -188,14 +177,14 @@ class Model
      */
     public function constant()
     {
-        if ('enum' !== $this->column->type()) {
+        if ('enum' !== $this->column->dataType()) {
             return $this->constants;
         }
 
         foreach ($this->column->options() as $value) {
             $name = strtoupper($this->column->name() . '_' . str_replace([' ',
-                    '-', '"', '/', ], '_', $value));
-            $this->constants[] = 'const ' . $name . '=' . "'$value'" . ';' . PHP_EOL;
+                    '-', '"', '/',], '_', $value));
+            $this->constants[] = "\t" . ' const ' . $name . '=' . "'$value'" . ';';
         }
 
         return $this->constants;
@@ -206,7 +195,7 @@ class Model
      */
     public function propertyDefiner()
     {
-        $this->propertyDefiners[] = '@property ' . $this->column->type() . ' $' . $this->column->name() . ' ' . str_replace('_', ' ', $this->column->name());
+        $this->propertyDefiners[] = '@property ' . $this->column->dataType() . ' $' . $this->column->name() . ' ' . $this->column->label();
 
         return $this->propertyDefiners;
     }
@@ -216,7 +205,7 @@ class Model
      */
     public function methodDefiner()
     {
-        $this->methodDefiners[] = '@method \Illuminate\Database\Eloquent\Builder ' . lcfirst($this->getModelName($this->column->name())) . '(' . $this->column->type() . ' $' . $this->column->name() . ')' . str_replace('_', ' ', $this->column->name());
+        $this->methodDefiners[] = '@method \Illuminate\Database\Eloquent\Builder ' . lcfirst($this->getModelName($this->column->name())) . '(' . $this->column->dataType() . ' $' . $this->column->name() . ')' . str_replace('_', ' ', $this->column->name());
 
         return $this->methodDefiners;
     }
@@ -226,31 +215,11 @@ class Model
      */
     public function fillable()
     {
-        if (!in_array($this->column->name(), config('laracrud.model.protectedColumns'))) {
-            $this->fillable[] = "'" . $this->column->name() . "'";
+        if ($this->column->isFillable()) {
+            $this->fillable[] = "\t\t" . "'" . $this->column->name() . "'";
         }
 
         return $this->fillable;
-    }
-
-    /**
-     * Make Relation if its a foreign key.
-     */
-    public function relations()
-    {
-        if (!$this->column->isForeign()) {
-            return [];
-        }
-        $fk = new ForeignKey($this->column->foreign);
-        $this->relations[] = [
-            'name' => ForeignKey::RELATION_BELONGS_TO,
-            'foreign_key' => $fk->column(),
-            'model' => $this->getModelName($fk->foreignTable()),
-            'methodName' => $this->getModelName(str_replace('_id', '', $fk->column())),
-            'other_key' => $fk->foreignColumn(),
-        ];
-
-        return $this->relations;
     }
 
     /**
@@ -261,7 +230,7 @@ class Model
     public function dates()
     {
         //Check if it is a data time column. If so then add it to $protected $dates=[]
-        if (in_array($this->column->type(), ['time', 'date', 'datetime', 'timestamp'])
+        if (in_array($this->column->dataType(), ['time', 'date', 'datetime', 'timestamp'])
             && !in_array($this->column->name(), config('laracrud.model.protectedColumns'))
         ) {
             $this->dates[] = "'" . $this->column->name() . "'";
@@ -278,13 +247,13 @@ class Model
     public function makeSearch()
     {
         //protected column and foreign key will be excepted from making seach scope
-        if (in_array($this->column->name(), config('laracrud.model.protectedColumns')) || $this->column->isForeign()) {
+        if (in_array($this->column->name(), config('laracrud.model.protectedColumns')) || $this->column->foreignKey()) {
             return $this->searchScope;
         }
 
-        if (in_array($this->column->type(), ['varchar', 'text'])) {
+        if (in_array($this->column->dataType(), ['varchar', 'text'])) {
             $this->searchScope[] = "\t" . "->orWhere('" . $this->column->name() . "','LIKE','%'.\$q.'%')" . PHP_EOL;
-        } elseif (in_array($this->column->type(), ['int', 'bigint'])) {
+        } elseif (in_array($this->column->dataType(), ['int', 'bigint'])) {
             $this->searchScope[] = "\t" . "->orWhere('" . $this->column->name() . "',\$q)" . PHP_EOL;
         }
 
@@ -302,8 +271,8 @@ class Model
         }
         $label = str_replace(' ', '', ucwords(str_replace('_', ' ', $this->column->name())));
 
-        if (in_array($this->column->type(), ['time', 'date', 'datetime', 'timestamp'])) {
-            $setDateFormat = isset($setTimeFormats[$this->column->type()]) ? $setTimeFormats[$this->column->type()] : 'Y-m-d';
+        if (in_array($this->column->dataType(), ['time', 'date', 'datetime', 'timestamp'])) {
+            $setDateFormat = isset($setTimeFormats[$this->column->dataType()]) ? $setTimeFormats[$this->column->dataType()] : 'Y-m-d';
 
             $tempMan = new TemplateManager('model/setAttributeDate.txt', [
                 'format' => $setDateFormat,
@@ -311,7 +280,7 @@ class Model
                 'column' => $this->column->name(),
             ]);
             $this->mutators[] = $tempMan->get();
-        } elseif (in_array($this->column->type(), ['varchar', 'text', 'tinytext', 'bigtext'])) {
+        } elseif (in_array($this->column->dataType(), ['varchar', 'text', 'tinytext', 'bigtext'])) {
             $tempMan = new TemplateManager('model/setAttributeText.txt', [
                 'columnLabel' => $label,
                 'column' => $this->column->name(),
@@ -330,10 +299,10 @@ class Model
         if (in_array($this->column->name(), config('laracrud.model.protectedColumns'))) {
             return $this->accessors;
         }
-        if (in_array($this->column->type(), ['time', 'date', 'datetime', 'timestamp'])) {
+        if (in_array($this->column->dataType(), ['time', 'date', 'datetime', 'timestamp'])) {
             $getTimeFormats = config('laracrud.model.getDateFormat', []);
             $tempMan = new TemplateManager('model/getAttributeDate.txt', [
-                'format' => isset($getTimeFormats[$this->column->type()]) ? $getTimeFormats[$this->column->type()] : 'd M Y',
+                'format' => isset($getTimeFormats[$this->column->dataType()]) ? $getTimeFormats[$this->column->dataType()] : 'd M Y',
                 'columnLabel' => str_replace(' ', '', ucwords(str_replace('_', ' ', $this->column->name()))),
                 'column' => $this->column->name(),
             ]);

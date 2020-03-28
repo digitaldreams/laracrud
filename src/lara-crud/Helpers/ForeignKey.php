@@ -2,15 +2,10 @@
 
 namespace LaraCrud\Helpers;
 
-use LaraCrud\Helpers\DatabaseHelper;
-use LaraCrud\Helpers\Helper;
-
 /**
- * Class ForeignKey
+ * Class ForeignKey.
  *
  * Process a row from information schema
- *
- * @package LaraCrud\Helpers
  */
 class ForeignKey
 {
@@ -28,11 +23,11 @@ class ForeignKey
 
     /**
      * @var \stdClass [
-     *  TABLE_NAME=>
-     *  COLUMN_NAME=>
-     *  REFERENCED_TABLE_NAME=>
-     *  REFERENCED_COLUMN_NAME=>
-     * ]
+     *                TABLE_NAME=>
+     *                COLUMN_NAME=>
+     *                REFERENCED_TABLE_NAME=>
+     *                REFERENCED_COLUMN_NAME=>
+     *                ]
      */
     protected $data;
 
@@ -43,10 +38,11 @@ class ForeignKey
 
     /**
      * ForeignKey constructor.
+     *
      * @param $data
+     *
+     * @throws \Exception
      */
-
-
     public function __construct($data)
     {
         $this->data = $data;
@@ -55,7 +51,7 @@ class ForeignKey
     }
 
     /**
-     * Name of the table that hold the foreign key
+     * Name of the table that hold the foreign key.
      *
      * @return bool
      */
@@ -65,7 +61,7 @@ class ForeignKey
     }
 
     /**
-     * Name of the column that used as foreign key
+     * Name of the column that used as foreign key.
      *
      * @return bool
      */
@@ -75,7 +71,7 @@ class ForeignKey
     }
 
     /**
-     * Name of the Foreign Table name
+     * Name of the Foreign Table name.
      *
      * @return string|bool
      */
@@ -85,7 +81,8 @@ class ForeignKey
     }
 
     /**
-     * Column name of foreign table that has relation to
+     * Column name of foreign table that has relation to.
+     *
      * @return bool
      */
     public function foreignColumn()
@@ -104,12 +101,12 @@ class ForeignKey
                                      AND COLUMN_NAME='id'
                                      ";
         $result = $this->db->query($sql)->fetch(\PDO::FETCH_OBJ);
+
         return $result->total > 0 ? false : true;
     }
 
-
     /**
-     *  Get Model name based on TABLE_NAME
+     *  Get Model name based on TABLE_NAME.
      *
      * @return string
      */
@@ -117,15 +114,16 @@ class ForeignKey
     {
         $name = '';
         if ($this->isPivot) {
-            $name = str_replace([$this->getSingular($this->foreignTable()), "_"], "", $this->table());
+            $name = str_replace([$this->getSingular($this->foreignTable()), '_'], '', $this->table());
         } else {
             $name = $this->table();
         }
+
         return $this->getModelName($name);
     }
 
     /**
-     * Make Relation array
+     * Make Relation array.
      *
      * @return array
      */
@@ -139,16 +137,17 @@ class ForeignKey
                 'foreign_key' => $this->column(),
                 'model' => $this->modelName(),
                 'other_key' => $this->foreignColumn(),
-                'pivotTable' => $this->table()
+                'pivotTable' => $this->table(),
             ];
         } else {
             $relation = [
                 'name' => static::RELATION_BELONGS_TO,
                 'foreign_key' => $this->column(),
                 'model' => $this->modelName(),
-                'other_key' => $this->foreignColumn()
+                'other_key' => $this->foreignColumn(),
             ];
         }
+
         return $relation;
     }
 }

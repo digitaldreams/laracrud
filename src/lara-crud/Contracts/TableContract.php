@@ -41,17 +41,7 @@ interface TableContract
     /**
      * @return array
      */
-    public function indexes(): array;
-
-    /**
-     * @return array
-     */
     public function relations(): array;
-
-    /**
-     * @return array
-     */
-    public function references(): array;
 
     /**
      * @return array

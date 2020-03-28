@@ -19,7 +19,7 @@ class TableRepository implements TableContract
     /**
      * TableRepository constructor.
      *
-     * @param $table
+     * @param int|string $table
      */
     public function __construct($table)
     {
@@ -73,6 +73,8 @@ class TableRepository implements TableContract
     }
 
     /**
+     * List of ColumnRepository.
+     *
      * @return array
      */
     public function columns(): array
@@ -87,14 +89,8 @@ class TableRepository implements TableContract
 
     /**
      * @return array
-     */
-    public function indexes(): array
-    {
-        return $this->table->indexes();
-    }
-
-    /**
-     * @return array
+     *
+     * @throws \Exception
      */
     public function relations(): array
     {
@@ -102,10 +98,12 @@ class TableRepository implements TableContract
         $relations = [];
         foreach ($otherKeys as $column) {
             $fk = new ForeignKey($column);
+
             $relation = [
                 'modelName' => $fk->modelName(),
                 'methodName' => Str::plural(lcfirst($fk->modelName())),
             ];
+
             if ($fk->isPivot) {
                 $relation['params'] = ",'" . $fk->table() . "'";
                 $relation['relationShip'] = ForeignKey::RELATION_BELONGS_TO_MANY;
@@ -115,28 +113,26 @@ class TableRepository implements TableContract
                 $relation['relationShip'] = ForeignKey::RELATION_HAS_MANY;
                 $relation['returnType'] = ucfirst(ForeignKey::RELATION_HAS_MANY);
             }
+
+            $relation['propertyDefiners'] = '@property \Illuminate\Database\Eloquent\Collection' . ' $' .
+                $relation['methodName'] . ' ' . $relation['relationShip'];
+
             $relations[] = $relation;
         }
         foreach ($this->table->relations() as $foreign) {
             $fk = new ForeignKey($foreign);
+
             $relations[] = [
-                'name' => ForeignKey::RELATION_BELONGS_TO,
-                'foreign_key' => $fk->column(),
-                'model' => ucfirst(Str::camel(Str::singular($fk->foreignTable()))),
+                'relationShip' => ForeignKey::RELATION_BELONGS_TO,
+                'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO),
+                'modelName' => ucfirst(Str::camel(Str::singular($fk->foreignTable()))),
                 'methodName' => Str::camel(Str::singular($fk->foreignTable())),
-                'other_key' => $fk->foreignColumn(),
+                'params' => ",'" . $fk->column() . "','" . $fk->foreignColumn() . "'",
+                'propertyDefiners' => '@property ' . $relation['methodName'] . ' $' . lcfirst($relation['modelName']) . ' ' . $relation['relationShip'],
             ];
         }
 
         return $relations;
-    }
-
-    /**
-     * @return array
-     */
-    public function references(): array
-    {
-        return $this->table->references();
     }
 
     /**

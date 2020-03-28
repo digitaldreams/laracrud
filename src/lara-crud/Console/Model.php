@@ -38,7 +38,7 @@ class Model extends Command
             $modelName = $this->argument('name');
             $on = $this->option('on');
             $off = $this->option('off');
-            $databaseRepository = app()->make(DatabaseContract::class);
+
             //Overwrite existing Configuration file for this Model Instance
             if (!empty($on)) {
                 $ons = explode(',', $on);
@@ -46,16 +46,21 @@ class Model extends Command
                     config(["laracrud.model.$option" => true]);
                 }
             }
+
             if (!empty($off)) {
                 $offs = explode(',', $off);
                 foreach ($offs as $option) {
                     config(["laracrud.model.$option" => false]);
                 }
             }
+
+            $databaseRepository = app()->make(DatabaseContract::class);
+
             if (strripos($table, ',')) {
                 $table = explode(',', $table);
-                $databaseRepository->tableExists($table);
+
                 foreach ($table as $tb) {
+                    $databaseRepository->tableExists($tb);
                     $modelCrud = new ModelCrud($tb);
                     $modelCrud->save();
                 }
