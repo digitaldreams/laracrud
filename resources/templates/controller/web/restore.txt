@@ -1,0 +1,17 @@
+    /**
+     * Restore a deleted resource.
+     *
+     * @param  @@requestClass@@  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function restore(@@requestClass@@ $request, $@@modelNameParam@@)
+    {
+        $model = @@modelName@@::withTrashed()->where('id', $@@modelNameParam@@)->first();
+        if ($model) {
+            $model->restore();
+            return redirect()->route('@@routePrefix@@@@table@@.index')
+                ->with('app_message', 'Business restored successfully');
+        } else {
+            return redirect()->back()->with('app_error', '@@modelName@@ is not found');
+        }
+    }

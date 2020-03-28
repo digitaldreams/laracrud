@@ -46,6 +46,11 @@ class Model implements Crud
     protected $importNamespaces = [];
 
     /**
+     * @var array
+     */
+    protected $searchableColumns = '';
+
+    /**
      * Model constructor.
      *
      * @param $table
@@ -63,7 +68,7 @@ class Model implements Crud
         if (!empty($name)) {
             $this->parseName($name);
         }
-        $this->isSoftDeleteAble();
+        $this->isSoftDeleteAble()->searchable();
     }
 
     /**
@@ -96,6 +101,7 @@ class Model implements Crud
             'scopes' => config('laracrud.model.scopes') ? $this->scopes() : '',
             'traits' => !empty($this->traits) ? 'use ' . implode(', ', $this->traits) . ';' : '',
             'importNamespaces' => !empty($this->importNamespaces) ? implode("\n", $this->importNamespaces) : '',
+            'searchable' => $this->searchableColumns,
         ];
         $tempMan = new TemplateManager('model/template.txt', $data);
 
@@ -296,6 +302,24 @@ class Model implements Crud
             $this->importNamespaces[] = 'use Illuminate\Database\Eloquent\SoftDeletes;';
         }
 
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function searchable()
+    {
+        $arr = null;
+        if ($columns = $this->table->searchableColumns()) {
+            foreach ($columns as $column) {
+                $arr .= "\t'" . $column . "'," . PHP_EOL;
+            }
+
+            $this->traits[] = 'FullTextSearch';
+            $this->importNamespaces[] = 'use LaraCrud\Services\FullTextSearch;';
+            $this->searchableColumns = "\t" . 'protected $searchable = [' . "\n" . $arr . '];';
+        }
         return $this;
     }
 }

@@ -19,6 +19,7 @@ class @@modelName@@ extends Model
     protected $table = '@@tableName@@';
 @@guarded@@
 @@fillable@@
+@@searchable@@
 @@casts@@
 @@dateColumns@@
 @@relationShips@@

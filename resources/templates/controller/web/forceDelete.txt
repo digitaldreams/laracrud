@@ -1,0 +1,17 @@
+    /**
+    * Permanently a delete a resource.
+    *
+    * @param  @@requestClass@@  $request
+    * @return \Illuminate\Http\Response
+    */
+    public function forceDelete(@@requestClass@@ $request, $@@modelNameParam@@)
+    {
+        $model = @@modelName@@::withTrashed()->where('id', $@@modelNameParam@@)->first();
+        if ($model) {
+            $model->forceDelete();
+            return redirect()->route('@@routePrefix@@@@table@@.index', ['trashOnly' => 'yes'])
+                ->with('app_message', '@@modelName@@ deleted from trash successfully');
+        } else {
+            return redirect()->back()->with('app_error', '@@modelName@@ is not found');
+        }
+    }

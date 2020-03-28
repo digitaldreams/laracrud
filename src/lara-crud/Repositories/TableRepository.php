@@ -158,4 +158,22 @@ class TableRepository implements TableContract
     {
         return array_key_exists('deleted_at', $this->table->columns());
     }
+
+    /**
+     * FullText SearchAble Columns.
+     *
+     * @return array
+     */
+    public function searchableColumns(): array
+    {
+        $data = [];
+        $indexes = $this->table->indexes();
+        foreach ($indexes as $index) {
+            if ('FULLTEXT' == $index->Index_type) {
+                $data[$index->Seq_in_index] = $index->Column_name;
+            }
+        }
+
+        return $data;
+    }
 }

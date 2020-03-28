@@ -47,18 +47,23 @@ class Controller extends Command
         try {
             $model = $this->argument('model');
             $name = $this->argument('name');
+            $parent = $this->option('parent');
+
             $only = $this->option('only');
             $api = $this->option('api');
             $with = $this->option('with');
+
             $withArr = !empty($with) ? explode(',', $with) : [];
             $onlyArr = !empty($only) ? explode(',', $only) : '';
-            $parent = $this->option('parent');
+
 
             if (in_array('request', $withArr)) {
                 $modelFullName = $this->modelFullName($model);
+
                 if (class_exists($modelFullName)) {
                     $modelObj = new $modelFullName();
                     $requestResource = new RequestResourceCrud($modelObj->getTable(), false, $api);
+
                     $requestResource->setModel($modelFullName);
                     $requestResource->save();
                     $this->info('Request controller classes created successfully');

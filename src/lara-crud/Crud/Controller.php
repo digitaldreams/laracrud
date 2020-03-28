@@ -127,7 +127,7 @@ class Controller implements Crud
     /**
      * ControllerCrud constructor.
      *
-     * @param $model
+     * @param                                          $model
      * @param string                                   $name
      * @param array|string                             $only
      * @param bool                                     $api
@@ -141,44 +141,14 @@ class Controller implements Crud
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         $this->modelNameSpace = $modelNamespace;
-
-        if (!class_exists($model)) {
-            $this->modelName = $this->modelNameSpace . '\\' . $model;
-            $this->shortModelName = $model;
-        } else {
-            $class = new \ReflectionClass($model);
-            $this->modelNameSpace = $class->getNamespaceName();
-            $this->shortModelName = $class->getShortName();
-            $this->modelName = $model;
-        }
-        if (!empty($parent)) {
-            $this->setParent($parent);
-        }
-        if (class_exists($this->modelName)) {
-            $this->model = $model = new $this->modelName();
-            $this->table = $model->getTable();
-        } else {
-            throw new \Exception($model . ' class does not exists');
-        }
+        $this->resolveModelClass($model)->resolveName($name);
 
         if (!empty($only) && is_array($only)) {
             $this->only = $only;
         }
+
         $this->requestClassSuffix = config('laracrud.request.classSuffix', 'Request');
 
-        if (!empty($name)) {
-            if (false !== strpos($name, '/')) {
-                $narr = explode('/', $name);
-                $this->fileName = array_pop($narr);
-
-                foreach ($narr as $p) {
-                    $this->subNameSpace .= '\\' . $p;
-                    $this->path .= '/' . $p;
-                }
-            } else {
-                $this->fileName = $name;
-            }
-        }
         $this->template = !empty($api) ? 'api' : 'web';
         $this->template = !empty($this->parentModel) ? $this->template . '/parent' : $this->template;
 
@@ -400,6 +370,11 @@ class Controller implements Crud
         return $retArr;
     }
 
+    /**
+     * @param string $method
+     *
+     * @return string
+     */
     protected function getUploadScript($method = 'store')
     {
         $retTemp = '';
@@ -420,6 +395,11 @@ class Controller implements Crud
         return $retTemp;
     }
 
+    /**
+     * @param $parent
+     *
+     * @throws \ReflectionException
+     */
     private function setParent($parent)
     {
         if (!class_exists($parent)) {
@@ -444,5 +424,59 @@ class Controller implements Crud
         $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) : $this->controllerName . 'Controller';
 
         return $this->namespace . '\\' . $fileName;
+    }
+
+    /**
+     * @param $model
+     *
+     * @return \LaraCrud\Crud\Controller
+     * @throws \ReflectionException
+     */
+    private function resolveModelClass($model)
+    {
+        if (!class_exists($model)) {
+            $this->modelName = $this->modelNameSpace . '\\' . $model;
+            $this->shortModelName = $model;
+        } else {
+            $class = new \ReflectionClass($model);
+            $this->modelNameSpace = $class->getNamespaceName();
+            $this->shortModelName = $class->getShortName();
+            $this->modelName = $model;
+        }
+
+        if (!empty($parent)) {
+            $this->setParent($parent);
+        }
+
+        if (class_exists($this->modelName)) {
+            $this->model = $model = new $this->modelName();
+            $this->table = $model->getTable();
+        } else {
+            throw new \Exception($model . ' class does not exists');
+        }
+        return $this;
+    }
+
+    /**
+     * @param $name
+     *
+     * @return \LaraCrud\Crud\Controller
+     */
+    public function resolveName($name)
+    {
+        if (!empty($name)) {
+            if (false !== strpos($name, '/')) {
+                $narr = explode('/', $name);
+                $this->fileName = array_pop($narr);
+
+                foreach ($narr as $p) {
+                    $this->subNameSpace .= '\\' . $p;
+                    $this->path .= '/' . $p;
+                }
+            } else {
+                $this->fileName = $name;
+            }
+        }
+        return $this;
     }
 }

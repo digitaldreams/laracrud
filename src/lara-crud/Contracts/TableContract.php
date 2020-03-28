@@ -57,4 +57,9 @@ interface TableContract
      * @return bool
      */
     public function isSoftDeleteAble(): bool;
+
+    /**
+     * @return array
+     */
+    public function searchableColumns(): array;
 }
