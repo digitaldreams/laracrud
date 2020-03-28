@@ -13,5 +13,4 @@ interface PageViewContract
 
     public function table(): TableContract;
 
-    public function model(): ModelContract;
 }

@@ -3,19 +3,39 @@
 
 namespace LaraCrud\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Contracts\IndexViewContract;
-use LaraCrud\Contracts\ModelContract;
 use LaraCrud\Contracts\TableContract;
 
 class IndexViewRepository implements IndexViewContract
 {
+    /**
+     * @var Model
+     */
+    protected $model;
+
+    /**
+     * @var TableContract
+     */
+    protected $table;
+
+    /**
+     * IndexViewRepository constructor.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     */
+    public function __construct(Model $model)
+    {
+        $this->model = $model;
+        $this->table = app(TableContract::class, ['table' => $this->model->getTable()]);
+    }
 
     /**
      * @return string
      */
     public function label(): string
     {
-        // TODO: Implement label() method.
+        return $this->table->label();
     }
 
     /**
@@ -56,26 +76,22 @@ class IndexViewRepository implements IndexViewContract
 
     public function name(): string
     {
-        // TODO: Implement name() method.
+        return 'index';
     }
 
     public function path(): string
     {
-        // TODO: Implement path() method.
+
     }
 
     public function title(): string
     {
-        // TODO: Implement title() method.
+        return $this->table->label();
     }
 
     public function table(): TableContract
     {
-        // TODO: Implement table() method.
+        return $this->table;
     }
 
-    public function model(): ModelContract
-    {
-        // TODO: Implement model() method.
-    }
 }

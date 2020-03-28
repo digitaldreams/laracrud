@@ -2,13 +2,17 @@
 namespace @@namespace@@;
 
 use Illuminate\Database\Eloquent\Model;
+@@importNamespaces@@
 /**
    @@propertyDefiner@@
    @@methodDefiner@@
  */
 class @@modelName@@ extends Model 
 {
+    @@traits@@
+
     @@constants@@
+
     /**
     * Database table name
     */

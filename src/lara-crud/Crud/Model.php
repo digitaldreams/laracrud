@@ -36,6 +36,16 @@ class Model implements Crud
     protected $modelBuilder;
 
     /**
+     * @var array
+     */
+    protected $traits = [];
+
+    /**
+     * @var array
+     */
+    protected $importNamespaces = [];
+
+    /**
      * Model constructor.
      *
      * @param $table
@@ -53,6 +63,7 @@ class Model implements Crud
         if (!empty($name)) {
             $this->parseName($name);
         }
+        $this->isSoftDeleteAble();
     }
 
     /**
@@ -83,6 +94,8 @@ class Model implements Crud
             'mutators' => config('laracrud.model.mutators') ? $this->mutators() : '',
             'accessors' => config('laracrud.model.accessors') ? $this->accessors() : '',
             'scopes' => config('laracrud.model.scopes') ? $this->scopes() : '',
+            'traits' => !empty($this->traits) ? 'use ' . implode(', ', $this->traits) . ';' : '',
+            'importNamespaces' => !empty($this->importNamespaces) ? implode("\n", $this->importNamespaces) : '',
         ];
         $tempMan = new TemplateManager('model/template.txt', $data);
 
@@ -274,5 +287,15 @@ class Model implements Crud
     public function getFullModelName()
     {
         return $this->namespace . '\\' . $this->modelName;
+    }
+
+    protected function isSoftDeleteAble()
+    {
+        if ($this->table->isSoftDeleteAble()) {
+            $this->traits[] = 'SoftDeletes';
+            $this->importNamespaces[] = 'use Illuminate\Database\Eloquent\SoftDeletes;';
+        }
+
+        return $this;
     }
 }

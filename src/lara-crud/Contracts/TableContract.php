@@ -52,4 +52,9 @@ interface TableContract
      * @return bool
      */
     public function hasFile(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isSoftDeleteAble(): bool;
 }

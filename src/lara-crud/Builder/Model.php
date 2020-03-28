@@ -183,7 +183,7 @@ class Model
 
         foreach ($this->column->options() as $value) {
             $name = strtoupper($this->column->name() . '_' . str_replace([' ',
-                    '-', '"', '/',], '_', $value));
+                    '-', '"', '/', ], '_', $value));
             $this->constants[] = "\t" . ' const ' . $name . '=' . "'$value'" . ';';
         }
 
@@ -233,7 +233,7 @@ class Model
         if (in_array($this->column->dataType(), ['time', 'date', 'datetime', 'timestamp'])
             && !in_array($this->column->name(), config('laracrud.model.protectedColumns'))
         ) {
-            $this->dates[] = "'" . $this->column->name() . "'";
+            $this->dates[] = "\t" . "'" . $this->column->name() . "'";
         }
 
         return $this->dates;

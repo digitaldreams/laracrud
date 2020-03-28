@@ -150,4 +150,12 @@ class TableRepository implements TableContract
     {
         return count($this->table->hasFile());
     }
+
+    /**
+     * @return bool
+     */
+    public function isSoftDeleteAble(): bool
+    {
+        return array_key_exists('deleted_at', $this->table->columns());
+    }
 }
