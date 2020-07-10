@@ -42,20 +42,20 @@ class Edit extends Page
      */
     public function template()
     {
-        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
+        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace').'::' : '';
         $link = new Link($this->table->name());
 
         return (new TemplateManager("view/{$this->version}/pages/edit.html", [
-            'layout' => config('laracrud.view.layout'),
-            'table' => $this->table->name(),
-            'tableTitle' => $this->getTitleColumn(),
-            'folder' => $prefix . $this->form->getFolder(),
-            'routeModelKey' => $this->dataStore['routeModelKey'] ?? 'id',
+            'layout'          => config('laracrud.view.layout'),
+            'table'           => $this->table->name(),
+            'tableTitle'      => $this->getTitleColumn(),
+            'folder'          => $prefix.$this->form->getFolder(),
+            'routeModelKey'   => $this->dataStore['routeModelKey'] ?? 'id',
             'partialFilename' => Str::singular($this->table->name()),
-            'indexRoute' => $this->getRouteName('index', $this->table->name()),
-            'createLink' => $link->create(get_class($this->model)),
-            'showRoute' => $this->getRouteName('show', $this->table->name()),
-            'updateRoute' => $this->getRouteName('update', $this->table->name()),
+            'indexRoute'      => $this->getRouteName('index', $this->table->name()),
+            'createLink'      => $link->create(get_class($this->model)),
+            'showRoute'       => $this->getRouteName('show', $this->table->name()),
+            'updateRoute'     => $this->getRouteName('update', $this->table->name()),
         ]))->get();
     }
 

@@ -73,7 +73,7 @@ class Request implements Crud
     {
         $filePath = $this->checkPath();
         if (file_exists($filePath)) {
-            throw new \Exception($this->namespace . '\\' . $this->modelName . ' already exists');
+            throw new \Exception($this->namespace.'\\'.$this->modelName.' already exists');
         }
         $model = new \SplFileObject($filePath, 'w+');
         $model->fwrite($this->template());
@@ -86,11 +86,11 @@ class Request implements Crud
      */
     public function template()
     {
-        $tempMan = new TemplateManager('request/' . $this->template . '/template.txt', [
-            'namespace' => $this->namespace,
+        $tempMan = new TemplateManager('request/'.$this->template.'/template.txt', [
+            'namespace'        => $this->namespace,
             'requestClassName' => $this->modelName,
-            'authorization' => $this->authorization,
-            'rules' => implode("\n", $this->makeRules()),
+            'authorization'    => $this->authorization,
+            'rules'            => implode("\n", $this->makeRules()),
         ]);
 
         return $tempMan->get();
@@ -111,7 +111,7 @@ class Request implements Crud
             } elseif (!in_array($column->name(), $fillable) || in_array($column->name(), $guarded)) {
                 continue;
             }
-            $rules[] = "\t\t\t'{$column->name()}' => '" . implode('|', $this->rule($column)) . "',";
+            $rules[] = "\t\t\t'{$column->name()}' => '".implode('|', $this->rule($column))."',";
         }
 
         return $rules;
@@ -139,11 +139,11 @@ class Request implements Crud
             $rules[] = "exists:{$column->foreignTable()},{$column->foreignColumn()}";
         }
         if ('enum' == $column->type()) {
-            $rules[] = 'in:' . implode(',', $column->options());
+            $rules[] = 'in:'.implode(',', $column->options());
         } elseif ($column->isFile()) {
             $rules[] = 'file';
         } elseif (in_array($column->type(), ['varchar'])) {
-            $rules[] = 'max:' . $column->length();
+            $rules[] = 'max:'.$column->length();
         } elseif ('tinyint' == $column->type() && 1 == $column->length()) {
             $rules[] = 'boolean';
         } elseif (in_array($column->type(), ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float', 'double'])) {

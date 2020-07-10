@@ -49,7 +49,7 @@ class Package
     {
         $this->name = strtolower($name);
         $this->rootPath = rtrim(config('laracrud.package.path'), '/');
-        $this->packagePath = $this->rootPath . '/' . $this->name;
+        $this->packagePath = $this->rootPath.'/'.$this->name;
         $this->namespace = $this->getModelName($name);
         $this->templatePath = $this->getFullPath('package');
         $this->dirIt = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->templatePath), \RecursiveIteratorIterator::SELF_FIRST);
@@ -70,13 +70,13 @@ class Package
 
         foreach ($this->dirTree as $name => $splFileinfo) {
             if ($splFileinfo->isDir()) {
-                if (!file_exists($this->packagePath . '/' . $name)) {
-                    mkdir($this->packagePath . '/' . $name);
+                if (!file_exists($this->packagePath.'/'.$name)) {
+                    mkdir($this->packagePath.'/'.$name);
                 }
             } else {
                 $content = '';
                 if ($splFileinfo->getSize() > 0) {
-                    $temp = new TemplateManager('package/' . $name, $this->globalVars());
+                    $temp = new TemplateManager('package/'.$name, $this->globalVars());
                     $content = $temp->get();
                 }
                 $this->saveFile($name, $content);
@@ -91,7 +91,7 @@ class Package
     {
         $data = [
             'packageNamespace' => $this->namespace,
-            'packageName' => $this->name,
+            'packageName'      => $this->name,
         ];
 
         return $data;
@@ -104,7 +104,7 @@ class Package
             if (in_array($it->getBasename(), ['.', '..'])) {
                 continue;
             }
-            $dirTree[$this->getRelativeDirectoryName($it) . $it->getBasename()] = $it;
+            $dirTree[$this->getRelativeDirectoryName($it).$it->getBasename()] = $it;
         }
 
         return $dirTree;
@@ -132,7 +132,7 @@ class Package
     {
         $filePath = $this->processFileName($filePath);
 
-        $fullPath = $this->packagePath . '/' . $filePath;
+        $fullPath = $this->packagePath.'/'.$filePath;
         if (file_exists($fullPath)) {
             return false;
         }
@@ -155,10 +155,10 @@ class Package
     public function getFullPath($filename)
     {
         $retPath = false;
-        if (file_exists(resource_path('views/vendor/laracrud/templates/' . $filename))) {
-            $retPath = resource_path('views/vendor/laracrud/templates/' . $filename);
-        } elseif (file_exists(__DIR__ . '/../../../resources/templates/' . $filename)) {
-            $retPath = __DIR__ . '/../../../resources/templates/' . $filename;
+        if (file_exists(resource_path('views/vendor/laracrud/templates/'.$filename))) {
+            $retPath = resource_path('views/vendor/laracrud/templates/'.$filename);
+        } elseif (file_exists(__DIR__.'/../../../resources/templates/'.$filename)) {
+            $retPath = __DIR__.'/../../../resources/templates/'.$filename;
         }
 
         return $retPath;

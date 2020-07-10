@@ -45,9 +45,9 @@ class Transformer extends Command
                 $modelObj = new $model();
             } else {
                 $namespace = $this->getFullNS(config('laracrud.model.namespace'));
-                $model = $namespace . '\\' . $model;
+                $model = $namespace.'\\'.$model;
                 if (!class_exists($model)) {
-                    $this->warn($model . ' class does not exists');
+                    $this->warn($model.' class does not exists');
                 }
                 $modelObj = new $model();
             }
@@ -57,14 +57,14 @@ class Transformer extends Command
                 try {
                     $incTc = new TransformerCrud($incModel);
                     $incTc->save();
-                    $this->warn($incTc->getName() . ' created successfully');
+                    $this->warn($incTc->getName().' created successfully');
                 } catch (\Exception $e) {
                     continue;
                 }
             }
-            $this->info($transformerCrud->getName() . ' created successfully');
+            $this->info($transformerCrud->getName().' created successfully');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
+            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 }

@@ -34,6 +34,7 @@ class Connector
 
             return $this->pdo;
         }
+
         throw new \Exception(' PDO connection is not defined');
     }
 }

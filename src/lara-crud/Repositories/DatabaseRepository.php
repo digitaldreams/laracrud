@@ -11,14 +11,15 @@ class DatabaseRepository implements DatabaseContract
     {
         return (new Database())->tables();
     }
+
     /**
      * If table name mistyped and then tell user that table not found and show him a list of table.
      *
      * @param string $table
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function tableExists($table)
     {
@@ -27,7 +28,8 @@ class DatabaseRepository implements DatabaseContract
         $missingTable = array_diff($insertAbleTable, $availableTables);
 
         if (!empty($missingTable)) {
-            $message = implode(',', $missingTable) . ' tables not found in ' . "\n" . implode("\n", $availableTables);
+            $message = implode(',', $missingTable).' tables not found in '."\n".implode("\n", $availableTables);
+
             throw new \Exception($message);
         }
 

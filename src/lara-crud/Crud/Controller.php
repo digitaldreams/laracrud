@@ -148,15 +148,15 @@ class Controller implements Crud
         $this->requestClassSuffix = config('laracrud.request.classSuffix', 'Request');
 
         $this->template = !empty($api) ? 'api' : 'web';
-        $this->template = !empty($this->parentModel) ? $this->template . '/parent' : $this->template;
+        $this->template = !empty($this->parentModel) ? $this->template.'/parent' : $this->template;
 
         $ns = !empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
-        $this->namespace = trim($this->getFullNS($ns), '/') . $this->subNameSpace;
+        $this->namespace = trim($this->getFullNS($ns), '/').$this->subNameSpace;
         $this->parseModelName();
 
         $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
         $requestFolder = !empty($this->table) ? ucfirst(Str::camel($this->table)) : $this->modelName;
-        $this->requestFolderNs = $this->getFullNS($requestNs) . '\\' . $requestFolder;
+        $this->requestFolderNs = $this->getFullNS($requestNs).'\\'.$requestFolder;
     }
 
     /**
@@ -168,8 +168,8 @@ class Controller implements Crud
     {
         $globalVars = $this->globalVars();
         $methods = $this->buildMethods();
-        $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', array_merge($globalVars, [
-            'methods' => $methods,
+        $tempMan = new TemplateManager('controller/'.$this->template.'/template.txt', array_merge($globalVars, [
+            'methods'         => $methods,
             'importNameSpace' => $this->makeNamespaceUseString(),
         ]));
 
@@ -184,41 +184,41 @@ class Controller implements Crud
         $rel = $this->makeRelation();
 
         return [
-            'controllerName' => $this->getFileName($this->controllerName . 'Controller'),
-            'modelName' => $this->shortModelName,
-            'fullmodelName' => $this->modelName,
-            'modelNameParam' => strtolower($this->shortModelName),
-            'viewPath' => $this->viewPath,
-            'requestClass' => $this->requestClass,
-            'table' => $this->table,
-            'namespace' => trim($this->namespace, '/'),
-            'belongsToRelation' => $rel['belongsToRelation'],
-            'belongsToRelationVars' => $rel['belongsToRelationVars'],
+            'controllerName'            => $this->getFileName($this->controllerName.'Controller'),
+            'modelName'                 => $this->shortModelName,
+            'fullmodelName'             => $this->modelName,
+            'modelNameParam'            => strtolower($this->shortModelName),
+            'viewPath'                  => $this->viewPath,
+            'requestClass'              => $this->requestClass,
+            'table'                     => $this->table,
+            'namespace'                 => trim($this->namespace, '/'),
+            'belongsToRelation'         => $rel['belongsToRelation'],
+            'belongsToRelationVars'     => $rel['belongsToRelationVars'],
             'belongsToManyRelationSync' => '',
-            'transformer' => $this->transformerName,
-            'importNameSpace' => '',
-            'parentModelName' => $this->parentModel,
-            'parentModelNameParam' => strtolower($this->parentModel),
-            'routePrefix' => config('laracrud.route.prefix', ''),
-            'apiRequest' => '{}',
-            'apiResponse' => '{}',
+            'transformer'               => $this->transformerName,
+            'importNameSpace'           => '',
+            'parentModelName'           => $this->parentModel,
+            'parentModelNameParam'      => strtolower($this->parentModel),
+            'routePrefix'               => config('laracrud.route.prefix', ''),
+            'apiRequest'                => '{}',
+            'apiResponse'               => '{}',
         ];
     }
 
     /**
      * Get code and save to disk.
      *
-     * @return mixed
-     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public function save()
     {
         $this->checkPath('');
-        $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) . '.php' : $this->controllerName . 'Controller' . '.php';
-        $filePath = base_path($this->toPath($this->namespace)) . '/' . $fileName;
+        $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName).'.php' : $this->controllerName.'Controller'.'.php';
+        $filePath = base_path($this->toPath($this->namespace)).'/'.$fileName;
         if (file_exists($filePath)) {
-            throw new \Exception($filePath . ' already exists');
+            throw new \Exception($filePath.' already exists');
         }
         $controller = new \SplFileObject($filePath, 'w+');
         $controller->fwrite($this->template());
@@ -231,25 +231,25 @@ class Controller implements Crud
     {
         $retTemp = '';
         $saveUpload = '';
-        $tempMan = new TemplateManager('controller/' . $this->template . '/template.txt', []);
+        $tempMan = new TemplateManager('controller/'.$this->template.'/template.txt', []);
         foreach ($this->only as $method) {
             $documentation = '';
             $requestClass = $this->getRequestClass($method);
-            if ($filePath = $tempMan->getFullPath('controller/' . $this->template . '/' . $method . '.txt')) {
+            if ($filePath = $tempMan->getFullPath('controller/'.$this->template.'/'.$method.'.txt')) {
                 if (in_array($method, ['store', 'update'])) {
                     $saveUpload = $this->getUploadScript($method);
                 }
                 $vars = array_merge($this->globalVars(), [
                     'requestClass' => $requestClass,
-                    'apiRequest' => $this->makeApiRequest($requestClass),
-                    'saveUpload' => $saveUpload,
+                    'apiRequest'   => $this->makeApiRequest($requestClass),
+                    'saveUpload'   => $saveUpload,
                 ]);
                 if (true == config('laracrud.controller.documentation') && 'web' !== $this->template) {
-                    $documentation = (new TemplateManager('controller/' . $this->template . '/docs/' . $method . '.txt', $vars));
+                    $documentation = (new TemplateManager('controller/'.$this->template.'/docs/'.$method.'.txt', $vars));
                 }
 
                 $vars['documentation'] = $documentation;
-                $methodTemp = new TemplateManager('controller/' . $this->template . '/' . $method . '.txt', $vars);
+                $methodTemp = new TemplateManager('controller/'.$this->template.'/'.$method.'.txt', $vars);
                 $retTemp .= $methodTemp->get();
             }
         }
@@ -264,7 +264,7 @@ class Controller implements Crud
      */
     protected function getRequestClass($method)
     {
-        $fullRequestNs = $this->requestFolderNs . '\\' . ucfirst($method);
+        $fullRequestNs = $this->requestFolderNs.'\\'.ucfirst($method);
         if (class_exists($fullRequestNs)) {
             $requestClass = ucfirst($method);
             $this->import[] = $fullRequestNs;
@@ -286,10 +286,10 @@ class Controller implements Crud
         $class = new \ReflectionClass($this->modelName);
         $model = $class->newInstance();
         $this->modelNameSpace = $class->getNamespaceName();
-        $this->viewPath = !empty($pagePath) ? str_replace('/', '.', $pagePath) . '.' . $model->getTable() : $model->getTable();
+        $this->viewPath = !empty($pagePath) ? str_replace('/', '.', $pagePath).'.'.$model->getTable() : $model->getTable();
 
         if (!empty($namespace)) {
-            $this->viewPath = rtrim($namespace, '::') . '::' . $this->viewPath;
+            $this->viewPath = rtrim($namespace, '::').'::'.$this->viewPath;
         }
         $this->controllerName = $class->getShortName();
     }
@@ -300,7 +300,7 @@ class Controller implements Crud
     public function makeRelation()
     {
         $retArr = [
-            'belongsToRelation' => '',
+            'belongsToRelation'     => '',
             'belongsToRelationVars' => '',
         ];
         if (!empty($this->table)) {
@@ -311,9 +311,9 @@ class Controller implements Crud
             foreach ($columnClasses as $column) {
                 if ($column->isForeign()) {
                     $variableName = $column->foreignTable();
-                    $this->import[] = $this->modelNameSpace . '\\' . $this->getModelName($variableName);
-                    $rel .= "\t\t" . '$' . strtolower($variableName) . ' = ' . $this->getModelName($variableName) . "::all(['id']);" . PHP_EOL;
-                    $relVars .= "\t\t\t" . '"' . strtolower($variableName) . '" => $' . strtolower($variableName) . ',' . PHP_EOL;
+                    $this->import[] = $this->modelNameSpace.'\\'.$this->getModelName($variableName);
+                    $rel .= "\t\t".'$'.strtolower($variableName).' = '.$this->getModelName($variableName)."::all(['id']);".PHP_EOL;
+                    $relVars .= "\t\t\t".'"'.strtolower($variableName).'" => $'.strtolower($variableName).','.PHP_EOL;
                 }
             }
             $retArr['belongsToRelation'] = $rel;
@@ -331,9 +331,9 @@ class Controller implements Crud
     private function setParent($parent)
     {
         if (!class_exists($parent)) {
-            $parentModel = $this->modelNameSpace . '\\' . $parent;
+            $parentModel = $this->modelNameSpace.'\\'.$parent;
             if (!class_exists($parentModel)) {
-                throw new \Exception($parent . ' class does not exists');
+                throw new \Exception($parent.' class does not exists');
             }
             $this->import[] = $parentModel;
             $this->parentModel = $parent;
@@ -349,22 +349,22 @@ class Controller implements Crud
      */
     public function getFullName()
     {
-        $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) : $this->controllerName . 'Controller';
+        $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) : $this->controllerName.'Controller';
 
-        return $this->namespace . '\\' . $fileName;
+        return $this->namespace.'\\'.$fileName;
     }
 
     /**
      * @param $model
      *
-     * @return \LaraCrud\Crud\Controller
-     *
      * @throws \ReflectionException
+     *
+     * @return \LaraCrud\Crud\Controller
      */
     private function resolveModelClass($model)
     {
         if (!class_exists($model)) {
-            $this->modelName = $this->modelNameSpace . '\\' . $model;
+            $this->modelName = $this->modelNameSpace.'\\'.$model;
             $this->shortModelName = $model;
         } else {
             $class = new \ReflectionClass($model);
@@ -381,7 +381,7 @@ class Controller implements Crud
             $this->model = $model = new $this->modelName();
             $this->table = $model->getTable();
         } else {
-            throw new \Exception($model . ' class does not exists');
+            throw new \Exception($model.' class does not exists');
         }
 
         return $this;
@@ -400,8 +400,8 @@ class Controller implements Crud
                 $this->fileName = array_pop($narr);
 
                 foreach ($narr as $p) {
-                    $this->subNameSpace .= '\\' . $p;
-                    $this->path .= '/' . $p;
+                    $this->subNameSpace .= '\\'.$p;
+                    $this->path .= '/'.$p;
                 }
             } else {
                 $this->fileName = $name;

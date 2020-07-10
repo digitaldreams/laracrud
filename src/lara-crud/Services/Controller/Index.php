@@ -22,17 +22,17 @@ class Index extends ControllerMethod implements ViewAbleMethod
     /**
      * Set necessary data.
      *
-     * @return $this
-     *
      * @throws \ReflectionException
+     *
+     * @return $this
      */
     protected function beforeGenerate()
     {
         $this->setParameter('Request', '$request');
 
         if ($this->parentModel) {
-            $this->setVariable($this->getParentShortName(), '$' . $this->getParentShortName())
-                ->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
+            $this->setVariable($this->getParentShortName(), '$'.$this->getParentShortName())
+                ->setParameter(ucfirst($this->getParentShortName()), '$'.$this->getParentShortName());
         }
 
         $this->setVariable(Str::plural($this->getModelShortName()), '$builder->paginate(10)');
@@ -45,9 +45,9 @@ class Index extends ControllerMethod implements ViewAbleMethod
      */
     public function getBody(): string
     {
-        $body = '$builder = ' . ucfirst($this->getModelShortName()) . '::';
+        $body = '$builder = '.ucfirst($this->getModelShortName()).'::';
         $body .= $this->isSearchAble() ? 'search($request->get(\'search\'))' : 'query';
 
-        return $body . ';';
+        return $body.';';
     }
 }

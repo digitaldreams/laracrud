@@ -39,7 +39,7 @@ trait RedirectAbleMethodHelper
      */
     public function getFlashMessage(): string
     {
-        return $this->getModelShortName() . ' successfully ' . $this->getMethodName();
+        return $this->getModelShortName().' successfully '.$this->getMethodName();
     }
 
     /**
@@ -56,11 +56,11 @@ trait RedirectAbleMethodHelper
     protected function generateRedirectAbleCode(): string
     {
         return (new TemplateManager('controller/web/save.txt', [
-            'parameters' => $this->buildParameters(),
-            'body' => $this->getBody(),
-            'methodName' => $this->getMethodName(),
-            'route' => $this->route(),
-            'flashKey' => $this->getFlashMessageKey(),
+            'parameters'   => $this->buildParameters(),
+            'body'         => $this->getBody(),
+            'methodName'   => $this->getMethodName(),
+            'route'        => $this->route(),
+            'flashKey'     => $this->getFlashMessageKey(),
             'flashMessage' => $this->getFlashMessage(),
         ]))->get();
     }
@@ -78,14 +78,14 @@ trait RedirectAbleMethodHelper
         }
 
         if (1 === count($routeParameters)) {
-            return $routeName . ',' . array_shift($routeParameters);
+            return $routeName.','.array_shift($routeParameters);
         }
         $paramString = '[';
         foreach ($routeParameters as $key => $variable) {
-            $paramString .= "'" . $key . "' => " . $variable . ',';
+            $paramString .= "'".$key."' => ".$variable.',';
         }
 
-        return $routeName . ',' . $paramString . ']';
+        return $routeName.','.$paramString.']';
     }
 
     /**
@@ -93,13 +93,13 @@ trait RedirectAbleMethodHelper
      */
     protected function generateRouteName()
     {
-        $name = config('laracrud.route.prefix') ? rtrim(config('laracrud.route.prefix'), '::') . '::' : '';
+        $name = config('laracrud.route.prefix') ? rtrim(config('laracrud.route.prefix'), '::').'::' : '';
         if ($this->parentModel) {
-            $name .= $this->toRouteString($this->getParentShortName()) . '.';
+            $name .= $this->toRouteString($this->getParentShortName()).'.';
         }
-        $name .= $this->toRouteString($this->getModelShortName()) . '.' . $this->redirectToRouteMethodName();
+        $name .= $this->toRouteString($this->getModelShortName()).'.'.$this->redirectToRouteMethodName();
 
-        return "'" . $name . "'";
+        return "'".$name."'";
     }
 
     /**
@@ -122,16 +122,15 @@ trait RedirectAbleMethodHelper
         return Str::plural($name);
     }
 
-
     /**
      * @return array
      */
     protected function generateRouteParameter()
     {
         if ($this->parentModel) {
-            $this->routeParameter[$this->getParentShortName()] = '$' . $this->getParentShortName() . '->' . $this->parentModel->getRouteKeyName();
+            $this->routeParameter[$this->getParentShortName()] = '$'.$this->getParentShortName().'->'.$this->parentModel->getRouteKeyName();
         }
-        $this->routeParameter[$this->getModelShortName()] = '$' . $this->getModelShortName() . '->' . $this->model->getRouteKeyName();
+        $this->routeParameter[$this->getModelShortName()] = '$'.$this->getModelShortName().'->'.$this->model->getRouteKeyName();
 
         return $this->routeParameter;
     }
@@ -148,6 +147,4 @@ trait RedirectAbleMethodHelper
 
         return $this;
     }
-
 }
-

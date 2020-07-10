@@ -24,8 +24,8 @@ trait BladeViewTrait
     public function addBreadcrumb(string $link, string $text, ?int $position = null)
     {
         $this->breadCrumbs[] = [
-            'link' => $link,
-            'text' => $text,
+            'link'     => $link,
+            'text'     => $text,
             'position' => $position,
         ];
 

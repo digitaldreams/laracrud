@@ -60,7 +60,7 @@ class Transformer implements Crud
         $this->name = $name;
         $this->namespace = $this->getFullNS(config('laracrud.transformer.namespace'));
         $this->reflectionClass = new \ReflectionClass(get_class($model));
-        $this->modelName = !empty($name) ? $name : $this->reflectionClass->getShortName() . config('laracrud.transformer.classSuffix', 'Transformer');
+        $this->modelName = !empty($name) ? $name : $this->reflectionClass->getShortName().config('laracrud.transformer.classSuffix', 'Transformer');
         $this->makeIncludes();
     }
 
@@ -72,15 +72,15 @@ class Transformer implements Crud
     public function template()
     {
         $vars = [
-            'namespace' => $this->namespace,
-            'modelFullName' => get_class($this->model),
-            'model' => $this->reflectionClass->getShortName(),
-            'properties' => $this->makeProperties(),
-            'modelParam' => lcfirst($this->reflectionClass->getShortName()),
-            'className' => $this->modelName,
+            'namespace'        => $this->namespace,
+            'modelFullName'    => get_class($this->model),
+            'model'            => $this->reflectionClass->getShortName(),
+            'properties'       => $this->makeProperties(),
+            'modelParam'       => lcfirst($this->reflectionClass->getShortName()),
+            'className'        => $this->modelName,
             'availableInclude' => $this->availableIncludes,
-            'defaultInclude' => '',
-            'importNameSpace' => '',
+            'defaultInclude'   => '',
+            'importNameSpace'  => '',
         ];
         $vars['includes'] = $this->generateIncludeCode($vars);
 
@@ -90,9 +90,9 @@ class Transformer implements Crud
     /**
      * Get code and save to disk.
      *
-     * @return mixed
-     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public function save()
     {
@@ -116,7 +116,7 @@ class Transformer implements Crud
             if (is_array($hiddenArray) && in_array($columnClass->name(), $hiddenArray)) {
                 continue;
             }
-            $retStr .= "\t\t\t" . '"' . $columnClass->name() . '" => $' . $modelName . '->' . $columnClass->name() . ',' . PHP_EOL;
+            $retStr .= "\t\t\t".'"'.$columnClass->name().'" => $'.$modelName.'->'.$columnClass->name().','.PHP_EOL;
         }
 
         return $retStr;
@@ -147,15 +147,15 @@ class Transformer implements Crud
     /**
      * @param $class
      *
-     * @return string
-     *
      * @throws \ReflectionException
+     *
+     * @return string
      */
     private function makeTransformer($class, $modelRef)
     {
         $shortName = $modelRef->getShortName();
-        $transformerName = $shortName . config('laracrud.transformer.classSuffix');
-        $transformerClass = $this->getFullNS(config('laracrud.transformer.namespace') . '\\' . $transformerName);
+        $transformerName = $shortName.config('laracrud.transformer.classSuffix');
+        $transformerClass = $this->getFullNS(config('laracrud.transformer.namespace').'\\'.$transformerName);
         $this->import[] = $transformerClass;
 
         return $transformerName;
@@ -167,11 +167,11 @@ class Transformer implements Crud
         $this->includedModels[] = $class;
         $modelRef = new \ReflectionClass(get_class($class));
         $transformerClass = $this->makeTransformer($class, $modelRef);
-        $this->availableIncludes .= '"' . strtolower($method->name) . '",';
+        $this->availableIncludes .= '"'.strtolower($method->name).'",';
         $this->includeArr[] = [
-            'relation' => $method->name,
-            'response' => $response,
-            'method' => ucfirst($method->name),
+            'relation'           => $method->name,
+            'response'           => $response,
+            'method'             => ucfirst($method->name),
             'includeTransformer' => $transformerClass,
         ];
     }

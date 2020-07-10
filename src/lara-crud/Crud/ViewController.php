@@ -51,7 +51,7 @@ class ViewController extends RouteCrud
             $controllerFullName = $ctr['full_name'];
             $routesMethods = isset($this->methodNames[$controllerName]) ? $this->methodNames[$controllerName] : [];
             foreach ($routesMethods as $method) {
-                $actionName = $controllerFullName . '@' . $method;
+                $actionName = $controllerFullName.'@'.$method;
                 $routeInfo = isset($this->routes[$actionName]) ? $this->routes[$actionName] : [];
 
                 if (isset($routeInfo['http_verbs'])) {
@@ -88,8 +88,8 @@ class ViewController extends RouteCrud
         $currentPath = '';
         $viewPath = config('laracrud.view.path');
         foreach ($pathArr as $path) {
-            $currentPath = $currentPath . '/' . $path;
-            $folder = rtrim($viewPath) . '/' . $currentPath;
+            $currentPath = $currentPath.'/'.$path;
+            $folder = rtrim($viewPath).'/'.$currentPath;
             if (!file_exists($folder)) {
                 mkdir($folder);
             }
@@ -109,7 +109,7 @@ class ViewController extends RouteCrud
                 $viewFileName = array_pop($pathArr);
                 $this->makeFolder($pathArr);
                 $folder = $this->getFullPath(implode('/', $pathArr));
-                $fullFilePath = $folder . '/' . $viewFileName . '.blade.php';
+                $fullFilePath = $folder.'/'.$viewFileName.'.blade.php';
                 $pageMaker = $this->pageMaker($viewFileName)->setFilePath($fullFilePath);
                 $pageMaker->save();
             } catch (\Exception $e) {
@@ -126,7 +126,7 @@ class ViewController extends RouteCrud
     protected function getFullPath($view)
     {
         $path = str_replace('.', '/', $view);
-        $folder = rtrim(config('laracrud.view.path'), '/') . '/' . $path;
+        $folder = rtrim(config('laracrud.view.path'), '/').'/'.$path;
 
         return $folder;
     }

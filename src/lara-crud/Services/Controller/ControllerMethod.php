@@ -13,7 +13,9 @@ use LaraCrud\Helpers\ViewAbleMethodHelper;
 
 abstract class ControllerMethod
 {
-    use ViewAbleMethodHelper, RedirectAbleMethodHelper, Helper;
+    use ViewAbleMethodHelper;
+    use RedirectAbleMethodHelper;
+    use Helper;
 
     /**
      * List of full namespaces that will be import on top of controller.
@@ -94,15 +96,15 @@ abstract class ControllerMethod
             $requestNs = config('laracrud.request.namespace');
         }
 
-        $this->requestFolderNs = $this->getFullNS($requestNs) . '\\' . ucfirst(Str::camel($this->model->getTable()));
+        $this->requestFolderNs = $this->getFullNS($requestNs).'\\'.ucfirst(Str::camel($this->model->getTable()));
     }
 
     /**
      * Name of of Controller Method.
      *
-     * @return string
-     *
      * @throws \ReflectionException
+     *
+     * @return string
      */
     public function getMethodName(): string
     {
@@ -137,8 +139,9 @@ abstract class ControllerMethod
     }
 
     /**
-     * @return string
      * @throws \ReflectionException
+     *
+     * @return string
      */
     public function getCode(): string
     {
@@ -158,14 +161,14 @@ abstract class ControllerMethod
     }
 
     /**
-     * @return string
-     *
      * @throws \ReflectionException
+     *
+     * @return string
      */
     protected function getRequestClass(): string
     {
-        $customRequestName = ucfirst($this->getMethodName()) . config('laracrud.request.classSuffix', 'Request');
-        $fullRequestNs = $this->requestFolderNs . '\\' . $customRequestName;
+        $customRequestName = ucfirst($this->getMethodName()).config('laracrud.request.classSuffix', 'Request');
+        $fullRequestNs = $this->requestFolderNs.'\\'.$customRequestName;
 
         if (class_exists($fullRequestNs)) {
             $requestClass = $customRequestName;
@@ -215,9 +218,9 @@ abstract class ControllerMethod
     /**
      * Get Model class Name without namespace.
      *
-     * @return string
-     *
      * @throws \ReflectionException
+     *
+     * @return string
      */
     protected function getParentShortName(): string
     {
@@ -227,5 +230,4 @@ abstract class ControllerMethod
 
         return $this->parentModelShortName = lcfirst((new \ReflectionClass($this->parentModel))->getShortName());
     }
-
 }

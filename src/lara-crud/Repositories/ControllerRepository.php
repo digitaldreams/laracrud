@@ -49,7 +49,7 @@ class ControllerRepository
      *
      * @return \LaraCrud\Repositories\ControllerRepository
      */
-    public function addMethod(ControllerMethod $method): ControllerRepository
+    public function addMethod(ControllerMethod $method): self
     {
         $this->methods[] = $method;
 
@@ -74,7 +74,7 @@ class ControllerRepository
     /**
      * @return \LaraCrud\Repositories\ControllerRepository
      */
-    public function stopSoftDeleteMethods(): ControllerRepository
+    public function stopSoftDeleteMethods(): self
     {
     }
 
@@ -83,7 +83,7 @@ class ControllerRepository
      *
      * @return \LaraCrud\Repositories\ControllerRepository
      */
-    public function setUploadable($path = false): ControllerRepository
+    public function setUploadable($path = false): self
     {
     }
 
@@ -92,7 +92,7 @@ class ControllerRepository
      *
      * @return \LaraCrud\Repositories\ControllerRepository
      */
-    public function setDownloadable($columns = null): ControllerRepository
+    public function setDownloadable($columns = null): self
     {
     }
 
