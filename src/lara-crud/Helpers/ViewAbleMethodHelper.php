@@ -108,7 +108,7 @@ trait ViewAbleMethodHelper
 
         $dataString = PHP_EOL . '';
         foreach ($variables as $key => $variable) {
-            $dataString .= "'" . $key . "' => " . $variable . ',' . PHP_EOL;
+            $dataString .= "\t\t'" . $key . "' => " . $variable . ',' . PHP_EOL;
         }
 
         return $dataString;

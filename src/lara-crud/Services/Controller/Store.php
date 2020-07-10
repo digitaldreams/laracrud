@@ -17,7 +17,7 @@ class Store extends ControllerMethod implements RedirectAbleMethod
         $this->setParameter($requestClass, '$request');
 
         if ($this->parentModel) {
-            $this->setParameter($this->getParentShortName(), '$' . lcfirst($this->getParentShortName()));
+            $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
         }
         return $this;
     }
@@ -28,11 +28,13 @@ class Store extends ControllerMethod implements RedirectAbleMethod
      */
     public function getBody(): string
     {
-        $variable = '$' . lcfirst($this->getModelShortName());
-        $body = $variable . ' = new ' . $this->getModelShortName() . ';' . PHP_EOL;
+        $variable = '$' . $this->getModelShortName();
+        $body = $variable . ' = new ' . ucfirst($this->getModelShortName()) . ';' . PHP_EOL;
+
         if ($this->parentModel) {
             $body .= "\t\t" . $variable . '->' . Str::snake($this->getParentShortName()) . '_id = $' . lcfirst($this->getParentShortName()) . '->id' . PHP_EOL;
         }
+
         $body .= "\t\t" . $variable . '->fill($request->all())->save();' . PHP_EOL;
         return $body;
     }

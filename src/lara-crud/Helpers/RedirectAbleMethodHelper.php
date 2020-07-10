@@ -119,7 +119,7 @@ trait RedirectAbleMethodHelper
      */
     protected function toRouteString($name): string
     {
-        return Str::plural(lcfirst($name));
+        return Str::plural($name);
     }
 
 
@@ -129,9 +129,9 @@ trait RedirectAbleMethodHelper
     protected function generateRouteParameter()
     {
         if ($this->parentModel) {
-            $this->routeParameter[lcfirst($this->getParentShortName())] = '$' . lcfirst($this->getParentShortName()) . '->' . $this->parentModel->getRouteKeyName();
+            $this->routeParameter[$this->getParentShortName()] = '$' . $this->getParentShortName() . '->' . $this->parentModel->getRouteKeyName();
         }
-        $this->routeParameter[lcfirst($this->getModelShortName())] = '$' . lcfirst($this->getModelShortName()) . '->' . $this->model->getRouteKeyName();
+        $this->routeParameter[$this->getModelShortName()] = '$' . $this->getModelShortName() . '->' . $this->model->getRouteKeyName();
 
         return $this->routeParameter;
     }

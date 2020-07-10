@@ -31,11 +31,11 @@ class Index extends ControllerMethod implements ViewAbleMethod
         $this->setParameter('Request', '$request');
 
         if ($this->parentModel) {
-            $this->setVariable(lcfirst($this->getParentShortName()), '$' . lcfirst($this->getParentShortName()))
-                ->setParameter($this->getParentShortName(), '$' . lcfirst($this->getParentShortName()));
+            $this->setVariable($this->getParentShortName(), '$' . $this->getParentShortName())
+                ->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
         }
 
-        $this->setVariable(Str::plural(lcfirst($this->getModelShortName())), '$builder->paginate(10)');
+        $this->setVariable(Str::plural($this->getModelShortName()), '$builder->paginate(10)');
 
         return $this;
     }
@@ -45,9 +45,9 @@ class Index extends ControllerMethod implements ViewAbleMethod
      */
     public function getBody(): string
     {
-        $body = '$builder = ' . $this->modelShortName . '::';
+        $body = '$builder = ' . ucfirst($this->getModelShortName()) . '::';
         $body .= $this->isSearchAble() ? 'search($request->get(\'search\'))' : 'query';
 
-        return $body;
+        return $body . ';';
     }
 }

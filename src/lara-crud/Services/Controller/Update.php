@@ -6,27 +6,30 @@ use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
 class Update extends ControllerMethod implements RedirectAbleMethod
 {
+    /**
+     * @return \LaraCrud\Services\Controller\ControllerMethod|void
+     * @throws \ReflectionException
+     */
+    protected function beforeGenerate()
+    {
+        $requestClass = $this->getRequestClass();
+        $this->setParameter($requestClass, '$request');
+
+        if ($this->parentModel) {
+            $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
+        }
+        $this->setParameter(ucfirst($this->getModelShortName()), '$' . $this->getModelShortName());
+
+        return $this;
+    }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getCode()
+    public function getBody(): string
     {
-        // TODO: Implement getCode() method.
-    }
+        $variable = '$' . $this->getModelShortName();
 
-    public function method()
-    {
-        // TODO: Implement method() method.
-    }
-
-    public function redirectTo()
-    {
-        // TODO: Implement redirectTo() method.
-    }
-
-    public function flashMessage(string $message, string $key = 'message')
-    {
-        // TODO: Implement flashMessage() method.
+        return $variable . '->fill($request->all())->save();' . PHP_EOL;
     }
 }

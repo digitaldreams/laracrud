@@ -209,7 +209,7 @@ abstract class ControllerMethod
             return $this->modelShortName;
         }
 
-        return $this->modelShortName = $this->modelReflectionClass->getShortName();
+        return $this->modelShortName = lcfirst($this->modelReflectionClass->getShortName());
     }
 
     /**
@@ -225,7 +225,7 @@ abstract class ControllerMethod
             return $this->parentModelShortName;
         }
 
-        return $this->parentModelShortName = (new \ReflectionClass($this->parentModel))->getShortName();
+        return $this->parentModelShortName = lcfirst((new \ReflectionClass($this->parentModel))->getShortName());
     }
 
 }
