@@ -32,13 +32,13 @@ class Link
         $version = config('laracrud.view.bootstrap');
         if (class_exists(Page::$policy) && method_exists(Page::$policy, 'create')) {
             $temMan = new TemplateManager("view/$version/link/policy/create.html", [
-                'table' => $this->table,
+                'table'       => $this->table,
                 'createRoute' => Page::getRouteName('create', $this->table),
-                'modelName' => $model . '::class',
+                'modelName'   => $model.'::class',
             ]);
         } else {
             $temMan = new TemplateManager("view/$version/link/create.html", [
-                'table' => $this->table,
+                'table'       => $this->table,
                 'createRoute' => Page::getRouteName('create', $this->table),
             ]);
         }
@@ -58,15 +58,15 @@ class Link
         $version = config('laracrud.view.bootstrap');
         if (class_exists(Page::$policy) && method_exists(Page::$policy, 'update')) {
             $temMan = new TemplateManager("view/$version/link/policy/edit.html", [
-                'table' => $this->table,
+                'table'         => $this->table,
                 'routeModelKey' => $routeModelKey,
-                'editRoute' => Page::getRouteName('edit', $this->table),
+                'editRoute'     => Page::getRouteName('edit', $this->table),
             ]);
         } else {
             $temMan = new TemplateManager("view/$version/link/edit.html", [
-                'table' => $this->table,
+                'table'         => $this->table,
                 'routeModelKey' => $routeModelKey,
-                'editRoute' => Page::getRouteName('edit', $this->table),
+                'editRoute'     => Page::getRouteName('edit', $this->table),
             ]);
         }
 
@@ -89,11 +89,11 @@ class Link
             if ($column->isIgnore() || $column->isProtected()) {
                 continue;
             }
-            $dataOption .= 'data-' . $column->name() . '="{{$record->' . $column->name() . '}}"' . PHP_EOL;
+            $dataOption .= 'data-'.$column->name().'="{{$record->'.$column->name().'}}"'.PHP_EOL;
 
             $version = config('laracrud.view.bootstrap');
             $temMan = new TemplateManager("view/$version/link/edit_modal.html", [
-                'modalName' => $this->table . 'Modal',
+                'modalName'   => $this->table.'Modal',
                 'dataOptions' => $dataOption,
             ]);
 
@@ -111,15 +111,15 @@ class Link
         $version = config('laracrud.view.bootstrap');
         if (class_exists(Page::$policy) && method_exists(Page::$policy, 'view')) {
             $temMan = new TemplateManager("view/$version/link/policy/show.html", [
-                'table' => $this->table,
+                'table'         => $this->table,
                 'routeModelKey' => $routeModelKey,
-                'showRoute' => Page::getRouteName('show', $this->table),
+                'showRoute'     => Page::getRouteName('show', $this->table),
             ]);
         } else {
             $temMan = new TemplateManager("view/$version/link/show.html", [
-                'table' => $this->table,
+                'table'         => $this->table,
                 'routeModelKey' => $routeModelKey,
-                'showRoute' => Page::getRouteName('show', $this->table),
+                'showRoute'     => Page::getRouteName('show', $this->table),
             ]);
         }
 
@@ -139,12 +139,12 @@ class Link
         if (class_exists(Page::$policy) && method_exists(Page::$policy, 'delete')) {
             $temMan = new TemplateManager("view/$version/link/policy/destroy.html", [
                 'routeModelKey' => $routeModelKey,
-                'destroyRoute' => Page::getRouteName('destroy', $this->table),
+                'destroyRoute'  => Page::getRouteName('destroy', $this->table),
             ]);
         } else {
             $temMan = new TemplateManager("view/$version/link/destroy.html", [
                 'routeModelKey' => $routeModelKey,
-                'destroyRoute' => Page::getRouteName('destroy', $this->table),
+                'destroyRoute'  => Page::getRouteName('destroy', $this->table),
             ]);
         }
 

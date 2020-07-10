@@ -8,8 +8,9 @@ use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 class Store extends ControllerMethod implements RedirectAbleMethod
 {
     /**
-     * @return \LaraCrud\Services\Controller\ControllerMethod|void
      * @throws \ReflectionException
+     *
+     * @return \LaraCrud\Services\Controller\ControllerMethod|void
      */
     protected function beforeGenerate()
     {
@@ -17,25 +18,28 @@ class Store extends ControllerMethod implements RedirectAbleMethod
         $this->setParameter($requestClass, '$request');
 
         if ($this->parentModel) {
-            $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
+            $this->setParameter(ucfirst($this->getParentShortName()), '$'.$this->getParentShortName());
         }
+
         return $this;
     }
 
     /**
-     * @return string
      * @throws \ReflectionException
+     *
+     * @return string
      */
     public function getBody(): string
     {
-        $variable = '$' . $this->getModelShortName();
-        $body = $variable . ' = new ' . ucfirst($this->getModelShortName()) . ';' . PHP_EOL;
+        $variable = '$'.$this->getModelShortName();
+        $body = $variable.' = new '.ucfirst($this->getModelShortName()).';'.PHP_EOL;
 
         if ($this->parentModel) {
-            $body .= "\t\t" . $variable . '->' . Str::snake($this->getParentShortName()) . '_id = $' . lcfirst($this->getParentShortName()) . '->id' . PHP_EOL;
+            $body .= "\t\t".$variable.'->'.Str::snake($this->getParentShortName()).'_id = $'.lcfirst($this->getParentShortName()).'->id'.PHP_EOL;
         }
 
-        $body .= "\t\t" . $variable . '->fill($request->all())->save();' . PHP_EOL;
+        $body .= "\t\t".$variable.'->fill($request->all())->save();'.PHP_EOL;
+
         return $body;
     }
 }

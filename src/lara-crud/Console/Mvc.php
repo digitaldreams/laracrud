@@ -49,6 +49,7 @@ class Mvc extends Command
             $table = $this->argument('table');
             $api = $this->option('api');
             Request::checkMissingTable($table);
+
             try {
                 $modelCrud = new Model($table);
                 $modelCrud->save();
@@ -83,6 +84,7 @@ class Mvc extends Command
             }
 
             $this->warn('Creating views files');
+
             try {
                 $indexPage = new Index($model);
                 $indexPage->save();
@@ -103,7 +105,7 @@ class Mvc extends Command
                 $this->error($e->getMessage());
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
+            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 }

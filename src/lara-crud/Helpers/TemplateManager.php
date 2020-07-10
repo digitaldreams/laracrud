@@ -56,10 +56,10 @@ class TemplateManager
     public function getFullPath($filename)
     {
         $retPath = false;
-        if (file_exists(resource_path('views/vendor/laracrud/templates/' . $filename))) {
-            $retPath = resource_path('views/vendor/laracrud/templates/' . $filename);
-        } elseif (file_exists(__DIR__ . '/../../../resources/templates/' . $filename)) {
-            $retPath = __DIR__ . '/../../../resources/templates/' . $filename;
+        if (file_exists(resource_path('views/vendor/laracrud/templates/'.$filename))) {
+            $retPath = resource_path('views/vendor/laracrud/templates/'.$filename);
+        } elseif (file_exists(__DIR__.'/../../../resources/templates/'.$filename)) {
+            $retPath = __DIR__.'/../../../resources/templates/'.$filename;
         }
 
         return $this->path = $retPath;
@@ -95,7 +95,7 @@ class TemplateManager
     {
         $retArr = [];
         foreach ($this->data as $index => $value) {
-            $retArr[$this->startTag . $index . $this->endTag] = $value;
+            $retArr[$this->startTag.$index.$this->endTag] = $value;
         }
 
         return $retArr;
@@ -147,7 +147,7 @@ class TemplateManager
     public function save($relativePath)
     {
         $filepath = config('laracrud.view.path');
-        $file = new \SplFileObject(base_path($filepath . $relativePath), 'w+');
+        $file = new \SplFileObject(base_path($filepath.$relativePath), 'w+');
 
         return $file->fwrite($this->template);
     }

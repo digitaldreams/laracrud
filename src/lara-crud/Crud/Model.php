@@ -74,34 +74,34 @@ class Model implements Crud
     /**
      * Done all processing work and make the final code that is ready to save as php file.
      *
-     * @return string
-     *
      * @throws \Exception
+     *
+     * @return string
      */
     public function template()
     {
         $relations = $this->relations();
         $data = [
-            'namespace' => $this->namespace,
-            'modelName' => $this->modelName,
+            'namespace'       => $this->namespace,
+            'modelName'       => $this->modelName,
             'propertyDefiner' => config('laracrud.model.propertyDefiner') ? implode("\n", array_reverse($this->modelBuilder->propertyDefiners)) : '',
-            'methodDefiner' => config('laracrud.model.methodDefiner') ? implode("\n", array_reverse($this->modelBuilder->methodDefiners)) : '',
+            'methodDefiner'   => config('laracrud.model.methodDefiner') ? implode("\n", array_reverse($this->modelBuilder->methodDefiners)) : '',
 
             'tableName' => $this->table->name(),
             'constants' => $this->constants(),
-            'guarded' => config('laracrud.model.guarded') ? $this->guarded() : '',
-            'fillable' => config('laracrud.model.fillable') ? $this->fillable() : '',
+            'guarded'   => config('laracrud.model.guarded') ? $this->guarded() : '',
+            'fillable'  => config('laracrud.model.fillable') ? $this->fillable() : '',
 
-            'dateColumns' => $this->dates(),
-            'casts' => config('laracrud.model.casts') ? $this->casts() : '',
+            'dateColumns'   => $this->dates(),
+            'casts'         => config('laracrud.model.casts') ? $this->casts() : '',
             'relationShips' => $relations,
 
-            'mutators' => config('laracrud.model.mutators') ? $this->mutators() : '',
-            'accessors' => config('laracrud.model.accessors') ? $this->accessors() : '',
-            'scopes' => config('laracrud.model.scopes') ? $this->scopes() : '',
-            'traits' => !empty($this->traits) ? 'use ' . implode(', ', $this->traits) . ';' : '',
+            'mutators'         => config('laracrud.model.mutators') ? $this->mutators() : '',
+            'accessors'        => config('laracrud.model.accessors') ? $this->accessors() : '',
+            'scopes'           => config('laracrud.model.scopes') ? $this->scopes() : '',
+            'traits'           => !empty($this->traits) ? 'use '.implode(', ', $this->traits).';' : '',
             'importNamespaces' => !empty($this->importNamespaces) ? implode("\n", $this->importNamespaces) : '',
-            'searchable' => $this->searchableColumns,
+            'searchable'       => $this->searchableColumns,
         ];
         $tempMan = new TemplateManager('model/template.txt', $data);
 
@@ -111,15 +111,15 @@ class Model implements Crud
     /**
      * Save code as php file.
      *
-     * @return mixed
-     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public function save()
     {
         $filePath = $this->checkPath();
         if (file_exists($filePath)) {
-            throw new \Exception($this->namespace . '\\' . $this->modelName . ' already exists');
+            throw new \Exception($this->namespace.'\\'.$this->modelName.' already exists');
         }
         $model = new \SplFileObject($filePath, 'w+');
         $model->fwrite($this->template());
@@ -199,9 +199,9 @@ class Model implements Crud
     /**
      * Making relationship code.
      *
-     * @return string
-     *
      * @throws \Exception
+     *
+     * @return string
      */
     protected function relations()
     {
@@ -211,12 +211,12 @@ class Model implements Crud
         foreach ($relations as $relation) {
             $tempMan = new TemplateManager('model/relationship.txt', [
                 'relationShip' => $relation['relationShip'],
-                'modelName' => $relation['modelName'],
-                'methodName' => $relation['methodName'],
-                'returnType' => $relation['returnType'],
-                'params' => $relation['params'],
+                'modelName'    => $relation['modelName'],
+                'methodName'   => $relation['methodName'],
+                'returnType'   => $relation['returnType'],
+                'params'       => $relation['params'],
             ]);
-            $temp .= $tempMan->get() . PHP_EOL;
+            $temp .= $tempMan->get().PHP_EOL;
             array_unshift($this->modelBuilder->propertyDefiners, $relation['propertyDefiners']);
         }
 
@@ -235,7 +235,7 @@ class Model implements Crud
         ]);
         $scopes = implode("\n", array_reverse($this->modelBuilder->scopes));
 
-        return $scopes . PHP_EOL . $tempMan->get();
+        return $scopes.PHP_EOL.$tempMan->get();
     }
 
     /**
@@ -292,7 +292,7 @@ class Model implements Crud
      */
     public function getFullModelName()
     {
-        return $this->namespace . '\\' . $this->modelName;
+        return $this->namespace.'\\'.$this->modelName;
     }
 
     protected function isSoftDeleteAble()
@@ -313,12 +313,12 @@ class Model implements Crud
         $arr = null;
         if ($columns = $this->table->searchableColumns()) {
             foreach ($columns as $column) {
-                $arr .= "\t'" . $column . "'," . PHP_EOL;
+                $arr .= "\t'".$column."',".PHP_EOL;
             }
 
             $this->traits[] = 'FullTextSearch';
             $this->importNamespaces[] = 'use LaraCrud\Services\FullTextSearch;';
-            $this->searchableColumns = "\t" . 'protected $searchable = [' . "\n" . $arr . '];';
+            $this->searchableColumns = "\t".'protected $searchable = ['."\n".$arr.'];';
         }
 
         return $this;

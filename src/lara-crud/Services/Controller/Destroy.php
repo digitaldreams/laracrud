@@ -7,15 +7,16 @@ use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 class Destroy extends ControllerMethod implements RedirectAbleMethod
 {
     /**
-     * @return \LaraCrud\Services\Controller\ControllerMethod|void
      * @throws \ReflectionException
+     *
+     * @return \LaraCrud\Services\Controller\ControllerMethod|void
      */
     protected function beforeGenerate()
     {
         if ($this->parentModel) {
-            $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
+            $this->setParameter(ucfirst($this->getParentShortName()), '$'.$this->getParentShortName());
         }
-        $this->setParameter(ucfirst($this->getModelShortName()), '$' . $this->getModelShortName());
+        $this->setParameter(ucfirst($this->getModelShortName()), '$'.$this->getModelShortName());
 
         return $this;
     }
@@ -33,7 +34,7 @@ class Destroy extends ControllerMethod implements RedirectAbleMethod
      */
     public function getBody(): string
     {
-        return '$' . $this->getModelShortName() . '->delete();';
+        return '$'.$this->getModelShortName().'->delete();';
     }
 
     /**

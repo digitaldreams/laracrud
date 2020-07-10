@@ -55,15 +55,15 @@ class Route extends Command
                 $rit = new \RecursiveIteratorIterator($dirIt);
                 while ($rit->valid()) {
                     if (!$rit->isDot()) {
-                        $controllers[] = rtrim($namespace, '\\') . '\\' . str_replace('', str_replace('/', '\\', $rit->getSubPathName()));
+                        $controllers[] = rtrim($namespace, '\\').'\\'.str_replace('', str_replace('/', '\\', $rit->getSubPathName()));
                     }
                     $rit->next();
                 }
                 $routeCrud = new RouteCrud($controllers, $api);
             } else {
                 $controller = str_replace('/', '\\', $controller);
-                if (!stripos(rtrim($namespace, '\\') . '\\', $controller)) {
-                    $controller = rtrim($namespace, '\\') . '\\' . $controller;
+                if (!stripos(rtrim($namespace, '\\').'\\', $controller)) {
+                    $controller = rtrim($namespace, '\\').'\\'.$controller;
                 }
 
                 $routeCrud = new RouteCrud($controller, $api);
@@ -76,7 +76,7 @@ class Route extends Command
                 $this->info('Routes created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
+            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 }

@@ -54,7 +54,7 @@ class Test extends RouteCrud implements Crud
         $this->suffix = config('laracrud.test.feature.suffix', 'Test');
         $this->namespace = config('laracrud.test.feature.namespace', 'Tests\Feature');
         $this->controllerInfo = array_shift($this->controllerMethods);
-        $this->fileName = $this->controllerInfo['shortName'] . $this->suffix;
+        $this->fileName = $this->controllerInfo['shortName'].$this->suffix;
     }
 
     /**
@@ -75,11 +75,11 @@ class Test extends RouteCrud implements Crud
      */
     public function template()
     {
-        return (new TemplateManager('test/' . $this->template . '/template.txt', [
+        return (new TemplateManager('test/'.$this->template.'/template.txt', [
             'namespace' => $this->namespace,
-            'import' => '',
+            'import'    => '',
             'className' => $this->fileName,
-            'methods' => $this->getMethodTestCode(),
+            'methods'   => $this->getMethodTestCode(),
         ]))->get();
     }
 
@@ -107,7 +107,7 @@ class Test extends RouteCrud implements Crud
      */
     protected function getRouteInfo($controller, $method)
     {
-        $action = $controller . '@' . $method;
+        $action = $controller.'@'.$method;
 
         return isset($this->routes[$action]) ? $this->routes[$action] : [];
     }
@@ -115,13 +115,13 @@ class Test extends RouteCrud implements Crud
     /**
      * Get code and save to disk.
      *
-     * @return mixed
-     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public function save()
     {
-        $fullPath = $this->toPath($this->namespace . '\\' . $this->fileName) . '.php';
+        $fullPath = $this->toPath($this->namespace.'\\'.$this->fileName).'.php';
         if (file_exists($fullPath)) {
             throw new \Exception('TestClass already exists');
         }
@@ -137,6 +137,6 @@ class Test extends RouteCrud implements Crud
      */
     public function saveFile($fileName, $content)
     {
-        $fileName = $this->namespace . '/' . $fileName . $this->suffix . '.php';
+        $fileName = $this->namespace.'/'.$fileName.$this->suffix.'.php';
     }
 }

@@ -33,17 +33,17 @@ class Index extends Page
     public function template()
     {
         $file = '';
-        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
+        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace').'::' : '';
         $folder = 3 == $this->version ? 'panels' : 'cards';
         $link = new Link($this->table->name());
         $data = [
-            'table' => $this->table->name(),
-            'layout' => config('laracrud.view.layout'),
-            'folder' => $prefix . $folder,
-            'routeModelKey' => $this->model->getRouteKeyName(),
-            'searchBox' => '',
+            'table'           => $this->table->name(),
+            'layout'          => config('laracrud.view.layout'),
+            'folder'          => $prefix.$folder,
+            'routeModelKey'   => $this->model->getRouteKeyName(),
+            'searchBox'       => '',
             'partialFilename' => Str::singular($this->table->name()),
-            'createLink' => $link->create(get_class($this->model)),
+            'createLink'      => $link->create(get_class($this->model)),
         ];
         switch ($this->type) {
             case 'panel':
@@ -65,9 +65,9 @@ class Index extends Page
     }
 
     /**
-     * @return string
-     *
      * @throws \Exception
+     *
+     * @return string
      */
     protected function tableView()
     {

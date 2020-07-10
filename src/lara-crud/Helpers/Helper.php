@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 
 trait Helper
 {
-
     /**
      * Import Namespace for Usages.
      *
@@ -28,9 +27,9 @@ trait Helper
      *
      * @param string $table
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public static function checkMissingTable($table)
     {
@@ -39,7 +38,8 @@ trait Helper
         $missingTable = array_diff($insertAbleTable, $availableTables);
 
         if (!empty($missingTable)) {
-            $message = implode(',', $missingTable) . ' tables not found in ' . "\n" . implode("\n", $availableTables);
+            $message = implode(',', $missingTable).' tables not found in '."\n".implode("\n", $availableTables);
+
             throw new \Exception($message);
         }
 
@@ -60,7 +60,7 @@ trait Helper
             $this->modelName = $this->getModelName(array_pop($narr));
 
             foreach ($narr as $path) {
-                $this->namespace .= '\\' . ucfirst($path);
+                $this->namespace .= '\\'.ucfirst($path);
             }
         } else {
             $this->modelName = $this->getModelName($name);
@@ -112,14 +112,14 @@ trait Helper
             $nextPath = '';
             $folders = explode('/', $relPath);
             foreach ($folders as $folder) {
-                $nextPath .= !empty($nextPath) ? '/' . $folder : $folder;
+                $nextPath .= !empty($nextPath) ? '/'.$folder : $folder;
                 if (!file_exists(base_path($nextPath))) {
                     mkdir(base_path($nextPath));
                 }
             }
         }
 
-        return base_path($this->toPath($this->namespace) . '/' . $this->modelName . $extension);
+        return base_path($this->toPath($this->namespace).'/'.$this->modelName.$extension);
     }
 
     /**
@@ -134,9 +134,9 @@ trait Helper
         $loadComposerJson = new \SplFileObject(base_path('composer.json'));
         $composerArr = json_decode($loadComposerJson->fread($loadComposerJson->getSize()), true);
         $psr4 = isset($composerArr['autoload']['psr-4']) ? $composerArr['autoload']['psr-4'] : [];
-        $rootPath = isset($psr4[$rootNs . '\\']) ? $psr4[$rootNs . '\\'] : lcfirst($rootNs);
+        $rootPath = isset($psr4[$rootNs.'\\']) ? $psr4[$rootNs.'\\'] : lcfirst($rootNs);
 
-        return rtrim($rootPath, '/') . '/' . implode('/', $nsArr);
+        return rtrim($rootPath, '/').'/'.implode('/', $nsArr);
     }
 
     /**
@@ -169,7 +169,7 @@ trait Helper
             return $rootNs;
         }
         if (0 !== substr_compare($namespace, $rootNs, 0, strlen($rootNs))) {
-            return trim($rootNs, '\\') . '\\' . $namespace;
+            return trim($rootNs, '\\').'\\'.$namespace;
         }
 
         return $namespace;
@@ -183,7 +183,7 @@ trait Helper
         $retStr = '';
         $ns = array_unique($this->import);
         foreach ($ns as $namespace) {
-            $retStr .= 'use ' . $namespace . ';' . PHP_EOL;
+            $retStr .= 'use '.$namespace.';'.PHP_EOL;
         }
 
         return $retStr;
@@ -194,6 +194,6 @@ trait Helper
      */
     public function getFullName()
     {
-        return $this->namespace . '\\' . $this->fileName;
+        return $this->namespace.'\\'.$this->fileName;
     }
 }

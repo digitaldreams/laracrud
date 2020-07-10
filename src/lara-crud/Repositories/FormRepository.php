@@ -7,7 +7,6 @@ use LaraCrud\Contracts\ModelContract;
 
 class FormRepository implements FormContract
 {
-
     /**
      * @return string
      */

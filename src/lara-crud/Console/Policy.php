@@ -39,7 +39,7 @@ class Policy extends Command
             $policyCrud->save();
             $this->info('Policy class created successfully');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
+            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 }

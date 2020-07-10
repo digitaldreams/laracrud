@@ -29,24 +29,24 @@ class MigrationCrud implements Crud
      * @var array
      */
     protected $columnMap = [
-        'varchar' => 'string',
-        'char' => 'char',
-        'text' => 'text',
+        'varchar'    => 'string',
+        'char'       => 'char',
+        'text'       => 'text',
         'mediumtext' => 'mediumText',
-        'longtext' => 'longText',
-        'int' => 'integer',
-        'tinyint' => 'tinyInteger',
-        'smallint' => 'smallInteger',
-        'mediumint' => 'mediumInteger',
-        'bigint' => 'bigInteger',
-        'float' => 'float',
-        'double' => 'double',
-        'decimal' => 'decimal',
-        'enum' => 'enum',
-        'date' => 'date',
-        'datetime' => 'dateTime',
-        'time' => 'time',
-        'timestamp' => 'timestamp',
+        'longtext'   => 'longText',
+        'int'        => 'integer',
+        'tinyint'    => 'tinyInteger',
+        'smallint'   => 'smallInteger',
+        'mediumint'  => 'mediumInteger',
+        'bigint'     => 'bigInteger',
+        'float'      => 'float',
+        'double'     => 'double',
+        'decimal'    => 'decimal',
+        'enum'       => 'enum',
+        'date'       => 'date',
+        'datetime'   => 'dateTime',
+        'time'       => 'time',
+        'timestamp'  => 'timestamp',
     ];
 
     /**
@@ -69,32 +69,32 @@ class MigrationCrud implements Crud
         $retContent = '';
         $rules = $this->rules();
         foreach ($rules as $r) {
-            $retContent .= "\t" . "\t" . "\t" . '$table->' . $r['methodName'];
-            $retContent .= !empty($r['mainParams']) ? '("' . $r['columnName'] . '",' . $r['mainParams'] . ')' : '("' . $r['columnName'] . '")';
+            $retContent .= "\t"."\t"."\t".'$table->'.$r['methodName'];
+            $retContent .= !empty($r['mainParams']) ? '("'.$r['columnName'].'",'.$r['mainParams'].')' : '("'.$r['columnName'].'")';
             if (!empty($r['otherMethods'])) {
                 foreach ($r['otherMethods'] as $om) {
-                    $retContent .= '->' . $om['name'] . '(' . $om['params'] . ')';
+                    $retContent .= '->'.$om['name'].'('.$om['params'].')';
                 }
             }
-            $retContent .= ';' . PHP_EOL;
+            $retContent .= ';'.PHP_EOL;
         }
         if (!empty($this->fk)) {
             foreach ($this->fk as $column => $rel) {
                 if (!empty($rel['references']) && !empty($rel['on'])) {
                     $fkTemp = new TemplateManager('migration/foreign.txt', [
-                        'column' => $column,
+                        'column'     => $column,
                         'references' => $rel['references'],
-                        'on' => $rel['on'],
+                        'on'         => $rel['on'],
                     ]);
-                    $retContent .= $fkTemp->get() . PHP_EOL;
+                    $retContent .= $fkTemp->get().PHP_EOL;
                 }
             }
         }
 
         $mtemp = new TemplateManager('migration/template.txt', [
             'className' => $this->generateClassName($this->table->name()),
-            'table' => $this->table->name(),
-            'content' => $retContent,
+            'table'     => $this->table->name(),
+            'content'   => $retContent,
         ]);
 
         return $mtemp->get();
@@ -107,7 +107,7 @@ class MigrationCrud implements Crud
      */
     public function save()
     {
-        $fullPath = config('laracrud.migrationPath', 'database/migrations/') . $this->generateName($this->table->name()) . '.php';
+        $fullPath = config('laracrud.migrationPath', 'database/migrations/').$this->generateName($this->table->name()).'.php';
         $migrationFile = new \SplFileObject($fullPath, 'w+');
         $migrationFile->fwrite($this->template());
     }
@@ -138,8 +138,8 @@ class MigrationCrud implements Crud
             }
             //for enum data type we will use in validator.
             if ('enum' == $dataType) {
-                $retVals = join("', '", $column->options());
-                $params = '[\'' . $retVals . '\']';
+                $retVals = implode("', '", $column->options());
+                $params = '[\''.$retVals.'\']';
             } elseif ('varchar' == $dataType) {
                 $params = $column->length();
             } elseif ('tinyint' == $dataType) {
@@ -164,29 +164,29 @@ class MigrationCrud implements Crud
             $defaultValue = $column->defaultValue();
             if (!empty($defaultValue)) {
                 $otherMethods[] = [
-                    'name' => 'default',
-                    'params' => "'" . $defaultValue . "'",
+                    'name'   => 'default',
+                    'params' => "'".$defaultValue."'",
                 ];
             }
             if ($column->isUnique()) {
                 $otherMethods[] = [
-                    'name' => 'unique',
+                    'name'   => 'unique',
                     'params' => '',
                 ];
             }
             if ($column->isForeign()) {
                 $otherMethods[] = [
-                    'name' => 'unsigned',
+                    'name'   => 'unsigned',
                     'params' => '',
                 ];
                 $this->fk[$column->name()] = [
                     'references' => $column->foreignColumn(),
-                    'on' => $column->foreignTable(),
+                    'on'         => $column->foreignTable(),
                 ];
             }
             if ($column->isNull()) {
                 $otherMethods[] = [
-                    'name' => 'nullable',
+                    'name'   => 'nullable',
                     'params' => '',
                 ];
             }
@@ -210,7 +210,7 @@ class MigrationCrud implements Crud
      */
     public function generateName($table)
     {
-        return date('Y_m_d_His') . '_create_' . $table . '_table';
+        return date('Y_m_d_His').'_create_'.$table.'_table';
     }
 
     /**
@@ -218,16 +218,16 @@ class MigrationCrud implements Crud
      *
      * @param $table
      *
-     * @return string
-     *
      * @throws \Exception
+     *
+     * @return string
      */
     public function generateClassName($table)
     {
-        $class = 'create' . ucfirst(camel_case($table)) . 'Table';
+        $class = 'create'.ucfirst(camel_case($table)).'Table';
 
         if (class_exists($class)) {
-            throw new \Exception('Migration for table ' . $table . ' already exists');
+            throw new \Exception('Migration for table '.$table.' already exists');
         }
 
         return $class;

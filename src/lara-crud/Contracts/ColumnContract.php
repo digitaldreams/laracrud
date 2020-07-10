@@ -69,7 +69,7 @@ interface ColumnContract
      *
      * @return mixed
      */
-    public function setOrder(int $number): ColumnContract;
+    public function setOrder(int $number): self;
 
     /**
      * @return mixed

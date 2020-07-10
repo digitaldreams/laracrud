@@ -4,7 +4,6 @@ namespace LaraCrud\Helpers;
 
 trait DatabaseHelper
 {
-
     /**
      * Get connected database name.
      *
