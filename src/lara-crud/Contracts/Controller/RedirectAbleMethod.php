@@ -7,12 +7,9 @@ interface RedirectAbleMethod
     /**
      * @return mixed
      */
-    public function method(): string;
+    public function route(): string;
 
-    /**
-     * @return mixed
-     */
-    public function redirectTo(): string;
+    public function getFlashMessage();
 
-    public function flashMessage(string $message, string $key = 'message');
+    public function getFlashMessageKey();
 }

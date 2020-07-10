@@ -2,23 +2,38 @@
 
 namespace LaraCrud\Services\Controller;
 
+use Illuminate\Support\Str;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
 class Store extends ControllerMethod implements RedirectAbleMethod
 {
-
-    public function method(): string
+    /**
+     * @return \LaraCrud\Services\Controller\ControllerMethod|void
+     * @throws \ReflectionException
+     */
+    protected function beforeGenerate()
     {
-        // TODO: Implement method() method.
+        $requestClass = $this->getRequestClass();
+        $this->setParameter($requestClass, '$request');
+
+        if ($this->parentModel) {
+            $this->setParameter($this->getParentShortName(), '$' . lcfirst($this->getParentShortName()));
+        }
+        return $this;
     }
 
-    public function redirectTo(): string
+    /**
+     * @return string
+     * @throws \ReflectionException
+     */
+    public function getBody(): string
     {
-        // TODO: Implement redirectTo() method.
-    }
-
-    public function flashMessage(string $message, string $key = 'message')
-    {
-        // TODO: Implement flashMessage() method.
+        $variable = '$' . lcfirst($this->getModelShortName());
+        $body = $variable . ' = new ' . $this->getModelShortName() . ';' . PHP_EOL;
+        if ($this->parentModel) {
+            $body .= "\t\t" . $variable . '->' . Str::snake($this->getParentShortName()) . '_id = $' . lcfirst($this->getParentShortName()) . '->id' . PHP_EOL;
+        }
+        $body .= "\t\t" . $variable . '->fill($request->all())->save();' . PHP_EOL;
+        return $body;
     }
 }

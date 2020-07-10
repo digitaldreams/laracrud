@@ -232,7 +232,7 @@ return [
          *
          * If you want wrap up all of your route name into your package namespace like blog in that case.
          * Your all routes name start with blog
-         * This is actuall as paramter of Route::group
+         * This is a parameter of Route::group
          *
          * Route::group(['as'=>'blog::', 'namespace' => 'Blog\Http\Controllers'], function () {
          *     Route::get('posts','PostController@index')->name('posts.index')

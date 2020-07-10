@@ -8,11 +8,12 @@ use LaraCrud\Contracts\Controller\ApiResponseMethod;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 use LaraCrud\Contracts\ViewAbleMethod;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\RedirectAbleMethodHelper;
 use LaraCrud\Helpers\ViewAbleMethodHelper;
 
 abstract class ControllerMethod
 {
-    use ViewAbleMethodHelper, Helper;
+    use ViewAbleMethodHelper, RedirectAbleMethodHelper, Helper;
 
     /**
      * List of full namespaces that will be import on top of controller.
@@ -144,7 +145,7 @@ abstract class ControllerMethod
         if ($this instanceof ViewAbleMethod) {
             return $this->beforeGenerate()->generateViewCode();
         } elseif ($this instanceof RedirectAbleMethod) {
-            return $this->generateRedirectAbleCode();
+            return $this->beforeGenerate()->generateRedirectAbleCode();
         }
     }
 
@@ -195,10 +196,6 @@ abstract class ControllerMethod
     public function getBody(): string
     {
         return '';
-    }
-
-    protected function generateRedirectAbleCode()
-    {
     }
 
     /**

@@ -1,0 +1,10 @@
+    /**
+     * @@PHPDocComment@@
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function @@methodName@@(@@parameters@@)
+    {
+        @@body@@
+         return redirect()->route(@@route@@)->with('@@flashKey@@','@@flashMessage@@');
+    }
