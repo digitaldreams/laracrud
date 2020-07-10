@@ -9,7 +9,8 @@ namespace LaraCrud\Helpers;
  */
 class ForeignKey
 {
-    use DatabaseHelper, Helper;
+    use DatabaseHelper;
+    use Helper;
 
     const RELATION_BELONGS_TO = 'belongsTo';
     const RELATION_HAS_MANY = 'hasMany';
@@ -133,18 +134,18 @@ class ForeignKey
 
         if ($this->isPivot) {
             $relation = [
-                'name' => static::RELATION_BELONGS_TO_MANY,
+                'name'        => static::RELATION_BELONGS_TO_MANY,
                 'foreign_key' => $this->column(),
-                'model' => $this->modelName(),
-                'other_key' => $this->foreignColumn(),
-                'pivotTable' => $this->table(),
+                'model'       => $this->modelName(),
+                'other_key'   => $this->foreignColumn(),
+                'pivotTable'  => $this->table(),
             ];
         } else {
             $relation = [
-                'name' => static::RELATION_BELONGS_TO,
+                'name'        => static::RELATION_BELONGS_TO,
                 'foreign_key' => $this->column(),
-                'model' => $this->modelName(),
-                'other_key' => $this->foreignColumn(),
+                'model'       => $this->modelName(),
+                'other_key'   => $this->foreignColumn(),
             ];
         }
 

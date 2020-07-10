@@ -44,18 +44,18 @@ class Show extends Page
     public function template()
     {
         $link = new Link($this->table->name());
-        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
+        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace').'::' : '';
         $routeKey = $this->dataStore['routeModelKey'] ?? 'id';
 
         return (new TemplateManager("view/{$this->version}/pages/show.html", [
-            'table' => $this->table->name(),
-            'tableTitle' => $this->getTitleColumn(),
-            'layout' => config('laracrud.view.layout'),
-            'folder' => $prefix . $this->panel->getFolder(),
-            'routeModelKey' => $this->model->getRouteKeyName(),
+            'table'           => $this->table->name(),
+            'tableTitle'      => $this->getTitleColumn(),
+            'layout'          => config('laracrud.view.layout'),
+            'folder'          => $prefix.$this->panel->getFolder(),
+            'routeModelKey'   => $this->model->getRouteKeyName(),
             'partialFilename' => Str::singular($this->table->name()),
-            'indexRoute' => $this->getRouteName('index', $this->table->name()),
-            'buttons' => PHP_EOL . $link->create(get_class($this->model)) . PHP_EOL . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . PHP_EOL,
+            'indexRoute'      => $this->getRouteName('index', $this->table->name()),
+            'buttons'         => PHP_EOL.$link->create(get_class($this->model)).PHP_EOL.$link->edit($routeKey).PHP_EOL.$link->destroy($routeKey).PHP_EOL,
         ]))->get();
     }
 

@@ -56,7 +56,7 @@ class Test extends Command
 
                 while ($rit->valid()) {
                     if (!$rit->isDot()) {
-                        $controllers[] = rtrim($namespace, '\\') . '\\' . str_replace(
+                        $controllers[] = rtrim($namespace, '\\').'\\'.str_replace(
                             '.php',
                             '',
                             str_replace('/', '\\', $rit->getSubPathName())
@@ -67,8 +67,8 @@ class Test extends Command
                 $testCrud = new TestCrud($controllers, $api);
             } else {
                 $controller = str_replace('/', '\\', $controller);
-                if (!stripos(rtrim($namespace, '\\') . '\\', $controller)) {
-                    $controller = rtrim($namespace, '\\') . '\\' . $controller;
+                if (!stripos(rtrim($namespace, '\\').'\\', $controller)) {
+                    $controller = rtrim($namespace, '\\').'\\'.$controller;
                 }
 
                 $testCrud = new TestCrud($controller, $api);
@@ -81,7 +81,7 @@ class Test extends Command
                 $this->info('Test created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
+            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 }

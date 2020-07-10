@@ -88,14 +88,14 @@ class Policy implements Crud
         }
 
         if (0 !== substr_compare($modelNamespace, '\\', 0, 1)) {
-            $modelNamespace = '\\' . $modelNamespace;
+            $modelNamespace = '\\'.$modelNamespace;
         }
         $this->modelNameSpace = $modelNamespace;
 
-        $this->modelFullClass = $this->modelName = class_exists($model) ? $model : $this->modelNameSpace . '\\' . $model;
+        $this->modelFullClass = $this->modelName = class_exists($model) ? $model : $this->modelNameSpace.'\\'.$model;
 
         $this->checkName($name);
-        $this->namespace = $this->getFullNS(trim(config('laracrud.policy.namespace'), ' / ')) . $this->subNameSpace;
+        $this->namespace = $this->getFullNS(trim(config('laracrud.policy.namespace'), ' / ')).$this->subNameSpace;
     }
 
     /**
@@ -110,20 +110,20 @@ class Policy implements Crud
         foreach ($this->only as $method) {
             $fileName = $tempCheck->getFullPath("policy/$method.txt") ? "policy/$method.txt" : 'policy/default.txt';
             $methodsTemp[] = (new TemplateManager($fileName, [
-                'method' => $method,
-                'modelClass' => $this->shortModelName,
+                'method'         => $method,
+                'modelClass'     => $this->shortModelName,
                 'modelFullClass' => $this->modelFullClass,
-                'modelClassVar' => lcfirst($this->shortModelName),
+                'modelClassVar'  => lcfirst($this->shortModelName),
             ]))->get();
         }
-        $userClass = !empty(config('auth.providers.users.model')) ? config('auth.providers.users.model') : config('laracrud.model.namespace') . '\\User';
+        $userClass = !empty(config('auth.providers.users.model')) ? config('auth.providers.users.model') : config('laracrud.model.namespace').'\\User';
 
         return (new TemplateManager('policy/template.txt', [
-            'namespace' => $this->namespace,
-            'className' => $this->getClassName(),
+            'namespace'      => $this->namespace,
+            'className'      => $this->getClassName(),
             'modelFullClass' => $this->modelFullClass,
-            'userClass' => $userClass,
-            'methods' => implode("\n", $methodsTemp),
+            'userClass'      => $userClass,
+            'methods'        => implode("\n", $methodsTemp),
         ]))->get();
     }
 
@@ -152,7 +152,7 @@ class Policy implements Crud
                 $this->name = array_pop($narr);
 
                 foreach ($narr as $p) {
-                    $this->subNameSpace .= '\\' . $p;
+                    $this->subNameSpace .= '\\'.$p;
                 }
             } else {
                 $this->name = $name;
@@ -168,9 +168,9 @@ class Policy implements Crud
     private function checkController($controller)
     {
         if (!empty($controller)) {
-            $this->controllerName = class_exists($controller) ? $controller : $this->getFullNS(config('laracrud.controller.namespace') . '\\' . $controller);
+            $this->controllerName = class_exists($controller) ? $controller : $this->getFullNS(config('laracrud.controller.namespace').'\\'.$controller);
             if (!class_exists($this->controllerName)) {
-                throw new \Exception($controller . ' does not exists');
+                throw new \Exception($controller.' does not exists');
             }
             $classInspector = new ClassInspector($this->controllerName);
             $this->only = $classInspector->publicMethods;
@@ -182,6 +182,6 @@ class Policy implements Crud
      */
     private function getClassName()
     {
-        return !empty($this->name) ? $this->name : $this->shortModelName . config('laracrud.policy.classSuffix');
+        return !empty($this->name) ? $this->name : $this->shortModelName.config('laracrud.policy.classSuffix');
     }
 }

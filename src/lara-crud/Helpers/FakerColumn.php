@@ -101,12 +101,12 @@ class FakerColumn
             case 'varchar':
                 foreach ($this->map as $faker => $columns) {
                     if (in_array($this->column->name(), $columns)) {
-                        return '$faker->' . $faker;
+                        return '$faker->'.$faker;
                     }
                 }
                 break;
             case 'enum':
-                return 'array_rand([\'' . implode("','", $this->column->options()) . '\'], 1)';
+                return 'array_rand([\''.implode("','", $this->column->options()).'\'], 1)';
                 break;
             case 'longtext':
             case 'mediumtext':

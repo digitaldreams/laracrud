@@ -79,7 +79,7 @@ class Controller extends Command
                 $this->info('Policy class created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
+            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
         }
     }
 
@@ -87,7 +87,7 @@ class Controller extends Command
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         if (!class_exists($model)) {
-            return $modelNamespace . '\\' . $model;
+            return $modelNamespace.'\\'.$model;
         }
 
         return false;

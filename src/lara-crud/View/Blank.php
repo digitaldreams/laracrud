@@ -27,8 +27,8 @@ class Blank extends Page
     public function template()
     {
         return (new TemplateManager("view/{$this->version}/pages/blank.html", [
-            'layout' => config('laracrud.view.layout'),
-            'table' => $this->table->name(),
+            'layout'     => config('laracrud.view.layout'),
+            'table'      => $this->table->name(),
             'indexRoute' => $this->getRouteName('index', $this->table->name()),
         ]))->get();
     }

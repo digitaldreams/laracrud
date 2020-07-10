@@ -42,7 +42,7 @@ class TestMethod
         $this->setHttpVerb($http_verb);
 
         if (!class_exists($this->controller)) {
-            throw new \Exception($this->controller . ' Class does not exists');
+            throw new \Exception($this->controller.' Class does not exists');
         }
         $this->reflection = new \ReflectionMethod($this->controller, $this->method);
         $this->template = !empty($api) ? 'api' : 'web';
@@ -68,7 +68,7 @@ class TestMethod
                 continue;
             }
             $optional = true == $param->isOptional() ? '?' : '';
-            $params .= '/{' . $param->getName() . $optional . '}';
+            $params .= '/{'.$param->getName().$optional.'}';
         }
 
         return $params;
@@ -79,7 +79,7 @@ class TestMethod
      */
     public function template()
     {
-        return (new TemplateManager('test/' . $this->template . '/' . $this->http_verb . '.txt', [
+        return (new TemplateManager('test/'.$this->template.'/'.$this->http_verb.'.txt', [
             'name' => ucfirst($this->method),
             'path' => $this->path,
             'data' => $this->data,

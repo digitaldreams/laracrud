@@ -8,7 +8,6 @@ use LaraCrud\Services\Controller\ControllerMethod;
 
 trait ViewAbleMethodHelper
 {
-
     /**
      * blade file path for view method.
      *
@@ -43,9 +42,9 @@ trait ViewAbleMethodHelper
     }
 
     /**
-     * @return string|null
-     *
      * @throws \ReflectionException
+     *
+     * @return string|null
      */
     public function getViewFilePath(): string
     {
@@ -54,18 +53,18 @@ trait ViewAbleMethodHelper
         }
 
         if ($this instanceof ViewAbleMethod) {
-            $viewNs = config('laracrud.view.namespace') ? rtrim(config('laracrud.view.namespace'), '::') . '::' : '';
+            $viewNs = config('laracrud.view.namespace') ? rtrim(config('laracrud.view.namespace'), '::').'::' : '';
 
-            return $this->viewFilePath = $viewNs . 'pages.' . Str::plural(lcfirst($this->getModelShortName())) . '.' . $this->getMethodName();
+            return $this->viewFilePath = $viewNs.'pages.'.Str::plural(lcfirst($this->getModelShortName())).'.'.$this->getMethodName();
         }
 
         return $this->viewFilePath;
     }
 
     /**
-     * @return array
-     *
      * @throws \ReflectionException
+     *
+     * @return array
      */
     public function getVariables(): array
     {
@@ -73,27 +72,27 @@ trait ViewAbleMethodHelper
 
         if ($this->parentModel) {
             $parentModelName = $this->getParentShortName();
-            $data['$' . $parentModelName] = $parentModelName;
+            $data['$'.$parentModelName] = $parentModelName;
         }
         $modelName = $this->getModelShortName();
-        $data['$' . $modelName] = $modelName;
+        $data['$'.$modelName] = $modelName;
 
         return $data;
     }
 
     /**
-     * @return string
-     *
      * @throws \ReflectionException
+     *
+     * @return string
      */
     protected function generateViewCode()
     {
         return (new TemplateManager('controller/web/view.txt', [
-            'variables' => $this->buildVariables(),
+            'variables'  => $this->buildVariables(),
             'parameters' => $this->buildParameters(),
-            'body' => $this->getBody(),
+            'body'       => $this->getBody(),
             'methodName' => $this->getMethodName(),
-            'viewPath' => $this->getViewFilePath(),
+            'viewPath'   => $this->getViewFilePath(),
         ]))->get();
     }
 
@@ -106,9 +105,9 @@ trait ViewAbleMethodHelper
     {
         $variables = !empty($variables) ? $variables : $this->variables;
 
-        $dataString = PHP_EOL . '';
+        $dataString = PHP_EOL.'';
         foreach ($variables as $key => $variable) {
-            $dataString .= "\t\t'" . $key . "' => " . $variable . ',' . PHP_EOL;
+            $dataString .= "\t\t'".$key."' => ".$variable.','.PHP_EOL;
         }
 
         return $dataString;
@@ -125,7 +124,7 @@ trait ViewAbleMethodHelper
         $parameters = !empty($parameters) ? $parameters : $this->parameters;
 
         foreach ($parameters as $class => $variable) {
-            $parameterString .= $class . ' ' . $variable . ',';
+            $parameterString .= $class.' '.$variable.',';
         }
 
         return trim($parameterString, ',');

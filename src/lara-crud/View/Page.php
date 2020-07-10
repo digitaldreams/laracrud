@@ -91,7 +91,7 @@ abstract class Page implements Crud
         $this->version = config('laracrud.view.bootstrap');
         $this->resource_path = config('laracrud.view.path');
 
-        $this->filePath = rtrim($this->resource_path, '/') . '/' . $this->folder . '/' . $this->name . '.blade.php';
+        $this->filePath = rtrim($this->resource_path, '/').'/'.$this->folder.'/'.$this->name.'.blade.php';
     }
 
     /**
@@ -100,9 +100,9 @@ abstract class Page implements Crud
     public function save()
     {
         if (file_exists($this->filePath)) {
-            throw  new \Exception($this->name . ' already exists');
+            throw  new \Exception($this->name.' already exists');
         }
-        $folder = rtrim($this->resource_path, '/') . '/' . $this->folder;
+        $folder = rtrim($this->resource_path, '/').'/'.$this->folder;
         if (!file_exists($folder)) {
             mkdir($folder);
         }
@@ -117,11 +117,11 @@ abstract class Page implements Crud
     {
         $pagePath = config('laracrud.view.page.path');
         if (!empty($pagePath)) {
-            $folder = rtrim(config('laracrud.view.path'), '/') . '/' . $pagePath;
+            $folder = rtrim(config('laracrud.view.path'), '/').'/'.$pagePath;
             if (!file_exists($folder)) {
                 mkdir($folder);
             }
-            $this->folder = trim($pagePath, '/') . '/' . $this->table->name();
+            $this->folder = trim($pagePath, '/').'/'.$this->table->name();
         } else {
             $this->folder = $this->table->name();
         }
@@ -180,13 +180,13 @@ abstract class Page implements Crud
     public static function getRouteName($method, $table = '')
     {
         $routePrefix = config('laracrud.route.prefix');
-        $table = !empty($routePrefix) ? $routePrefix . $table : $table;
-        $action = static::$controller . '@' . $method;
+        $table = !empty($routePrefix) ? $routePrefix.$table : $table;
+        $action = static::$controller.'@'.$method;
         if (isset(static::$routeMap[$action])) {
             return static::$routeMap[$action];
         }
 
-        return $table . '.' . $method;
+        return $table.'.'.$method;
     }
 
     /**

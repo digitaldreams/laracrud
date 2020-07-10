@@ -41,10 +41,10 @@ class ModelFactory implements Crud
         $this->name = $name;
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         if (!class_exists($model)) {
-            $model = $modelNamespace . '\\' . $model;
+            $model = $modelNamespace.'\\'.$model;
         }
         if (!class_exists($model)) {
-            throw new \Exception('Model ' . $model . ' is not exists');
+            throw new \Exception('Model '.$model.' is not exists');
         }
         $this->model = new $model();
         $this->table = new Table($this->model->getTable());
@@ -54,10 +54,10 @@ class ModelFactory implements Crud
     {
         $path = config('laracrud.factory.path');
         $name = $this->getName();
-        if (file_exists($path . '/' . $name)) {
-            throw new \Exception($name . ' already exists');
+        if (file_exists($path.'/'.$name)) {
+            throw new \Exception($name.' already exists');
         }
-        $factory = new \SplFileObject($path . '/' . $name . '.php', 'w+');
+        $factory = new \SplFileObject($path.'/'.$name.'.php', 'w+');
         $factory->fwrite($this->template());
     }
 
@@ -68,7 +68,7 @@ class ModelFactory implements Crud
     {
         return (new TemplateManager('factory/template.txt', [
             'modelClass' => get_class($this->model),
-            'columns' => $this->makeColumns(),
+            'columns'    => $this->makeColumns(),
         ]))->get();
     }
 
@@ -85,17 +85,17 @@ class ModelFactory implements Crud
             }
             $fakerColumn = new FakerColumn($column);
             $default = $fakerColumn->default();
-            $columnValue = !empty($default) ? $default . ',' : '\'\',';
-            $arr .= "\t\t" . '"' . $column->name() . '" => ' . $columnValue . PHP_EOL;
+            $columnValue = !empty($default) ? $default.',' : '\'\',';
+            $arr .= "\t\t".'"'.$column->name().'" => '.$columnValue.PHP_EOL;
         }
 
         return $arr;
     }
 
     /**
-     * @return string
-     *
      * @throws \ReflectionException
+     *
+     * @return string
      */
     protected function getName()
     {
@@ -103,6 +103,6 @@ class ModelFactory implements Crud
         $class = new \ReflectionClass($this->model);
         $shortModelName = $class->getShortName();
 
-        return !empty($this->name) ? $this->name : $shortModelName . $suffix;
+        return !empty($this->name) ? $this->name : $shortModelName.$suffix;
     }
 }
