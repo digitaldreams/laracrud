@@ -1,6 +1,5 @@
 <?php
 
-
 namespace LaraCrud\Contracts;
 
 interface DatabaseContract
@@ -14,6 +13,7 @@ interface DatabaseContract
 
     /**
      * @param $table string
+     *
      * @return mixed
      */
     public function tableExists(string $table);

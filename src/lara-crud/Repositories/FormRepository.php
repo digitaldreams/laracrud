@@ -1,6 +1,5 @@
 <?php
 
-
 namespace LaraCrud\Repositories;
 
 use LaraCrud\Contracts\FormContract;

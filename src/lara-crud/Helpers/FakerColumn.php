@@ -10,21 +10,21 @@ class FakerColumn
         'firstName' => [
             'first_name',
             'first_name',
-            'fname'
+            'fname',
         ],
         'lastName' => [
             'last_name',
             'lastname',
-            'lname'
+            'lname',
         ],
         'name' => [
             'full_name',
-            'name'
+            'name',
         ],
         'safeEmail' => [
             'email',
             'email_address',
-            'emailaddress'
+            'emailaddress',
         ],
         'address' => [
             'address',
@@ -37,7 +37,7 @@ class FakerColumn
             'locality',
             'state',
             'village',
-            'town'
+            'town',
         ],
         'country' => [
             'country',
@@ -54,10 +54,10 @@ class FakerColumn
             'content',
             'description',
             'about',
-            'profile'
+            'profile',
         ],
         'slug' => [
-            'slug'
+            'slug',
         ],
         'phoneNumber' => [
             'phone',
@@ -78,9 +78,8 @@ class FakerColumn
             'image',
             'image_url',
             'document',
-            'file'
-        ]
-
+            'file',
+        ],
     ];
     /**
      * @var Column

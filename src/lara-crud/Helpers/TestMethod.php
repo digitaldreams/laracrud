@@ -4,7 +4,6 @@ namespace LaraCrud\Helpers;
 
 class TestMethod
 {
-
     protected $controller;
 
     protected $method;
@@ -27,8 +26,10 @@ class TestMethod
 
     /**
      * TestMethod constructor.
+     *
      * @param array $arr
-     * @param bool $api
+     * @param bool  $api
+     *
      * @throws \Exception
      */
     public function __construct($arr = [], $api = false)
@@ -49,10 +50,11 @@ class TestMethod
 
     /**
      * One method may have several params are some may have default values and some may not have.
-     * we will inspect this params and define in routes respectively
+     * we will inspect this params and define in routes respectively.
      *
      * @param string $controller
      * @param string $method
+     *
      * @return string
      */
     public function addParams($controller, $method)
@@ -65,9 +67,10 @@ class TestMethod
             if ($param->getClass()) {
                 continue;
             }
-            $optional = $param->isOptional() == true ? '?' : "";
+            $optional = true == $param->isOptional() ? '?' : '';
             $params .= '/{' . $param->getName() . $optional . '}';
         }
+
         return $params;
     }
 
@@ -79,12 +82,13 @@ class TestMethod
         return (new TemplateManager('test/' . $this->template . '/' . $this->http_verb . '.txt', [
             'name' => ucfirst($this->method),
             'path' => $this->path,
-            'data' => $this->data
+            'data' => $this->data,
         ]))->get();
     }
 
     /**
      * @param $http_verb
+     *
      * @return $this
      */
     private function setHttpVerb($http_verb)
@@ -98,6 +102,7 @@ class TestMethod
         } else {
             $this->http_verb = strtolower($http_verb);
         }
+
         return $this;
     }
 }

@@ -117,8 +117,6 @@ class Controller implements Crud
      */
     protected $only = ['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'];
 
-    protected $transformerName;
-
     /**
      * @var bool|string
      */
@@ -156,9 +154,6 @@ class Controller implements Crud
         $this->namespace = trim($this->getFullNS($ns), '/') . $this->subNameSpace;
         $this->parseModelName();
 
-        if (!empty($api)) {
-            $this->transformerName = $this->getTransformerClass();
-        }
         $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
         $requestFolder = !empty($this->table) ? ucfirst(Str::camel($this->table)) : $this->modelName;
         $this->requestFolderNs = $this->getFullNS($requestNs) . '\\' . $requestFolder;
@@ -281,48 +276,6 @@ class Controller implements Crud
     }
 
     /**
-     * Get Transformer Class.
-     */
-    protected function getTransformerClass()
-    {
-        $transformerNs = $this->getFullNS(config('laracrud.transformer.namespace', 'Transformers'));
-        $suffiex = config('laracrud.transformer.classSuffix', 'Transformer');
-        $transformerName = $this->shortModelName . $suffiex;
-        $fullTransformerNs = $transformerNs . '\\' . $transformerName;
-        $this->import[] = $fullTransformerNs;
-
-        if (class_exists($fullTransformerNs)) {
-            return $transformerName;
-        } elseif (is_object($this->model)) {
-            $transformerCrud = new Transformer($this->model);
-            $transformerCrud->save();
-        }
-
-        return $transformerName;
-    }
-
-    /**
-     * @param $requestClass
-     *
-     * @return array
-     */
-    protected function makeApiRequest($requestClass)
-    {
-        $rules = [];
-
-        if (!class_exists($requestClass)) {
-            $requestClass = $this->requestFolderNs . '\\' . $requestClass;
-        }
-
-        if (is_subclass_of($requestClass, \Dingo\Api\Http\FormRequest::class)) {
-            $request = new $requestClass();
-            $rules = $request->rules();
-        }
-
-        return !empty($rules) && is_array($rules) ? json_encode($rules, JSON_PRETTY_PRINT) : '{}';
-    }
-
-    /**
      * Analyze Model and get extract information from there
      * Like Get folder Name of the view, Controller Short Name etc.
      */
@@ -371,31 +324,6 @@ class Controller implements Crud
     }
 
     /**
-     * @param string $method
-     *
-     * @return string
-     */
-    protected function getUploadScript($method = 'store')
-    {
-        $retTemp = '';
-        $modelNameParam = $method == 'store' ? 'model' : strtolower($this->shortModelName);
-        $table = new Table($this->table);
-        if ($table->hasFile()) {
-            $columns = $table->fileColumns();
-            foreach ($columns as $column) {
-                $temp = new TemplateManager('controller/upload.txt', [
-                    'modelNameParam' => $modelNameParam,
-                    'imagePropertyName' => $column,
-                    'imageUploadDisk' => config('laracrud.image.disk', 'public'),
-                ]);
-                $retTemp .= $temp->get();
-            }
-        }
-
-        return $retTemp;
-    }
-
-    /**
      * @param $parent
      *
      * @throws \ReflectionException
@@ -430,6 +358,7 @@ class Controller implements Crud
      * @param $model
      *
      * @return \LaraCrud\Crud\Controller
+     *
      * @throws \ReflectionException
      */
     private function resolveModelClass($model)
@@ -454,6 +383,7 @@ class Controller implements Crud
         } else {
             throw new \Exception($model . ' class does not exists');
         }
+
         return $this;
     }
 
@@ -477,6 +407,7 @@ class Controller implements Crud
                 $this->fileName = $name;
             }
         }
+
         return $this;
     }
 }

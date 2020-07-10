@@ -1,6 +1,5 @@
 <?php
 
-
 namespace LaraCrud\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
@@ -81,7 +80,6 @@ class IndexViewRepository implements IndexViewContract
 
     public function path(): string
     {
-
     }
 
     public function title(): string
@@ -93,5 +91,4 @@ class IndexViewRepository implements IndexViewContract
     {
         return $this->table;
     }
-
 }

@@ -56,7 +56,6 @@ class Controller extends Command
             $withArr = !empty($with) ? explode(',', $with) : [];
             $onlyArr = !empty($only) ? explode(',', $only) : '';
 
-
             if (in_array('request', $withArr)) {
                 $modelFullName = $this->modelFullName($model);
 

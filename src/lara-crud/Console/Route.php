@@ -46,7 +46,7 @@ class Route extends Command
             $controllers = [];
             $controller = $this->argument('controller');
             $api = $this->option('api');
-            $namespace = $api == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
+            $namespace = true == $api ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
             $namespace = $this->getFullNS($namespace);
 
             if ('all' == $controller) {

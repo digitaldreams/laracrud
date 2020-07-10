@@ -5,7 +5,6 @@ namespace LaraCrud\Helpers;
 /**
  * Class TemplateManager
  * All the internal template used by this library will be read and write via this class.
- * @package LaraCrud
  */
 class TemplateManager
 {
@@ -17,7 +16,7 @@ class TemplateManager
     protected $file;
 
     /**
-     * Fully processed template string
+     * Fully processed template string.
      *
      * @var string
      */
@@ -28,7 +27,7 @@ class TemplateManager
     protected $endTag = '@@';
 
     /**
-     * Associative array of placeholders. Where index is placeholder without tag
+     * Associative array of placeholders. Where index is placeholder without tag.
      *
      * @var array
      */
@@ -46,12 +45,13 @@ class TemplateManager
     }
 
     /**
-     * It will search given template in resources/vendor/$name if not found then search in  current directory template folder
+     * It will search given template in resources/vendor/$name if not found then search in  current directory template folder.
      *
      * @param $filename
-     * @return full qualified file path if found otherwise false;
-     * @internal param string $name Template Name
      *
+     * @return full qualified file path if found otherwise false;
+     *
+     * @internal param string $name Template Name
      */
     public function getFullPath($filename)
     {
@@ -61,11 +61,12 @@ class TemplateManager
         } elseif (file_exists(__DIR__ . '/../../../resources/templates/' . $filename)) {
             $retPath = __DIR__ . '/../../../resources/templates/' . $filename;
         }
+
         return $this->path = $retPath;
     }
 
     /**
-     * return full qualify file path
+     * return full qualify file path.
      *
      * @return mixed
      */
@@ -75,7 +76,7 @@ class TemplateManager
     }
 
     /**
-     * This function will replace its placeholder by its original value and return the processed template
+     * This function will replace its placeholder by its original value and return the processed template.
      *
      * Here index will be placeholder name without prefix and
      * value will be its value which will be replace instead of placeholder
@@ -87,32 +88,37 @@ class TemplateManager
         return $this->template = strtr($this->template, $this->placeholders());
     }
 
-    protected function placeholders()
+    /**
+     * @return array
+     */
+    protected function placeholders(): array
     {
         $retArr = [];
         foreach ($this->data as $index => $value) {
             $retArr[$this->startTag . $index . $this->endTag] = $value;
         }
+
         return $retArr;
     }
 
-
     /**
-     * Set Template Tags
+     * Set Template Tags.
      *
      * @param string $start
      * @param string $end
+     *
      * @return $this
      */
     public function setTags($start = '@@', $end = '@@')
     {
         $this->startTag = $start;
         $this->endTag = $end;
+
         return $this;
     }
 
     /**
-     * Get template
+     * Get template.
      *
      * @return string
      */
@@ -122,7 +128,8 @@ class TemplateManager
     }
 
     /**
-     * String representation of template class
+     * String representation of template class.
+     *
      * @return string
      */
     public function __toString()
@@ -131,7 +138,7 @@ class TemplateManager
     }
 
     /**
-     * Your view path on config file will be appended before your given path or file
+     * Your view path on config file will be appended before your given path or file.
      *
      * @param $relativePath
      *
@@ -141,6 +148,7 @@ class TemplateManager
     {
         $filepath = config('laracrud.view.path');
         $file = new \SplFileObject(base_path($filepath . $relativePath), 'w+');
+
         return $file->fwrite($this->template);
     }
 }

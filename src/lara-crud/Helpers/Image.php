@@ -1,4 +1,5 @@
 <?php
+
 namespace LaraCrud\Helpers;
 
 use Illuminate\Http\Request;
@@ -6,14 +7,15 @@ use Intervention\Image\Facades\Image as ImageLib;
 use Storage;
 
 /**
- * Tuhin Bepari <digitaldreams40@gmail.com>
+ * Tuhin Bepari <digitaldreams40@gmail.com>.
  */
 trait Image
 {
     /**
-     * Upload multiple file from requests
+     * Upload multiple file from requests.
      *
      * @param Request $request
+     *
      * @return bool
      */
     public function upload(Request $request)
@@ -29,6 +31,7 @@ trait Image
             $this->{$column} = $document->storeAs($this->getStoragePath(), $fileName, 'public');
             $this->resize($this->getMainWidth(), $this->getStoragePath(), $this->getMainHeight());
         }
+
         return $this;
     }
 
@@ -40,20 +43,14 @@ trait Image
         return 'image';
     }
 
-    /**
-     *
-     */
     public function getStoragePath()
     {
         defined('static::STORAGE_PATH') ? static::STORAGE_PATH : $this->getTable();
     }
 
-    /**
-     *
-     */
     public function getThumbnailPath()
     {
-        defined('static::THUMBNAIL_PATH') ? static::THUMBNAIL_PATH : $this->getTable()."/thumbs";
+        defined('static::THUMBNAIL_PATH') ? static::THUMBNAIL_PATH : $this->getTable() . '/thumbs';
     }
 
     /**
@@ -62,17 +59,20 @@ trait Image
     public function columnValue()
     {
         $column = $this->getColumnName();
+
         return $this->{$column};
     }
 
     public function hasImage()
     {
         $value = $this->columnValue();
+
         return !empty($value) && $this->isExists();
     }
 
     /**
-     * return base name of the file. e.g. documents/user.png to user.png
+     * return base name of the file. e.g. documents/user.png to user.png.
+     *
      * @return mixed
      */
     public function getBaseName()
@@ -82,6 +82,7 @@ trait Image
 
     /**
      * get relative path of current document.
+     *
      * @return varchar
      */
     public function getPath()
@@ -98,7 +99,8 @@ trait Image
     }
 
     /**
-     * Get full path of the current document. It can be used in programming
+     * Get full path of the current document. It can be used in programming.
+     *
      * @return mixed
      */
     public function getFullPath($thumbnail = false)
@@ -107,19 +109,21 @@ trait Image
     }
 
     /**
-     * Get thumbnail path
+     * Get thumbnail path.
+     *
      * @return bool|string
      */
     public function getThumbPath()
     {
-        if (Storage::disk('public')->exists($this->getThumbnailPath() . "/" . $this->getBaseName())) {
-            return config('filesystems.disks.public.root') . '/' . $this->getThumbnailPath() . "/" . $this->getBaseName();
+        if (Storage::disk('public')->exists($this->getThumbnailPath() . '/' . $this->getBaseName())) {
+            return config('filesystems.disks.public.root') . '/' . $this->getThumbnailPath() . '/' . $this->getBaseName();
         }
+
         return false;
     }
 
     /**
-     * Get thumbnail url for web
+     * Get thumbnail url for web.
      *
      * @return bool
      */
@@ -129,23 +133,27 @@ trait Image
     }
 
     /**
-     * Does file exists on storage
+     * Does file exists on storage.
+     *
      * @param string $path
+     *
      * @return bool
      */
     public function isExists($path = '')
     {
         $path = !empty($path) ? $path : $this->getStoragePath();
-        return !empty($this->getBaseName()) && Storage::disk('public')->exists($path . "/" . $this->getBaseName());
+
+        return !empty($this->getBaseName()) && Storage::disk('public')->exists($path . '/' . $this->getBaseName());
     }
 
     /**
-     * Resize an image
+     * Resize an image.
      *
      * @param $width int width of the image
      * @param $path relative path to storage
      * @param int|null $height Height of the Image
-     * @return  \Intervention\Image\Image
+     *
+     * @return \Intervention\Image\Image
      */
     public function resize($width, $path, $height = null)
     {
@@ -156,11 +164,13 @@ trait Image
             $constraint->aspectRatio();
             $constraint->upsize();
         });
-        return $img->save($fullPath . "/" . $this->getBaseName());
+
+        return $img->save($fullPath . '/' . $this->getBaseName());
     }
 
     /**
-     * Make a Thumbnail  100*150
+     * Make a Thumbnail  100*150.
+     *
      * @return bool|\Intervention\Image\Image
      */
     public function makeThumb()
@@ -168,6 +178,7 @@ trait Image
         if (!$this->isExists()) {
             return false;
         }
+
         return $this->resize($this->getThumbWidth(), $this->getThumbnailPath(), $this->getThumbHeight());
     }
 
@@ -204,22 +215,26 @@ trait Image
     }
 
     /**
-     * Check if path exists if not then make it or return
+     * Check if path exists if not then make it or return.
+     *
      * @param string $path
+     *
      * @return string
      */
     public function makePath($path = '')
     {
         $path = !empty($path) ? $path : $this->getStoragePath();
 
-        if (!Storage::disk('public')->exists(trim($path, "/"))) {
-            Storage::disk('public')->makeDirectory(trim($path, "/"));
+        if (!Storage::disk('public')->exists(trim($path, '/'))) {
+            Storage::disk('public')->makeDirectory(trim($path, '/'));
         }
+
         return config('filesystems.disks.public.root') . '/' . $path;
     }
 
     /**
-     * Get mime type of the file
+     * Get mime type of the file.
+     *
      * @return bool
      */
     public function getMimeType()
@@ -229,6 +244,7 @@ trait Image
                 $finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
                 return finfo_file($finfo, $this->getPath());
             }
+
             return false;
         } catch (\Exception $ex) {
             return false;

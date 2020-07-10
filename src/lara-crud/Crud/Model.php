@@ -320,6 +320,7 @@ class Model implements Crud
             $this->importNamespaces[] = 'use LaraCrud\Services\FullTextSearch;';
             $this->searchableColumns = "\t" . 'protected $searchable = [' . "\n" . $arr . '];';
         }
+
         return $this;
     }
 }

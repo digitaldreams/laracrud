@@ -251,6 +251,7 @@ class RouteCrud implements Crud
      * @param string $method
      *
      * @return string
+     *
      * @throws \ReflectionException
      */
     public function addParams($controller, $method)

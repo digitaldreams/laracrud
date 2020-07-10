@@ -1,6 +1,5 @@
 <?php
 
-
 namespace LaraCrud\Contracts;
 
 interface IndexViewContract extends PageViewContract

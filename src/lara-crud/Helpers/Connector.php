@@ -5,7 +5,8 @@ namespace LaraCrud\Helpers;
 class Connector
 {
     /**
-     * PHP DATABSE OBJECT
+     * PHP DATABSE OBJECT.
+     *
      * @var \PDO
      */
     protected $pdo;
@@ -30,6 +31,7 @@ class Connector
     {
         if ($this->pdo instanceof \PDO) {
             $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
+
             return $this->pdo;
         }
         throw new \Exception(' PDO connection is not defined');

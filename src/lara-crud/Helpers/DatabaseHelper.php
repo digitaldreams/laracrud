@@ -6,17 +6,20 @@ trait DatabaseHelper
 {
 
     /**
-     * Get connected database name
+     * Get connected database name.
+     *
      * @return bool
      */
     public function getDatabaseName()
     {
         $result = $this->db->query('SELECT DATABASE() as db')->fetch();
+
         return isset($result->db) ? $result->db : false;
     }
 
     /**
-     * Get the PDO object
+     * Get the PDO object.
+     *
      * @return mixed
      */
     public function db()
@@ -25,7 +28,8 @@ trait DatabaseHelper
     }
 
     /**
-     * Show all table in current database
+     * Show all table in current database.
+     *
      * @return array
      */
     public function tables()
@@ -33,10 +37,11 @@ trait DatabaseHelper
         $tableNames = [];
         $result = $this->db->query('SHOW TABLES')->fetchAll(\PDO::FETCH_OBJ);
         foreach ($result as $tb) {
-            $tb = (array)$tb;
+            $tb = (array) $tb;
             $tableName = array_values($tb);
             $tableNames[] = array_shift($tableName);
         }
+
         return $tableNames;
     }
 }

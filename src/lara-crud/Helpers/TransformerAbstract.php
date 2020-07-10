@@ -2,7 +2,6 @@
 
 namespace LaraCrud\Helpers;
 
-use Illuminate\Database\Eloquent\Model;
 use League\Fractal\TransformerAbstract as RootTransformer;
 
 class TransformerAbstract extends RootTransformer
@@ -16,6 +15,7 @@ class TransformerAbstract extends RootTransformer
 
     /**
      * @param $data
+     *
      * @return array
      */
     protected function filterFields($data)
@@ -25,6 +25,7 @@ class TransformerAbstract extends RootTransformer
 
     /**
      * @param $include
+     *
      * @return $this
      */
     public function addDefaultInclude($include)
@@ -34,6 +35,7 @@ class TransformerAbstract extends RootTransformer
         } elseif (is_array($include) && !empty($include)) {
             $this->defaultIncludes[] = array_unique(array_merge($this->defaultIncludes, $include));
         }
+
         return $this;
     }
 }

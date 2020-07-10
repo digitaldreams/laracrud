@@ -183,6 +183,7 @@ class ColumnRepository implements ColumnContract
         if ($this->column->isForeign()) {
             return $this->column;
         }
+
         return null;
     }
 }
