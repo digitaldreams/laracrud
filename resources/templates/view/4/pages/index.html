@@ -5,19 +5,13 @@
 </li>
 @endsection
 @section('header')
-<h3><i class="fa fa-list"></i> @@table@@ </h3>
+<h3><i class="fa fa-list"></i> @@title@@ </h3>
 @endsection
 @section('tools')
 @@createLink@@
 @endsection
 
 @section('content')
-<div class="row">
-    @foreach($records as $record)
-    <div class="col-sm-6">
-        @include('@@folder@@.@@partialFilename@@')
-    </div>
-    @endforeach
-</div>
-{!! $records->render() !!}
+@@searchForm@@
+ @@body@@
 @endSection

@@ -1,11 +1,10 @@
 <?php
 
-namespace LaraCrud\Repositories;
+namespace LaraCrud\Repositories\View;
 
-use LaraCrud\Contracts\FormContract;
-use LaraCrud\Contracts\ModelContract;
+use LaraCrud\Contracts\View\FormContract;
 
-class FormRepository implements FormContract
+class FormRepository extends PageRepository implements FormContract
 {
     /**
      * @return string
@@ -13,14 +12,6 @@ class FormRepository implements FormContract
     public function name(): string
     {
         // TODO: Implement name() method.
-    }
-
-    /**
-     * @return ModelContract
-     */
-    public function model(): ModelContract
-    {
-        // TODO: Implement model() method.
     }
 
     /**
@@ -71,5 +62,15 @@ class FormRepository implements FormContract
     public function orders(): array
     {
         // TODO: Implement orders() method.
+    }
+
+    public function path(): string
+    {
+        // TODO: Implement path() method.
+    }
+
+    public function template(): string
+    {
+        // TODO: Implement template() method.
     }
 }

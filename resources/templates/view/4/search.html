@@ -1,12 +1,9 @@
-<form method="GET">
-    <div class="form-group">
-        <div class="input-group">
-            <input type="search" class="form-control" value="{{request('q')}}" name="q" placeholder="Search"/>
-            <div class="input-group-addon">
-                <button type="submit" style="margin: 0px;padding: 0px;background:none;border:none">
-                    <span class="fa fa-search"></span>
-                </button>
-            </div>
+<form>
+    <div class="input-group mb-3">
+        <input type="search" name="search" value="{{request('search')}}" class="form-control" placeholder="Search..."
+               aria-label="Search" aria-describedby="button-addon2">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
         </div>
     </div>
 </form>

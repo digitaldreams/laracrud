@@ -1,18 +1,13 @@
 <?php
 
-namespace LaraCrud\Contracts;
+namespace LaraCrud\Contracts\View;
 
-interface FormViewContract extends PageViewContract
+interface FormContract
 {
     /**
      * @return string
      */
     public function name(): string;
-
-    /**
-     * @return ModelContract
-     */
-    public function model(): ModelContract;
 
     /**
      * @return array
