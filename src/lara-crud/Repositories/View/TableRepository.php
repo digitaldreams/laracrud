@@ -3,6 +3,7 @@
 namespace LaraCrud\Repositories\View;
 
 use LaraCrud\Contracts\View\TableContract;
+use LaraCrud\Helpers\TemplateManager;
 
 class TableRepository extends PageRepository implements TableContract
 {
@@ -24,17 +25,30 @@ class TableRepository extends PageRepository implements TableContract
      */
     public function template(): string
     {
-        // TODO: Implement template() method.
+        return new TemplateManager('views/4/table.html', [
+            'tableHeader' => $this->generateTableHeader(),
+        ]);
     }
 
+    private function generateTableHeader(): string
+    {
+
+    }
+
+    /**
+     * @return array
+     */
     public function columns(): array
     {
-        // TODO: Implement columns() method.
+        $data = [];
+        foreach ($this->table->columns() as $columnRepository) {
+            if ($columnRepository->dataType()) {
+                
+            }
+        }
     }
 
     public function links(): string
     {
-
     }
-
 }
