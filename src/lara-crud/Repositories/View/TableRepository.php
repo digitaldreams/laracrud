@@ -55,6 +55,14 @@ class TableRepository extends PageRepository implements TableContract
     }
 
     /**
+     *
+     */
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    /**
      * @return array
      */
     public function makeColumns(): array

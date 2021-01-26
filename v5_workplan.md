@@ -30,3 +30,19 @@ Now you can able to manage how your `Post` `index.blade.php` will look like.
 You can select Table/Card template also can able to select which column you want to show on your 
 Card\Table and which order. 
 
+###List of Tasks
+1. Rewrite the `TableRepository` [Done]
+2. Implement `TableRepository` it on `Crud\Model` and update the `Console\Model` [Done]
+3. Create new `ControllerRepository` [Done]
+4. Implement `ControllerRepository` in Console and Crud
+5. Complete `View\TableRepository` class
+6. Complete `View\IndexRepository`,
+7. Complete `View\PageRepository`
+8. Implement all newly created view Repositories onto View Blade file creation.
+9. Rewrite the Request Rules
+10. Rewrite the Route Generation to Laravel 8 compatible
+11. Remove the Dingo API resources and Create Laravel Built in API resources
+
+
+
+

@@ -13,8 +13,8 @@ class Model extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:model 
-        {table : MySQl Table name} 
+    protected $signature = 'laracrud:model
+        {table : MySQl Table name}
         {name? : Custom Model Name. e.g. MyPost}
         {--on= : Config options of model from config/laracrud.php you want to switch on. For example --on=mutators will activate mutators for your model.}
         {--off= : Config options from config/laracrud.php you want to switch of}';
@@ -72,7 +72,7 @@ class Model extends Command
 
             $this->info('Model class successfully created');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error(sprintf('%s on line %s  in %', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
         }
     }
 }

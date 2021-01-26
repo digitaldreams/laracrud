@@ -4,7 +4,9 @@ namespace LaraCrud\Contracts\View;
 
 interface TableContract
 {
-    public function columns(): array;
+    /**
+     * @return mixed
+     */
+    public function getColumns();
 
-    public function links(): ?string;
 }
