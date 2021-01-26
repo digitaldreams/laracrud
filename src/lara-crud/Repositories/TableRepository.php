@@ -99,22 +99,22 @@ class TableRepository implements TableContract
             $fk = new ForeignKey($column);
 
             $relation = [
-                'modelName'  => $fk->modelName(),
+                'modelName' => $fk->modelName(),
                 'methodName' => Str::plural(lcfirst($fk->modelName())),
             ];
 
             if ($fk->isPivot) {
-                $relation['params'] = ",'".$fk->table()."'";
+                $relation['params'] = ",'" . $fk->table() . "'";
                 $relation['relationShip'] = ForeignKey::RELATION_BELONGS_TO_MANY;
                 $relation['returnType'] = ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY);
             } else {
-                $relation['params'] = ",'".$fk->column()."'";
+                $relation['params'] = ",'" . $fk->column() . "'";
                 $relation['relationShip'] = ForeignKey::RELATION_HAS_MANY;
                 $relation['returnType'] = ucfirst(ForeignKey::RELATION_HAS_MANY);
             }
 
-            $relation['propertyDefiners'] = '@property \Illuminate\Database\Eloquent\Collection'.' $'.
-                $relation['methodName'].' '.$relation['relationShip'];
+            $relation['propertyDefiners'] = '@property \Illuminate\Database\Eloquent\Collection' . ' $' .
+                $relation['methodName'] . ' ' . $relation['relationShip'];
 
             $relations[] = $relation;
         }
@@ -122,12 +122,12 @@ class TableRepository implements TableContract
             $fk = new ForeignKey($foreign);
 
             $relations[] = [
-                'relationShip'     => ForeignKey::RELATION_BELONGS_TO,
-                'returnType'       => ucfirst(ForeignKey::RELATION_BELONGS_TO),
-                'modelName'        => ucfirst(Str::camel(Str::singular($fk->foreignTable()))),
-                'methodName'       => Str::camel(Str::singular($fk->foreignTable())),
-                'params'           => ",'".$fk->column()."','".$fk->foreignColumn()."'",
-                'propertyDefiners' => '@property '.$relation['methodName'].' $'.lcfirst($relation['modelName']).' '.$relation['relationShip'],
+                'relationShip' => ForeignKey::RELATION_BELONGS_TO,
+                'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO),
+                'modelName' => ucfirst(Str::camel(Str::singular($fk->foreignTable()))),
+                'methodName' => Str::camel(Str::singular($fk->foreignTable())),
+                'params' => ",'" . $fk->column() . "','" . $fk->foreignColumn() . "'",
+                'propertyDefiners' => '@property ' . $relation['methodName'] . ' $' . lcfirst($relation['modelName']) . ' ' . $relation['relationShip'],
             ];
         }
 
@@ -147,7 +147,7 @@ class TableRepository implements TableContract
      */
     public function hasFile(): bool
     {
-        return count($this->table->hasFile());
+        return count($this->table->fileColumns());
     }
 
     /**

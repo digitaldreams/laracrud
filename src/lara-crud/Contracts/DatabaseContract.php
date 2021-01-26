@@ -7,7 +7,7 @@ interface DatabaseContract
     /**
      * Collection of TableContract.
      *
-     * @return mixed
+     * @return array
      */
     public function tables();
 

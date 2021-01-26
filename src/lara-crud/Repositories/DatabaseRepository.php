@@ -7,7 +7,12 @@ use LaraCrud\Contracts\DatabaseContract;
 
 class DatabaseRepository implements DatabaseContract
 {
-    public function tables()
+    /**
+     * List of all Available Tables.
+     *
+     * @return array
+     */
+    public function tables(): array
     {
         return (new Database())->tables();
     }
@@ -15,20 +20,20 @@ class DatabaseRepository implements DatabaseContract
     /**
      * If table name mistyped and then tell user that table not found and show him a list of table.
      *
-     * @param string $table
-     *
-     * @throws \Exception
+     * @param string|array $table
      *
      * @return bool
+     *
+     * @throws \Exception
      */
-    public function tableExists($table)
+    public function tableExists($table): bool
     {
         $insertAbleTable = !is_array($table) ? [$table] : $table;
         $availableTables = $this->tables();
         $missingTable = array_diff($insertAbleTable, $availableTables);
 
         if (!empty($missingTable)) {
-            $message = implode(',', $missingTable).' tables not found in '."\n".implode("\n", $availableTables);
+            $message = sprintf("%s tables not found in \n %s", implode(',', $missingTable), implode("\n", $availableTables));
 
             throw new \Exception($message);
         }
