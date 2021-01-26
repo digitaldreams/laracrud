@@ -67,7 +67,7 @@ interface ColumnContract
     /**
      * @param int $number
      *
-     * @return mixed
+     * @return self
      */
     public function setOrder(int $number): self;
 

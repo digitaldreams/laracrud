@@ -176,6 +176,14 @@ class ColumnRepository implements ColumnContract
     }
 
     /**
+     * @return bool
+     */
+    public function isForeign(): bool
+    {
+        return $this->column->isForeign();
+    }
+
+    /**
      * @return ForeignKeyContract|null
      */
     public function foreignKey()

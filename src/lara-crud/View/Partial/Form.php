@@ -29,20 +29,19 @@ class Form extends Page
      * @var array
      */
     public $inputType = [
-        'text'       => 'textarea',
-        'bigtext'    => 'textarea',
-        'tinytext'   => 'textarea',
+        'text' => 'textarea',
+        'bigtext' => 'textarea',
+        'tinytext' => 'textarea',
         'mediumtext' => 'textarea',
-        'enum'       => 'select',
-        'int'        => 'number',
-        'bigint'     => 'number',
-        'varchar'    => 'text',
-        'timestamp'  => 'datetime',
-        'time'       => 'time',
-        'date'       => 'date',
-        'datetime'   => 'datetime',
-        'enum'       => 'select',
-        'tinyint'    => 'checkbox',
+        'int' => 'number',
+        'bigint' => 'number',
+        'varchar' => 'text',
+        'timestamp' => 'datetime',
+        'time' => 'time',
+        'date' => 'date',
+        'datetime' => 'datetime',
+        'enum' => 'select',
+        'tinyint' => 'checkbox',
     ];
 
     /**
@@ -68,11 +67,11 @@ class Form extends Page
     public function template()
     {
         return (new TemplateManager("view/{$this->version}/forms/form.html", [
-            'formContent'   => implode("\n", $this->make()),
+            'formContent' => implode("\n", $this->make()),
             'routeModelKey' => $this->model->getRouteKeyName(),
-            'table'         => $this->table->name(),
-            'options'       => $this->makeOptions(),
-            'routeName'     => $this->getRouteName('store', $this->table->name()),
+            'table' => $this->table->name(),
+            'options' => $this->makeOptions(),
+            'routeName' => $this->getRouteName('store', $this->table->name()),
         ]))->get();
     }
 
@@ -87,7 +86,7 @@ class Form extends Page
             $options['enctype'] = 'multipart/form-data';
         }
         foreach ($options as $prop => $value) {
-            $retStr .= $prop.'="'.$value.'" ';
+            $retStr .= $prop . '="' . $value . '" ';
         }
 
         return $retStr;
@@ -132,30 +131,30 @@ class Form extends Page
                     $propertiesText = '';
                     if (is_array($columnArr['properties'])) {
                         foreach ($columnArr['properties'] as $name => $value) {
-                            $propertiesText .= $name.'="'.$value.'" ';
+                            $propertiesText .= $name . '="' . $value . '" ';
                         }
                     }
                     $retArr[] = $this->tempMan('date.html', [
-                        'properties'  => $propertiesText,
-                        'type'        => $columnArr['type'],
-                        'columnValue' => '{{old(\''.$column->name().'\',$model->'.$column->name().')}}',
+                        'properties' => $propertiesText,
+                        'type' => $columnArr['type'],
+                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}',
                     ], $column);
                     break;
                 case 'textarea':
                     $retArr[] = $this->tempMan('textarea.html', [
-                        'columnValue' => '{{old(\''.$column->name().'\',$model->'.$column->name().')}}',
+                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}',
                     ], $column);
                     break;
                 default:
                     $propertiesText = '';
                     if (is_array($columnArr['properties'])) {
                         foreach ($columnArr['properties'] as $name => $value) {
-                            $propertiesText .= $name.'="'.$value.'" ';
+                            $propertiesText .= $name . '="' . $value . '" ';
                         }
                     }
                     $retArr[] = $this->tempMan('default.html', [
-                        'properties'  => $propertiesText,
-                        'columnValue' => '{{old(\''.$column->name().'\',$model->'.$column->name().')}}',
+                        'properties' => $propertiesText,
+                        'columnValue' => '{{old(\'' . $column->name() . '\',$model->' . $column->name() . ')}}',
                     ], $column);
                     break;
             }
@@ -177,16 +176,16 @@ class Form extends Page
         $options = '';
         if ($columnObj->isForeign()) {
             $options = $this->tempMan('select-rel.html', [
-                'modelVar'      => $columnObj->foreignTable(),
+                'modelVar' => $columnObj->foreignTable(),
                 'foreignColumn' => $columnObj->name(),
-                'name'          => $columnObj->name(),
+                'name' => $columnObj->name(),
             ], $columnObj);
         } else {
             if (isset($column['options']) && is_array($column['options'])) {
                 foreach ($column['options'] as $opt) {
-                    $selectedText = '{{old(\''.$column['name'].'\',$model->'.$column['name'].')==\''.$opt.'\'?"selected":""}}';
+                    $selectedText = '{{old(\'' . $column['name'] . '\',$model->' . $column['name'] . ')==\'' . $opt . '\'?"selected":""}}';
                     $label = ucwords(str_replace('_', ' ', $opt));
-                    $options .= '<option value="'.$opt.'" '.$selectedText.' >'.$label.'</option>'."\n";
+                    $options .= '<option value="' . $opt . '" ' . $selectedText . ' >' . $label . '</option>' . "\n";
                 }
             }
         }
@@ -204,7 +203,7 @@ class Form extends Page
     protected function checkBox($column)
     {
         return $this->tempMan('checkbox.html', [
-            'label'   => $column->label(),
+            'label' => $column->label(),
             'checked' => '',
         ], $column);
     }
@@ -262,9 +261,9 @@ class Form extends Page
         $common = [
             'hasErrorClass' => $this->hasErr($column),
             'showErrorText' => $this->showErr($column),
-            'name'          => $column->name(),
-            'label'         => $column->label(),
-            'type'          => isset($this->inputType[$column->type()]) ? $this->inputType[$column->type()] : 'text',
+            'name' => $column->name(),
+            'label' => $column->label(),
+            'type' => isset($this->inputType[$column->type()]) ? $this->inputType[$column->type()] : 'text',
         ];
 
         return (new TemplateManager("view/{$this->version}/forms/$fileName", array_merge($options, $common)))->get();
