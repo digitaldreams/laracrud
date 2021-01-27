@@ -10,6 +10,7 @@ use LaraCrud\Contracts\Controller\ViewAbleMethod;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\RedirectAbleMethodHelper;
 use LaraCrud\Helpers\ViewAbleMethodHelper;
+use ReflectionClass;
 
 abstract class ControllerMethod
 {
@@ -22,26 +23,26 @@ abstract class ControllerMethod
      *
      * @var array
      */
-    protected $namespaces = [];
+    protected array $namespaces = [];
 
     /**
      * @var \ReflectionClass
      */
-    protected $modelReflectionClass;
+    protected ReflectionClass $modelReflectionClass;
 
     /**
      * Whether its an API method or not.
      *
      * @var bool
      */
-    protected $isApi = false;
+    protected bool $isApi = false;
 
     /**
      * Full Namespace Request folder where system will find custom Request class or save into it.
      *
      * @var string
      */
-    protected $requestFolderNs;
+    protected string $requestFolderNs;
 
     /**
      * Eloquent Model that will be as main model.
@@ -80,8 +81,6 @@ abstract class ControllerMethod
      * ControllerMethod constructor.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
-     *
-     * @throws \ReflectionException
      */
     public function __construct(Model $model)
     {
@@ -103,8 +102,6 @@ abstract class ControllerMethod
      * Name of of Controller Method.
      *
      * @return string
-     * @throws \ReflectionException
-     *
      */
     public function getMethodName(): string
     {
@@ -163,7 +160,6 @@ abstract class ControllerMethod
 
     /**
      * @return string
-     * @throws \ReflectionException
      *
      */
     protected function getRequestClass(): string
