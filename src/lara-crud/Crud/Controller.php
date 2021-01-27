@@ -18,14 +18,14 @@ class Controller implements Crud
      *
      * @var string
      */
-    protected $controllerName;
+    protected string $controllerName;
 
     /**
      * Model Name.
      *
      * @var string
      */
-    protected $modelName;
+    protected string $modelName;
 
     /**
      * @var \Illuminate\Database\Eloquent\Model
@@ -46,19 +46,19 @@ class Controller implements Crud
      *
      * @var string
      */
-    protected $modelNameSpace = 'App';
+    protected string $modelNameSpace = 'App';
 
     /**
      * @var string
      */
-    protected $requestFolderNs = '';
+    protected string $requestFolderNs = '';
     /**
      * Request Class.
      * Check if any Request Class created for this Model. If so then Use that Request Name otherwise use default Request.
      *
      * @var string
      */
-    protected $requestClass = 'Request';
+    protected string $requestClass = 'Request';
 
     /**
      * Generally all Request class are suffix with Request.
@@ -66,19 +66,19 @@ class Controller implements Crud
      *
      * @var string
      */
-    protected $requestClassSuffix = 'Request';
+    protected string $requestClassSuffix = 'Request';
 
     /**
      * Name of the Model Table.
      *
      * @var string
      */
-    protected $table;
+    protected string $table;
 
     /**
      * @var string
      */
-    protected $fileName = '';
+    protected string $fileName = '';
 
     /**
      * Sub Path of the Controller.
@@ -86,7 +86,7 @@ class Controller implements Crud
      *
      * @var string
      */
-    public $path = '';
+    public string $path = '';
 
     /**
      * @var
@@ -98,19 +98,19 @@ class Controller implements Crud
      *
      * @var string
      */
-    protected $subNameSpace = '';
+    protected string $subNameSpace = '';
 
     /**
      * Model Name without Namespace.
      *
      * @var string
      */
-    protected $shortModelName;
+    protected string $shortModelName;
 
     /**
      * @var string
      */
-    protected $template;
+    protected string $template;
 
     /**
      * @var array

@@ -17,17 +17,18 @@ use LaraCrud\Helpers\Helper;
 class Controller extends Command
 {
     use Helper;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'laracrud:controller 
-      {model : Name of the Eloquent Model.} 
+    protected $signature = 'laracrud:controller
+      {model : Name of the Eloquent Model.}
       {name? : Custom Controller Name}
       {--o|only= : If you want to create partial resourceful controller. e.g. --only=index,show}
-      {--api : whether its an API controller or now} 
-      {--p|parent= : Generate a nested resource controller class. Give the Parent Eloquent Model name. e.g --parent=Post} 
+      {--api : whether its an API controller or now}
+      {--p|parent= : Generate a nested resource controller class. Give the Parent Eloquent Model name. e.g --parent=Post}
       {--w|with= : Create Custom Request Classes or Policy along with Newly created Controller. e.g --with=request,policy }';
 
     /**
@@ -79,15 +80,20 @@ class Controller extends Command
                 $this->info('Policy class created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error(sprintf('%s on line %  in %', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
         }
     }
 
+    /**
+     * @param $model
+     *
+     * @return false|string
+     */
     private function modelFullName($model)
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         if (!class_exists($model)) {
-            return $modelNamespace.'\\'.$model;
+            return $modelNamespace . '\\' . $model;
         }
 
         return false;
