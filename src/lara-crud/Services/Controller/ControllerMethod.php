@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use LaraCrud\Contracts\Controller\ApiResponseMethod;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
-use LaraCrud\Contracts\ViewAbleMethod;
+use LaraCrud\Contracts\Controller\ViewAbleMethod;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\RedirectAbleMethodHelper;
 use LaraCrud\Helpers\ViewAbleMethodHelper;
@@ -96,15 +96,15 @@ abstract class ControllerMethod
             $requestNs = config('laracrud.request.namespace');
         }
 
-        $this->requestFolderNs = $this->getFullNS($requestNs).'\\'.ucfirst(Str::camel($this->model->getTable()));
+        $this->requestFolderNs = $this->getFullNS($requestNs) . '\\' . ucfirst(Str::camel($this->model->getTable()));
     }
 
     /**
      * Name of of Controller Method.
      *
+     * @return string
      * @throws \ReflectionException
      *
-     * @return string
      */
     public function getMethodName(): string
     {
@@ -118,10 +118,11 @@ abstract class ControllerMethod
 
     /**
      * Will be called before getViewGenerateCode method call to setup necessary parameters and variables.
+     * @throw \Exception
      *
      * @return $this
      */
-    protected function beforeGenerate()
+    protected function beforeGenerate(): self
     {
         return $this;
     }
@@ -139,9 +140,9 @@ abstract class ControllerMethod
     }
 
     /**
+     * @return string
      * @throws \ReflectionException
      *
-     * @return string
      */
     public function getCode(): string
     {
@@ -161,14 +162,14 @@ abstract class ControllerMethod
     }
 
     /**
+     * @return string
      * @throws \ReflectionException
      *
-     * @return string
      */
     protected function getRequestClass(): string
     {
-        $customRequestName = ucfirst($this->getMethodName()).config('laracrud.request.classSuffix', 'Request');
-        $fullRequestNs = $this->requestFolderNs.'\\'.$customRequestName;
+        $customRequestName = ucfirst($this->getMethodName()) . config('laracrud.request.classSuffix', 'Request');
+        $fullRequestNs = $this->requestFolderNs . '\\' . $customRequestName;
 
         if (class_exists($fullRequestNs)) {
             $requestClass = $customRequestName;
@@ -218,9 +219,9 @@ abstract class ControllerMethod
     /**
      * Get Model class Name without namespace.
      *
+     * @return string
      * @throws \ReflectionException
      *
-     * @return string
      */
     protected function getParentShortName(): string
     {

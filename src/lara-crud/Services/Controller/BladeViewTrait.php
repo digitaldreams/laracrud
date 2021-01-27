@@ -2,7 +2,7 @@
 
 namespace LaraCrud\Services\Controller;
 
-use LaraCrud\Contracts\ViewAbleMethod;
+use LaraCrud\Contracts\Controller\ViewAbleMethod;
 
 trait BladeViewTrait
 {
@@ -24,8 +24,8 @@ trait BladeViewTrait
     public function addBreadcrumb(string $link, string $text, ?int $position = null)
     {
         $this->breadCrumbs[] = [
-            'link'     => $link,
-            'text'     => $text,
+            'link' => $link,
+            'text' => $text,
             'position' => $position,
         ];
 
@@ -41,14 +41,14 @@ trait BladeViewTrait
     }
 
     /**
-     * @return \LaraCrud\Contracts\ViewAbleMethod
+     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
      */
     public function setPath(): ViewAbleMethod
     {
     }
 
     /**
-     * @return \LaraCrud\Contracts\ViewAbleMethod
+     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
      */
     public function setFileName(): ViewAbleMethod
     {
@@ -66,14 +66,14 @@ trait BladeViewTrait
      * @param string      $text
      * @param string|null $icon
      *
-     * @return \LaraCrud\Contracts\ViewAbleMethod
+     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
      */
     public function addToolMenuItem(string $link, string $text, ?string $icon = null): ViewAbleMethod
     {
     }
 
     /**
-     * @return \LaraCrud\Contracts\ViewAbleMethod
+     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
      */
     public function setTitle(): ViewAbleMethod
     {
@@ -83,7 +83,7 @@ trait BladeViewTrait
      * @param          $parent
      * @param int|null $postion
      *
-     * @return \LaraCrud\Contracts\ViewAbleMethod
+     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
      */
     public function AddToSideBarMenu($parent, ?int $postion = null): ViewAbleMethod
     {

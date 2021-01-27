@@ -7,11 +7,9 @@ use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 class Restore extends ControllerMethod implements RedirectAbleMethod
 {
     /**
-     * @return \LaraCrud\Services\Controller\ControllerMethod|void
-     *
-     * @throws \ReflectionException
+     * {@inheritdoc}
      */
-    protected function beforeGenerate()
+    protected function beforeGenerate(): self
     {
         if ($this->parentModel) {
             $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());

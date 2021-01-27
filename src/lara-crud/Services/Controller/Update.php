@@ -7,19 +7,17 @@ use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 class Update extends ControllerMethod implements RedirectAbleMethod
 {
     /**
-     * @throws \ReflectionException
-     *
-     * @return \LaraCrud\Services\Controller\ControllerMethod|void
+     * {@inheritdoc}
      */
-    protected function beforeGenerate()
+    protected function beforeGenerate(): self
     {
         $requestClass = $this->getRequestClass();
         $this->setParameter($requestClass, '$request');
 
         if ($this->parentModel) {
-            $this->setParameter(ucfirst($this->getParentShortName()), '$'.$this->getParentShortName());
+            $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
         }
-        $this->setParameter(ucfirst($this->getModelShortName()), '$'.$this->getModelShortName());
+        $this->setParameter(ucfirst($this->getModelShortName()), '$' . $this->getModelShortName());
 
         return $this;
     }
@@ -29,8 +27,8 @@ class Update extends ControllerMethod implements RedirectAbleMethod
      */
     public function getBody(): string
     {
-        $variable = '$'.$this->getModelShortName();
+        $variable = '$' . $this->getModelShortName();
 
-        return $variable.'->fill($request->all())->save();'.PHP_EOL;
+        return $variable . '->fill($request->all())->save();' . PHP_EOL;
     }
 }

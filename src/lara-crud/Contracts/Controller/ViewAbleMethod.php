@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Contracts;
+namespace LaraCrud\Contracts\Controller;
 
 interface ViewAbleMethod
 {

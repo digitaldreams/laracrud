@@ -4,8 +4,6 @@
 namespace LaraCrud\Services\Controller;
 
 
-use LaraCrud\Contracts\Controller\RedirectAbleMethod;
-
 class ForceDelete extends Restore
 {
     /**
@@ -20,10 +18,11 @@ class ForceDelete extends Restore
 
         return $body;
     }
+
     /**
      * @return array
      */
-    public function generateRouteParameter()
+    public function generateRouteParameter(): array
     {
         $parameters = parent::generateRouteParameter();
         unset($parameters[$this->getModelShortName()]);

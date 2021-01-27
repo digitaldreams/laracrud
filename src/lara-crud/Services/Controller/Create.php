@@ -2,25 +2,21 @@
 
 namespace LaraCrud\Services\Controller;
 
-use LaraCrud\Contracts\ViewAbleMethod;
+use LaraCrud\Contracts\Controller\ViewAbleMethod;
 
 class Create extends ControllerMethod implements ViewAbleMethod
 {
     /**
-     * Set necessary data.
-     *
-     * @throws \ReflectionException
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    protected function beforeGenerate()
+    protected function beforeGenerate(): self
     {
         if ($this->parentModel) {
-            $this->setVariable(lcfirst($this->getParentShortName()), '$'.lcfirst($this->getParentShortName()))
-                ->setParameter($this->getParentShortName(), '$'.lcfirst($this->getParentShortName()));
+            $this->setVariable(lcfirst($this->getParentShortName()), '$' . lcfirst($this->getParentShortName()))
+                ->setParameter($this->getParentShortName(), '$' . lcfirst($this->getParentShortName()));
         }
 
-        $this->setVariable(lcfirst($this->getModelShortName()), 'new '.$this->getModelShortName());
+        $this->setVariable(lcfirst($this->getModelShortName()), 'new ' . $this->getModelShortName());
 
         return $this;
     }

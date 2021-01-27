@@ -3,36 +3,35 @@
 namespace LaraCrud\Services\Controller;
 
 use Illuminate\Support\Str;
-use LaraCrud\Contracts\ViewAbleMethod;
+use LaraCrud\Contracts\Controller\ViewAbleMethod;
 use LaraCrud\Services\FullTextSearch;
-use Laravel\Scout\Searchable;
 
 class Index extends ControllerMethod implements ViewAbleMethod
 {
     /**
      * @return bool
      */
-    public function isSearchAble()
+    public function isSearchAble(): bool
     {
         $traits = class_uses($this->model);
 
-        return in_array(Searchable::class, $traits) || in_array(FullTextSearch::class, $traits);
+        return in_array('Laravel\Scout\Searchable', $traits) || in_array(FullTextSearch::class, $traits);
     }
 
     /**
      * Set necessary data.
      *
+     * @return $this
      * @throws \ReflectionException
      *
-     * @return $this
      */
-    protected function beforeGenerate()
+    protected function beforeGenerate(): self
     {
         $this->setParameter('Request', '$request');
 
         if ($this->parentModel) {
-            $this->setVariable($this->getParentShortName(), '$'.$this->getParentShortName())
-                ->setParameter(ucfirst($this->getParentShortName()), '$'.$this->getParentShortName());
+            $this->setVariable($this->getParentShortName(), '$' . $this->getParentShortName())
+                ->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
         }
 
         $this->setVariable(Str::plural($this->getModelShortName()), '$builder->paginate(10)');
@@ -45,9 +44,9 @@ class Index extends ControllerMethod implements ViewAbleMethod
      */
     public function getBody(): string
     {
-        $body = '$builder = '.ucfirst($this->getModelShortName()).'::';
+        $body = '$builder = ' . ucfirst($this->getModelShortName()) . '::';
         $body .= $this->isSearchAble() ? 'search($request->get(\'search\'))' : 'query';
 
-        return $body.';';
+        return $body . ';';
     }
 }
