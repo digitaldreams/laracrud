@@ -4,7 +4,7 @@ namespace LaraCrud\Services\Controller;
 
 use LaraCrud\Contracts\Controller\ViewAbleMethod;
 
-class Show extends ControllerMethod implements ViewAbleMethod
+class ShowMethod extends ControllerMethod implements ViewAbleMethod
 {
     /**
      * {@inheritdoc}

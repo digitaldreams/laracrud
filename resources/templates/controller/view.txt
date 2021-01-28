@@ -1,0 +1,10 @@
+   /**
+     * @@PHPDocComment@@
+     *
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function @@methodName@@(@@parameters@@)
+    {
+        @@body@@
+        return view('@@viewPath@@', [@@variables@@]);
+    }

@@ -4,7 +4,7 @@ namespace LaraCrud\Services\Controller;
 
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
-class Destroy extends ControllerMethod implements RedirectAbleMethod
+class DestroyMethod extends ControllerMethod implements RedirectAbleMethod
 {
     /**
      * {@inheritdoc}

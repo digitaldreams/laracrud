@@ -110,11 +110,12 @@ abstract class ControllerMethod
         }
         $reflection = new \ReflectionClass(static::class);
 
-        return $this->methodName = lcfirst($reflection->getShortName());
+        return $this->methodName = str_replace('Method', '', lcfirst($reflection->getShortName()));
     }
 
     /**
      * Will be called before getViewGenerateCode method call to setup necessary parameters and variables.
+     *
      * @throw \Exception
      *
      * @return $this
@@ -138,8 +139,8 @@ abstract class ControllerMethod
 
     /**
      * @return string
-     * @throws \ReflectionException
      *
+     * @throws \ReflectionException
      */
     public function getCode(): string
     {
@@ -160,7 +161,6 @@ abstract class ControllerMethod
 
     /**
      * @return string
-     *
      */
     protected function getRequestClass(): string
     {
@@ -209,15 +209,15 @@ abstract class ControllerMethod
             return $this->modelShortName;
         }
 
-        return $this->modelShortName = lcfirst($this->modelReflectionClass->getShortName());
+        return $this->modelShortName = $this->modelReflectionClass->getShortName();
     }
 
     /**
      * Get Model class Name without namespace.
      *
      * @return string
-     * @throws \ReflectionException
      *
+     * @throws \ReflectionException
      */
     protected function getParentShortName(): string
     {

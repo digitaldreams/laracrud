@@ -95,12 +95,12 @@ class Controller implements Crud
     public function template(): string
     {
         $this->controllerRepository->build();
-
+        print_r($this->controllerRepository->getCode());
         $tempMan = new TemplateManager('controller/template.txt', [
             'namespace' => $this->namespace,
             'fullmodelName' => get_class($this->model),
-            'controllerName' => $this->controllerName,
-            'methods' => $this->controllerRepository->getCode(),
+            'controllerName' => $this->fileName,
+            'methods' => implode("\n", $this->controllerRepository->getCode()),
             'importNameSpace' => implode(";\n", $this->controllerRepository->getImportableNamespaces()),
         ]);
 
@@ -148,14 +148,14 @@ class Controller implements Crud
         if (!empty($name)) {
             if (false !== strpos($name, '/')) {
                 $narr = explode('/', $name);
-                $this->fileName = array_pop($narr);
+                $this->modelName = $this->fileName = array_pop($narr);
 
                 foreach ($narr as $p) {
                     $this->subNameSpace .= '\\' . $p;
                     $this->path .= '/' . $p;
                 }
             } else {
-                $this->fileName = $name;
+                $this->modelName = $this->fileName = $name;
             }
         }
 

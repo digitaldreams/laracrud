@@ -2,9 +2,10 @@
 
 namespace LaraCrud\Services\Controller;
 
+use Illuminate\Support\Str;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
-class Update extends ControllerMethod implements RedirectAbleMethod
+class StoreMethod extends ControllerMethod implements RedirectAbleMethod
 {
     /**
      * {@inheritdoc}
@@ -17,18 +18,26 @@ class Update extends ControllerMethod implements RedirectAbleMethod
         if ($this->parentModel) {
             $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
         }
-        $this->setParameter(ucfirst($this->getModelShortName()), '$' . $this->getModelShortName());
 
         return $this;
     }
 
     /**
      * @return string
+     *
+     * @throws \ReflectionException
      */
     public function getBody(): string
     {
         $variable = '$' . $this->getModelShortName();
+        $body = $variable . ' = new ' . ucfirst($this->getModelShortName()) . ';' . PHP_EOL;
+        //Assign something like $comment->post_id = $post->id;
+        if ($this->parentModel) {
+            $body .= "\t\t" . $variable . '->' . Str::snake($this->getParentShortName()) . '_id = $' . lcfirst($this->getParentShortName()) . '->id' . PHP_EOL;
+        }
 
-        return $variable . '->fill($request->all())->save();' . PHP_EOL;
+        $body .= "\t\t" . $variable . '->fill($request->all())->save();' . PHP_EOL;
+
+        return $body;
     }
 }

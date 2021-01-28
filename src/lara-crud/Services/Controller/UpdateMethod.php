@@ -4,17 +4,20 @@ namespace LaraCrud\Services\Controller;
 
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
-class Restore extends ControllerMethod implements RedirectAbleMethod
+class UpdateMethod extends ControllerMethod implements RedirectAbleMethod
 {
     /**
      * {@inheritdoc}
      */
     protected function beforeGenerate(): self
     {
+        $requestClass = $this->getRequestClass();
+        $this->setParameter($requestClass, '$request');
+
         if ($this->parentModel) {
             $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
         }
-        $this->setParameter('int', '$' . $this->getModelShortName());
+        $this->setParameter(ucfirst($this->getModelShortName()), '$' . $this->getModelShortName());
 
         return $this;
     }
@@ -25,10 +28,7 @@ class Restore extends ControllerMethod implements RedirectAbleMethod
     public function getBody(): string
     {
         $variable = '$' . $this->getModelShortName();
-        $body = $variable . ' = ' . ucfirst($this->getModelShortName()) . '::withTrashed()->where(\'' . $this->model->getRouteKeyName() . '\',' . $variable . ')->firstOrFail()' . PHP_EOL;
 
-        $body .= "\t\t" . $variable . '->restore();' . PHP_EOL;
-
-        return $body;
+        return $variable . '->fill($request->all())->save();' . PHP_EOL;
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use LaraCrud\Contracts\Controller\ViewAbleMethod;
 use LaraCrud\Services\FullTextSearch;
 
-class Index extends ControllerMethod implements ViewAbleMethod
+class IndexMethod extends ControllerMethod implements ViewAbleMethod
 {
     /**
      * @return bool

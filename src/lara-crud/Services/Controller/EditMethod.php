@@ -2,6 +2,6 @@
 
 namespace LaraCrud\Services\Controller;
 
-class Edit extends Show
+class EditMethod extends ShowMethod
 {
 }

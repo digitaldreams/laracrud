@@ -43,8 +43,8 @@ trait ViewAbleMethodHelper
 
     /**
      * @return string|null
-     * @throws \ReflectionException
      *
+     * @throws \ReflectionException
      */
     public function getViewFilePath(): string
     {
@@ -62,7 +62,6 @@ trait ViewAbleMethodHelper
     }
 
     /**
-     *
      * @return array
      */
     public function getVariables(): array
@@ -81,12 +80,12 @@ trait ViewAbleMethodHelper
 
     /**
      * @return string
-     * @throws \ReflectionException
      *
+     * @throws \ReflectionException
      */
     protected function generateViewCode(): string
     {
-        return (new TemplateManager('controller/web/view.txt', [
+        return (new TemplateManager('controller/view.txt', [
             'variables' => $this->buildVariables(),
             'parameters' => $this->buildParameters(),
             'body' => $this->getBody(),
