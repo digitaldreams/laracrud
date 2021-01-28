@@ -2,11 +2,35 @@
 
 namespace LaraCrud\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use LaraCrud\Services\Controller\ControllerMethod;
+use LaraCrud\Services\Controller\CreateMethod;
+use LaraCrud\Services\Controller\DestroyMethod;
+use LaraCrud\Services\Controller\EditMethod;
+use LaraCrud\Services\Controller\ForceDeleteMethod;
+use LaraCrud\Services\Controller\IndexMethod;
+use LaraCrud\Services\Controller\RestoreMethod;
+use LaraCrud\Services\Controller\ShowMethod;
+use LaraCrud\Services\Controller\StoreMethod;
+use LaraCrud\Services\Controller\UpdateMethod;
 
 class ControllerRepository
 {
+    /**
+     * @var string[]
+     */
+    public static $methodClassMapper = [
+        'index' => IndexMethod::class,
+        'show' => ShowMethod::class,
+        'create' => CreateMethod::class,
+        'store' => StoreMethod::class,
+        'edit' => EditMethod::class,
+        'update' => UpdateMethod::class,
+        'destroy' => DestroyMethod::class,
+        'restore' => RestoreMethod::class,
+        'forceDelete' => ForceDeleteMethod::class,
+    ];
 
     /**
      * @var bool
@@ -41,6 +65,26 @@ class ControllerRepository
     {
         $this->methods[] = $method;
 
+        return $this;
+    }
+
+    /**
+     * @param string[]                                 $methods
+     * @param \Illuminate\Database\Eloquent\Model      $model
+     * @param \Illuminate\Database\Eloquent\Model|null $parent
+     *
+     * @return $this
+     */
+    public function addMethodsFromString(array $methods, Model $model, ?Model $parent = null): self
+    {
+        $insertAbleMethods = array_intersect_key(static::$methodClassMapper, array_flip($methods));
+        foreach ($insertAbleMethods as $methodName) {
+            $method = new $methodName($model);
+            if (!empty($parent)) {
+                $method->setParent($parent);
+            }
+            $this->addMethod($method);
+        }
         return $this;
     }
 

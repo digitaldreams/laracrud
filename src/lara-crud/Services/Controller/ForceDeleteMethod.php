@@ -4,7 +4,7 @@
 namespace LaraCrud\Services\Controller;
 
 
-class ForceDelete extends RestoreMethod
+class ForceDeleteMethod extends RestoreMethod
 {
     /**
      * @return string
