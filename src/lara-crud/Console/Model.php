@@ -3,6 +3,7 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use LaraCrud\Contracts\DatabaseContract;
 use LaraCrud\Crud\Model as ModelCrud;
 
@@ -72,7 +73,8 @@ class Model extends Command
 
             $this->info('Model class successfully created');
         } catch (\Exception $ex) {
-            $this->error(sprintf('%s on line %s  in %', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
+            $this->error(sprintf('%s on line %s  in %. Please see log file more more details.', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
+            Log::error($ex->getTraceAsString());
         }
     }
 }

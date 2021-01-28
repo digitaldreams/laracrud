@@ -120,14 +120,15 @@ class TableRepository implements TableContract
         }
         foreach ($this->table->relations() as $foreign) {
             $fk = new ForeignKey($foreign);
-
+            $modelName = ucfirst(Str::camel(Str::singular($fk->foreignTable())));
+            $methodName = Str::camel(Str::singular($fk->foreignTable()));
             $relations[] = [
                 'relationShip' => ForeignKey::RELATION_BELONGS_TO,
                 'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO),
-                'modelName' => ucfirst(Str::camel(Str::singular($fk->foreignTable()))),
-                'methodName' => Str::camel(Str::singular($fk->foreignTable())),
+                'modelName' => $modelName,
+                'methodName' => $methodName,
                 'params' => ",'" . $fk->column() . "','" . $fk->foreignColumn() . "'",
-                'propertyDefiners' => '@property ' . $relation['methodName'] . ' $' . lcfirst($relation['modelName']) . ' ' . $relation['relationShip'],
+                'propertyDefiners' => '@property ' . $modelName . ' $' . $methodName . ' ' . ucfirst(ForeignKey::RELATION_BELONGS_TO),
             ];
         }
 
