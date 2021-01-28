@@ -16,6 +16,30 @@ class ColumnRepository implements ColumnContract
     protected $column;
 
     /**
+     * This will use to generate @property .
+     *
+     * @var string[]
+     */
+    protected $phpDataTypes = [
+        //MySql Type => PHP native data type
+        'varchar' => 'string',
+        'text' => 'string',
+        'longtext' => 'string',
+        'tinytext' => 'string',
+        'mediumtext' => 'string',
+        'enum' => 'string',
+        'tinyint' => 'int',
+        'smallint' => 'int',
+        'float' => 'int',
+        'double' => 'int',
+        'decimal' => 'int',
+        'bigint' => 'int',
+        'json' => 'array',
+        'timestamp' => '\Carbon\Carbon',
+        'datetime' => '\Carbon\Carbon',
+    ];
+
+    /**
      * @var TableContract
      */
     protected $table;
@@ -107,6 +131,14 @@ class ColumnRepository implements ColumnContract
     public function dataType(): string
     {
         return $this->column->type();
+    }
+
+    /**
+     * @return string
+     */
+    public function phpDataType(): string
+    {
+        return isset($this->phpDataTypes[$this->dataType()]) ? $this->phpDataTypes[$this->dataType()] : $this->dataType();
     }
 
     /**

@@ -2,17 +2,11 @@
 
 namespace LaraCrud\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use LaraCrud\Services\Controller\ControllerMethod;
 
 class ControllerRepository
 {
-    /**
-     * @var Model
-     */
-    protected $model;
 
     /**
      * @var bool
@@ -38,29 +32,7 @@ class ControllerRepository
      */
     protected array $importableNamespaces = [];
 
-
-    /**
-     * ControllerRepository constructor.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     */
-    public function __construct(Model $model)
-    {
-        $this->model = $model;
-    }
-
-    /**
-     * Whether given model implement SoftDeletes trait.
-     * If so then we have to add restore and forceDelete methods as well.
-     *
-     * @return bool
-     */
-    public function isSoftDeleteAble(): bool
-    {
-        return in_array(SoftDeletes::class, class_uses($this->model));
-    }
-
-    /**
+ /**
      * @param \LaraCrud\Services\Controller\ControllerMethod $method
      *
      * @return \LaraCrud\Repositories\ControllerRepository

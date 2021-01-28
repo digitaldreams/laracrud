@@ -95,10 +95,10 @@ class Model
     private $converTypes = [
         'varchar' => 'string',
         'boolean' => 'bool',
-        'enum'    => 'string',
-        'int'     => 'int',
-        'double'  => 'double',
-        'bigint'  => 'int',
+        'enum' => 'string',
+        'int' => 'int',
+        'double' => 'double',
+        'bigint' => 'int',
         'tinyint' => 'int',
     ];
 
@@ -153,8 +153,8 @@ class Model
         if (!in_array($this->column->name(), config('laracrud.model.protectedColumns')) && !in_array($this->column->dataType(), ['text', 'tinytext', 'bigtext'])) {
             $this->scopes[] = (new TemplateManager('model/scope.txt', [
                 'methodName' => ucfirst($this->column->name()),
-                'fielName'   => $this->column->name(),
-            ]))->get()."\n";
+                'fielName' => $this->column->name(),
+            ]))->get() . "\n";
         }
 
         return $this->scopes;
@@ -166,7 +166,7 @@ class Model
     public function casts()
     {
         if (isset($this->converTypes[$this->column->dataType()])) {
-            $this->casts[] = "'".$this->column->name()."'=>'".$this->converTypes[$this->column->dataType()]."'";
+            $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->converTypes[$this->column->dataType()] . "'";
         }
 
         return $this->casts;
@@ -182,9 +182,9 @@ class Model
         }
 
         foreach ($this->column->options() as $value) {
-            $name = strtoupper($this->column->name().'_'.str_replace([' ',
+            $name = strtoupper($this->column->name() . '_' . str_replace([' ',
                 '-', '"', '/', ], '_', $value));
-            $this->constants[] = "\t".' const '.$name.'='."'$value'".';';
+            $this->constants[] = "\t" . ' const ' . $name . '=' . "'$value'" . ';';
         }
 
         return $this->constants;
@@ -195,7 +195,7 @@ class Model
      */
     public function propertyDefiner()
     {
-        $this->propertyDefiners[] = '@property '.$this->column->dataType().' $'.$this->column->name().' '.$this->column->label();
+        $this->propertyDefiners[] = '@property ' . $this->column->phpDataType() . ' $' . $this->column->name() . ' ' . $this->column->label();
 
         return $this->propertyDefiners;
     }
@@ -205,7 +205,7 @@ class Model
      */
     public function methodDefiner()
     {
-        $this->methodDefiners[] = '@method \Illuminate\Database\Eloquent\Builder '.lcfirst($this->getModelName($this->column->name())).'('.$this->column->dataType().' $'.$this->column->name().')'.str_replace('_', ' ', $this->column->name());
+        $this->methodDefiners[] = '@method \Illuminate\Database\Eloquent\Builder ' . lcfirst($this->getModelName($this->column->name())) . '(' . $this->column->dataType() . ' $' . $this->column->name() . ')' . str_replace('_', ' ', $this->column->name());
 
         return $this->methodDefiners;
     }
@@ -216,7 +216,7 @@ class Model
     public function fillable()
     {
         if ($this->column->isFillable()) {
-            $this->fillable[] = "\t\t"."'".$this->column->name()."'";
+            $this->fillable[] = "\t\t" . "'" . $this->column->name() . "'";
         }
 
         return $this->fillable;
@@ -233,7 +233,7 @@ class Model
         if (in_array($this->column->dataType(), ['time', 'date', 'datetime', 'timestamp'])
             && !in_array($this->column->name(), config('laracrud.model.protectedColumns'))
         ) {
-            $this->dates[] = "\t"."'".$this->column->name()."'";
+            $this->dates[] = "\t" . "'" . $this->column->name() . "'";
         }
 
         return $this->dates;
@@ -252,9 +252,9 @@ class Model
         }
 
         if (in_array($this->column->dataType(), ['varchar', 'text'])) {
-            $this->searchScope[] = "\t"."->orWhere('".$this->column->name()."','LIKE','%'.\$q.'%')".PHP_EOL;
+            $this->searchScope[] = "\t" . "->orWhere('" . $this->column->name() . "','LIKE','%'.\$q.'%')" . PHP_EOL;
         } elseif (in_array($this->column->dataType(), ['int', 'bigint'])) {
-            $this->searchScope[] = "\t"."->orWhere('".$this->column->name()."',\$q)".PHP_EOL;
+            $this->searchScope[] = "\t" . "->orWhere('" . $this->column->name() . "',\$q)" . PHP_EOL;
         }
 
         return $this->searchScope;
@@ -275,15 +275,17 @@ class Model
             $setDateFormat = isset($setTimeFormats[$this->column->dataType()]) ? $setTimeFormats[$this->column->dataType()] : 'Y-m-d';
 
             $tempMan = new TemplateManager('model/setAttributeDate.txt', [
-                'format'      => $setDateFormat,
+                'format' => $setDateFormat,
                 'columnLabel' => $label,
-                'column'      => $this->column->name(),
+                'column' => $this->column->name(),
             ]);
             $this->mutators[] = $tempMan->get();
+
         } elseif (in_array($this->column->dataType(), ['varchar', 'text', 'tinytext', 'bigtext'])) {
+
             $tempMan = new TemplateManager('model/setAttributeText.txt', [
                 'columnLabel' => $label,
-                'column'      => $this->column->name(),
+                'column' => $this->column->name(),
             ]);
             $this->mutators[] = $tempMan->get();
         }
@@ -299,12 +301,14 @@ class Model
         if (in_array($this->column->name(), config('laracrud.model.protectedColumns'))) {
             return $this->accessors;
         }
+
         if (in_array($this->column->dataType(), ['time', 'date', 'datetime', 'timestamp'])) {
             $getTimeFormats = config('laracrud.model.getDateFormat', []);
+
             $tempMan = new TemplateManager('model/getAttributeDate.txt', [
-                'format'      => isset($getTimeFormats[$this->column->dataType()]) ? $getTimeFormats[$this->column->dataType()] : 'd M Y',
+                'format' => isset($getTimeFormats[$this->column->dataType()]) ? $getTimeFormats[$this->column->dataType()] : 'd M Y',
                 'columnLabel' => str_replace(' ', '', ucwords(str_replace('_', ' ', $this->column->name()))),
-                'column'      => $this->column->name(),
+                'column' => $this->column->name(),
             ]);
             $this->accessors[] = $tempMan->get();
         }

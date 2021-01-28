@@ -98,4 +98,17 @@ class Controller extends Command
 
         return false;
     }
+
+    /**
+     * Whether given model implement SoftDeletes trait.
+     * If so then we have to add restore and forceDelete methods as well.
+     *
+     * @return bool
+     */
+    public function isSoftDeleteAble(): bool
+    {
+        //     return in_array(SoftDeletes::class, class_uses($this->model));
+    }
+
+
 }
