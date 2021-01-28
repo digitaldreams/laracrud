@@ -4,6 +4,7 @@ namespace LaraCrud\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use LaraCrud\Services\Controller\ControllerMethod;
 
 class ControllerRepository
@@ -19,9 +20,24 @@ class ControllerRepository
     protected bool $softDeleteAble = false;
 
     /**
-     * @var array
+     * @var ControllerMethod[]
      */
     protected array $methods = [];
+
+    /**
+     * All code generated my ControllerMethod classes and stored here as array of string.
+     *
+     * @var string[]
+     */
+    protected array $code = [];
+
+    /**
+     * List of Class Full Namespace that should be imported on top of Class.
+     *
+     * @var array
+     */
+    protected array $importableNamespaces = [];
+
 
     /**
      * ControllerRepository constructor.
@@ -57,49 +73,41 @@ class ControllerRepository
     }
 
     /**
-     * @return array
+     * Loop through all of the ControllerMethod classes and getCode and importable NameSpace
+     *
+     * @return $this
      */
-    public function build()
+    public function build(): self
     {
-        $codes = [];
         foreach ($this->methods as $method) {
-            if ($method instanceof ControllerMethod) {
-                $codes[] = $method->getCode();
+            try {
+                if ($method instanceof ControllerMethod) {
+                    $this->code[] = $method->getCode();
+                    $this->importableNamespaces = array_merge($this->importableNamespaces, $method->getNamespaces());
+                }
+            } catch (\Exception $exception) {
+                Log::error($exception->getTraceAsString());
+                continue;
             }
         }
 
-        return $codes;
+        return $this;
     }
 
     /**
-     * @return \LaraCrud\Repositories\ControllerRepository
+     * @return array
      */
-    public function stopSoftDeleteMethods(): self
+    public function getImportableNamespaces(): array
     {
+        return $this->importableNamespaces;
     }
 
     /**
-     * @param bool $path
-     *
-     * @return \LaraCrud\Repositories\ControllerRepository
+     * @return string[]
      */
-    public function setUploadable($path = false): self
+    public function getCode(): array
     {
+        return $this->code;
     }
 
-    /**
-     * @param null $columns
-     *
-     * @return \LaraCrud\Repositories\ControllerRepository
-     */
-    public function setDownloadable($columns = null): self
-    {
-    }
-
-    /**
-     * @param string $path
-     */
-    public function setViewPath(string $path)
-    {
-    }
 }
