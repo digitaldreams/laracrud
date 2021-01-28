@@ -1,5 +1,0 @@
-@@documentation@@
-    public function index(@@requestClass@@ $request)
-    {
-       return $this->response->paginator(@@modelName@@::paginate(10), new @@transformer@@());
-    }

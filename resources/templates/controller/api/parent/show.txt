@@ -1,5 +1,0 @@
-@@documentation@@
-    public function show(@@requestClass@@ $request, $@@parentModelNameParam@@, @@modelName@@ $@@modelNameParam@@)
-    {
-      return $this->response->item($@@modelNameParam@@, new @@transformer@@());
-    }

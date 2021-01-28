@@ -1,9 +1,0 @@
-@@documentation@@
-    public function destroy(@@requestClass@@ $request, $@@parentModelNameParam@@, @@modelName@@ $@@modelNameParam@@)
-    {
-        if ($@@modelNameParam@@->delete()) {
-            return $this->response->array(['status' => 200, 'message' => '@@modelName@@ successfully deleted']);
-        } else {
-             return $this->response->errorInternal('Error occurred while deleting @@modelName@@');
-        }
-    }
