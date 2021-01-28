@@ -101,7 +101,7 @@ class Controller implements Crud
             'fullmodelName' => get_class($this->model),
             'controllerName' => $this->fileName,
             'methods' => implode("\n", $this->controllerRepository->getCode()),
-            'importNameSpace' => implode(";\n", $this->controllerRepository->getImportableNamespaces()),
+            'importNameSpace' => implode(";\n", $this->controllerRepository->getImportableNamespaces()) . ';',
         ]);
 
         return $tempMan->get();

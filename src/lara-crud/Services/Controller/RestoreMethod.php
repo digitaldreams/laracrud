@@ -12,7 +12,7 @@ class RestoreMethod extends ControllerMethod implements RedirectAbleMethod
     protected function beforeGenerate(): self
     {
         if ($this->parentModel) {
-            $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
+            $this->setParameter($this->getParentShortName(), '$' . $this->getParentVariableName());
         }
         $this->setParameter('int', '$' . $this->getModelShortName());
 
@@ -24,8 +24,8 @@ class RestoreMethod extends ControllerMethod implements RedirectAbleMethod
      */
     public function getBody(): string
     {
-        $variable = '$' . $this->getModelShortName();
-        $body = $variable . ' = ' . ucfirst($this->getModelShortName()) . '::withTrashed()->where(\'' . $this->model->getRouteKeyName() . '\',' . $variable . ')->firstOrFail()' . PHP_EOL;
+        $variable = '$' . $this->getModelVariableName();
+        $body = $variable . ' = ' . $this->getModelShortName() . '::withTrashed()->where(\'' . $this->model->getRouteKeyName() . '\',' . $variable . ')->firstOrFail()' . PHP_EOL;
 
         $body .= "\t\t" . $variable . '->restore();' . PHP_EOL;
 

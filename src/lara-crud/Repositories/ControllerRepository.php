@@ -98,7 +98,8 @@ class ControllerRepository
         foreach ($this->methods as $method) {
             try {
                 $this->code[] = $method->getCode();
-                $this->importableNamespaces = array_merge($this->importableNamespaces, $method->getNamespaces());
+                //Only unique Full Namespace will be imported. Already added will be ignored.
+                $this->importableNamespaces = array_unique(array_merge($this->importableNamespaces, array_unique($method->getNamespaces())));
             } catch (\Exception $exception) {
                 Log::error($exception->getTraceAsString());
                 continue;

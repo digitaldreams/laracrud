@@ -11,8 +11,8 @@ class ForceDeleteMethod extends RestoreMethod
      */
     public function getBody(): string
     {
-        $variable = '$' . $this->getModelShortName();
-        $body = $variable . ' = ' . ucfirst($this->getModelShortName()) . '::withTrashed()->where(\'' . $this->model->getRouteKeyName() . '\',' . $variable . ')->firstOrFail()' . PHP_EOL;
+        $variable = '$' . $this->getModelVariableName();
+        $body = $variable . ' = ' . $this->getModelShortName() . '::withTrashed()->where(\'' . $this->model->getRouteKeyName() . '\',' . $variable . ')->firstOrFail()' . PHP_EOL;
 
         $body .= "\t\t" . $variable . '->forceDelete();' . PHP_EOL;
 

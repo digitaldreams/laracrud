@@ -95,9 +95,9 @@ trait RedirectAbleMethodHelper
     {
         $name = config('laracrud.route.prefix') ? rtrim(config('laracrud.route.prefix'), '::') . '::' : '';
         if ($this->parentModel) {
-            $name .= $this->toRouteString($this->getParentShortName()) . '.';
+            $name .= $this->toRouteString($this->getParentVariableName()) . '.';
         }
-        $name .= $this->toRouteString($this->getModelShortName()) . '.' . $this->redirectToRouteMethodName();
+        $name .= $this->toRouteString($this->getModelVariableName()) . '.' . $this->redirectToRouteMethodName();
 
         return "'" . $name . "'";
     }
@@ -128,9 +128,9 @@ trait RedirectAbleMethodHelper
     protected function generateRouteParameter()
     {
         if ($this->parentModel) {
-            $this->routeParameter[$this->getParentShortName()] = '$' . $this->getParentShortName() . '->' . $this->parentModel->getRouteKeyName();
+            $this->routeParameter[$this->getParentVariableName()] = '$' . $this->getParentVariableName() . '->' . $this->parentModel->getRouteKeyName();
         }
-        $this->routeParameter[$this->getModelShortName()] = '$' . $this->getModelShortName() . '->' . $this->model->getRouteKeyName();
+        $this->routeParameter[$this->getModelVariableName()] = '$' . $this->getModelVariableName() . '->' . $this->model->getRouteKeyName();
 
         return $this->routeParameter;
     }

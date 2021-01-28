@@ -11,10 +11,8 @@ class DestroyMethod extends ControllerMethod implements RedirectAbleMethod
      */
     protected function beforeGenerate(): self
     {
-        if ($this->parentModel) {
-            $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
-        }
-        $this->setParameter(ucfirst($this->getModelShortName()), '$' . $this->getModelShortName());
+        $this->setParentVariableAndParam()
+            ->setParameter($this->getModelShortName(), '$' . $this->getModelVariableName());
 
         return $this;
     }
@@ -32,7 +30,7 @@ class DestroyMethod extends ControllerMethod implements RedirectAbleMethod
      */
     public function getBody(): string
     {
-        return '$' . $this->getModelShortName() . '->delete();';
+        return '$' . $this->getModelVariableName() . '->delete();';
     }
 
     /**

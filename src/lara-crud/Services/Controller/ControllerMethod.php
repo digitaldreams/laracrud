@@ -119,10 +119,12 @@ abstract class ControllerMethod
      * @throw \Exception
      *
      * @return $this
+     *
+     * @throws \ReflectionException
      */
     protected function beforeGenerate(): self
     {
-        return $this;
+        return $this->setParentVariableAndParam();
     }
 
     /**
@@ -185,7 +187,7 @@ abstract class ControllerMethod
     public function setParent(Model $parentModel): self
     {
         $this->parentModel = $parentModel;
-        $this->namespaces[] = get_class($parentModel);
+        $this->namespaces[] = 'use ' . get_class($parentModel);
 
         return $this;
     }
@@ -213,6 +215,24 @@ abstract class ControllerMethod
     }
 
     /**
+     * @return string
+     */
+    public function getModelVariableName(): string
+    {
+        return lcfirst($this->getModelShortName());
+    }
+
+    /**
+     * @return string
+     *
+     * @throws \ReflectionException
+     */
+    public function getParentVariableName(): string
+    {
+        return lcfirst($this->getParentShortName());
+    }
+
+    /**
      * Get Model class Name without namespace.
      *
      * @return string
@@ -225,6 +245,21 @@ abstract class ControllerMethod
             return $this->parentModelShortName;
         }
 
-        return $this->parentModelShortName = lcfirst((new \ReflectionClass($this->parentModel))->getShortName());
+        return $this->parentModelShortName = (new \ReflectionClass($this->parentModel))->getShortName();
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws \ReflectionException
+     */
+    protected function setParentVariableAndParam(): self
+    {
+        if ($this->parentModel) {
+            $this->setVariable($this->getParentVariableName(), '$' . $this->getParentVariableName())
+                ->setParameter($this->getParentShortName(), '$' . $this->getParentVariableName());
+        }
+
+        return $this;
     }
 }

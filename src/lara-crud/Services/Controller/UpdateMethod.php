@@ -14,10 +14,7 @@ class UpdateMethod extends ControllerMethod implements RedirectAbleMethod
         $requestClass = $this->getRequestClass();
         $this->setParameter($requestClass, '$request');
 
-        if ($this->parentModel) {
-            $this->setParameter(ucfirst($this->getParentShortName()), '$' . $this->getParentShortName());
-        }
-        $this->setParameter(ucfirst($this->getModelShortName()), '$' . $this->getModelShortName());
+        $this->setParentVariableAndParam()->setParameter($this->getModelShortName(), '$' . $this->getModelVariableName());
 
         return $this;
     }
@@ -27,7 +24,7 @@ class UpdateMethod extends ControllerMethod implements RedirectAbleMethod
      */
     public function getBody(): string
     {
-        $variable = '$' . $this->getModelShortName();
+        $variable = '$' . $this->getModelVariableName();
 
         return $variable . '->fill($request->all())->save();' . PHP_EOL;
     }
