@@ -32,7 +32,7 @@ class ControllerRepository
      */
     protected array $importableNamespaces = [];
 
- /**
+    /**
      * @param \LaraCrud\Services\Controller\ControllerMethod $method
      *
      * @return \LaraCrud\Repositories\ControllerRepository
@@ -45,7 +45,7 @@ class ControllerRepository
     }
 
     /**
-     * Loop through all of the ControllerMethod classes and getCode and importable NameSpace
+     * Loop through all of the ControllerMethod classes and getCode and importable NameSpace.
      *
      * @return $this
      */
@@ -53,10 +53,8 @@ class ControllerRepository
     {
         foreach ($this->methods as $method) {
             try {
-                if ($method instanceof ControllerMethod) {
-                    $this->code[] = $method->getCode();
-                    $this->importableNamespaces = array_merge($this->importableNamespaces, $method->getNamespaces());
-                }
+                $this->code[] = $method->getCode();
+                $this->importableNamespaces = array_merge($this->importableNamespaces, $method->getNamespaces());
             } catch (\Exception $exception) {
                 Log::error($exception->getTraceAsString());
                 continue;

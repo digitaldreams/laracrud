@@ -85,7 +85,7 @@ trait ViewAbleMethodHelper
      */
     protected function generateViewCode(): string
     {
-        return (new TemplateManager('controller/view.txt', [
+        return (new TemplateManager('controller/web/view.txt', [
             'variables' => $this->buildVariables(),
             'parameters' => $this->buildParameters(),
             'body' => $this->getBody(),
