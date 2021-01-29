@@ -9,14 +9,49 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use LaraCrud\Crud\Controller as ControllerCrud;
 use LaraCrud\Crud\Policy;
 use LaraCrud\Crud\RequestResource as RequestResourceCrud;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Repositories\ControllerRepository;
 
 class Controller extends Command
 {
     use Helper;
+
+    /**
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $model;
+
+    /**
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $parent;
+
+    /**
+     * @var string[][]
+     */
+    protected $methods = [
+        'web' => [
+            'index',
+            'show',
+            'create',
+            'store',
+            'edit',
+            'update',
+            'destroy',
+        ],
+        'api' => [
+            'index',
+            'show',
+            'store',
+            'update',
+            'destroy',
+        ],
+    ];
 
     /**
      * The name and signature of the console command.
@@ -46,40 +81,30 @@ class Controller extends Command
     public function handle()
     {
         try {
-            $model = $this->argument('model');
-            $name = $this->argument('name');
-            $parent = $this->option('parent');
+            $this->checkModelExists();
 
-            $only = $this->option('only');
+            $name = $this->argument('name');
             $api = $this->option('api');
             $with = $this->option('with');
 
             $withArr = !empty($with) ? explode(',', $with) : [];
-            $onlyArr = !empty($only) ? explode(',', $only) : '';
 
             if (in_array('request', $withArr)) {
-                $modelFullName = $this->modelFullName($model);
-
-                if (class_exists($modelFullName)) {
-                    $modelObj = new $modelFullName();
-                    $requestResource = new RequestResourceCrud($modelObj->getTable(), false, $api);
-
-                    $requestResource->setModel($modelFullName);
-                    $requestResource->save();
-                    $this->info('Request controller classes created successfully');
-                }
+                $this->createRequestResource($api);
             }
+            $controllerRepository = $this->initControllerCrud();
 
-            $controllerCrud = new ControllerCrud($model, $name, $onlyArr, $api, $parent);
+            $controllerCrud = new ControllerCrud($controllerRepository, $this->model, $name, $api);
             $controllerCrud->save();
-            $this->info('Controller class successfully created');
+            $this->info(sprintf('%s  class successfully created', $controllerCrud->getFullName()));
 
             if (in_array('policy', $withArr)) {
-                $policyCrud = new Policy($model, $controllerCrud->getFullName());
+                $policyCrud = new Policy($this->model, $controllerCrud->getFullName());
                 $policyCrud->save();
                 $this->info('Policy class created successfully');
             }
         } catch (\Exception $ex) {
+            Log::error($ex->getTraceAsString());
             $this->error(sprintf('%s on line %  in %', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
         }
     }
@@ -100,15 +125,82 @@ class Controller extends Command
     }
 
     /**
+     *  Check if Model or Parent Model exists . If so then create object from them otherwise return warning and exit.
+     */
+    private function checkModelExists()
+    {
+        $model = $this->argument('model');
+        $modelFullName = $this->modelFullName($model);
+        if (class_exists($modelFullName)) {
+            $this->model = new $modelFullName();
+        } else {
+            $this->error(sprintf('%s model does not exists in %s.', $model, $modelFullName));
+            exit();
+        }
+        $parent = $this->option('parent');
+
+        if (!empty($parent)) {
+            $parentModelFullName = $this->modelFullName($parent);
+
+            if (class_exists($parentModelFullName)) {
+                $this->parent = new $parentModelFullName();
+            } else {
+                $this->error(sprintf('parent model %s does not exists in %s.', $parent, $parentModelFullName));
+                exit();
+            }
+        }
+
+    }
+
+    /**
+     * @param false $api
+     *
+     * @throws \Exception
+     */
+    private function createRequestResource($api = false)
+    {
+        $requestResource = new RequestResourceCrud($this->model, false, $api);
+
+        $requestResource->setModel(get_class($this->model));
+        $requestResource->save();
+
+        $this->info('Request controller classes created successfully');
+    }
+
+    private function createPolicy()
+    {
+    }
+
+    /**
+     * @return \LaraCrud\Repositories\ControllerRepository
+     */
+    protected function initControllerCrud(): ControllerRepository
+    {
+        $only = $this->option('only');
+        if (!empty($only)) {
+            $methods = explode(',', $only);
+        } else {
+            $methods = $this->methods['web'];
+            if ($this->isSoftDeleteAble()) {
+                $methods[] = 'restore';
+                $methods[] = 'forceDelete';
+            }
+        }
+        $cr = new ControllerRepository();
+
+        return $cr->addMethodsFromString($methods, $this->model, $this->parent);
+    }
+
+
+    /**
      * Whether given model implement SoftDeletes trait.
      * If so then we have to add restore and forceDelete methods as well.
      *
      * @return bool
      */
-    public function isSoftDeleteAble(): bool
+    private function isSoftDeleteAble(): bool
     {
-        //     return in_array(SoftDeletes::class, class_uses($this->model));
+        return in_array(SoftDeletes::class, class_uses($this->model));
     }
-
 
 }

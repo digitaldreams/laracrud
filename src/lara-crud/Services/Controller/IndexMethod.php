@@ -30,7 +30,7 @@ class IndexMethod extends ControllerMethod implements ViewAbleMethod
         $this->setParameter('Request', '$request');
 
         $this->setParentVariableAndParam()
-            ->setVariable(Str::plural($this->getModelShortName()), '$builder->paginate(10)');
+            ->setVariable(Str::plural($this->getModelVariableName()), '$builder->paginate(10)');
 
         return $this;
     }

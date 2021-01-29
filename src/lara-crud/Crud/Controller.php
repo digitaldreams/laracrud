@@ -72,12 +72,12 @@ class Controller implements Crud
      *
      * @param \LaraCrud\Repositories\ControllerRepository $controllerRepository
      * @param \Illuminate\Database\Eloquent\Model         $model
-     * @param string                                      $controllerFileName
+     * @param string|null                                 $controllerFileName
      * @param bool                                        $api
      *
      * @internal param array $except
      */
-    public function __construct(ControllerRepository $controllerRepository, Model $model, string $controllerFileName = '', $api = false)
+    public function __construct(ControllerRepository $controllerRepository, Model $model, ?string $controllerFileName = '', $api = false)
     {
         $this->model = $model;
         $this->resolveControllerFileName($controllerFileName);
@@ -95,7 +95,6 @@ class Controller implements Crud
     public function template(): string
     {
         $this->controllerRepository->build();
-        print_r($this->controllerRepository->getCode());
         $tempMan = new TemplateManager('controller/web/template.txt', [
             'namespace' => $this->namespace,
             'fullmodelName' => get_class($this->model),
@@ -107,13 +106,12 @@ class Controller implements Crud
         return $tempMan->get();
     }
 
-
     /**
      * Get code and save to disk.
      *
      * @return mixed
-     * @throws \Exception
      *
+     * @throws \Exception
      */
     public function save()
     {
@@ -126,7 +124,6 @@ class Controller implements Crud
         $controller = new \SplFileObject($filePath, 'w+');
         $controller->fwrite($this->template());
     }
-
 
     /**
      * Get full newly created fully qualified Class namespace.
@@ -157,6 +154,10 @@ class Controller implements Crud
             } else {
                 $this->modelName = $this->fileName = $name;
             }
+        } else {
+            // Controller Name is empty, Lets create a new name from Model Name like PostController.
+            $controllerNamePrefix = config('laracrud.controller.classSuffix');
+            $this->modelName = $this->fileName = (new \ReflectionClass($this->model))->getShortName() . $controllerNamePrefix;
         }
 
         return $this;
