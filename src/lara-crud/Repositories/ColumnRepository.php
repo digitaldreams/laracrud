@@ -3,24 +3,28 @@
 namespace LaraCrud\Repositories;
 
 use DbReader\Column;
-use DbReader\Table;
 use LaraCrud\Contracts\ColumnContract;
-use LaraCrud\Contracts\ForeignKeyContract;
 use LaraCrud\Contracts\TableContract;
+use LaraCrud\Helpers\ForeignKey;
 
 class ColumnRepository implements ColumnContract
 {
     /**
      * @var Column;
      */
-    protected $column;
+    protected Column $column;
+
+    /**
+     * @var array|\StdClass
+     */
+    protected $foreignData;
 
     /**
      * This will use to generate @property .
      *
      * @var string[]
      */
-    protected $phpDataTypes = [
+    protected array $phpDataTypes = [
         //MySql Type => PHP native data type
         'varchar' => 'string',
         'text' => 'string',
@@ -45,20 +49,21 @@ class ColumnRepository implements ColumnContract
     protected $table;
 
     /**
-     * @param mixed        $data
-     * @param string|Table $table
+     * @param mixed                                             $data
+     * @param TableRepository|\LaraCrud\Contracts\TableContract $tableRepository
+     * @param array                                             $foreignColumn
+     *
+     * @throws \Exception
      */
-    public function __construct($data, $table)
+    public function __construct($data, TableContract $tableRepository, $foreignColumn = [])
     {
-        $this->table = $table instanceof Table ? $table : new Table($table);
-        $this->column = new Column($data, [], $table);
+        $this->table = $tableRepository;
+        $this->column = new Column($data, $foreignColumn, $tableRepository->getTable());
+        $this->foreignData = $foreignColumn;
 
         $files = $this->table->fileColumns();
         $file = isset($files[$this->column->name()]) ? $files[$this->column->name()] : '';
         $this->column->setFile($file);
-
-        $relations = $this->table->relations();
-        $this->column->foreign = isset($relations[$this->column->name()]) ? $relations[$this->column->name()] : [];
     }
 
     /**
@@ -216,14 +221,52 @@ class ColumnRepository implements ColumnContract
     }
 
     /**
-     * @return ForeignKeyContract|null
+     * @return \LaraCrud\Helpers\ForeignKey|null
      */
     public function foreignKey()
     {
         if ($this->column->isForeign()) {
-            return $this->column;
+            return new ForeignKey($this->foreignData);
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validationRules(): array
+    {
+        $rules = [];
+        if (!$this->isNull()) {
+            $rules[] = 'required';
+        } else {
+            $rules[] = 'nullable';
+        }
+        if ($this->isUnique()) {
+            $rules[] = sprintf("Rule::unique('%s','%s')", $this->table->name(), $this->name());
+        }
+        if ($this->isForeign()) {
+            $rules[] = sprintf("Rule::exists('%s','%s')", $this->column->foreignTable(), $this->column->foreignColumn());
+        }
+        if ('enum' == $this->dataType()) {
+            $rules[] = 'in:' . implode(',', $this->options());
+        } elseif ($this->file()) {
+            $rules[] = 'file';
+        } elseif (in_array($this->dataType(), ['varchar'])) {
+            $rules[] = 'max:' . $this->length();
+        } elseif ('tinyint' == $this->dataType() && 1 == $this->length()) {
+            $rules[] = 'boolean';
+        } elseif (in_array($this->dataType(), ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float', 'double'])) {
+            $rules[] = 'numeric';
+        } elseif (in_array($this->dataType(), ['date', 'time', 'datetime', 'timestamp'])) {
+            $rules[] = 'date';
+        }
+
+        if (in_array($this->dataType(), ['text', 'tinytext', 'mediumtext', 'longtext'])) {
+            $rules[] = 'string';
+        }
+
+        return $rules;
     }
 }

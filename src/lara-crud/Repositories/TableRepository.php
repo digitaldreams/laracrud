@@ -28,9 +28,9 @@ class TableRepository implements TableContract
     /**
      * @param $name
      *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     *
      * @return bool
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function exists(): bool
     {
@@ -74,65 +74,31 @@ class TableRepository implements TableContract
     /**
      * List of ColumnRepository.
      *
-     * @return array
+     * @return \LaraCrud\Repositories\ColumnRepository[]
+     * @throws \Exception
      */
     public function columns(): array
     {
         $arr = [];
+        $foreignColumns = $this->table->relations();
         foreach ($this->table->columns() as $name => $data) {
-            $arr[] = new ColumnRepository($data, $this->table);
+            $foreignColumn = isset($foreignColumns[$name]) ? $foreignColumns[$name] : [];
+            $arr[$name] = new ColumnRepository($data, $this, $foreignColumn);
         }
 
         return $arr;
     }
 
     /**
-     * @throws \Exception
+     * Create Relationships array.
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function relations(): array
     {
-        $otherKeys = $this->table->references();
-        $relations = [];
-        foreach ($otherKeys as $column) {
-            $fk = new ForeignKey($column);
-
-            $relation = [
-                'modelName' => $fk->modelName(),
-                'methodName' => Str::plural(lcfirst($fk->modelName())),
-            ];
-
-            if ($fk->isPivot) {
-                $relation['params'] = ",'" . $fk->table() . "'";
-                $relation['relationShip'] = ForeignKey::RELATION_BELONGS_TO_MANY;
-                $relation['returnType'] = ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY);
-            } else {
-                $relation['params'] = ",'" . $fk->column() . "'";
-                $relation['relationShip'] = ForeignKey::RELATION_HAS_MANY;
-                $relation['returnType'] = ucfirst(ForeignKey::RELATION_HAS_MANY);
-            }
-
-            $relation['propertyDefiners'] = '@property \Illuminate\Database\Eloquent\Collection' . ' $' .
-                $relation['methodName'] . ' ' . $relation['relationShip'];
-
-            $relations[] = $relation;
-        }
-        foreach ($this->table->relations() as $foreign) {
-            $fk = new ForeignKey($foreign);
-            $modelName = ucfirst(Str::camel(Str::singular($fk->foreignTable())));
-            $methodName = Str::camel(Str::singular($fk->foreignTable()));
-            $relations[] = [
-                'relationShip' => ForeignKey::RELATION_BELONGS_TO,
-                'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO),
-                'modelName' => $modelName,
-                'methodName' => $methodName,
-                'params' => ",'" . $fk->column() . "','" . $fk->foreignColumn() . "'",
-                'propertyDefiners' => '@property ' . $modelName . ' $' . $methodName . ' ' . ucfirst(ForeignKey::RELATION_BELONGS_TO),
-            ];
-        }
-
-        return $relations;
+        return array_merge($this->belongsToRelations(), $this->hasManyAndBelongsToManyRelations());
     }
 
     /**
@@ -175,5 +141,85 @@ class TableRepository implements TableContract
         }
 
         return $data;
+    }
+
+    /**
+     * Create Belongs To Relationship.
+     *
+     * @throws \Exception
+     */
+    protected function belongsToRelations(): array
+    {
+        $relations = [];
+        foreach ($this->table->relations() as $foreign) {
+            $fk = new ForeignKey($foreign);
+            $modelName = ucfirst(Str::camel(Str::singular($fk->foreignTable())));
+            $methodName = Str::camel(Str::singular($fk->foreignTable()));
+            $belongToRelation = [
+                'relationShip' => ForeignKey::RELATION_BELONGS_TO,
+                'returnType' => ucfirst(ForeignKey::RELATION_BELONGS_TO),
+                'modelName' => $modelName,
+                'methodName' => $methodName,
+                'params' => ",'" . $fk->column() . "','" . $fk->foreignColumn() . "'",
+                'propertyDefiners' => '@property ' . $modelName . ' $' . $methodName . ' ' . ucfirst(ForeignKey::RELATION_BELONGS_TO),
+            ];
+            if (isset($relations[$methodName])) {
+                $relations[$methodName . rand(1, 5)] = $belongToRelation;
+            } else {
+                $relations[$methodName] = $belongToRelation;
+            }
+        }
+
+        return $relations;
+    }
+
+    /**
+     * Create HasMany and BelongsToMany Relationships.
+     *
+     * @return array
+     * @throws \Exception
+     */
+    protected function hasManyAndBelongsToManyRelations(): array
+    {
+        $otherKeys = $this->table->references();
+        $relations = [];
+        foreach ($otherKeys as $column) {
+            $fk = new ForeignKey($column);
+            $methodName = Str::plural(lcfirst($fk->modelName()));
+            $relation = [
+                'modelName' => $fk->modelName(),
+                'methodName' => $methodName,
+            ];
+
+            if ($fk->isPivot) {
+                $relation['params'] = ",'" . $fk->table() . "'";
+                $relation['relationShip'] = ForeignKey::RELATION_BELONGS_TO_MANY;
+                $relation['returnType'] = ucfirst(ForeignKey::RELATION_BELONGS_TO_MANY);
+            } else {
+                $relation['params'] = ",'" . $fk->column() . "'";
+                $relation['relationShip'] = ForeignKey::RELATION_HAS_MANY;
+                $relation['returnType'] = ucfirst(ForeignKey::RELATION_HAS_MANY);
+            }
+
+            $relation['propertyDefiners'] = '@property \Illuminate\Database\Eloquent\Collection' . ' $' . $relation['methodName'] . ' ' . $relation['relationShip'];
+
+            if (isset($relations[$methodName])) {
+                $relations[$methodName . rand(1, 5)] = $relation;
+            } else {
+                $relations[$methodName] = $relation;
+            }
+        }
+
+        return $relations;
+    }
+
+    /**
+     * Get Database Table object.
+     *
+     * @return Table
+     */
+    public function getTable(): Table
+    {
+        return $this->table;
     }
 }

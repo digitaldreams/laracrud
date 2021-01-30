@@ -2,17 +2,18 @@
 
 namespace LaraCrud\Crud;
 
-use DbReader\Column;
-use DbReader\Table;
+use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Contracts\Crud;
+use LaraCrud\Contracts\TableContract;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
 class Request implements Crud
 {
     use Helper;
+
     /**
-     * @var Table
+     * @var \LaraCrud\Contracts\TableContract
      */
     protected $table;
 
@@ -51,13 +52,14 @@ class Request implements Crud
      * @param string                              $name
      * @param bool                                $api
      */
-    public function __construct(\Illuminate\Database\Eloquent\Model $model, $name = '', $api = false)
+    public function __construct(Model $model, $name = '', $api = false)
     {
         $this->model = $model;
-        $this->table = new Table($model->getTable());
+        $this->table = app()->make(TableContract::class, ['table' => $model->getTable()]);
+
         $this->namespace = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
         $this->namespace = $this->getFullNS($this->namespace);
-        $this->modelName = $this->getModelName($model->getTable());
+        $this->modelName = $this->getModelName((new \ReflectionClass($this->model))->getShortName());
         if (!empty($name)) {
             $this->parseName($name);
         } else {
@@ -102,58 +104,14 @@ class Request implements Crud
     public function makeRules()
     {
         $rules = [];
-        $columns = $this->table->columnClasses();
+        $columns = $this->table->columns();
         $fillable = $this->model->getFillable();
         $guarded = $this->model->getGuarded();
         foreach ($columns as $column) {
-            if (in_array($column->name(), config('laracrud.model.protectedColumns'))) {
-                continue;
-            } elseif (!in_array($column->name(), $fillable) || in_array($column->name(), $guarded)) {
+            if (!$column->isFillable() || !in_array($column->name(), $fillable) || in_array($column->name(), $guarded)) {
                 continue;
             }
-            $rules[] = "\t\t\t'{$column->name()}' => '" . implode('|', $this->rule($column)) . "',";
-        }
-
-        return $rules;
-    }
-
-    /**
-     * Make rules for Request Class.
-     *
-     * @param Column $column
-     *
-     * @return array
-     */
-    public function rule(Column $column)
-    {
-        $rules = [];
-        if (!$column->isNull()) {
-            $rules[] = 'required';
-        } else {
-            $rules[] = 'nullable';
-        }
-        if ($column->isUnique()) {
-            $rules[] = "unique:{$this->table->name()},{$column->name()}";
-        }
-        if ($column->isForeign()) {
-            $rules[] = "exists:{$column->foreignTable()},{$column->foreignColumn()}";
-        }
-        if ('enum' == $column->type()) {
-            $rules[] = 'in:' . implode(',', $column->options());
-        } elseif ($column->isFile()) {
-            $rules[] = 'file';
-        } elseif (in_array($column->type(), ['varchar'])) {
-            $rules[] = 'max:' . $column->length();
-        } elseif ('tinyint' == $column->type() && 1 == $column->length()) {
-            $rules[] = 'boolean';
-        } elseif (in_array($column->type(), ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float', 'double'])) {
-            $rules[] = 'numeric';
-        } elseif (in_array($column->type(), ['date', 'time', 'datetime', 'timestamp'])) {
-            $rules[] = 'date';
-        }
-
-        if (in_array($column->type(), ['text', 'tinytext', 'mediumtext', 'longtext'])) {
-            $rules[] = 'string';
+            $rules[] = "\t\t\t'{$column->name()}' => " . $this->implode($column->validationRules());
         }
 
         return $rules;
@@ -169,5 +127,17 @@ class Request implements Crud
         $this->authorization = $auth;
 
         return $this;
+    }
+
+    private function implode(array $rules)
+    {
+        $string = '[';
+        foreach ($rules as $rule) {
+            $string .= 0 !== substr_compare($rule, 'Rule::', 0, 6) ? "'" . $rule . "'" : $rule;
+            $string .= ',';
+        }
+        $string .= '],';
+
+        return $string;
     }
 }

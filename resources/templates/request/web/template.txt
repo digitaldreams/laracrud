@@ -3,8 +3,9 @@
 namespace @@namespace@@;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class @@requestClassName@@ extends FormRequest 
+class @@requestClassName@@ extends FormRequest
 {
 
     /**
@@ -12,7 +13,7 @@ class @@requestClassName@@ extends FormRequest
      *
      * @return bool
      */
-    public function authorize() 
+    public function authorize()
     {
         return @@authorization@@;
     }
@@ -22,7 +23,7 @@ class @@requestClassName@@ extends FormRequest
      *
      * @return array
      */
-    public function rules() 
+    public function rules()
     {
         return [
 @@rules@@
@@ -37,7 +38,7 @@ class @@requestClassName@@ extends FormRequest
     public function messages()
     {
         return [
-     
+
         ];
     }
 

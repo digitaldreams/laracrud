@@ -91,6 +91,13 @@ class ForeignKey
         return isset($this->data->REFERENCED_COLUMN_NAME) ? $this->data->REFERENCED_COLUMN_NAME : false;
     }
 
+    /**
+     * Check whether current table is a pivot table or not.
+     * For example, user_team is a pivot table. That does not have a primary column.
+     * So by running this query we can see whether this table has a primary key called id.
+     *
+     * @return bool
+     */
     public function isPivot()
     {
         $dbName = $this->getDatabaseName();
@@ -98,7 +105,7 @@ class ForeignKey
         $sql = "SELECT COUNT(*) as total FROM  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
                                     WHERE TABLE_SCHEMA='$dbName'
                                      AND TABLE_NAME='$tableName'
-                                     AND CONSTRAINT_NAME='PRIMARY' 
+                                     AND CONSTRAINT_NAME='PRIMARY'
                                      AND COLUMN_NAME='id'
                                      ";
         $result = $this->db->query($sql)->fetch(\PDO::FETCH_OBJ);
@@ -134,18 +141,18 @@ class ForeignKey
 
         if ($this->isPivot) {
             $relation = [
-                'name'        => static::RELATION_BELONGS_TO_MANY,
+                'name' => static::RELATION_BELONGS_TO_MANY,
                 'foreign_key' => $this->column(),
-                'model'       => $this->modelName(),
-                'other_key'   => $this->foreignColumn(),
-                'pivotTable'  => $this->table(),
+                'model' => $this->modelName(),
+                'other_key' => $this->foreignColumn(),
+                'pivotTable' => $this->table(),
             ];
         } else {
             $relation = [
-                'name'        => static::RELATION_BELONGS_TO,
+                'name' => static::RELATION_BELONGS_TO,
                 'foreign_key' => $this->column(),
-                'model'       => $this->modelName(),
-                'other_key'   => $this->foreignColumn(),
+                'model' => $this->modelName(),
+                'other_key' => $this->foreignColumn(),
             ];
         }
 

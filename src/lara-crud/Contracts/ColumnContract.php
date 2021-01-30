@@ -92,7 +92,14 @@ interface ColumnContract
     public function options(): ?array;
 
     /**
-     * @return ForeignKeyContract|null
+     * @return \LaraCrud\Helpers\ForeignKey|null
      */
     public function foreignKey();
+
+    /**
+     * Request validation Rules.
+     *
+     * @return array
+     */
+    public function validationRules(): array;
 }
