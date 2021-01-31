@@ -4,9 +4,11 @@ namespace LaraCrud\Repositories\View;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use LaraCrud\Configuration;
 use LaraCrud\Contracts\TableContract;
 use LaraCrud\Services\FullTextSearch;
 use LaraCrud\Traits\ModelShortNameAndVariablesTrait;
+use SplFileObject;
 
 abstract class PageRepository
 {
@@ -41,7 +43,7 @@ abstract class PageRepository
     /**
      * @var \SplFileObject
      */
-    protected $splFileObject;
+    protected SplFileObject $splFileObject;
 
     /**
      * PageRepository constructor.
@@ -53,8 +55,8 @@ abstract class PageRepository
         $this->model = $model;
         $this->table = app(TableContract::class, ['table' => $this->model->getTable()]);
 
-        $this->viewNamespace = config('laracrud.view.namespace');
-        $this->viewRootPath = config('laracrud.view.path');
+        $this->viewNamespace = Configuration::getViewNamespace();
+        $this->viewRootPath = Configuration::getViewPath();
     }
 
     /**
@@ -133,5 +135,4 @@ abstract class PageRepository
     {
         $this->parentModel = $parentModel;
     }
-
 }

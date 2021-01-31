@@ -74,4 +74,12 @@ class Configuration
     public static function getRoutes()
     {
     }
+
+    /**
+     * @return string
+     */
+    public static function getViewPath(): string
+    {
+        return !empty(static::$viewPath) ? static::$viewPath : config('laracrud.view.path');
+    }
 }
