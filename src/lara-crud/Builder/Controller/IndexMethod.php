@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Services\Controller;
+namespace LaraCrud\Builder\Controller;
 
 use Illuminate\Support\Str;
 use LaraCrud\Contracts\Controller\ViewAbleMethod;

@@ -6,28 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use LaraCrud\Contracts\TableContract;
 use LaraCrud\Services\FullTextSearch;
-use Laravel\Scout\Searchable;
+use LaraCrud\Traits\ModelShortNameAndVariablesTrait;
 
 abstract class PageRepository
 {
-    /**
-     * The Main Model.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $model;
+    use ModelShortNameAndVariablesTrait;
 
     /**
      * @var TableContract
      */
     protected TableContract $table;
-
-    /**
-     * Parent Model if any.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $parentModel;
 
     /**
      * List of routes that are registered for CRUD operation of this Model.
@@ -49,16 +37,6 @@ abstract class PageRepository
      * @var string
      */
     protected string $viewNamespace;
-
-    /**
-     * @var string
-     */
-    protected string $parentModelShortName;
-
-    /**
-     * @var string
-     */
-    protected string $modelShortName;
 
     /**
      * @var \SplFileObject
@@ -135,7 +113,7 @@ abstract class PageRepository
     {
         $traits = class_uses($this->model);
 
-        return in_array(Searchable::class, $traits) || in_array(FullTextSearch::class, $traits);
+        return in_array('Laravel\Scout\Searchable', $traits) || in_array(FullTextSearch::class, $traits);
     }
 
     /**
@@ -156,35 +134,4 @@ abstract class PageRepository
         $this->parentModel = $parentModel;
     }
 
-    /**
-     * Get Model class name without namespace.
-     *
-     * @return string
-     *
-     * @throws \ReflectionException
-     */
-    protected function getModelShortName(): string
-    {
-        if (!empty($this->modelShortName)) {
-            return $this->modelShortName;
-        }
-
-        return $this->modelShortName = lcfirst((new \ReflectionClass($this->model))->getShortName());
-    }
-
-    /**
-     * Get Model class Name without namespace.
-     *
-     * @return string
-     *
-     * @throws \ReflectionException
-     */
-    protected function getParentShortName(): string
-    {
-        if (!empty($this->parentModelShortName)) {
-            return $this->parentModelShortName;
-        }
-
-        return $this->parentModelShortName = lcfirst((new \ReflectionClass($this->parentModel))->getShortName());
-    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Services\Controller;
+namespace LaraCrud\Builder\Controller;
 
 class EditMethod extends ShowMethod
 {

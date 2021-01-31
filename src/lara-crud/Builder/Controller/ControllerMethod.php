@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Services\Controller;
+namespace LaraCrud\Builder\Controller;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -10,13 +10,13 @@ use LaraCrud\Contracts\Controller\ViewAbleMethod;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\RedirectAbleMethodHelper;
 use LaraCrud\Helpers\ViewAbleMethodHelper;
+use LaraCrud\Traits\ModelShortNameAndVariablesTrait;
 use ReflectionClass;
 
 abstract class ControllerMethod
 {
-    use ViewAbleMethodHelper;
-    use RedirectAbleMethodHelper;
-    use Helper;
+    use ViewAbleMethodHelper, RedirectAbleMethodHelper, Helper, ModelShortNameAndVariablesTrait;
+
 
     /**
      * List of full namespaces that will be import on top of controller.
@@ -43,32 +43,6 @@ abstract class ControllerMethod
      * @var string
      */
     protected string $requestFolderNs;
-
-    /**
-     * Eloquent Model that will be as main model.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $model;
-
-    /**
-     * Parent Model.
-     *
-     * If controller has a parent. For example Comment Model may have Post parent.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $parentModel;
-
-    /**
-     * @var string
-     */
-    protected string $parentModelShortName;
-
-    /**
-     * @var string
-     */
-    protected string $modelShortName;
 
     /**
      * Name of the controller method.
@@ -198,54 +172,6 @@ abstract class ControllerMethod
     public function getBody(): string
     {
         return '';
-    }
-
-    /**
-     * Get Model class name without namespace.
-     *
-     * @return string
-     */
-    protected function getModelShortName(): string
-    {
-        if (!empty($this->modelShortName)) {
-            return $this->modelShortName;
-        }
-
-        return $this->modelShortName = $this->modelReflectionClass->getShortName();
-    }
-
-    /**
-     * @return string
-     */
-    public function getModelVariableName(): string
-    {
-        return lcfirst($this->getModelShortName());
-    }
-
-    /**
-     * @return string
-     *
-     * @throws \ReflectionException
-     */
-    public function getParentVariableName(): string
-    {
-        return lcfirst($this->getParentShortName());
-    }
-
-    /**
-     * Get Model class Name without namespace.
-     *
-     * @return string
-     *
-     * @throws \ReflectionException
-     */
-    protected function getParentShortName(): string
-    {
-        if (!empty($this->parentModelShortName)) {
-            return $this->parentModelShortName;
-        }
-
-        return $this->parentModelShortName = (new \ReflectionClass($this->parentModel))->getShortName();
     }
 
     /**

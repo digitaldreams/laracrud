@@ -1,7 +1,7 @@
 <?php
 
 
-namespace LaraCrud\Services\Controller;
+namespace LaraCrud\Builder\Controller;
 
 
 class ForceDeleteMethod extends RestoreMethod
