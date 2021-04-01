@@ -114,6 +114,8 @@ abstract class ControllerMethod
     }
 
     /**
+     * Get Inside code of a Controller Method.
+     *
      * @return string
      *
      * @throws \ReflectionException
@@ -128,6 +130,8 @@ abstract class ControllerMethod
     }
 
     /**
+     * Get list of importable Namespaces.
+     *
      * @return array
      */
     public function getNamespaces(): array
@@ -136,6 +140,8 @@ abstract class ControllerMethod
     }
 
     /**
+     * Which Request class will be used in method argument.
+     *
      * @return string
      */
     protected function getRequestClass(): string
@@ -154,6 +160,8 @@ abstract class ControllerMethod
     }
 
     /**
+     * Set Parent Model when creating a child Resource Controller.
+     *
      * @param \Illuminate\Database\Eloquent\Model $parentModel
      *
      * @return $this
@@ -175,6 +183,8 @@ abstract class ControllerMethod
     }
 
     /**
+     * This is a helper function which will set Parent variable name and its method argument.
+     *
      * @return $this
      *
      * @throws \ReflectionException
