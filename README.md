@@ -8,9 +8,6 @@ By using this tools you can generate Models which have necessary methods and pro
 composer require digitaldream/laracrud --dev
 ```
 
-
-This version are ready to use in Laravel 5.3 and above. If you are using 5.2  please have a look to config/laracrud.php and adjust folder path.
-
 ## Setting
 
 01. Add this line to config/app.php providers array . Not needed if you are using laravel 5.5 or greater
@@ -47,8 +44,8 @@ Then you can see new commands by running 'php artisan'
 
 ## Create a Model
 
-Theare are some good practice for model in Laravel. Use scope to define query, define fillable, dates, casts etc.
-ALso define relation, set*Attribute and get*Attribute for doing work before and after model save and fetch.
+There are some good practice for model in Laravel. Use scope to define query, define fillable, dates, casts etc.
+Also define relation, set*Attribute and get*Attribute for doing work before and after model save and fetch.
 
 We are going to create this thing automatically by reading table structure and its relation to others table.
 ```php
@@ -62,7 +59,7 @@ php artisan laracrud:model users MyUser
 
 ## Create Request
 
- An well structured table validate everything before inserting . You can not insert a illegal date in a birth_date column if its data type set to date.So if we have this logic set on table why we should write it on Request again. Lets use this table logic to create a request class in laravel.
+ A well structured table validate everything before inserting . You can not insert a illegal date in a birth_date column if its data type set to date.So if we have this logic set on table why we should write it on Request again. Lets use this table logic to create a request class in laravel.
  
     php artisan laracrud:request MyUser
    
@@ -173,7 +170,7 @@ php artisan laracrud:transformer User
 [See API documentation](https://github.com/digitaldreams/laracrud/wiki/API-Development)
 ## Create everything at once
 
-If we need all of the command to then just to
+If we need all the command to then just to
 ```php 
     php artisan laracrud:mvc users
     php artisan laracrud:mvc users --api // create all the API related resources
