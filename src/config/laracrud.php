@@ -71,9 +71,9 @@ return [
          * Get Date Format. Model Date/ Time related column will display date to user in this format
          */
         'getDateFormat' => [
-            'time'      => 'h:i A',
-            'date'      => 'm/d/Y',
-            'datetime'  => 'm/d/Y h:i A',
+            'time' => 'h:i A',
+            'date' => 'm/d/Y',
+            'datetime' => 'm/d/Y h:i A',
             'timestamp' => 'm/d/Y h:i A',
         ],
 
@@ -81,9 +81,9 @@ return [
          * Date will be convert in this format before save.
          */
         'setDateFormat' => [
-            'time'      => 'H:i:s',
-            'date'      => 'Y-m-d',
-            'datetime'  => 'Y-m-d H:i:s',
+            'time' => 'H:i:s',
+            'date' => 'Y-m-d',
+            'datetime' => 'Y-m-d H:i:s',
             'timestamp' => 'Y-m-d H:i:s',
         ],
         /*
@@ -96,7 +96,7 @@ return [
         ],
     ],
     'factory' => [
-        'path'   => base_path('database/factories'),
+        'path' => base_path('database/factories'),
         'suffix' => 'Factory',
     ],
     'view' => [
@@ -145,27 +145,6 @@ return [
              *  Relative to resources/views folder. Default to resources/views/pages
              */
             'path' => 'pages',
-
-            'index' => [
-                /*
-                 * Name of the page. e.g. index.blade.php
-                 */
-                'name' => 'index',
-
-                /*
-                 * Style of the page. available options are table, panel
-                 */
-                'type' => 'table',
-            ],
-            'create' => [
-                'name' => 'create',
-            ],
-            'edit' => [
-                'name' => 'edit',
-            ],
-            'show' => [
-                'name' => 'show',
-            ],
         ],
     ],
     'controller' => [
@@ -242,17 +221,6 @@ return [
          */
         'prefix' => false,
     ],
-    'transformer' => [
-        /*
-         * Root namespace
-         */
-        'namespace' => 'Transformers',
-
-        /*
-         * After every transformer class name this world will be added. For example, Users will be UsersTransformer
-         */
-        'classSuffix' => 'Transformer',
-    ],
 
     /*
      * PHPUnit test. Which shifts with laravel by default
@@ -313,11 +281,9 @@ return [
      */
     'informationSchema' => 'INFORMATION_SCHEMA',
 
-    'binds'=> [
-        \LaraCrud\Contracts\DatabaseContract::class  => \LaraCrud\Repositories\DatabaseRepository::class,
-        \LaraCrud\Contracts\TableContract::class     => \LaraCrud\Repositories\TableRepository::class,
-        \LaraCrud\Contracts\ColumnContract::class    => \LaraCrud\Repositories\ColumnRepository::class,
-        \LaraCrud\Contracts\FormViewContract::class  => \LaraCrud\Repositories\FormRepository::class,
-        \LaraCrud\Contracts\ForeignKeyContract::class=> \LaraCrud\Repositories\ForeignKeyRepository::class,
+    'binds' => [
+        \LaraCrud\Contracts\DatabaseContract::class => \LaraCrud\Repositories\DatabaseRepository::class,
+        \LaraCrud\Contracts\TableContract::class => \LaraCrud\Repositories\TableRepository::class,
+        \LaraCrud\Contracts\ColumnContract::class => \LaraCrud\Repositories\ColumnRepository::class,
     ],
 ];
