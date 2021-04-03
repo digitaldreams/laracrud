@@ -11,9 +11,9 @@ class Policy extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:policy 
-        {model  : Eloquent model name} 
-        {--c|controller= : Create policy for all of the public method of this controller. e.g. --controller=PostController} 
+    protected $signature = 'laracrud:policy
+        {model  : Eloquent model name}
+        {--c|controller= : Create policy for all of the public method of this controller. e.g. --controller=PostController}
         {--name= : Custom Name of the Policy. e.g. --name=MyPostPolicy}';
 
     /**
@@ -39,7 +39,7 @@ class Policy extends Command
             $policyCrud->save();
             $this->info('Policy class created successfully');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error(sprintf('%s on line %d in %s', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
         }
     }
 }

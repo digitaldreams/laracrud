@@ -14,7 +14,6 @@ use LaraCrud\Console\Policy;
 use LaraCrud\Console\Request;
 use LaraCrud\Console\Route;
 use LaraCrud\Console\Test;
-use LaraCrud\Console\Transformer;
 use LaraCrud\Console\View;
 
 /**
@@ -40,7 +39,6 @@ class LaraCrudServiceProvider extends ServiceProvider
         View::class,
         Mvc::class,
         Policy::class,
-        Transformer::class,
         Test::class,
         Package::class,
     ];
@@ -51,17 +49,17 @@ class LaraCrudServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/laracrud.php' => config_path('laracrud.php'),
+            __DIR__ . '/../config/laracrud.php' => config_path('laracrud.php'),
         ], 'laracrud-config');
 
         // Publish Templates to view/vendor folder so user can customize this own templates
         $this->publishes([
-            __DIR__.'/../../resources/templates' => resource_path('views/vendor/laracrud/templates'),
+            __DIR__ . '/../../resources/templates' => resource_path('views/vendor/laracrud/templates'),
         ], 'laracrud-template');
 
         $this->publishes([
-            __DIR__.'/../../resources/assets' => public_path('laracrud'),
-            __DIR__.'/../../resources/views'  => resource_path('views/laracrud'),
+            __DIR__ . '/../../resources/assets' => public_path('laracrud'),
+            __DIR__ . '/../../resources/views' => resource_path('views/laracrud'),
         ], 'laracrud-assets');
     }
 
@@ -71,7 +69,7 @@ class LaraCrudServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/laracrud.php',
+            __DIR__ . '/../config/laracrud.php',
             'laracrud'
         );
         foreach (config('laracrud.binds') as $contract => $repository) {
@@ -80,11 +78,11 @@ class LaraCrudServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             //DbReader\Database settings
             Database::settings([
-                'pdo'              => app('db')->connection()->getPdo(),
-                'manualRelations'  => config('laracrud.model.relations', []),
-                'ignore'           => config('laracrud.view.ignore', []),
+                'pdo' => app('db')->connection()->getPdo(),
+                'manualRelations' => config('laracrud.model.relations', []),
+                'ignore' => config('laracrud.view.ignore', []),
                 'protectedColumns' => config('laracrud.model.protectedColumns', []),
-                'files'            => config('laracrud.image.columns', []),
+                'files' => config('laracrud.image.columns', []),
             ]);
             $this->commands($this->commands);
         }

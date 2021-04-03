@@ -14,8 +14,8 @@ class Route extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:route 
-        {controller : Controller name} 
+    protected $signature = 'laracrud:route
+        {controller : Controller name}
         {--api : Whether its an API controller}';
 
     /**
@@ -62,8 +62,8 @@ class Route extends Command
                 $routeCrud = new RouteCrud($controllers, $api);
             } else {
                 $controller = str_replace('/', '\\', $controller);
-                if (!stripos(rtrim($namespace, '\\').'\\', $controller)) {
-                    $controller = rtrim($namespace, '\\').'\\'.$controller;
+                if (!stripos(rtrim($namespace, '\\') . '\\', $controller)) {
+                    $controller = rtrim($namespace, '\\') . '\\' . $controller;
                 }
 
                 $routeCrud = new RouteCrud($controller, $api);
@@ -76,7 +76,7 @@ class Route extends Command
                 $this->info('Routes created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error(sprintf('%s on line %d in %s', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
         }
     }
 }

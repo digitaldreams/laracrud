@@ -16,11 +16,11 @@ class Request extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:request 
-        {model : Eloquent Model name} 
-        {name? : Custom name of your Request. e.g. MyPostRequest } 
-        {--c|controller= : Create individual Request class for each public method of this controller.} 
-        {--r|resource= : Pass list of Resource method name e.g. --resource=index,show or pass --resource=all for a all of Resourceful method} 
+    protected $signature = 'laracrud:request
+        {model : Eloquent Model name}
+        {name? : Custom name of your Request. e.g. MyPostRequest }
+        {--c|controller= : Create individual Request class for each public method of this controller.}
+        {--r|resource= : Pass list of Resource method name e.g. --resource=index,show or pass --resource=all for a all of Resourceful method}
         {--api : whether its an API Request}';
 
     /**
@@ -61,7 +61,7 @@ class Request extends Command
                 $this->info('Request class created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error(sprintf('%s on line %d in %s', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
         }
     }
 
@@ -69,7 +69,7 @@ class Request extends Command
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         if (!class_exists($model)) {
-            return $modelNamespace.'\\'.$model;
+            return $modelNamespace . '\\' . $model;
         }
 
         return false;
