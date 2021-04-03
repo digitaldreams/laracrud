@@ -18,6 +18,8 @@ class DestroyMethod extends ControllerMethod implements RedirectAbleMethod
     }
 
     /**
+     * Name of the Route user will be redirected after successfully Delete.
+     *
      * @return string
      */
     public function redirectToRouteMethodName(): string
@@ -26,6 +28,8 @@ class DestroyMethod extends ControllerMethod implements RedirectAbleMethod
     }
 
     /**
+     * What code will be inside the destroy method.
+     *
      * @return string
      */
     public function getBody(): string
@@ -34,6 +38,8 @@ class DestroyMethod extends ControllerMethod implements RedirectAbleMethod
     }
 
     /**
+     * Redirect route Parameter.
+     *
      * @return array
      */
     public function generateRouteParameter(): array
