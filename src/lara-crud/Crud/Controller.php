@@ -47,9 +47,9 @@ class Controller implements Crud
     public string $path = '';
 
     /**
-     * @var
+     * @var string
      */
-    public $namespace;
+    public string $namespace;
 
     /**
      * Namespace version of subpath.
@@ -136,11 +136,11 @@ class Controller implements Crud
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return \LaraCrud\Crud\Controller
      */
-    public function resolveControllerFileName($name): self
+    public function resolveControllerFileName( string $name): self
     {
         if (!empty($name)) {
             if (false !== strpos($name, '/')) {

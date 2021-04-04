@@ -16,7 +16,7 @@ class Model implements Crud
      *
      * @var string
      */
-    protected $namespace;
+    protected string $namespace;
 
     /**
      * Name of Model class.
@@ -38,12 +38,12 @@ class Model implements Crud
     /**
      * @var array
      */
-    protected $traits = [];
+    protected array $traits = [];
 
     /**
      * @var array
      */
-    protected $importNamespaces = [];
+    protected array $importNamespaces = [];
 
     /**
      * @var array
