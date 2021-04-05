@@ -189,6 +189,8 @@ class ColumnRepository implements ColumnContract
     }
 
     /**
+     * Whether current column is uploadable image or not.
+     *
      * @return string
      */
     public function image(): string
@@ -197,6 +199,8 @@ class ColumnRepository implements ColumnContract
     }
 
     /**
+     * Whether current column is uploadable file or not?
+     *
      * @return string
      */
     public function file(): string
@@ -205,6 +209,8 @@ class ColumnRepository implements ColumnContract
     }
 
     /**
+     * For Enum data type there are some predefined data set.
+     *
      * @return array|null
      */
     public function options(): ?array
