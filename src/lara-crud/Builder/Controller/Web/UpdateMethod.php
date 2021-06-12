@@ -1,7 +1,8 @@
 <?php
 
-namespace LaraCrud\Builder\Controller;
+namespace LaraCrud\Builder\Controller\Web;
 
+use LaraCrud\Builder\Controller\ControllerMethod;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
 class UpdateMethod extends ControllerMethod implements RedirectAbleMethod
@@ -27,5 +28,11 @@ class UpdateMethod extends ControllerMethod implements RedirectAbleMethod
         $variable = '$' . $this->getModelVariableName();
 
         return $variable . '->fill($request->all())->save();' . PHP_EOL;
+    }
+
+
+    public function phpDocComment(): string
+    {
+        return sprintf('Update the specified %s in storage.', $this->getModelShortName());
     }
 }

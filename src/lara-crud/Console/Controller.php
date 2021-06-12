@@ -92,7 +92,7 @@ class Controller extends Command
             if (in_array('request', $withArr)) {
                 $this->createRequestResource($api);
             }
-            $controllerRepository = $this->initControllerCrud();
+            $controllerRepository = $this->initControllerCrud($api);
 
             $controllerCrud = new ControllerCrud($controllerRepository, $this->model, $name, $api);
             $controllerCrud->save();
@@ -174,19 +174,25 @@ class Controller extends Command
     /**
      * @return \LaraCrud\Repositories\ControllerRepository
      */
-    protected function initControllerCrud(): ControllerRepository
+    protected function initControllerCrud($api): ControllerRepository
     {
         $only = $this->option('only');
         if (!empty($only)) {
             $methods = explode(',', $only);
         } else {
-            $methods = $this->methods['web'];
+            $methods = $api == true ? $this->methods['api'] : $this->methods['web'];
             if ($this->isSoftDeleteAble()) {
                 $methods[] = 'restore';
                 $methods[] = 'forceDelete';
             }
         }
         $cr = new ControllerRepository();
+
+        if ($api) {
+            $cr->setApi();
+        } else {
+            $cr->setWeb();
+        }
 
         return $cr->addMethodsFromString($methods, $this->model, $this->parent);
     }

@@ -1,8 +1,9 @@
 <?php
 
-namespace LaraCrud\Builder\Controller;
+namespace LaraCrud\Builder\Controller\Web;
 
 use Illuminate\Support\Str;
+use LaraCrud\Builder\Controller\ControllerMethod;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
 class StoreMethod extends ControllerMethod implements RedirectAbleMethod
@@ -35,5 +36,11 @@ class StoreMethod extends ControllerMethod implements RedirectAbleMethod
         $body .= "\t\t" . $variable . '->fill($request->all())->save();' . PHP_EOL;
 
         return $body;
+    }
+
+
+    public function phpDocComment(): string
+    {
+        return sprintf('Store a newly created %s in storage.', $this->getModelShortName());
     }
 }

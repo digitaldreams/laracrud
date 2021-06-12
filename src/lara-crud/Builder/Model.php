@@ -99,6 +99,7 @@ class Model
         'int' => 'int',
         'double' => 'double',
         'bigint' => 'int',
+        'smallint' => 'int',
         'tinyint' => 'int',
     ];
 

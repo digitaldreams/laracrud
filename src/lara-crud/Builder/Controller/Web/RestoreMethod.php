@@ -1,8 +1,9 @@
 <?php
 
-namespace LaraCrud\Builder\Controller;
+namespace LaraCrud\Builder\Controller\Web;
 
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
+use LaraCrud\Builder\Controller\ControllerMethod;
 
 class RestoreMethod extends ControllerMethod implements RedirectAbleMethod
 {

@@ -1,7 +1,8 @@
 <?php
 
-namespace LaraCrud\Builder\Controller;
+namespace LaraCrud\Builder\Controller\Web;
 
+use LaraCrud\Builder\Controller\ControllerMethod;
 use LaraCrud\Contracts\Controller\ViewAbleMethod;
 
 class ShowMethod extends ControllerMethod implements ViewAbleMethod
@@ -16,5 +17,11 @@ class ShowMethod extends ControllerMethod implements ViewAbleMethod
             ->setParameter(ucfirst($this->getModelShortName()), '$' . lcfirst($this->getModelShortName()));
 
         return $this;
+    }
+
+
+    public function phpDocComment(): string
+    {
+        return sprintf('Display the specified %s.', $this->getModelShortName());
     }
 }

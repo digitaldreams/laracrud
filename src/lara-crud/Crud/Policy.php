@@ -48,7 +48,7 @@ class Policy implements Crud
     /**
      * Namespace version of subpath.
      *
-     * @var type
+     * @var string
      */
     protected $subNameSpace = '';
 
@@ -60,7 +60,7 @@ class Policy implements Crud
     /**
      * Model Name without Namespace.
      *
-     * @var type
+     * @var string
      */
     protected $shortModelName;
     /**

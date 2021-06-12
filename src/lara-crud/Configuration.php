@@ -2,15 +2,15 @@
 
 namespace LaraCrud;
 
-use LaraCrud\Builder\Controller\CreateMethod;
-use LaraCrud\Builder\Controller\DestroyMethod;
-use LaraCrud\Builder\Controller\EditMethod;
-use LaraCrud\Builder\Controller\ForceDeleteMethod;
-use LaraCrud\Builder\Controller\IndexMethod;
-use LaraCrud\Builder\Controller\RestoreMethod;
-use LaraCrud\Builder\Controller\ShowMethod;
-use LaraCrud\Builder\Controller\StoreMethod;
-use LaraCrud\Builder\Controller\UpdateMethod;
+use LaraCrud\Builder\Controller\Web\CreateMethod;
+use LaraCrud\Builder\Controller\Web\DestroyMethod;
+use LaraCrud\Builder\Controller\Web\EditMethod;
+use LaraCrud\Builder\Controller\Web\ForceDeleteMethod;
+use LaraCrud\Builder\Controller\Web\IndexMethod;
+use LaraCrud\Builder\Controller\Web\RestoreMethod;
+use LaraCrud\Builder\Controller\Web\ShowMethod;
+use LaraCrud\Builder\Controller\Web\StoreMethod;
+use LaraCrud\Builder\Controller\Web\UpdateMethod;
 
 /**
  * All of the Global configuration will be handled from this Class instead of direct call of config().
@@ -20,7 +20,7 @@ class Configuration
     /**
      * @var array
      */
-    public static array $controllerMethods = [
+    public static array $controllerWebMethods = [
         'index' => IndexMethod::class,
         'show' => ShowMethod::class,
         'create' => CreateMethod::class,
@@ -30,6 +30,10 @@ class Configuration
         'destroy' => DestroyMethod::class,
         'restore' => RestoreMethod::class,
         'forceDelete' => ForceDeleteMethod::class,
+    ];
+
+    public static array $controllerApiMethods = [
+
     ];
     /**
      * @var array

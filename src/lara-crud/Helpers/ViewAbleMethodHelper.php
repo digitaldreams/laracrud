@@ -91,6 +91,7 @@ trait ViewAbleMethodHelper
             'body' => $this->getBody(),
             'methodName' => $this->getMethodName(),
             'viewPath' => $this->getViewFilePath(),
+            'PHPDocComment' =>$this->phpDocComment(),
         ]))->get();
     }
 

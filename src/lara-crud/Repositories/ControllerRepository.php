@@ -27,6 +27,9 @@ class ControllerRepository
      */
     protected array $code = [];
 
+
+    protected bool $isApi = false;
+
     /**
      * List of Class Full Namespace that should be imported on top of Class.
      *
@@ -55,7 +58,9 @@ class ControllerRepository
      */
     public function addMethodsFromString(array $methods, Model $model, ?Model $parent = null): self
     {
-        $insertAbleMethods = array_intersect_key(Configuration::$controllerMethods, array_flip($methods));
+        $availableMethods = $this->isApi ? Configuration::$controllerApiMethods : Configuration::$controllerWebMethods;
+
+        $insertAbleMethods = array_intersect_key($availableMethods, array_flip($methods));
         foreach ($insertAbleMethods as $methodName) {
             $method = new $methodName($model);
             if (!empty($parent)) {
@@ -101,6 +106,26 @@ class ControllerRepository
     public function getCode(): array
     {
         return $this->code;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setApi(): self
+    {
+        $this->isApi = true;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setWeb(): self
+    {
+        $this->isApi = false;
+
+        return $this;
     }
 
 }

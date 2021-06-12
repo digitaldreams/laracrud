@@ -62,6 +62,7 @@ trait RedirectAbleMethodHelper
             'route' => $this->route(),
             'flashKey' => $this->getFlashMessageKey(),
             'flashMessage' => $this->getFlashMessage(),
+            'PHPDocComment' => $this->phpDocComment(),
         ]))->get();
     }
 

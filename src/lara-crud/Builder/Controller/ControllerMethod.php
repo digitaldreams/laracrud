@@ -198,4 +198,12 @@ abstract class ControllerMethod
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function phpDocComment(): string
+    {
+        return '';
+    }
 }

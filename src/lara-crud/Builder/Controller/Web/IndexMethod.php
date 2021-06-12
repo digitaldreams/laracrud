@@ -1,8 +1,9 @@
 <?php
 
-namespace LaraCrud\Builder\Controller;
+namespace LaraCrud\Builder\Controller\Web;
 
 use Illuminate\Support\Str;
+use LaraCrud\Builder\Controller\ControllerMethod;
 use LaraCrud\Contracts\Controller\ViewAbleMethod;
 use LaraCrud\Services\FullTextSearch;
 
@@ -44,5 +45,10 @@ class IndexMethod extends ControllerMethod implements ViewAbleMethod
         $body .= $this->isSearchAble() ? 'search($request->get(\'search\'))' : 'query()';
 
         return $body . ';';
+    }
+
+    public function phpDocComment(): string
+    {
+        return sprintf('Display a listing of %s', $this->getModelShortName());
     }
 }

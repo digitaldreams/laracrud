@@ -95,7 +95,7 @@ class Controller implements Crud
     public function template(): string
     {
         $this->controllerRepository->build();
-        $tempMan = new TemplateManager('controller/web/template.txt', [
+        $tempMan = new TemplateManager('controller/template.txt', [
             'namespace' => $this->namespace,
             'fullmodelName' => get_class($this->model),
             'controllerName' => $this->fileName,

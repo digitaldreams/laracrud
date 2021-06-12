@@ -1,7 +1,8 @@
 <?php
 
-namespace LaraCrud\Builder\Controller;
+namespace LaraCrud\Builder\Controller\Web;
 
+use LaraCrud\Builder\Controller\ControllerMethod;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
 class DestroyMethod extends ControllerMethod implements RedirectAbleMethod
@@ -48,5 +49,11 @@ class DestroyMethod extends ControllerMethod implements RedirectAbleMethod
         unset($parameters[$this->getModelShortName()]);
 
         return $parameters;
+    }
+
+
+    public function phpDocComment(): string
+    {
+        return sprintf('Remove the specified %s from storage.', $this->getModelShortName());
     }
 }
