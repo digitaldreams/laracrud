@@ -100,7 +100,7 @@ class Controller implements Crud
             'fullmodelName' => get_class($this->model),
             'controllerName' => $this->fileName,
             'methods' => implode("\n", $this->controllerRepository->getCode()),
-            'importNameSpace' => implode(";\n", $this->controllerRepository->getImportableNamespaces()) . ';',
+            'importNameSpace' => $this->makeNamespaceImportString(),
         ]);
 
         return $tempMan->get();
@@ -140,7 +140,7 @@ class Controller implements Crud
      *
      * @return \LaraCrud\Crud\Controller
      */
-    public function resolveControllerFileName( string $name): self
+    public function resolveControllerFileName(string $name): self
     {
         if (!empty($name)) {
             if (false !== strpos($name, '/')) {
@@ -162,4 +162,16 @@ class Controller implements Crud
 
         return $this;
     }
+
+
+
+    private function makeNamespaceImportString()
+    {
+        $ns = '';
+        foreach ($this->controllerRepository->getImportableNamespaces() as $namespace) {
+            $ns .= "\n use " . $namespace . ';';
+        }
+        return $ns;
+    }
+
 }

@@ -161,7 +161,6 @@ class Controller extends Command
     {
         $requestResource = new RequestResourceCrud($this->model, false, $api);
 
-        $requestResource->setModel(get_class($this->model));
         $requestResource->save();
 
         $this->info('Request controller classes created successfully');

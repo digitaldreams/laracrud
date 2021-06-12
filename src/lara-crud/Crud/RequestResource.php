@@ -33,8 +33,11 @@ class RequestResource implements Crud
     /**
      * @var array|string
      */
-    protected $methods = ['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'];
+    protected $methods = ['store', 'update'];
 
+    /**
+     * @var string
+     */
     protected $template = '';
 
     /**
@@ -43,7 +46,7 @@ class RequestResource implements Crud
     protected $model;
 
     /**
-     * @var
+     * @var string
      */
     protected $policy;
 
@@ -69,7 +72,7 @@ class RequestResource implements Crud
             $this->methods = $only;
         }
         $ns = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $this->namespace = $this->getFullNS(trim($ns, '/')).'\\'.ucfirst(Str::camel($this->folderName));
+        $this->namespace = $this->getFullNS(trim($ns, '/')) . '\\' . ucfirst(Str::camel($this->folderName));
         $this->modelName = $this->getModelName($this->table);
         $this->template = !empty($api) ? 'api' : 'web';
     }
@@ -83,11 +86,11 @@ class RequestResource implements Crud
      */
     public function template($authorization = 'true')
     {
-        $tempMan = new TemplateManager('request/'.$this->template.'/template.txt', [
-            'namespace'        => $this->namespace,
+        $tempMan = new TemplateManager('request/' . $this->template . '/template.txt', [
+            'namespace' => $this->namespace,
             'requestClassName' => $this->modelName,
-            'authorization'    => $authorization,
-            'rules'            => implode("\n", []),
+            'authorization' => $authorization,
+            'rules' => implode("\n", []),
         ]);
 
         return $tempMan->get();
@@ -96,9 +99,9 @@ class RequestResource implements Crud
     /**
      * Get code and save to disk.
      *
+     * @return mixed
      * @throws \Exception
      *
-     * @return mixed
      */
     public function save()
     {
@@ -109,7 +112,7 @@ class RequestResource implements Crud
             foreach ($publicMethods as $method) {
                 $folderPath = base_path($this->toPath($this->namespace));
                 $this->modelName = $this->getModelName($method);
-                $filePath = $folderPath.'/'.$this->modelName.'.php';
+                $filePath = $folderPath . '/' . $this->modelName . '.php';
 
                 if (file_exists($filePath)) {
                     continue;
@@ -117,11 +120,11 @@ class RequestResource implements Crud
                 $isApi = 'api' == $this->template ? true : false;
 
                 if ('store' === $method) {
-                    $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)).'/Store', $isApi);
+                    $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/StoreRequest', $isApi);
                     $requestStore->setAuthorization($this->getAuthCode('create'));
                     $requestStore->save();
                 } elseif ('update' === $method) {
-                    $requestUpdate = new Request($this->model, ucfirst(Str::camel($this->folderName)).'/Update', $isApi);
+                    $requestUpdate = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/UpdateRequest', $isApi);
                     $requestUpdate->setAuthorization($this->getAuthCode('update'));
                     $requestUpdate->save();
                 } else {
@@ -155,7 +158,7 @@ class RequestResource implements Crud
 
         if (!class_exists($model)) {
             $modelNS = $this->getFullNS(config('laracrud.model.namespace'));
-            $fullClass = $modelNS.'\\'.$model;
+            $fullClass = $modelNS . '\\' . $model;
 
             if (class_exists($fullClass)) {
                 $this->model = $fullClass;
@@ -176,12 +179,12 @@ class RequestResource implements Crud
         $auth = 'true';
         if (class_exists($this->policy) && method_exists($this->policy, $methodName)) {
             if (in_array($methodName, ['index', 'create', 'store'])) {
-                $code = '\\'.get_class($this->model).'::class)';
+                $code = '\\' . get_class($this->model) . '::class)';
             } else {
                 $modelName = (new \ReflectionClass($this->model))->getShortName();
-                $code = '$this->route(\''.strtolower($modelName).'\'))';
+                $code = '$this->route(\'' . strtolower($modelName) . '\'))';
             }
-            $auth = 'auth()->user()->can(\''.$methodName.'\', '.$code;
+            $auth = 'auth()->user()->can(\'' . $methodName . '\', ' . $code;
         }
 
         return $auth;
