@@ -5,6 +5,6 @@
      */
     public function @@methodName@@(@@parameters@@)
     {
-        @@body@@
+         @@authorization@@ @@body@@
          return redirect()->route(@@route@@)->with('@@flashKey@@','@@flashMessage@@');
     }

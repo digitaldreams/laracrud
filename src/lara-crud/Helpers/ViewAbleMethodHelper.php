@@ -3,8 +3,8 @@
 namespace LaraCrud\Helpers;
 
 use Illuminate\Support\Str;
+use LaraCrud\Builder\Controller\ControllerMethod;
 use LaraCrud\Contracts\Controller\ViewAbleMethod;
-use LaraCrud\Services\Controller\ControllerMethod;
 
 trait ViewAbleMethodHelper
 {
@@ -91,7 +91,8 @@ trait ViewAbleMethodHelper
             'body' => $this->getBody(),
             'methodName' => $this->getMethodName(),
             'viewPath' => $this->getViewFilePath(),
-            'PHPDocComment' =>$this->phpDocComment(),
+            'PHPDocComment' => $this->phpDocComment(),
+            'authorization' => $this->getAuthorization(),
         ]))->get();
     }
 

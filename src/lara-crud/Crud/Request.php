@@ -49,10 +49,12 @@ class Request implements Crud
      * RequestCrud constructor.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
-     * @param string                              $name
+     * @param string|null                         $name
      * @param bool                                $api
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function __construct(Model $model, $name = '', $api = false)
+    public function __construct(Model $model, ?string $name = '', ?bool $api = false)
     {
         $this->model = $model;
         $this->table = app()->make(TableContract::class, ['table' => $model->getTable()]);

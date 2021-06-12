@@ -54,13 +54,13 @@ class RequestResource implements Crud
      * RequestControllerCrud constructor.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
-     * @param string                              $only
+     * @param string|null                         $only
      * @param bool                                $api
-     * @param string                              $name
+     * @param string|null                         $name
      *
      * @internal param string $controller
      */
-    public function __construct(\Illuminate\Database\Eloquent\Model $model, $only = '', $api = false, $name = '')
+    public function __construct(\Illuminate\Database\Eloquent\Model $model, ?string $only = '', ?bool $api = false, ?string $name = '')
     {
         $this->table = $model->getTable();
         $this->model = $model;

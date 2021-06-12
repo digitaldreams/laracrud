@@ -3,6 +3,7 @@
 namespace LaraCrud\Builder\Controller;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use LaraCrud\Contracts\Controller\ApiResponseMethod;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
@@ -50,6 +51,18 @@ abstract class ControllerMethod
      * @var string
      */
     protected string $methodName;
+
+    /**
+     * @var string[]
+     */
+    protected $policyMethodmapper = [
+        //Controller Method => Policy Method
+        'index' => 'viewAny',
+        'show' => 'view',
+        'destroy' => 'delete',
+        'edit' => 'update',
+        'store' => 'create',
+    ];
 
     /**
      * ControllerMethod constructor.
@@ -205,5 +218,28 @@ abstract class ControllerMethod
     public function phpDocComment(): string
     {
         return '';
+    }
+
+    public function getAuthorization(): string
+    {
+        $policies = Gate::policies();
+        $policy = $policies[get_class($this->model)] ?? false;
+        $policyMethod = isset($this->policyMethodmapper[$this->getMethodName()]) ? $this->policyMethodmapper[$this->getMethodName()] : $this->getMethodName();
+        if (class_exists($policy) && method_exists($policy, $policyMethod)) {
+            return $this->getAuthCode($policyMethod);
+        }
+        return '';
+    }
+
+
+    private function getAuthCode($methodName): string
+    {
+        $auth = '';
+        if (in_array($methodName, ['viewAny', 'create', 'store'])) {
+            $code = $this->modelShortName . '::class';
+        } else {
+            $code = '$' . $this->getModelVariableName();
+        }
+        return '$this->authorize(\'' . $methodName . '\', ' . $code . ');' . "\n";
     }
 }
