@@ -34,7 +34,7 @@ interface TableContract
     public function model(): ?object;
 
     /**
-     * @return array
+     * @return \LaraCrud\Repositories\ColumnRepository[]
      */
     public function columns(): array;
 

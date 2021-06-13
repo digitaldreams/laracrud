@@ -4,8 +4,8 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
+use LaraCrud\Crud\ApiResource;
 use LaraCrud\Helpers\Helper;
-
 
 class Resource extends Command
 {
@@ -28,6 +28,8 @@ class Resource extends Command
      */
     protected $description = 'Create a API resource class based on Model';
 
+    private \Illuminate\Database\Eloquent\Model $model;
+
     /**
      * Execute the console command.
      *
@@ -36,10 +38,44 @@ class Resource extends Command
     public function handle()
     {
         try {
-
+            $this->checkModelExists();
+            $crud = new ApiResource($this->model);
+            $crud->save();
+            $this->info(sprintf('%s created successfully on %s',$crud->modelName,$crud->getFullName()));
         } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
+    }
 
+    /**
+     *  Check if Model or Parent Model exists . If so then create object from them otherwise return warning and exit.
+     */
+    private function checkModelExists()
+    {
+        $model = $this->argument('model');
+        $modelFullName = $this->modelFullName($model);
+        if (class_exists($modelFullName)) {
+            $this->model = new $modelFullName();
+        } else {
+            $this->error(sprintf('%s model does not exists in %s.', $model, $modelFullName));
+            exit();
         }
 
     }
+
+    /**
+     * @param $model
+     *
+     * @return false|string
+     */
+    private function modelFullName($model)
+    {
+        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
+        if (!class_exists($model)) {
+            return $modelNamespace . '\\' . $model;
+        }
+
+        return false;
+    }
+
 }

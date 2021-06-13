@@ -1,10 +1,9 @@
 <?php
 
-
 namespace LaraCrud\Crud;
 
-
 use LaraCrud\Contracts\Crud;
+use LaraCrud\Contracts\TableContract;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 
@@ -15,7 +14,7 @@ class ApiResource implements Crud
     private \Illuminate\Database\Eloquent\Model $model;
     private string $namespace;
     protected string $fileName;
-    private string $subNameSpace;
+    private $subNameSpace;
     public $modelName;
 
     protected array $properties = [];
@@ -26,9 +25,8 @@ class ApiResource implements Crud
     public function __construct(\Illuminate\Database\Eloquent\Model $model, ?string $name = null)
     {
         $this->model = $model;
-        $this->fileName = $this->checkName($name);
+        $this->checkName($name);
         $this->namespace = $this->getFullNS(trim(config('laracrud.resource.namespace', 'App\Http\Resources'), ' / ')) . $this->subNameSpace;
-
     }
 
     public function template()
@@ -37,7 +35,7 @@ class ApiResource implements Crud
             'namespace' => $this->namespace,
             'className' => $this->fileName,
             'importNameSpace' => $this->makeNamespaceUseString(),
-            'data' => implode("\n", $this->makeProperties()),
+            'data' => implode("\n", $this->createRelatedResourceClass()->makeProperties()),
         ]))->get();
     }
 
@@ -52,18 +50,23 @@ class ApiResource implements Crud
 
     public function makeProperties(): array
     {
-        $retStr = '';
-        $hiddenArray = $this->model->getHidden();
-        $fillableColumns = $this->model->getFillable();
+        $tableRepository = app()->make(TableContract::class, ['table' => $this->model->getTable()]);
 
-        foreach ($fillableColumns as $column) {
-            if (is_array($hiddenArray) && in_array($column, $hiddenArray)) {
-                continue;
+        foreach ($tableRepository->columns() as $columnRepository) {
+            if (!$columnRepository->isForeign()) {
+                $this->properties[] = "\t\t\t".'"' . $columnRepository->name() . '" => $this->resource->' . $columnRepository->name() . ',';
             }
-            $this->properties[] .= '"' . $column . '" => $this>resource->' . $column->name() . ';';
         }
 
         return $this->properties;
+    }
+
+    /**
+     * @return $this
+     */
+    public function createRelatedResourceClass(): self
+    {
+        return $this;
     }
 
 
@@ -72,7 +75,7 @@ class ApiResource implements Crud
      *
      * @return string
      */
-    private function checkName(?string $name = null): string
+    private function checkName(?string $name = null)
     {
         if (!empty($name)) {
             if (false !== strpos($name, ' / ')) {
@@ -85,6 +88,8 @@ class ApiResource implements Crud
             } else {
                 $this->fileName = $name;
             }
+        } else {
+            $this->fileName = (new \ReflectionClass($this->model))->getShortName() . 'Resource';
         }
     }
 
