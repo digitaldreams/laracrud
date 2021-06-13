@@ -41,7 +41,7 @@ class ModelRelationReader
      */
     public function read(): self
     {
-        $reflectionClass = new \ReflectionClass(get_class($this->model));
+        $reflectionClass = new \ReflectionClass($this->model);
         $methods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
             try {

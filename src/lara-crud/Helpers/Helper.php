@@ -133,8 +133,8 @@ trait Helper
         $rootNs = array_shift($nsArr);
         $loadComposerJson = new \SplFileObject(base_path('composer.json'));
         $composerArr = json_decode($loadComposerJson->fread($loadComposerJson->getSize()), true);
-        $psr4 = isset($composerArr['autoload']['psr-4']) ? $composerArr['autoload']['psr-4'] : [];
-        $rootPath = isset($psr4[$rootNs . '\\']) ? $psr4[$rootNs . '\\'] : lcfirst($rootNs);
+        $psr4 = $composerArr['autoload']['psr-4'] ?? [];
+        $rootPath = $psr4[$rootNs . '\\'] ?? lcfirst($rootNs);
 
         return rtrim($rootPath, '/') . '/' . implode('/', $nsArr);
     }

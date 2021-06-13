@@ -165,7 +165,7 @@ class Controller implements Crud
 
 
 
-    private function makeNamespaceImportString()
+    public function makeNamespaceImportString()
     {
         $ns = '';
         foreach ($this->controllerRepository->getImportableNamespaces() as $namespace) {

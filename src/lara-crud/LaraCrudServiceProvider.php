@@ -12,6 +12,7 @@ use LaraCrud\Console\Mvc;
 use LaraCrud\Console\Package;
 use LaraCrud\Console\Policy;
 use LaraCrud\Console\Request;
+use LaraCrud\Console\Resource;
 use LaraCrud\Console\Route;
 use LaraCrud\Console\Test;
 use LaraCrud\Console\View;
@@ -41,6 +42,7 @@ class LaraCrudServiceProvider extends ServiceProvider
         Policy::class,
         Test::class,
         Package::class,
+        Resource::class,
     ];
 
     /**
