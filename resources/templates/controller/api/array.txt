@@ -1,0 +1,10 @@
+   /**
+     * @@PHPDocComment@@
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function @@methodName@@(@@parameters@@)
+    {
+         @@authorization@@ @@body@@
+        return response()->json([@@data@@]);
+    }

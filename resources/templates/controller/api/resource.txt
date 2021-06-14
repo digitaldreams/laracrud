@@ -1,0 +1,10 @@
+   /**
+     * @@PHPDocComment@@
+     *
+     * @return \Illuminate\Http\Resources\Json\JsonResource
+     */
+    public function @@methodName@@(@@parameters@@)
+    {
+         @@authorization@@ @@body@@
+        return @@response@@;
+    }

@@ -5,9 +5,12 @@ namespace LaraCrud\Builder\Controller;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
-use LaraCrud\Contracts\Controller\ApiResponseMethod;
+use LaraCrud\Contracts\Controller\ApiArrayResponseMethod;
+use LaraCrud\Contracts\Controller\ApiResourceResponseMethod;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 use LaraCrud\Contracts\Controller\ViewAbleMethod;
+use LaraCrud\Crud\ApiResource;
+use LaraCrud\Helpers\ApiMethodHelper;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\RedirectAbleMethodHelper;
 use LaraCrud\Helpers\ViewAbleMethodHelper;
@@ -16,7 +19,7 @@ use ReflectionClass;
 
 abstract class ControllerMethod
 {
-    use ViewAbleMethodHelper, RedirectAbleMethodHelper, Helper, ModelShortNameAndVariablesTrait;
+    use ViewAbleMethodHelper, RedirectAbleMethodHelper, Helper, ModelShortNameAndVariablesTrait, ApiMethodHelper;
 
 
     /**
@@ -74,7 +77,7 @@ abstract class ControllerMethod
         $this->model = $model;
         $this->modelReflectionClass = new \ReflectionClass($model);
 
-        if ($this instanceof ApiResponseMethod) {
+        if ($this instanceof ApiResourceResponseMethod) {
             $requestNs = config('laracrud.request.apiNamespace');
 
             $this->isApi = true;
@@ -139,8 +142,10 @@ abstract class ControllerMethod
             return $this->beforeGenerate()->generateViewCode();
         } elseif ($this instanceof RedirectAbleMethod) {
             return $this->beforeGenerate()->generateRedirectAbleCode();
-        }else{
-            echo get_class($this);
+        } elseif ($this instanceof ApiResourceResponseMethod) {
+            return $this->beforeGenerate()->generateApiResourceCode();
+        } elseif ($this instanceof ApiArrayResponseMethod) {
+            return $this->beforeGenerate()->generateApiArrayCode();
         }
     }
 
@@ -244,4 +249,40 @@ abstract class ControllerMethod
         }
         return '$this->authorize(\'' . $methodName . '\', ' . $code . ');' . "\n";
     }
+
+
+    public function isCollection(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function resource(): string
+    {
+        $resourceNs = config('laracrud.resource.namespace', 'App\Http\Resources');
+        $classSuffix = config('laracrud.resource.classSuffix', 'Resource');
+        $resourceName = $this->getModelShortName() . $classSuffix;
+        $fullNs = $resourceNs . '\\' . $resourceName;
+        if (!class_exists($fullNs)) {
+            $resourceCrud = new ApiResource($this->model);
+            $resourceCrud->save();
+            $fullNs = $resourceCrud->getFullName();
+            $resourceName = $resourceCrud->modelName;
+        }
+        $this->namespaces[] = $fullNs;
+
+        return $resourceName;
+    }
+
+    public function generateResourceResponse(): string
+    {
+        $resourceName = $this->resource();
+        if ($this->isCollection()) {
+            return "$resourceName::" . 'collection($builder->paginate(10))';
+        }
+        return 'new ' . $resourceName . '($' . $this->getModelVariableName() . ')';
+    }
+
 }

@@ -2,6 +2,11 @@
 
 namespace LaraCrud;
 
+use LaraCrud\Builder\Controller\Api\DestroyMethod as ApiDestroyMethod;
+use LaraCrud\Builder\Controller\Api\IndexMethod as ApiIndexMethod;
+use LaraCrud\Builder\Controller\Api\ShowMethod as ApiShowMethod;
+use LaraCrud\Builder\Controller\Api\StoreMethod as ApiStoreMethod;
+use LaraCrud\Builder\Controller\Api\UpdateMethod as ApiUpdateMethod;
 use LaraCrud\Builder\Controller\Web\CreateMethod;
 use LaraCrud\Builder\Controller\Web\DestroyMethod;
 use LaraCrud\Builder\Controller\Web\EditMethod;
@@ -33,8 +38,13 @@ class Configuration
     ];
 
     public static array $controllerApiMethods = [
-
+        'index' => ApiIndexMethod::class,
+        'show' => ApiShowMethod::class,
+        'store' => ApiStoreMethod::class,
+        'update' => ApiUpdateMethod::class,
+        'destroy' => ApiDestroyMethod::class,
     ];
+
     /**
      * @var array
      */
