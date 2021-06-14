@@ -105,7 +105,7 @@ class Controller extends Command
             }
         } catch (\Exception $ex) {
             Log::error($ex->getTraceAsString());
-            $this->error(sprintf('%s on line %  in %', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
+            $this->error(sprintf('%s on line %s  in %s', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
         }
     }
 
