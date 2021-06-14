@@ -3,7 +3,9 @@
 namespace LaraCrud;
 
 use LaraCrud\Builder\Controller\Api\DestroyMethod as ApiDestroyMethod;
+use LaraCrud\Builder\Controller\Api\ForceDeleteMethod as ApiForceDeleteMethod;
 use LaraCrud\Builder\Controller\Api\IndexMethod as ApiIndexMethod;
+use LaraCrud\Builder\Controller\Api\RestoreMethod as ApiRestoreMethod;
 use LaraCrud\Builder\Controller\Api\ShowMethod as ApiShowMethod;
 use LaraCrud\Builder\Controller\Api\StoreMethod as ApiStoreMethod;
 use LaraCrud\Builder\Controller\Api\UpdateMethod as ApiUpdateMethod;
@@ -43,6 +45,8 @@ class Configuration
         'store' => ApiStoreMethod::class,
         'update' => ApiUpdateMethod::class,
         'destroy' => ApiDestroyMethod::class,
+        'restore' => ApiRestoreMethod::class,
+        'forceDelete' => ApiForceDeleteMethod::class,
     ];
 
     /**
