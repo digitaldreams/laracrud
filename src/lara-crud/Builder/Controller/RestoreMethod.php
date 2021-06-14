@@ -2,8 +2,6 @@
 
 namespace LaraCrud\Builder\Controller;
 
-use LaraCrud\Builder\Controller\ControllerMethod;
-
 abstract class RestoreMethod extends ControllerMethod
 {
     /**
@@ -14,7 +12,7 @@ abstract class RestoreMethod extends ControllerMethod
         if ($this->parentModel) {
             $this->setParameter($this->getParentShortName(), '$' . $this->getParentVariableName());
         }
-        $this->setParameter('int', '$' . $this->getModelShortName());
+        $this->setParameter('int', '$' . $this->getModelVariableName());
 
         return $this;
     }
@@ -25,10 +23,15 @@ abstract class RestoreMethod extends ControllerMethod
     public function getBody(): string
     {
         $variable = '$' . $this->getModelVariableName();
-        $body = $variable . ' = ' . $this->getModelShortName() . '::withTrashed()->where(\'' . $this->model->getRouteKeyName() . '\',' . $variable . ')->firstOrFail()' . PHP_EOL;
+        $body = $variable . ' = ' . $this->getModelShortName() . '::withTrashed()->where(\'' . $this->model->getRouteKeyName() . '\',' . $variable . ')->firstOrFail();' . PHP_EOL;
 
         $body .= "\t\t" . $variable . '->restore();' . PHP_EOL;
 
         return $body;
+    }
+
+    public function phpDocComment(): string
+    {
+        return sprintf('Restore a previously deleted %s .', $this->getModelShortName());
     }
 }

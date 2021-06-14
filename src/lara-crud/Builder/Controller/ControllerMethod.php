@@ -139,6 +139,8 @@ abstract class ControllerMethod
             return $this->beforeGenerate()->generateViewCode();
         } elseif ($this instanceof RedirectAbleMethod) {
             return $this->beforeGenerate()->generateRedirectAbleCode();
+        }else{
+            echo get_class($this);
         }
     }
 
