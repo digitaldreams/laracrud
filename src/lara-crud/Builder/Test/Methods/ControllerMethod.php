@@ -45,6 +45,16 @@ class ControllerMethod
     protected $model;
 
     /**
+     * @var string
+     */
+    protected string $modelFactory;
+
+    /**
+     * @var string
+     */
+    protected string $parentModelFactory;
+
+    /**
      * ControllerMethod constructor.
      *
      * @param \ReflectionMethod         $reflectionMethod
@@ -91,5 +101,21 @@ class ControllerMethod
         $this->namespaces[] = 'use ' . get_class($parentModel);
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModelFactory(): string
+    {
+        return $this->modelFactory;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParentModelFactory(): string
+    {
+        return $this->parentModelFactory;
     }
 }
