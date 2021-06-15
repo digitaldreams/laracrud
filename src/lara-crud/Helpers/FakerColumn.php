@@ -101,50 +101,52 @@ class FakerColumn
             case 'varchar':
                 foreach ($this->map as $faker => $columns) {
                     if (in_array($this->column->name(), $columns)) {
-                        return '$faker->'.$faker;
+                        return '$this->faker->' . $faker;
                     }
                 }
+
+                return '$this->faker->words(5,true)';
                 break;
             case 'enum':
-                return 'array_rand([\''.implode("','", $this->column->options()).'\'], 1)';
+                return 'array_rand([\'' . implode("','", $this->column->options()) . '\'], 1)';
                 break;
             case 'longtext':
             case 'mediumtext':
             case 'text':
             case 'tinytext':
                 if (in_array($this->column->name(), $this->map['realText()'])) {
-                    return '$faker->realText()';
+                    return '$this->faker->realText()';
                 } else {
-                    return '$faker->text';
+                    return '$this->faker->text';
                 }
                 break;
             // Numeric data Type
             case 'bigint':
             case 'mediumint':
             case 'int':
-                return '$faker->randomNumber()';
+                return '$this->faker->randomNumber()';
                 break;
             case 'smallint':
             case 'tinyint':
-                return '$faker->numberBetween(1,99)';
+                return '$this->faker->numberBetween(1,99)';
                 break;
             case 'decimal':
             case 'float':
             case 'double':
-                return '$faker->randomNumber()';
+                return '$this->faker->randomNumber()';
                 break;
             // Date Time
             case 'date':
-                return '$faker->date()';
+                return '$this->faker->date()';
                 break;
             case 'datetime':
             case 'timestamp':
-                return '$faker->dateTime()';
+                return '$this->faker->dateTime()';
                 break;
             case 'time':
-                return '$faker->time()';
+                return '$this->faker->time()';
             case 'year':
-                return '$faker->year';
+                return '$this->faker->year';
                 break;
         }
     }

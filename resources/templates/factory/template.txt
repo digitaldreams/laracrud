@@ -1,15 +1,28 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-/*
-|--------------------------------------------------------------------------
-| @@modelClass@@ Factories
-|--------------------------------------------------------------------------
-*/
+use @@modelClass@@;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(@@modelClass@@::class, function (Faker $faker) {
-    return [
+class @@className@@ extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = @@modelShortName@@::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
 @@columns@@
-    ];
-});
+        ];
+    }
+}

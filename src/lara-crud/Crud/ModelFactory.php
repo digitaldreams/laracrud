@@ -68,6 +68,8 @@ class ModelFactory implements Crud
     {
         return (new TemplateManager('factory/template.txt', [
             'modelClass' => get_class($this->model),
+            'modelShortName' => (new \ReflectionClass($this->model))->getShortName(),
+            'className' => $this->getName(),
             'columns' => $this->makeColumns(),
         ]))->get();
     }
@@ -86,7 +88,7 @@ class ModelFactory implements Crud
             $fakerColumn = new FakerColumn($column);
             $default = $fakerColumn->default();
             $columnValue = !empty($default) ? $default . ',' : '\'\',';
-            $arr .= "\t\t" . '"' . $column->name() . '" => ' . $columnValue . PHP_EOL;
+            $arr .= "\t\t\t" . '"' . $column->name() . '" => ' . $columnValue . PHP_EOL;
         }
 
         return $arr;
