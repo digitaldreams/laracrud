@@ -26,8 +26,7 @@
     "require-dev": {
     },
     "suggest": {
-        "intervention/image": "For Image",
-        "tymon/jwt-auth": "For API authentication",
+        "intervention/image": "For Image"
     },
     "autoload": {
         "psr-4": {
