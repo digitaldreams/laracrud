@@ -1,0 +1,10 @@
+
+    /**
+     * @return array
+     */
+    public function createNew@@modelShortName@@ValidationProvider(): array
+    {
+        return [
+            @@data@@
+        ];
+    }

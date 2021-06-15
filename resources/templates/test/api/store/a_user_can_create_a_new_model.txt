@@ -1,0 +1,15 @@
+  /**
+     * @test
+     */
+    public function an_user_can_create_a_new_@@modelShortName@@(): void
+    {
+        $user = $this->createUser();
+
+        @@modelVariable@@ = @@modelShortName@@::factory()->make();
+
+        $response = $this->actingAs($user)->postJson(@@route@@, [ @@data@@]);
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('@@table@@', [
+        ]);
+    }
