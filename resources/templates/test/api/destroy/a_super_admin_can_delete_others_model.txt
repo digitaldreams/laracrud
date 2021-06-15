@@ -1,0 +1,20 @@
+    /**
+     * @test
+     */
+    public function a_super_admin_can_delete_others_@@modelShortName@@(): void
+    {
+        $user = $this->createUser();
+        $superAdmin = $this->createSuperAdmin();
+
+        @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
+
+        $response = $this->actingAs($superAdmin)->deleteJson(@@route@@);
+
+        $response->assertOk()->assertJson([
+            'message' => '',
+        ]);
+
+      $this->@@assertDeleted@@('@@table@@', [
+               'id' => @@modelVariable@@->id,
+           ]);
+    }
