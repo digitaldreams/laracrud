@@ -75,7 +75,7 @@ class ControllerMethod
      */
     public function getCode(): string
     {
-
+        return implode(", ", $this->route->gatherMiddleware());
     }
 
     /**
@@ -86,6 +86,18 @@ class ControllerMethod
     public function getNamespaces(): array
     {
         return $this->namespaces;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $model
+     *
+     * @return $this
+     */
+    public function setModel(Model $model): self
+    {
+        $this->model = $model;
+
+        return $this;
     }
 
     /**
@@ -118,4 +130,5 @@ class ControllerMethod
     {
         return $this->parentModelFactory;
     }
+
 }

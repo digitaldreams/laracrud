@@ -18,6 +18,11 @@ use LaraCrud\Builder\Controller\Web\RestoreMethod;
 use LaraCrud\Builder\Controller\Web\ShowMethod;
 use LaraCrud\Builder\Controller\Web\StoreMethod;
 use LaraCrud\Builder\Controller\Web\UpdateMethod;
+use LaraCrud\Builder\Test\Methods\DestroyMethod as TestDestroyMethod;
+use LaraCrud\Builder\Test\Methods\IndexMethod as TestIndexMethod;
+use LaraCrud\Builder\Test\Methods\ShowMethod as TestShowMethod;
+use LaraCrud\Builder\Test\Methods\StoreMethod as TestStoreMethod;
+use LaraCrud\Builder\Test\Methods\UpdateMethod as TestUpdateMethod;
 
 /**
  * All of the Global configuration will be handled from this Class instead of direct call of config().
@@ -47,6 +52,14 @@ class Configuration
         'destroy' => ApiDestroyMethod::class,
         'restore' => ApiRestoreMethod::class,
         'forceDelete' => ApiForceDeleteMethod::class,
+    ];
+
+    public static array $testApiMethods = [
+        'index' => TestIndexMethod::class,
+        'show' => TestShowMethod::class,
+        'store' => TestStoreMethod::class,
+        'update' => TestUpdateMethod::class,
+        'destroy' => TestDestroyMethod::class,
     ];
 
     /**
