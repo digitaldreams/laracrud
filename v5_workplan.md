@@ -41,7 +41,7 @@ Card\Table and which order.
 8. Implement all newly created view Repositories onto View Blade file creation.
 9. Rewrite the Request Rules [Done]
 10. Rewrite the Route Generation to Laravel 8 compatible
-11. Remove the Dingo API resources and Create Laravel Built in API resources
+11. Remove the Dingo API resources and Create Laravel Built in API resources [Done]
 
 
 

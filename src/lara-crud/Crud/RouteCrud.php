@@ -17,6 +17,7 @@ use LaraCrud\Helpers\TemplateManager;
 class RouteCrud implements Crud
 {
     use Helper;
+
     /**
      * Save all register routes name. To avoid name conficts for new routes.
      *
@@ -90,7 +91,7 @@ class RouteCrud implements Crud
 
         $this->template = !empty($api) ? 'api' : 'web';
         $this->namespace = true == $api ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
-        $this->namespace = rtrim($this->getFullNS($this->namespace), '\\').'\\';
+        $this->namespace = rtrim($this->getFullNS($this->namespace), '\\') . '\\';
     }
 
     /**
@@ -98,28 +99,19 @@ class RouteCrud implements Crud
      */
     public function getRoute()
     {
-        if ($this->api) {
-            $routes = [];
-            $routeCollection = \Dingo\Api\Facade\Route::getRoutes();
-            foreach ($routeCollection as $rts) {
-                foreach ($rts as $route) {
-                    $routes[] = $route;
-                }
-            }
-        } else {
-            $routes = Route::getRoutes();
-        }
+
+        $routes = Route::getRoutes();
 
         foreach ($routes as $route) {
             $controllerName = strstr($route->getActionName(), '@', true);
             $methodName = str_replace('@', '', strstr($route->getActionName(), '@'));
             $this->routes[$route->getActionName()] = [
-                'name'       => $route->getName(),
-                'path'       => $route->uri(),
+                'name' => $route->getName(),
+                'path' => $route->uri(),
                 'controller' => $controllerName,
-                'method'     => $methodName,
+                'method' => $methodName,
                 'http_verbs' => $route->methods(),
-                'action'     => $route->getActionName(),
+                'action' => $route->getActionName(),
                 'parameters' => $route->parameterNames(),
             ];
 
@@ -143,10 +135,10 @@ class RouteCrud implements Crud
             $methods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
 
             $this->controllerMethods[$controller] = [
-                'full_name'   => $controller,
-                'shortName'   => $reflectionClass->getShortName(),
+                'full_name' => $controller,
+                'shortName' => $reflectionClass->getShortName(),
                 'description' => $reflectionClass->getDocComment(),
-                'methods'     => $this->filterMethod($controller, $methods),
+                'methods' => $this->filterMethod($controller, $methods),
             ];
         }
     }
@@ -217,7 +209,7 @@ class RouteCrud implements Crud
         $routeMethodName = 'get';
 
         if (!empty($subNameSpace)) {
-            $routeName = strtolower($subNameSpace).'.';
+            $routeName = strtolower($subNameSpace) . '.';
         }
 
         $path .= strtolower($method);
@@ -230,14 +222,14 @@ class RouteCrud implements Crud
 
         $controllerShortName = str_replace('Controller', '', $controllerName);
 
-        $actionName = $controllerName.'@'.$method;
-        $routeName .= Str::plural(strtolower($controllerShortName)).'.'.strtolower($method);
+        $actionName = $controllerName . '@' . $method;
+        $routeName .= Str::plural(strtolower($controllerShortName)) . '.' . strtolower($method);
 
-        $tempObj = new TemplateManager('route/'.$this->template.'/template.txt', [
-            'method'    => $routeMethodName,
-            'path'      => $path,
+        $tempObj = new TemplateManager('route/' . $this->template . '/template.txt', [
+            'method' => $routeMethodName,
+            'path' => $path,
             'routeName' => $routeName,
-            'action'    => $actionName,
+            'action' => $actionName,
         ]);
 
         return $tempObj->get();
@@ -250,9 +242,9 @@ class RouteCrud implements Crud
      * @param string $controller
      * @param string $method
      *
+     * @return string
      * @throws \ReflectionException
      *
-     * @return string
      */
     public function addParams($controller, $method)
     {
@@ -265,7 +257,7 @@ class RouteCrud implements Crud
                 continue;
             }
             $optional = true == $param->isOptional() ? '?' : '';
-            $params .= '/{'.$param->getName().$optional.'}';
+            $params .= '/{' . $param->getName() . $optional . '}';
         }
 
         return $params;
@@ -295,8 +287,8 @@ class RouteCrud implements Crud
             $controllerShortName = strtolower(str_replace('Controller', '', $ctr['shortName']));
 
             if (!empty($path)) {
-                $subNameSpace = ','."'namespace'=>'".$path."'";
-                $controllerShortName = strtolower($path).'/'.$controllerShortName;
+                $subNameSpace = ',' . "'namespace'=>'" . $path . "'";
+                $controllerShortName = strtolower($path) . '/' . $controllerShortName;
             }
 
             $routesMethods = isset($this->methodNames[$controllerName]) ? $this->methodNames[$controllerName] : [];
@@ -308,8 +300,8 @@ class RouteCrud implements Crud
             if (count($resourceMethods) == count($resources)) {
                 $newRouteMethods = array_diff($newRouteMethods, $resources);
                 $tableName = Str::plural(strtolower(str_replace('Controller', '', $ctr['shortName'])));
-                $resourceRTempObj = new TemplateManager('route/'.$this->template.'/resource.txt', [
-                    'table'      => $tableName,
+                $resourceRTempObj = new TemplateManager('route/' . $this->template . '/resource.txt', [
+                    'table' => $tableName,
                     'controller' => $ctr['shortName'],
                 ]);
                 $resourceRTemp = $resourceRTempObj->get();
@@ -324,10 +316,10 @@ class RouteCrud implements Crud
                 continue;
             }
 
-            $routeGroupTempObj = new TemplateManager('route/'.$this->template.'/group.txt', [
+            $routeGroupTempObj = new TemplateManager('route/' . $this->template . '/group.txt', [
                 'namespace' => $subNameSpace,
-                'routes'    => $controllerRoutes,
-                'prefix'    => Str::plural($controllerShortName),
+                'routes' => $controllerRoutes,
+                'prefix' => Str::plural($controllerShortName),
             ]);
             $routeGroupTemp = $routeGroupTempObj->get();
             $retRoutes .= $routeGroupTemp;
