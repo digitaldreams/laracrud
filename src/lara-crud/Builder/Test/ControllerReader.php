@@ -21,6 +21,9 @@ class ControllerReader
      */
     protected array $methods = [];
 
+    /**
+     * @var \Illuminate\Routing\Route[]
+     */
     protected array $routes = [];
 
     /**
@@ -40,13 +43,16 @@ class ControllerReader
     }
 
     /**
-     * @return array
+     * @return \ReflectionMethod[]
      */
     public function getMethods(): array
     {
         return $this->methods;
     }
 
+    /**
+     * @return \Illuminate\Routing\Route[]
+     */
     public function getRoutes()
     {
         return $this->routes;
@@ -66,13 +72,7 @@ class ControllerReader
                 continue;
             }
             $methodName = str_replace('@', '', strstr($route->getActionName(), '@'));
-            $returnRoutes[$methodName] = [
-                'name' => $route->getName(),
-                'path' => $route->uri(),
-                'method' => $methodName,
-                'http_verbs' => $route->methods(),
-                'parameters' => $route->parameterNames(),
-            ];
+            $returnRoutes[$methodName] = $route;
         }
 
         return $returnRoutes;
