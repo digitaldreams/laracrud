@@ -3,7 +3,9 @@
      */
     public function a_guest_cannot_delete_the_@@modelMethodName@@_of_a_user(): void
     {
-        @@modelVariable@@ = @@modelShortName@@::factory()->create();
+        $user = $this->createUser();
+
+        @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
 
         $response = $this->deleteJson(@@route@@);
 
