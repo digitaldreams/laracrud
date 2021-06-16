@@ -8,7 +8,7 @@
         @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
 
         @@apiActingAs@@
-        $response = $this->@@webActingAs@@->deleteJson(@@route@@);
+        $response = $this->@@webActingAs@@deleteJson(@@route@@);
         $response->assertForbidden();
 
         $this->assertDatabaseHas('@@table@@', [

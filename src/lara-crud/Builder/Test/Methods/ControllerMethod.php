@@ -138,7 +138,7 @@ abstract class ControllerMethod
     {
         $this->model = $model;
         $this->modelRelationReader = (new ModelRelationReader($model))->read();
-        $this->namespaces[] = 'use ' . get_class($model);
+        $this->namespaces[] =  get_class($model);
 
         return $this;
     }
@@ -153,7 +153,7 @@ abstract class ControllerMethod
     public function setParent(Model $parentModel): self
     {
         $this->parentModel = $parentModel;
-        $this->namespaces[] = 'use ' . get_class($parentModel);
+        $this->namespaces[] =  get_class($parentModel);
 
         return $this;
     }
@@ -206,7 +206,7 @@ abstract class ControllerMethod
         if (!$this->isSanctumAuth) {
             return false;
         }
-        $this->namespaces[] = 'use Laravel\Sanctum\Sanctum';
+        $this->namespaces[] = 'Laravel\Sanctum\Sanctum';
         return 'Sanctum::actingAs(' . $actionAs . ', [\'*\']);';
     }
 
@@ -219,7 +219,7 @@ abstract class ControllerMethod
             return false;
         }
 
-        $this->namespaces[] = 'use Laravel\Passport\Passport';
+        $this->namespaces[] = 'Laravel\Passport\Passport';
 
         return 'Passport::actingAs(' . $actionAs . ', [\'*\']);';
     }

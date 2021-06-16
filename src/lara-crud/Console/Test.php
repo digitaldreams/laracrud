@@ -5,17 +5,21 @@ namespace LaraCrud\Console;
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Test as TestCrud;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Repositories\TestRepository;
 
 class Test extends Command
 {
     use Helper;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'laracrud:test 
-        {controller : Controller Name} 
+    protected $signature = 'laracrud:test
+        {controller : Controller Name}
+        {model : Model name}
+        {fileName : Test Class Name}
         {--api : Whether its an API Controller Test}';
 
     /**
@@ -43,45 +47,40 @@ class Test extends Command
     public function handle()
     {
         try {
-            $controllers = [];
             $controller = $this->argument('controller');
+            $model = $this->argument('model');
+            $fileName = $this->argument('fileName');
             $api = $this->option('api');
-            $namespace = true == $api ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
-            $namespace = $this->getFullNS($namespace);
 
-            if ('all' == $controller) {
-                $path = $this->toPath($namespace);
-                $dirIt = new \RecursiveDirectoryIterator(base_path($path));
-                $rit = new \RecursiveIteratorIterator($dirIt);
-
-                while ($rit->valid()) {
-                    if (!$rit->isDot()) {
-                        $controllers[] = rtrim($namespace, '\\').'\\'.str_replace(
-                            '.php',
-                            '',
-                            str_replace('/', '\\', $rit->getSubPathName())
-                        );
-                    }
-                    $rit->next();
-                }
-                $testCrud = new TestCrud($controllers, $api);
-            } else {
-                $controller = str_replace('/', '\\', $controller);
-                if (!stripos(rtrim($namespace, '\\').'\\', $controller)) {
-                    $controller = rtrim($namespace, '\\').'\\'.$controller;
-                }
-
-                $testCrud = new TestCrud($controller, $api);
+            if (!class_exists($controller)) {
+                $namespace = true == $api ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
+                $namespace = $this->getFullNS($namespace);
+                $controller = rtrim($namespace, '\\') . '\\' . $controller;
             }
+
+            if (!class_exists($controller)) {
+                $this->error(sprintf('%s controller does not exists', $controller));
+                exit();
+            }
+
+            if (!class_exists($model)) {
+                $namespace = config('laracrud.model.namespace');
+                $namespace = $this->getFullNS($namespace);
+                $model = rtrim($namespace, '\\') . '\\' . $model;
+            }
+
+            if (!class_exists($model)) {
+                $this->error(sprintf('%s model does not exists', $model));
+                exit();
+            }
+
+            $testCrud = new TestCrud(new TestRepository($controller, new $model, $api), $fileName);
 
             $testCrud->save();
-            if (!empty($testCrud->errors)) {
-                $this->error(implode(', ', $testCrud->errors));
-            } else {
-                $this->info('Test created successfully');
-            }
+
+            $this->info('Test created successfully');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 }

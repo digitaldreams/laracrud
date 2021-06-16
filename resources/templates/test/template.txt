@@ -1,0 +1,20 @@
+<?php
+
+namespace @@namespace@@;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
+use Tests\TestCase;
+@@importNameSpace@@
+
+/**
+ * Description of @@className@@
+ *
+ * @author Tuhin Bepari <digitaldreams40@gmail.com>
+ */
+class @@className@@ extends TestCase
+{
+   use RefreshDatabase;
+
+   @@methods@@
+}

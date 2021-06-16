@@ -27,15 +27,7 @@ class TestRepository extends AbstractControllerRepository
     public function __construct(string $controller, Model $model, bool $isApi = false)
     {
         $this->model = $model;
-        if (!class_exists($controller)) {
-            $ns = $isApi == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
-            $fullNs = $this->getFullNS($ns);
-            $controller = $fullNs . '\\' . $controller;
-        }
 
-        if (!class_exists($controller)) {
-            throw new \Exception(sprintf('Unable to find %s', $controller));
-        }
         $this->controller = $controller;
         $this->isApi = $isApi;
 

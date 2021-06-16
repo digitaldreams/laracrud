@@ -5,7 +5,7 @@ namespace LaraCrud\Crud;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-use LaraCrud\Helpers\TestMethod;
+use LaraCrud\Repositories\TestRepository;
 
 /**
  * Create Routes based on controller method and its parameters
@@ -13,14 +13,9 @@ use LaraCrud\Helpers\TestMethod;
  *
  * @author Tuhin
  */
-class Test extends RouteCrud implements Crud
+class Test implements Crud
 {
     use Helper;
-
-    /**
-     * @var array
-     */
-    protected $params = [];
 
     /**
      * @var
@@ -31,41 +26,25 @@ class Test extends RouteCrud implements Crud
      * @var
      */
     protected $namespace;
-    /**
-     * @var mixed
-     */
-    protected $controllerInfo;
 
     /**
      * @var string
      */
-    protected $fileName;
+    protected string $fileName;
+
+    protected TestRepository $testRepository;
 
     /**
      * Test constructor.
      *
-     * @param string $controller
-     * @param bool   $api
+     * @param \LaraCrud\Repositories\TestRepository $testRepository
+     * @param                                       $fileName
      */
-    public function __construct($controller = '', $api = false)
+    public function __construct(TestRepository $testRepository, $fileName)
     {
-        parent::__construct($controller, $api);
-
-        $this->suffix = config('laracrud.test.feature.suffix', 'Test');
         $this->namespace = config('laracrud.test.feature.namespace', 'Tests\Feature');
-        $this->controllerInfo = array_shift($this->controllerMethods);
-        $this->fileName = $this->controllerInfo['shortName'].$this->suffix;
-    }
-
-    /**
-     * @param $controller
-     * @param $method
-     *
-     * @return bool
-     */
-    public function hasRoute($controller, $method)
-    {
-        return isset($this->methodNames[$controller]) && in_array($method, $this->methodNames[$controller]);
+        $this->fileName = $fileName;
+        $this->testRepository = $testRepository;
     }
 
     /**
@@ -75,53 +54,25 @@ class Test extends RouteCrud implements Crud
      */
     public function template()
     {
-        return (new TemplateManager('test/'.$this->template.'/template.txt', [
+        $this->testRepository->build();
+        return (new TemplateManager('test/template.txt', [
             'namespace' => $this->namespace,
-            'import'    => '',
+            'importNameSpace' => $this->makeNamespaceImportString(),
             'className' => $this->fileName,
-            'methods'   => $this->getMethodTestCode(),
+            'methods' => implode("\n",$this->testRepository->getCode()),
         ]))->get();
-    }
-
-    public function getMethodTestCode()
-    {
-        $testCodes = '';
-
-        foreach ($this->controllerInfo['methods'] as $method) {
-            if ($this->hasRoute($this->controllerInfo['full_name'], $method)) {
-                $routeInfo = $this->getRouteInfo($this->controllerInfo['full_name'], $method);
-                if (!empty($routeInfo)) {
-                    $testCodes .= (new TestMethod($routeInfo, $this->api))->template();
-                }
-            }
-        }
-
-        return $testCodes;
-    }
-
-    /**
-     * @param $controller
-     * @param $method
-     *
-     * @return array
-     */
-    protected function getRouteInfo($controller, $method)
-    {
-        $action = $controller.'@'.$method;
-
-        return isset($this->routes[$action]) ? $this->routes[$action] : [];
     }
 
     /**
      * Get code and save to disk.
      *
+     * @return mixed
      * @throws \Exception
      *
-     * @return mixed
      */
     public function save()
     {
-        $fullPath = $this->toPath($this->namespace.'\\'.$this->fileName).'.php';
+        $fullPath = $this->toPath($this->namespace . '\\' . $this->fileName) . '.php';
         if (file_exists($fullPath)) {
             throw new \Exception('TestClass already exists');
         }
@@ -129,14 +80,15 @@ class Test extends RouteCrud implements Crud
         $testClass->fwrite($this->template());
     }
 
-    /**
-     * @param $fileName
-     * @param $content
-     *
-     * @throws \Exception
-     */
-    public function saveFile($fileName, $content)
+
+
+    public function makeNamespaceImportString()
     {
-        $fileName = $this->namespace.'/'.$fileName.$this->suffix.'.php';
+        $ns = '';
+        foreach ($this->testRepository->getImportableNamespaces() as $namespace) {
+            $ns .= "\n use " . $namespace . ';';
+        }
+        return $ns;
     }
+
 }
