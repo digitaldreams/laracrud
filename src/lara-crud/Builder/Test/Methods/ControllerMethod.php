@@ -6,6 +6,8 @@ namespace LaraCrud\Builder\Test\Methods;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Str;
+use LaraCrud\Services\ModelRelationReader;
 
 abstract class ControllerMethod
 {
@@ -78,6 +80,8 @@ abstract class ControllerMethod
     public static bool $hasSuperAdminRole = false;
 
 
+    protected ModelRelationReader $modelRelationReader;
+
     /**
      * ControllerMethod constructor.
      *
@@ -105,7 +109,8 @@ abstract class ControllerMethod
     public function getCode(): string
     {
         $this->before();
-        return implode("\n", $this->testMethods);
+        return $this->getRoute();
+        // return implode("\n", $this->testMethods);
     }
 
     /**
@@ -126,6 +131,7 @@ abstract class ControllerMethod
     public function setModel(Model $model): self
     {
         $this->model = $model;
+        $this->modelRelationReader = (new ModelRelationReader($model))->read();
 
         return $this;
     }
@@ -148,7 +154,7 @@ abstract class ControllerMethod
     /**
      * @return string
      */
-    public function getModelFactory(): string
+    protected function getModelFactory(): string
     {
         return $this->modelFactory;
     }
@@ -156,7 +162,7 @@ abstract class ControllerMethod
     /**
      * @return string
      */
-    public function getParentModelFactory(): string
+    protected function getParentModelFactory(): string
     {
         return $this->parentModelFactory;
     }
@@ -166,7 +172,7 @@ abstract class ControllerMethod
      *
      * @return bool
      */
-    public function isAuthRequired(): bool
+    protected function isAuthRequired(): bool
     {
         $auth = array_intersect($this->authMiddleware, $this->route->gatherMiddleware());
 
@@ -188,7 +194,7 @@ abstract class ControllerMethod
     /**
      * @return false|string
      */
-    public function getSanctumActingAs()
+    protected function getSanctumActingAs()
     {
         if (!$this->isSanctumAuth) {
             return false;
@@ -200,7 +206,7 @@ abstract class ControllerMethod
     /**
      * @return false|string
      */
-    public function getPassportActingAs()
+    protected function getPassportActingAs()
     {
         if (!$this->isPassportAuth) {
             return false;
@@ -211,7 +217,7 @@ abstract class ControllerMethod
         return 'Passport::actingAs($user, [\'*\']);';
     }
 
-    public function getWebAuthActingAs()
+    protected function getWebAuthActingAs()
     {
         if (!$this->isWebAuth) {
             return false;
@@ -225,7 +231,7 @@ abstract class ControllerMethod
      *
      * @return bool
      */
-    public function hasSuperAdminRole(): bool
+    protected function hasSuperAdminRole(): bool
     {
         return static::$hasSuperAdminRole;
     }
@@ -233,13 +239,52 @@ abstract class ControllerMethod
     /**
      *
      */
-    public function getRoute()
+    protected function getRoute()
     {
+        $params = '';
         $name = $this->route->getName();
-        if (!$this->route->hasParameters()) {
+        if (empty($this->route->parameterNames())) {
             return 'route("' . $name . '")';
         }
+        foreach ($this->route->parameterNames() as $name) {
+            if (strtolower($name) == strtolower($this->modelRelationReader->getShortName())) {
+                $value = $this->getModelVariable() . '->' . $this->model->getRouteKeyName();
+            } else {
+                $value = '';
+            }
+            $params .= '"' . $name . '" => ' . $value . ', ';
+        }
 
+        return 'route("' . $name . '",[' . $params . '])';
+    }
+
+    protected function getModelVariable(): string
+    {
+        return '$' . lcfirst($this->modelRelationReader->getShortName());
+    }
+
+    protected function getApiActingAs()
+    {
+        if ($this->isSanctumAuth) {
+            return $this->getSanctumActingAs();
+        }
+        if ($this->isPassportAuth) {
+            return $this->getPassportActingAs();
+        }
+        return '';
+    }
+
+    protected function getGlobalVariables(): array
+    {
+        return [
+            'modelVariable' => $this->getModelVariable(),
+            'modelShortName' => $this->modelRelationReader->getShortName(),
+            'route' => $this->getRoute(),
+            'modelMethodName' => Str::snake($this->modelRelationReader->getShortName()),
+            'apiActingAs' => $this->getApiActingAs(),
+            'webActingAs' => $this->isWebAuth ? $this->getWebAuthActingAs() : '',
+            'table' => $this->model->getTable(),
+        ];
     }
 
 

@@ -29,6 +29,8 @@ class ModelRelationReader
     protected string $ownerForeignKey;
     protected string $ownerLocalKey;
 
+    protected string $shortName;
+
     /**
      * ModelRelationReader constructor.
      *
@@ -48,6 +50,7 @@ class ModelRelationReader
     public function read(): self
     {
         $reflectionClass = new \ReflectionClass($this->model);
+        $this->shortName = $reflectionClass->getShortName();
         $methods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
             try {
@@ -143,7 +146,7 @@ class ModelRelationReader
     /**
      * @param \Illuminate\Database\Eloquent\Relations\BelongsTo $response
      */
-    protected function findOwner(Relation $response)
+    protected function findOwner(Relation $response): bool
     {
         if ($response instanceof BelongsTo) {
             $userModel = config('auth.providers.users.model');
@@ -171,4 +174,10 @@ class ModelRelationReader
     {
         return $this->ownerLocalKey;
     }
+
+    public function getShortName(): string
+    {
+        return $this->shortName;
+    }
+
 }

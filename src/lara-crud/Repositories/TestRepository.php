@@ -26,6 +26,7 @@ class TestRepository extends AbstractControllerRepository
 
     public function __construct(string $controller, Model $model, bool $isApi = false)
     {
+        $this->model = $model;
         if (!class_exists($controller)) {
             $ns = $isApi == true ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
             $fullNs = $this->getFullNS($ns);
@@ -39,7 +40,7 @@ class TestRepository extends AbstractControllerRepository
         $this->isApi = $isApi;
 
         $this->addMethods($controller);
-        $this->model = $model;
+
     }
 
     /**
