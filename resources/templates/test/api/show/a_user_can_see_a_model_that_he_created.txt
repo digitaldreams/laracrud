@@ -1,0 +1,15 @@
+
+    /**
+     * @test
+     */
+    public function a_user_can_see_a_@@modelMethodName@@_that_he_created(): void
+    {
+        $user = $this->createUser();
+        @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
+
+        @@apiActingAs@@
+        $response = $this->@@webActingAs@@getJson(@@route@@);
+        $response->assertStatus(200)->assertJson([
+            'data' => [],
+        ]);
+    }

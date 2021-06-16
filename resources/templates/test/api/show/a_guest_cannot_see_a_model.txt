@@ -1,0 +1,12 @@
+
+    /**
+     * @test
+     */
+    public function a_guest_cannot_see_a_@@modelMethodName@@(): void
+    {
+        $user = $this->createUser();
+        @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
+
+        $response = $this->getJson(@@route@@);
+        $response->assertUnauthorized();
+    }

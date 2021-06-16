@@ -207,7 +207,7 @@ abstract class ControllerMethod
             return false;
         }
         $this->namespaces[] = 'use Laravel\Sanctum\Sanctum';
-        return 'Sanctum::actingAs(' . $actionAs . ', [\' * \']);';
+        return 'Sanctum::actingAs(' . $actionAs . ', [\'*\']);';
     }
 
     /**
