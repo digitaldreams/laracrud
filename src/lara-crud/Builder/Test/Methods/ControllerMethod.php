@@ -5,6 +5,7 @@ namespace LaraCrud\Builder\Test\Methods;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Str;
 use LaraCrud\Services\ModelRelationReader;
@@ -200,7 +201,7 @@ abstract class ControllerMethod
             return false;
         }
         $this->namespaces[] = 'use Laravel\Sanctum\Sanctum';
-        return 'Sanctum::actingAs('.$actionAs.', [\' * \']);';
+        return 'Sanctum::actingAs(' . $actionAs . ', [\' * \']);';
     }
 
     /**
@@ -214,7 +215,7 @@ abstract class ControllerMethod
 
         $this->namespaces[] = 'use Laravel\Passport\Passport';
 
-        return 'Passport::actingAs('.$actionAs.', [\'*\']);';
+        return 'Passport::actingAs(' . $actionAs . ', [\'*\']);';
     }
 
     protected function getWebAuthActingAs($actionAs)
@@ -223,7 +224,7 @@ abstract class ControllerMethod
             return false;
         }
 
-        return 'actingAs('.$actionAs.')->';
+        return 'actingAs(' . $actionAs . ')->';
     }
 
     /**
@@ -274,7 +275,7 @@ abstract class ControllerMethod
         return '';
     }
 
-    protected function getGlobalVariables($actionAs='$user'): array
+    protected function getGlobalVariables($actionAs = '$user'): array
     {
         return [
             'modelVariable' => $this->getModelVariable(),
@@ -289,4 +290,47 @@ abstract class ControllerMethod
     }
 
 
+    public function getCustomRequestClassRules(): array
+    {
+        $rules = [];
+        try {
+            foreach ($this->reflectionMethod->getParameters() as $parameter) {
+                if ($parameter->hasType()) {
+                    if (is_subclass_of($parameter->getType()->getName(), FormRequest::class)) {
+                        $className = $parameter->getType()->getName();
+                        $rfm = new \ReflectionMethod($parameter->getType()->getName(), 'rules');
+                        $rules = $rfm->invoke(new $className);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            return $rules;
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @return string
+     */
+    public function generateDataProvider(): string
+    {
+        $data = '';
+        $rules = $this->getCustomRequestClassRules();
+        foreach ($rules as $field => $rule) {
+            $listOfRules = is_array($rule) ? $rule : explode("|", $rule);
+            foreach ($listOfRules as $listOfRule) {
+                if (is_object($listOfRule)) {
+                    continue;
+                }
+                if (in_array($listOfRule, static::$ignoreDataProviderRules)) {
+                    continue;
+                }
+                $data .= "\t\t\t". '"'. "The $field must be $listOfRule" .'"'. ' => ["' . $field . '"," " ],' . PHP_EOL;
+            }
+
+        }
+
+        return $data;
+    }
 }

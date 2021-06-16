@@ -7,9 +7,12 @@
         @@modelVariable@@ = @@modelShortName@@::factory()->make();
 
         @@apiActingAs@@
-        $response = $this->@@webActingAs@@postJson(@@route@@, [ @@data@@]);
+        $response = $this->@@webActingAs@@postJson(@@route@@, [
+@@data@@
+        ]);
         $response->assertCreated();
 
         $this->assertDatabaseHas('@@table@@', [
+@@data@@
         ]);
     }

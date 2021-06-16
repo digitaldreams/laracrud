@@ -6,11 +6,11 @@
      * @param $fieldName
      * @param $fieldValue
      */
-    public function create_new_@@modelShortName@@_validation_check($fieldName, $fieldValue): void
+    public function create_new_@@modelMethodName@@_validation_check($fieldName, $fieldValue): void
     {
         $user = $this->createUser();
-
-        $response = $this->actingAs($user)->postJson(@@route@@, [
+        @@apiActingAs@@
+        $response = $this->@@webActingAs@@postJson(@@route@@, [
             $fieldName => $fieldValue,
         ]);
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)->assertJsonValidationErrors($fieldName);
