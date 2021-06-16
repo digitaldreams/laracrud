@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ModelRelationReader
 {
@@ -178,6 +179,11 @@ class ModelRelationReader
     public function getShortName(): string
     {
         return $this->shortName;
+    }
+
+    public function isSoftDeleteAble(): bool
+    {
+        return in_array(SoftDeletes::class, class_uses($this->model));
     }
 
 }

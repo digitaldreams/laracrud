@@ -1,13 +1,13 @@
     /**
      * @test
      */
-    public function a_member_can_delete_his_own_@@modelShortName@@(): void
+    public function a_user_can_delete_his_own_@@modelMethodName@@(): void
     {
         $user = $this->createUser();
-
         @@modelVariable@@ = @@modelShortName@@::factory()->create();
 
-        $response = $this->actingAs($user)->deleteJson(@@route@@);
+        @@apiActingAs@@
+        $response = $this->@@webActingAs@@deleteJson(@@route@@);
 
         $response->assertOk()->assertJson([
             'message' =>'',

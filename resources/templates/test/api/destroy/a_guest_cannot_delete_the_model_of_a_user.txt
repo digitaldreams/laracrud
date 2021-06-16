@@ -1,7 +1,7 @@
     /**
      * @test
      */
-    public function a_guest_cannot_delete_the_@@modelShortName@@_of_a_member(): void
+    public function a_guest_cannot_delete_the_@@modelMethodName@@_of_a_user(): void
     {
         @@modelVariable@@ = @@modelShortName@@::factory()->create();
 

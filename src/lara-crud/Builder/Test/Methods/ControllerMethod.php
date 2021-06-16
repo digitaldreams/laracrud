@@ -109,8 +109,7 @@ abstract class ControllerMethod
     public function getCode(): string
     {
         $this->before();
-        return $this->getRoute();
-        // return implode("\n", $this->testMethods);
+        return implode("\n", $this->testMethods);
     }
 
     /**
@@ -132,6 +131,7 @@ abstract class ControllerMethod
     {
         $this->model = $model;
         $this->modelRelationReader = (new ModelRelationReader($model))->read();
+        $this->namespaces[] = 'use ' . get_class($model);
 
         return $this;
     }
@@ -194,19 +194,19 @@ abstract class ControllerMethod
     /**
      * @return false|string
      */
-    protected function getSanctumActingAs()
+    protected function getSanctumActingAs($actionAs)
     {
         if (!$this->isSanctumAuth) {
             return false;
         }
         $this->namespaces[] = 'use Laravel\Sanctum\Sanctum';
-        return 'Sanctum::actingAs($user, [\' * \']);';
+        return 'Sanctum::actingAs('.$actionAs.', [\' * \']);';
     }
 
     /**
      * @return false|string
      */
-    protected function getPassportActingAs()
+    protected function getPassportActingAs($actionAs)
     {
         if (!$this->isPassportAuth) {
             return false;
@@ -214,16 +214,16 @@ abstract class ControllerMethod
 
         $this->namespaces[] = 'use Laravel\Passport\Passport';
 
-        return 'Passport::actingAs($user, [\'*\']);';
+        return 'Passport::actingAs('.$actionAs.', [\'*\']);';
     }
 
-    protected function getWebAuthActingAs()
+    protected function getWebAuthActingAs($actionAs)
     {
         if (!$this->isWebAuth) {
             return false;
         }
 
-        return 'actingAs($user)->';
+        return 'actingAs('.$actionAs.')->';
     }
 
     /**
@@ -246,13 +246,13 @@ abstract class ControllerMethod
         if (empty($this->route->parameterNames())) {
             return 'route("' . $name . '")';
         }
-        foreach ($this->route->parameterNames() as $name) {
-            if (strtolower($name) == strtolower($this->modelRelationReader->getShortName())) {
+        foreach ($this->route->parameterNames() as $parameterName) {
+            if (strtolower($parameterName) == strtolower($this->modelRelationReader->getShortName())) {
                 $value = $this->getModelVariable() . '->' . $this->model->getRouteKeyName();
             } else {
                 $value = '';
             }
-            $params .= '"' . $name . '" => ' . $value . ', ';
+            $params .= '"' . $parameterName . '" => ' . $value . ', ';
         }
 
         return 'route("' . $name . '",[' . $params . '])';
@@ -263,27 +263,28 @@ abstract class ControllerMethod
         return '$' . lcfirst($this->modelRelationReader->getShortName());
     }
 
-    protected function getApiActingAs()
+    protected function getApiActingAs(string $actionAs)
     {
         if ($this->isSanctumAuth) {
-            return $this->getSanctumActingAs();
+            return $this->getSanctumActingAs($actionAs);
         }
         if ($this->isPassportAuth) {
-            return $this->getPassportActingAs();
+            return $this->getPassportActingAs($actionAs);
         }
         return '';
     }
 
-    protected function getGlobalVariables(): array
+    protected function getGlobalVariables($actionAs='$user'): array
     {
         return [
             'modelVariable' => $this->getModelVariable(),
             'modelShortName' => $this->modelRelationReader->getShortName(),
             'route' => $this->getRoute(),
             'modelMethodName' => Str::snake($this->modelRelationReader->getShortName()),
-            'apiActingAs' => $this->getApiActingAs(),
-            'webActingAs' => $this->isWebAuth ? $this->getWebAuthActingAs() : '',
+            'apiActingAs' => $this->getApiActingAs($actionAs),
+            'webActingAs' => $this->isWebAuth ? $this->getWebAuthActingAs($actionAs) : '',
             'table' => $this->model->getTable(),
+            'assertDeleted' => $this->modelRelationReader->isSoftDeleteAble() ? 'assertSoftDeleted' : 'assertDeleted',
         ];
     }
 

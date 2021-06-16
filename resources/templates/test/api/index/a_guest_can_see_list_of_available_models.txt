@@ -2,13 +2,12 @@
     /**
      * @test
      */
-    public function a_user_can_see_list_of_@@modelMethodName@@_that_he_created(): void
+    public function a_guest_can_see_list_of_available_@@modelMethodName@@(): void
     {
         $user = $this->createUser();
         @@modelVariable@@s = @@modelShortName@@::factory()->count(5)->for($user)->create();
 
-        @@apiActingAs@@
-        $response = $this->@@webActingAs@@getJson(@@route@@);
+        $response = $this->getJson(@@route@@);
         $response->assertStatus(200)->assertJson([
             'data' => [],
         ]);
