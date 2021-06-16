@@ -14,7 +14,9 @@ class DestroyMethod extends ControllerMethod
         if ($this->isAuthRequired()) {
             if ($this->isAuthRequired()) {
                 $this->testMethods[] = (new TemplateManager('test/api/destroy/a_guest_cannot_delete_the_model_of_a_user.txt', $this->getGlobalVariables()));
-                $this->testMethods[] = (new TemplateManager('test/api/destroy/a_super_admin_can_delete_others_model.txt', $this->getGlobalVariables('$superAdmin')));
+                if ($this->hasSuperAdminRole()) {
+                    $this->testMethods[] = (new TemplateManager('test/api/destroy/a_super_admin_can_delete_others_model.txt', $this->getGlobalVariables('$superAdmin')));
+                }
                 $this->testMethods[] = (new TemplateManager('test/api/destroy/a_user_can_delete_his_own_model.txt', $this->getGlobalVariables()));
                 $this->testMethods[] = (new TemplateManager('test/api/destroy/a_user_cannot_delete_others_model.txt', $this->getGlobalVariables('$secondUser')));
             } else {
