@@ -54,6 +54,29 @@ class ControllerMethod
      */
     protected string $parentModelFactory;
 
+    public array $authMiddleware = ['auth', 'auth:sanctum', 'auth:api'];
+
+    /**
+     * @var bool
+     */
+    protected bool $isSanctumAuth = false;
+
+    /**
+     * @var bool
+     */
+    protected bool $isPassportAuth = false;
+
+    /**
+     * @var bool
+     */
+    protected bool $isWebAuth = false;
+
+    /**
+     * @var bool
+     */
+    public static bool $hasSuperAdminRole = false;
+
+
     /**
      * ControllerMethod constructor.
      *
@@ -131,4 +154,72 @@ class ControllerMethod
         return $this->parentModelFactory;
     }
 
+    /**
+     * Whether Current route need Auth.
+     *
+     * @return bool
+     */
+    public function isAuthRequired(): bool
+    {
+        $auth = array_intersect($this->authMiddleware, $this->route->gatherMiddleware());
+
+        if (count($auth) > 0) {
+            if (in_array('auth', $auth)) {
+                $this->isWebAuth = true;
+            }
+            if (in_array('auth:sanctum', $auth)) {
+                $this->isSanctumAuth = true;
+            }
+            if (in_array('auth:api', $auth)) {
+                $this->isPassportAuth = true;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return false|string
+     */
+    public function getSanctumActingAs()
+    {
+        if (!$this->isSanctumAuth) {
+            return false;
+        }
+        $this->namespaces[] = 'use Laravel\Sanctum\Sanctum';
+        return 'Sanctum::actingAs($user, [\' * \']);';
+    }
+
+    /**
+     * @return false|string
+     */
+    public function getPassportActingAs()
+    {
+        if (!$this->isPassportAuth) {
+            return false;
+        }
+
+        $this->namespaces[] = 'use Laravel\Passport\Passport';
+
+        return 'Passport::actingAs($user, [\'*\']);';
+    }
+
+    public function getWebAuthActingAs()
+    {
+        if (!$this->isWebAuth) {
+            return false;
+        }
+
+        return 'actingAs($user)->';
+    }
+
+    /**
+     * Whether current application has Super Admin Role.
+     *
+     * @return bool
+     */
+    public function hasSuperAdminRole(): bool
+    {
+        return static::$hasSuperAdminRole;
+    }
 }
