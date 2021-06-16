@@ -7,9 +7,10 @@ namespace LaraCrud\Builder\Test\Methods;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 
-class ControllerMethod
+abstract class ControllerMethod
 {
 
+    protected array $testMethods = [];
     /**
      * List of full namespaces that will be import on top of controller.
      *
@@ -90,6 +91,11 @@ class ControllerMethod
     }
 
     /**
+     * @return static
+     */
+    public abstract function before();
+
+    /**
      * Get Inside code of a Controller Method.
      *
      * @return string
@@ -98,7 +104,8 @@ class ControllerMethod
      */
     public function getCode(): string
     {
-        return implode(", ", $this->route->gatherMiddleware());
+        $this->before();
+        return implode("\n", $this->testMethods);
     }
 
     /**
@@ -222,4 +229,18 @@ class ControllerMethod
     {
         return static::$hasSuperAdminRole;
     }
+
+    /**
+     *
+     */
+    public function getRoute()
+    {
+        $name = $this->route->getName();
+        if (!$this->route->hasParameters()) {
+            return 'route("' . $name . '")';
+        }
+
+    }
+
+
 }

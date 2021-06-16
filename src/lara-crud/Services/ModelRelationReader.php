@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ModelRelationReader
 {
@@ -22,6 +23,11 @@ class ModelRelationReader
 
     protected array $single;
     protected array $collection;
+
+    protected bool $hasOwner;
+
+    protected string $ownerForeignKey;
+    protected string $ownerLocalKey;
 
     /**
      * ModelRelationReader constructor.
@@ -52,6 +58,7 @@ class ModelRelationReader
                     }
                     $responseClass = get_class($response);
                     if ($this->isItem($responseClass)) {
+                        $this->findOwner($response);
                         $this->single[] = [
                             'method' => $method,
                             'relation' => $response,
@@ -131,5 +138,37 @@ class ModelRelationReader
             MorphMany::class,
         ];
         return in_array($responseClass, $collection);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Relations\BelongsTo $response
+     */
+    protected function findOwner(Relation $response)
+    {
+        if ($response instanceof BelongsTo) {
+            $userModel = config('auth.providers.users.model');
+            if ($userModel == get_class($response->getQuery()->getModel())) {
+                $this->ownerForeignKey = $response->getForeignKeyName();
+                $this->ownerLocalKey = $response->getOwnerKeyName();
+                $this->hasOwner = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function hasOwner(): bool
+    {
+        return $this->hasOwner;
+    }
+
+    public function getOwnerForeignKey(): string
+    {
+        return $this->ownerForeignKey;
+    }
+
+    public function getOwnerLocalKey(): string
+    {
+        return $this->ownerLocalKey;
     }
 }

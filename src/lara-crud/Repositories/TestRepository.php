@@ -14,7 +14,7 @@ class TestRepository extends AbstractControllerRepository
     use Helper;
 
     /**
-     * Controller Full Namesapce.
+     * Controller Full Namespace.
      *
      * @var string
      */
