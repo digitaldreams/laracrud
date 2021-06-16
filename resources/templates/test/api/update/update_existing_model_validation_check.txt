@@ -7,13 +7,13 @@
      * @param $fieldName
      * @param $fieldValue
      */
-    public function update_existing_@@modelShortName@@_validation_check($fieldName, $fieldValue): void
+    public function update_existing_@@modelMethodName@@_validation_check($fieldName, $fieldValue): void
     {
         $user = $this->createUser();
 
         @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
-
-        $response = $this->actingAs($user)->patchJson(@@route@@, [
+        @@apiActingAs@@
+        $response = $this->@@webActingAs@@patchJson(@@route@@, [
             $fieldName => $fieldValue,
         ]);
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)->assertJsonValidationErrors($fieldName);

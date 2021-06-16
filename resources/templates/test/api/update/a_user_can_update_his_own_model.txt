@@ -2,21 +2,21 @@
     /**
      * @test
      */
-    public function a_user_can_update_his_own_@@modelShortName@@(): void
+    public function a_user_can_update_his_own_@@modelMethodName@@(): void
     {
         $user = $this->createUser();
 
         @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
 
         $new@@modelShortName@@ = @@modelShortName@@::factory()->make();
-
-        $response = $this->actingAs($user)->patchJson(@@route@@, [
-         'table_column' => $new@@modelShortName@@->property,
+        @@apiActingAs@@
+        $response = $this->@@webActingAs@@patchJson(@@route@@, [
+             @@data@@
          ]);
 
         $response->assertOk();
 
-        $this->assertDatabaseHas('posts', [
-            'table_column' => $new@@modelShortName@@->property,
+        $this->assertDatabaseHas('@@table@@', [
+           @@data@@
         ]);
     }

@@ -83,6 +83,12 @@ abstract class ControllerMethod
 
     protected ModelRelationReader $modelRelationReader;
 
+    public static array $ignoreDataProviderRules = [
+        'nullable',
+        'string',
+        'numeric',
+    ];
+
     /**
      * ControllerMethod constructor.
      *
@@ -310,6 +316,18 @@ abstract class ControllerMethod
         return $rules;
     }
 
+    public function generatePostData($update = false): string
+    {
+        $data = '';
+        $modelVariable = $update == true ? '$new' . $this->modelRelationReader->getShortName() : $this->getModelVariable();
+        $rules = $this->getCustomRequestClassRules();
+        foreach ($rules as $field => $rule) {
+            $data .= "\t\t\t" . '"' . $field . '" => ' . $modelVariable . '->' . $field . ',' . PHP_EOL;
+        }
+
+        return $data;
+    }
+
     /**
      * @return string
      */
@@ -326,7 +344,7 @@ abstract class ControllerMethod
                 if (in_array($listOfRule, static::$ignoreDataProviderRules)) {
                     continue;
                 }
-                $data .= "\t\t\t". '"'. "The $field must be $listOfRule" .'"'. ' => ["' . $field . '"," " ],' . PHP_EOL;
+                $data .= "\t\t\t" . '"' . "The $field must be $listOfRule" . '"' . ' => ["' . $field . '"," " ],' . PHP_EOL;
             }
 
         }

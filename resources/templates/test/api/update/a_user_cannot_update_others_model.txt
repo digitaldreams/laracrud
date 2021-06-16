@@ -1,21 +1,21 @@
    /**
      * @test
      */
-    public function a_member_cannot_update_others_model(): void
+    public function a_user_cannot_update_others_@@modelMethodName@@(): void
     {
         $user = $this->createUser();
         $secondUser = $this->createUser();
 
         @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
-
         $new@@modelShortName@@ = @@modelShortName@@::factory()->make();
 
-        $response = $this->actingAs($secondUser)->patchJson(@@route@@, [
-            'table_column' => $new@@modelShortName@@->property,
+        @@apiActingAs@@
+        $response = $this->@@webActingAs@@patchJson(@@route@@, [
+             @@data@@
         ]);
         $response->assertForbidden();
 
         $this->assertDatabaseMissing('@@table@@', [
-            'table_column' => $new@@modelShortName@@->property,
+            @@data@@
         ]);
     }
