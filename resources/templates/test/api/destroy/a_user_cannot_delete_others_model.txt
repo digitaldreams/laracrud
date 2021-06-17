@@ -5,7 +5,7 @@
     {
         $user = $this->createUser();
         $secondUser = $this->createUser();
-        @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
+        @@parentVariable@@@@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
 
         @@apiActingAs@@
         $response = $this->@@webActingAs@@deleteJson(@@route@@);

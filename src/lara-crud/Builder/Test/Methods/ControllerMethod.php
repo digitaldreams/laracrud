@@ -93,6 +93,14 @@ abstract class ControllerMethod
 
     protected array $validationRules;
 
+    protected string $routeString;
+
+    protected bool $hasModelOnParameter;
+
+    protected string $parentVariable = '';
+
+    protected bool $hasModelParentOnParameter;
+
     /**
      * ControllerMethod constructor.
      *
@@ -119,6 +127,7 @@ abstract class ControllerMethod
      */
     public function getCode(): string
     {
+        $this->parseRoute();
         $this->hasFile()->before();
 
         return implode("\n", $this->testMethods);
@@ -251,10 +260,7 @@ abstract class ControllerMethod
         return static::$hasSuperAdminRole;
     }
 
-    /**
-     *
-     */
-    protected function getRoute()
+    protected function parseRoute(): string
     {
         $params = '';
         $name = $this->route->getName();
@@ -264,13 +270,40 @@ abstract class ControllerMethod
         foreach ($this->route->parameterNames() as $parameterName) {
             if (strtolower($parameterName) == strtolower($this->modelRelationReader->getShortName())) {
                 $value = $this->getModelVariable() . '->' . $this->model->getRouteKeyName();
+                $this->hasModelOnParameter = true;
             } else {
-                $value = '';
+                if ($this->parentModel) {
+                    $ref = new \ReflectionClass($this->parentModel);
+                    if (strtolower($parameterName) == strtolower($ref->getShortName())) {
+                        $this->hasModelParentOnParameter = true;
+                        $parentVariable = '$' . lcfirst($ref->getShortName());
+                        $value = $parentVariable . '->' . $this->parentModel->getRouteKeyName();
+                        $this->parentVariable = sprintf(
+                            '%s = %s::factory()->for($user)->create();',
+                            $parentVariable,
+                            $ref->getShortName()
+                        ) . "\n\t\t";
+                    }
+                } else {
+                    $value = '';
+                }
             }
             $params .= '"' . $parameterName . '" => ' . $value . ', ';
         }
 
-        return 'route("' . $name . '",[' . $params . '])';
+        return $this->routeString = 'route("' . $name . '",[' . $params . '])';
+    }
+
+    /**
+     *
+     */
+    protected function getRoute(): string
+    {
+        if (! empty($this->routeString)) {
+            return $this->routeString;
+        }
+
+        return $this->parseRoute();
     }
 
     protected function getModelVariable(): string
@@ -303,6 +336,7 @@ abstract class ControllerMethod
             'assertDeleted' => $this->modelRelationReader->isSoftDeleteAble() ? 'assertSoftDeleted' : 'assertDeleted',
             'fake' => implode("\n", array_unique($this->fake)),
             'endFake' => implode("\n", array_unique($this->endFake)),
+            'parentVariable' => $this->parentVariable,
 
         ];
     }

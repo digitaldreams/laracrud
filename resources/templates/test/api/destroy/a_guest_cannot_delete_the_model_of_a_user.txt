@@ -5,7 +5,7 @@
     {
         $user = $this->createUser();
 
-        @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
+        @@parentVariable@@@@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
 
         $response = $this->deleteJson(@@route@@);
 

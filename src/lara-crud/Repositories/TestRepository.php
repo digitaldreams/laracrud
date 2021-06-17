@@ -25,13 +25,18 @@ class TestRepository extends AbstractControllerRepository
      */
     private Model $model;
 
-    public function __construct(string $controller, Model $model, bool $isApi = false)
+    /**
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $parentModel = '';
+
+    public function __construct(string $controller, Model $model, ?Model $parentModel = null, bool $isApi = false)
     {
         $this->model = $model;
 
         $this->controller = $controller;
         $this->isApi = $isApi;
-
+        $this->parentModel = $parentModel;
         $this->addMethods($controller);
     }
 
@@ -64,6 +69,9 @@ class TestRepository extends AbstractControllerRepository
         foreach ($insertAbleMethods as $key => $methodName) {
             $method = new $methodName($methods[$key], $routes[$key]);
             $method->setModel($this->model);
+            if ($this->parentModel) {
+                $method->setParent($this->parentModel);
+            }
             $this->addMethod($method);
             unset($routes[$key]);
         }
@@ -71,8 +79,18 @@ class TestRepository extends AbstractControllerRepository
         foreach ($routes as $key => $route) {
             $method = new DefaultMethod($methods[$key], $route);
             $method->setModel($this->model);
+            if ($this->parentModel) {
+                $method->setParent($this->parentModel);
+            }
             $this->addMethod($method->init());
         }
+
+        return $this;
+    }
+
+    public function setParentModel(Model $model): TestRepository
+    {
+        $this->parentModel = $model;
 
         return $this;
     }

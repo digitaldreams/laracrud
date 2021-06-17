@@ -4,7 +4,7 @@
     public function an_user_can_create_a_new_@@modelMethodName@@(): void
     {
         @@fake@@$user = $this->createUser();
-        @@modelVariable@@ = @@modelShortName@@::factory()->make();
+        @@parentVariable@@ @@modelVariable@@ = @@modelShortName@@::factory()->make();
 
         @@apiActingAs@@
         $response = $this->@@webActingAs@@postJson(@@route@@, [

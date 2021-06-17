@@ -6,7 +6,7 @@
         $user = $this->createUser();
         $superAdmin = $this->createSuperAdmin();
 
-        @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
+        @@parentVariable@@@@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
          @@apiActingAs@@
         $response = $this->@@webActingAs@@->deleteJson(@@route@@);
 

@@ -9,7 +9,7 @@
     public function create_new_@@modelMethodName@@_validation_check($fieldName, $fieldValue): void
     {
         $user = $this->createUser();
-        @@apiActingAs@@
+        @@parentVariable@@@@apiActingAs@@
         $response = $this->@@webActingAs@@postJson(@@route@@, [
             $fieldName => $fieldValue,
         ]);

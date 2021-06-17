@@ -16,9 +16,22 @@ class DefaultMethod extends ControllerMethod
 
         if (! empty($rules) && $this->reflectionMethod->getName() == '__invoke') {
             if (in_array('POST', $this->route->methods())) {
-                return (new StoreMethod($this->reflectionMethod, $this->route))->setModel($this->model);
+                $store = new StoreMethod($this->reflectionMethod, $this->route);
+                $store->setModel($this->model);
+                if ($this->parentModel) {
+                    $store->setParent($this->parentModel);
+                }
+
+                return $store;
             } elseif (in_array('PUT', $this->route->methods())) {
-                return (new StoreMethod($this->reflectionMethod, $this->route))->setModel($this->model);
+                $update = new UpdateMethod($this->reflectionMethod, $this->route);
+                $update->setModel($this->model);
+
+                if ($this->parentModel) {
+                    $update->setParent($this->parentModel);
+                }
+
+                return $update;
             }
         }
 
