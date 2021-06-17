@@ -11,6 +11,7 @@ use LaraCrud\Services\ModelRelationReader;
 abstract class ControllerMethod
 {
     protected array $testMethods = [];
+
     /**
      * List of full namespaces that will be import on top of controller.
      *
@@ -86,6 +87,12 @@ abstract class ControllerMethod
         'numeric',
     ];
 
+    protected array $fake = [];
+
+    protected array $endFake = [];
+
+    protected array $validationRules;
+
     /**
      * ControllerMethod constructor.
      *
@@ -112,7 +119,8 @@ abstract class ControllerMethod
      */
     public function getCode(): string
     {
-        $this->before();
+        $this->hasFile()->before();
+
         return implode("\n", $this->testMethods);
     }
 
@@ -135,7 +143,7 @@ abstract class ControllerMethod
     {
         $this->model = $model;
         $this->modelRelationReader = (new ModelRelationReader($model))->read();
-        $this->namespaces[] =  get_class($model);
+        $this->namespaces[] = get_class($model);
 
         return $this;
     }
@@ -150,7 +158,7 @@ abstract class ControllerMethod
     public function setParent(Model $parentModel): self
     {
         $this->parentModel = $parentModel;
-        $this->namespaces[] =  get_class($parentModel);
+        $this->namespaces[] = get_class($parentModel);
 
         return $this;
     }
@@ -190,8 +198,10 @@ abstract class ControllerMethod
             if (in_array('auth:api', $auth)) {
                 $this->isPassportAuth = true;
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -200,10 +210,11 @@ abstract class ControllerMethod
      */
     protected function getSanctumActingAs($actionAs)
     {
-        if (!$this->isSanctumAuth) {
+        if (! $this->isSanctumAuth) {
             return false;
         }
         $this->namespaces[] = 'Laravel\Sanctum\Sanctum';
+
         return 'Sanctum::actingAs(' . $actionAs . ', [\'*\']);';
     }
 
@@ -212,7 +223,7 @@ abstract class ControllerMethod
      */
     protected function getPassportActingAs($actionAs)
     {
-        if (!$this->isPassportAuth) {
+        if (! $this->isPassportAuth) {
             return false;
         }
 
@@ -223,7 +234,7 @@ abstract class ControllerMethod
 
     protected function getWebAuthActingAs($actionAs)
     {
-        if (!$this->isWebAuth) {
+        if (! $this->isWebAuth) {
             return false;
         }
 
@@ -275,6 +286,7 @@ abstract class ControllerMethod
         if ($this->isPassportAuth) {
             return $this->getPassportActingAs($actionAs);
         }
+
         return '';
     }
 
@@ -289,12 +301,18 @@ abstract class ControllerMethod
             'webActingAs' => $this->isWebAuth ? $this->getWebAuthActingAs($actionAs) : '',
             'table' => $this->model->getTable(),
             'assertDeleted' => $this->modelRelationReader->isSoftDeleteAble() ? 'assertSoftDeleted' : 'assertDeleted',
+            'fake' => implode("\n", array_unique($this->fake)),
+            'endFake' => implode("\n", array_unique($this->endFake)),
+
         ];
     }
 
 
     public function getCustomRequestClassRules(): array
     {
+        if (! empty($this->validationRules)) {
+            return $this->validationRules;
+        }
         $rules = [];
         try {
             foreach ($this->reflectionMethod->getParameters() as $parameter) {
@@ -310,7 +328,7 @@ abstract class ControllerMethod
             return $rules;
         }
 
-        return $rules;
+        return $this->validationRules = $rules;
     }
 
     public function generatePostData($update = false): string
@@ -346,5 +364,31 @@ abstract class ControllerMethod
         }
 
         return $data;
+    }
+
+    protected function hasFile(): self
+    {
+        $rules = $this->getCustomRequestClassRules();
+        foreach ($rules as $field => $rule) {
+            $listOfRules = is_array($rule) ? $rule : explode("|", $rule);
+            foreach ($listOfRules as $listOfRule) {
+                if (is_object($listOfRule)) {
+                    continue;
+                }
+                $mimeTypes = substr_compare($listOfRule, 'mimetypes', 0, 9);
+                $mimes = substr_compare($listOfRule, 'mimes', 0, 5);
+                $dimensions = substr_compare($listOfRule, 'dimensions', 0, 10);
+                if ('image' == $listOfRule || 'file' == $listOfRule || $mimes == 0 || $mimeTypes == 0 || $dimensions == 0) {
+                    $this->namespaces[] = 'Illuminate\Support\Facades\Storage';
+                    $this->namespaces[] = 'Illuminate\Http\UploadedFile';
+                    $this->fake[] = 'Storage::fake(\'file\');';
+                    $this->fake[] = '$file = UploadedFile::fake()->create(\'poster.jpg\');';
+
+                    $this->endFake[] = 'Storage::disk(\'file\')->assertExists(\'photo1.jpg\');';
+                }
+            }
+        }
+
+        return $this;
     }
 }

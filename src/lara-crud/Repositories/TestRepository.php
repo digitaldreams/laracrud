@@ -71,7 +71,7 @@ class TestRepository extends AbstractControllerRepository
         foreach ($routes as $key => $route) {
             $method = new DefaultMethod($methods[$key], $route);
             $method->setModel($this->model);
-            $this->addMethod($method);
+            $this->addMethod($method->init());
         }
 
         return $this;

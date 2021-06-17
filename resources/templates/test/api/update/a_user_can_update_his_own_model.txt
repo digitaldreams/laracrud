@@ -4,7 +4,7 @@
      */
     public function a_user_can_update_his_own_@@modelMethodName@@(): void
     {
-        $user = $this->createUser();
+        @@fake@@$user = $this->createUser();
 
         @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
 
@@ -18,5 +18,5 @@
 
         $this->assertDatabaseHas('@@table@@', [
            @@data@@
-        ]);
+        ]);@@fake@@
     }

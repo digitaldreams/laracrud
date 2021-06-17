@@ -3,7 +3,7 @@
      */
     public function an_user_can_create_a_new_@@modelMethodName@@(): void
     {
-        $user = $this->createUser();
+        @@fake@@$user = $this->createUser();
         @@modelVariable@@ = @@modelShortName@@::factory()->make();
 
         @@apiActingAs@@
@@ -14,5 +14,6 @@
 
         $this->assertDatabaseHas('@@table@@', [
 @@data@@
-        ]);
+        ]);@@endFake@@
+
     }
