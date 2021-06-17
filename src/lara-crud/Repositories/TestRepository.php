@@ -1,11 +1,11 @@
 <?php
 
-
 namespace LaraCrud\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Builder\Test\ControllerReader;
 use LaraCrud\Builder\Test\Methods\ControllerMethod;
+use LaraCrud\Builder\Test\Methods\DefaultMethod;
 use LaraCrud\Configuration;
 use LaraCrud\Helpers\Helper;
 
@@ -19,6 +19,7 @@ class TestRepository extends AbstractControllerRepository
      * @var string
      */
     protected string $controller;
+
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
@@ -32,7 +33,6 @@ class TestRepository extends AbstractControllerRepository
         $this->isApi = $isApi;
 
         $this->addMethods($controller);
-
     }
 
     /**
@@ -65,8 +65,15 @@ class TestRepository extends AbstractControllerRepository
             $method = new $methodName($methods[$key], $routes[$key]);
             $method->setModel($this->model);
             $this->addMethod($method);
+            unset($routes[$key]);
         }
+
+        foreach ($routes as $key => $route) {
+            $method = new DefaultMethod($methods[$key], $route);
+            $method->setModel($this->model);
+            $this->addMethod($method);
+        }
+
         return $this;
     }
-
 }

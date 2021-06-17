@@ -14,6 +14,7 @@ class ControllerReader
      * @var string
      */
     protected string $controller;
+
     /**
      * List of Public method's of this controller
      *
@@ -68,10 +69,12 @@ class ControllerReader
         $routes = Route::getRoutes();
         foreach ($routes as $route) {
             $controllerName = strstr($route->getActionName(), '@', true);
-            if ($this->controller != $controllerName) {
+            $cname = $controllerName ?: $route->getActionName();
+            if ($this->controller != $cname) {
                 continue;
             }
             $methodName = str_replace('@', '', strstr($route->getActionName(), '@'));
+            $methodName = $methodName ?: '__invoke';
             $returnRoutes[$methodName] = $route;
         }
 
@@ -91,6 +94,8 @@ class ControllerReader
         $retMethods = [];
         foreach ($reflectionMethods as $method) {
             if (0 != substr_compare($method->name, '__', 0, 2) && $method->class == $controllerName) {
+                $retMethods[$method->name] = $method;
+            } elseif ($method->name == '__invoke' && $method->class == $controllerName) {
                 $retMethods[$method->name] = $method;
             }
         }

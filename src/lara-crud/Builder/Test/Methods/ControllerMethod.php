@@ -1,8 +1,6 @@
 <?php
 
-
 namespace LaraCrud\Builder\Test\Methods;
-
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,7 +10,6 @@ use LaraCrud\Services\ModelRelationReader;
 
 abstract class ControllerMethod
 {
-
     protected array $testMethods = [];
     /**
      * List of full namespaces that will be import on top of controller.
@@ -104,7 +101,7 @@ abstract class ControllerMethod
     /**
      * @return static
      */
-    public abstract function before();
+    abstract public function before();
 
     /**
      * Get Inside code of a Controller Method.
@@ -305,7 +302,7 @@ abstract class ControllerMethod
                     if (is_subclass_of($parameter->getType()->getName(), FormRequest::class)) {
                         $className = $parameter->getType()->getName();
                         $rfm = new \ReflectionMethod($parameter->getType()->getName(), 'rules');
-                        $rules = $rfm->invoke(new $className);
+                        $rules = $rfm->invoke(new $className());
                     }
                 }
             }
@@ -346,7 +343,6 @@ abstract class ControllerMethod
                 }
                 $data .= "\t\t\t" . '"' . "The $field must be $listOfRule" . '"' . ' => ["' . $field . '"," " ],' . PHP_EOL;
             }
-
         }
 
         return $data;
