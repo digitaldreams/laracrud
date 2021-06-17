@@ -42,6 +42,10 @@ Card\Table and which order.
 9. Rewrite the Request Rules [Done]
 10. Rewrite the Route Generation to Laravel 8 compatible
 11. Remove the Dingo API resources and Create Laravel Built in API resources [Done]
+12. Writing Test Case [Done]
+13. Writing Factory For Laravel 8 [Done]
+14. Writing the Laravel 8 Resource API [Done]
+
 
 
 
