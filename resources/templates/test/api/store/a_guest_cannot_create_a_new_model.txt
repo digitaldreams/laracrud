@@ -1,0 +1,15 @@
+  /**
+     * @test
+     */
+    public function an_guest_cannot_create_a_new_@@modelMethodName@@(): void
+    {
+        @@fake@@$user = $this->createUser();
+        @@parentVariable@@ @@modelVariable@@ = @@modelShortName@@::factory()->make();
+
+        @@apiActingAs@@
+        $response = $this->@@webActingAs@@postJson(@@route@@, [
+@@data@@
+        ]);
+       $response->assertUnauthorized();
+
+    }

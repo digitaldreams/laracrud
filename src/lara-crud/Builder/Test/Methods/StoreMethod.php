@@ -17,6 +17,10 @@ class StoreMethod extends ControllerMethod
                 array_merge($this->getGlobalVariables(), ['data' => $this->generatePostData()])
             ));
             $this->testMethods[] = (new TemplateManager(
+                'test/api/store/a_guest_cannot_create_a_new_model.txt',
+                array_merge($this->getGlobalVariables(), ['data' => $this->generatePostData()])
+            ));
+            $this->testMethods[] = (new TemplateManager(
                 'test/api/store/create_new_model_validation_check.txt',
                 $this->getGlobalVariables()
             ));

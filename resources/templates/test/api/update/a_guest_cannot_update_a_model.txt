@@ -1,0 +1,18 @@
+
+    /**
+     * @test
+     */
+    public function a_guest_cannot_update_a_@@modelMethodName@@(): void
+    {
+        @@fake@@$user = $this->createUser();
+
+        @@parentVariable@@@@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
+
+        $new@@modelShortName@@ = @@modelShortName@@::factory()->make();
+        @@apiActingAs@@
+        $response = $this->@@webActingAs@@patchJson(@@route@@, [
+             @@data@@
+         ]);
+
+       $response->assertUnauthorized();
+    }

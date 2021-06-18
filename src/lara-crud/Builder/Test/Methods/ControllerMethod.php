@@ -279,10 +279,10 @@ abstract class ControllerMethod
                         $parentVariable = '$' . lcfirst($ref->getShortName());
                         $value = $parentVariable . '->' . $this->parentModel->getRouteKeyName();
                         $this->parentVariable = sprintf(
-                            '%s = %s::factory()->for($user)->create();',
-                            $parentVariable,
-                            $ref->getShortName()
-                        ) . "\n\t\t";
+                                '%s = %s::factory()->for($user)->create();',
+                                $parentVariable,
+                                $ref->getShortName()
+                            ) . "\n\t\t";
                     }
                 } else {
                     $value = '';

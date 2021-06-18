@@ -1,0 +1,15 @@
+
+    /**
+     * @test
+     */
+    public function a_user_cannot_see_others_@@modelMethodName@@(): void
+    {
+        $user = $this->createUser();
+        $secondUser = $this->createUser();
+
+        @@parentVariable@@ @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
+
+        @@apiActingAs@@
+        $response = $this->@@webActingAs@@getJson(@@route@@);
+        $response->assertForbidden();
+    }
