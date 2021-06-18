@@ -7,5 +7,5 @@
      */
     public function view(User $user, @@modelClass@@  $@@modelClassVar@@)
     {
-        return true;
+        return @@return@@;
     }

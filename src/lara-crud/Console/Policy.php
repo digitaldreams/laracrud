@@ -3,9 +3,12 @@
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
+use LaraCrud\Helpers\Helper;
 
 class Policy extends Command
 {
+    use Helper;
+
     /**
      * The name and signature of the console command.
      *
@@ -32,14 +35,46 @@ class Policy extends Command
     {
         try {
             $model = $this->argument('model');
-            $controller = str_replace('/', '\\', $this->option('controller'));
+            $controller = $this->option('controller');
             $name = $this->option('name');
 
-            $policyCrud = new \LaraCrud\Crud\Policy($model, $controller, $name);
+            $policyCrud = new \LaraCrud\Crud\Policy($this->getModel($model), $this->getController($controller), $name);
             $policyCrud->save();
             $this->info('Policy class created successfully');
         } catch (\Exception $ex) {
             $this->error(sprintf('%s on line %d in %s', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
         }
+    }
+
+    private function getController($controller)
+    {
+        if (! empty($controller) && ! class_exists($controller)) {
+            $namespace = config('laracrud.controller.namespace');
+            $namespace = $this->getFullNS($namespace);
+            $controller = rtrim($namespace, '\\') . '\\' . $controller;
+
+            if (! class_exists($controller)) {
+                $this->error(sprintf('%s controller does not exists', $controller));
+                exit();
+            }
+        }
+
+        return $controller;
+    }
+
+    private function getModel($model)
+    {
+        if (! class_exists($model)) {
+            $namespace = config('laracrud.model.namespace');
+            $namespace = $this->getFullNS($namespace);
+            $model = rtrim($namespace, '\\') . '\\' . $model;
+        }
+
+        if (! class_exists($model)) {
+            $this->error(sprintf('%s model does not exists', $model));
+            exit();
+        }
+
+        return $model;
     }
 }

@@ -55,11 +55,13 @@ class Test implements Crud
     public function template()
     {
         $this->testRepository->build();
+        $fileNames = explode("\\", $this->fileName);
+
         return (new TemplateManager('test/template.txt', [
             'namespace' => $this->namespace,
             'importNameSpace' => $this->makeNamespaceImportString(),
-            'className' => $this->fileName,
-            'methods' => implode("\n",$this->testRepository->getCode()),
+            'className' => array_pop($fileNames),
+            'methods' => implode("\n", $this->testRepository->getCode()),
         ]))->get();
     }
 
@@ -81,13 +83,13 @@ class Test implements Crud
     }
 
 
-
     public function makeNamespaceImportString()
     {
         $ns = '';
         foreach ($this->testRepository->getImportableNamespaces() as $namespace) {
             $ns .= "\n use " . $namespace . ';';
         }
+
         return $ns;
     }
 

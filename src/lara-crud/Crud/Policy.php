@@ -6,6 +6,7 @@ use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\ClassInspector;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
+use LaraCrud\Services\ModelRelationReader;
 
 class Policy implements Crud
 {
@@ -13,8 +14,8 @@ class Policy implements Crud
 
     /**
      * Controller Name prefix.
-     * If Model Name is User and no controller name is supplier then it will be User and then Controller will be appended.
-     * Its name will be UserController.
+     * If Model Name is User and no controller name is supplier then it will be User and then Controller will be
+     * appended. Its name will be UserController.
      *
      * @var string
      */
@@ -63,10 +64,13 @@ class Policy implements Crud
      * @var string
      */
     protected $shortModelName;
+
     /**
      * @var string
      */
     protected $modelFullClass;
+
+    protected $modelRelationReader;
 
     /**
      * Policy constructor.
@@ -78,22 +82,17 @@ class Policy implements Crud
      *
      * @throws \Exception
      */
-    public function __construct($model, $controller = '', $name = '', $only = '')
+    public function __construct(string $model, ?string $controller = null, ?string $name = null, array $only = [])
     {
-        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
-        $this->shortModelName = $model;
+        $this->modelFullClass = $model;
+        $this->modelRelationReader = (new ModelRelationReader(new $this->modelFullClass()))->read();
+        $this->shortModelName = $this->modelRelationReader->getShortName();
         $this->checkController($controller);
 
-        if (!empty($only) && is_array($only)) {
+        if (! empty($only) && is_array($only)) {
             $this->only = $only;
         }
 
-        if (0 !== substr_compare($modelNamespace, '\\', 0, 1)) {
-            $modelNamespace = '\\' . $modelNamespace;
-        }
-        $this->modelNameSpace = $modelNamespace;
-
-        $this->modelFullClass = $this->modelName = class_exists($model) ? $model : $this->modelNameSpace . '\\' . $model;
 
         $this->checkName($name);
         $this->namespace = $this->getFullNS(trim(config('laracrud.policy.namespace'), ' / ')) . $this->subNameSpace;
@@ -115,9 +114,10 @@ class Policy implements Crud
                 'modelClass' => $this->shortModelName,
                 'modelFullClass' => $this->modelFullClass,
                 'modelClassVar' => lcfirst($this->shortModelName),
+                'return' => $this->getReturnString(),
             ]))->get();
         }
-        $userClass = !empty(config('auth.providers.users.model')) ? config('auth.providers.users.model') : config('laracrud.model.namespace') . '\\User';
+        $userClass = ! empty(config('auth.providers.users.model')) ? config('auth.providers.users.model') : config('laracrud.model.namespace') . '\\User';
 
         return (new TemplateManager('policy/template.txt', [
             'namespace' => $this->namespace,
@@ -147,7 +147,7 @@ class Policy implements Crud
      */
     private function checkName($name)
     {
-        if (!empty($name)) {
+        if (! empty($name)) {
             if (false !== strpos($name, ' / ')) {
                 $narr = explode(' / ', $name);
                 $this->name = array_pop($narr);
@@ -168,9 +168,9 @@ class Policy implements Crud
      */
     private function checkController($controller)
     {
-        if (!empty($controller)) {
+        if (! empty($controller)) {
             $this->controllerName = class_exists($controller) ? $controller : $this->getFullNS(config('laracrud.controller.namespace') . '\\' . $controller);
-            if (!class_exists($this->controllerName)) {
+            if (! class_exists($this->controllerName)) {
                 throw new \Exception($controller . ' does not exists');
             }
             $classInspector = new ClassInspector($this->controllerName);
@@ -183,6 +183,17 @@ class Policy implements Crud
      */
     private function getClassName()
     {
-        return !empty($this->name) ? $this->name : $this->shortModelName . config('laracrud.policy.classSuffix');
+        return ! empty($this->name) ? $this->name : $this->shortModelName . config('laracrud.policy.classSuffix');
+    }
+
+    protected function getReturnString(): string
+    {
+        if ($this->modelRelationReader->hasOwner()) {
+            $modelVar = '$' . lcfirst($this->shortModelName . '->' . $this->modelRelationReader->getOwnerForeignKey());
+
+            return '$user->' . $this->modelRelationReader->getOwnerLocalKey() . '===' . $modelVar;
+        }
+
+        return 'true';
     }
 }
