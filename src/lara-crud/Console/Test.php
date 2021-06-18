@@ -19,7 +19,7 @@ class Test extends Command
     protected $signature = 'laracrud:test
         {controller : Controller Name}
         {model : Model name}
-        {fileName : Test Class Name}
+        {--f|name= : Test Class Name}
         {--p|parent= : Generate a nested resource controller class. Give the Parent Eloquent Model name. e.g --parent=Post}
         {--api : Whether its an API Controller Test}';
 
@@ -30,15 +30,7 @@ class Test extends Command
      */
     protected $description = 'Create test based on Controller class';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected string $fileName = '';
 
     /**
      * Execute the console command.
@@ -48,13 +40,11 @@ class Test extends Command
     public function handle()
     {
         try {
-            $fileName = $this->argument('fileName');
-
-            $testCrud = new TestCrud($this->initTestRepository(), $fileName);
+            $testCrud = new TestCrud($this->initTestRepository(), $this->fileName);
 
             $testCrud->save();
 
-            $this->info(sprintf('%s Test created successfully', $fileName));
+            $this->info(sprintf('%s Test created successfully', $this->fileName));
         } catch (\Exception $ex) {
             $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
@@ -65,6 +55,7 @@ class Test extends Command
         $controller = $this->argument('controller');
         $model = $this->argument('model');
         $parent = $this->option('parent');
+        $fileName = $this->option('name');
         $api = $this->option('api');
 
         if (! class_exists($controller)) {
@@ -101,8 +92,9 @@ class Test extends Command
                 }
                 $parent = new $parent();
             }
-
         }
+
+        $this->fileName = empty($fileName) ? (new \ReflectionClass($model))->getShortName() . 'Test' : $fileName;
 
         return new TestRepository($controller, new $model(), $parent, $api);
     }

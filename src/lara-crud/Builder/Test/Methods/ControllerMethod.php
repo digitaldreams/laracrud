@@ -95,11 +95,11 @@ abstract class ControllerMethod
 
     protected string $routeString;
 
-    protected bool $hasModelOnParameter;
+    protected bool $hasModelOnParameter = false;
 
     protected string $parentVariable = '';
 
-    protected bool $hasModelParentOnParameter;
+    protected bool $hasModelParentOnParameter = false;
 
     /**
      * ControllerMethod constructor.
