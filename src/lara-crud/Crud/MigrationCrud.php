@@ -6,7 +6,7 @@ use DbReader\Table;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
-
+use Illuminate\Support\Str;
 /**
  * Description of MigrationCrud.
  *
@@ -224,7 +224,7 @@ class MigrationCrud implements Crud
      */
     public function generateClassName($table)
     {
-        $class = 'create'.ucfirst(camel_case($table)).'Table';
+        $class = 'create'.Str::camel($table).'Table';
 
         if (class_exists($class)) {
             throw new \Exception('Migration for table '.$table.' already exists');
