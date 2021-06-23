@@ -15,6 +15,10 @@ trait ApiMethodHelper
             'PHPDocComment' => $this->phpDocComment(),
             'authorization' => $this->getAuthorization(),
             'data' => $this->arrayToString($this->array()),
+            'modelVariable' => $this->getModelVariableName(),
+            'model' => $this->getModelShortName(),
+            'parentModelVariable' => $this->getParentVariableName(),
+            'parentModel' => $this->getParentShortName(),
         ]))->get();
     }
 
@@ -27,6 +31,10 @@ trait ApiMethodHelper
             'PHPDocComment' => $this->phpDocComment(),
             'authorization' => $this->getAuthorization(),
             'response' => $this->generateResourceResponse(),
+            'modelVariable' => $this->getModelVariableName(),
+            'model' => $this->getModelShortName(),
+            'parentModelVariable' => $this->getParentVariableName(),
+            'parentModel' => $this->getParentShortName(),
         ]))->get();
     }
 
@@ -35,11 +43,12 @@ trait ApiMethodHelper
         $str = "\n";
         foreach ($data as $key => $value) {
             if (is_bool($value)) {
-                $str .= "\t\t\t". '"' . $key . '" => ' .(bool) $value . ',' . PHP_EOL;
+                $str .= "\t\t\t" . '"' . $key . '" => ' . (bool) $value . ',' . PHP_EOL;
             } else {
-                $str .= "\t\t\t".'"' . $key . '" => "' . $value . '",' . PHP_EOL;
+                $str .= "\t\t\t" . '"' . $key . '" => "' . $value . '",' . PHP_EOL;
             }
         }
+
         return $str;
     }
 }

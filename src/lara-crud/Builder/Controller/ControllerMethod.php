@@ -19,7 +19,11 @@ use ReflectionClass;
 
 abstract class ControllerMethod
 {
-    use ViewAbleMethodHelper, RedirectAbleMethodHelper, Helper, ModelShortNameAndVariablesTrait, ApiMethodHelper;
+    use ViewAbleMethodHelper;
+    use RedirectAbleMethodHelper;
+    use Helper;
+    use ModelShortNameAndVariablesTrait;
+    use ApiMethodHelper;
 
 
     /**
@@ -284,5 +288,4 @@ abstract class ControllerMethod
         }
         return 'new ' . $resourceName . '($' . $this->getModelVariableName() . ')';
     }
-
 }

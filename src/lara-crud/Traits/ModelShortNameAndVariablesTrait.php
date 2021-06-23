@@ -42,7 +42,7 @@ trait ModelShortNameAndVariablesTrait
      */
     protected function getModelShortName(): string
     {
-        if (!empty($this->modelShortName)) {
+        if (! empty($this->modelShortName)) {
             return $this->modelShortName;
         }
 
@@ -76,7 +76,10 @@ trait ModelShortNameAndVariablesTrait
      */
     protected function getParentShortName(): string
     {
-        if (!empty($this->parentModelShortName)) {
+        if (empty($this->parentModel)) {
+            return '';
+        }
+        if (! empty($this->parentModelShortName)) {
             return $this->parentModelShortName;
         }
 

@@ -14,8 +14,8 @@ class Controller implements Crud
 
     /**
      * Controller Name prefix.
-     * If Model Name is User and no controller name is supplier then it will be User and then Controller will be appended.
-     * Its name will be UserController.
+     * If Model Name is User and no controller name is supplier then it will be User and then Controller will be
+     * appended. Its name will be UserController.
      *
      * @var string
      */
@@ -62,6 +62,7 @@ class Controller implements Crud
      * @var bool|string
      */
     protected $parentModel;
+
     /**
      * @var \LaraCrud\Repositories\ControllerRepository
      */
@@ -77,12 +78,16 @@ class Controller implements Crud
      *
      * @internal param array $except
      */
-    public function __construct(ControllerRepository $controllerRepository, Model $model, ?string $controllerFileName = '', $api = false)
-    {
+    public function __construct(
+        ControllerRepository $controllerRepository,
+        Model $model,
+        ?string $controllerFileName = '',
+        bool $api = false
+    ) {
         $this->model = $model;
         $this->resolveControllerFileName($controllerFileName);
 
-        $ns = !empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
+        $ns = ! empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
         $this->namespace = trim($this->getFullNS($ns), '/') . $this->subNameSpace;
         $this->controllerRepository = $controllerRepository;
     }
@@ -94,6 +99,7 @@ class Controller implements Crud
      */
     public function template(): string
     {
+        $modelShortName = (new \ReflectionClass($this->model))->getShortName();
         $this->controllerRepository->build();
         $tempMan = new TemplateManager('controller/template.txt', [
             'namespace' => $this->namespace,
@@ -101,6 +107,8 @@ class Controller implements Crud
             'controllerName' => $this->fileName,
             'methods' => implode("\n", $this->controllerRepository->getCode()),
             'importNameSpace' => $this->makeNamespaceImportString(),
+            'modelVariable' => lcfirst($modelShortName),
+            'model' => $modelShortName,
         ]);
 
         return $tempMan->get();
@@ -116,7 +124,7 @@ class Controller implements Crud
     public function save()
     {
         $this->checkPath('');
-        $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) . '.php' : $this->controllerName . 'Controller' . '.php';
+        $fileName = ! empty($this->fileName) ? $this->getFileName($this->fileName) . '.php' : $this->controllerName . 'Controller' . '.php';
         $filePath = base_path($this->toPath($this->namespace)) . '/' . $fileName;
         if (file_exists($filePath)) {
             throw new \Exception($filePath . ' already exists');
@@ -130,7 +138,7 @@ class Controller implements Crud
      */
     public function getFullName()
     {
-        $fileName = !empty($this->fileName) ? $this->getFileName($this->fileName) : $this->controllerName . 'Controller';
+        $fileName = ! empty($this->fileName) ? $this->getFileName($this->fileName) : $this->controllerName . 'Controller';
 
         return $this->namespace . '\\' . $fileName;
     }
@@ -142,7 +150,7 @@ class Controller implements Crud
      */
     public function resolveControllerFileName(string $name): self
     {
-        if (!empty($name)) {
+        if (! empty($name)) {
             if (false !== strpos($name, '/')) {
                 $narr = explode('/', $name);
                 $this->modelName = $this->fileName = array_pop($narr);
@@ -164,13 +172,13 @@ class Controller implements Crud
     }
 
 
-
     public function makeNamespaceImportString()
     {
         $ns = '';
         foreach ($this->controllerRepository->getImportableNamespaces() as $namespace) {
             $ns .= "\n use " . $namespace . ';';
         }
+
         return $ns;
     }
 

@@ -93,6 +93,10 @@ trait ViewAbleMethodHelper
             'viewPath' => $this->getViewFilePath(),
             'PHPDocComment' => $this->phpDocComment(),
             'authorization' => $this->getAuthorization(),
+            'modelVariable' => $this->getModelVariableName(),
+            'model' => $this->getModelShortName(),
+            'parentModelVariable' => $this->getParentVariableName(),
+            'parentModel' => $this->getParentShortName(),
         ]))->get();
     }
 
