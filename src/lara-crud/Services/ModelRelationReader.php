@@ -20,15 +20,23 @@ class ModelRelationReader
      * @var \Illuminate\Database\Eloquent\Model
      */
     protected Model $model;
+
     private \ReflectionClass $reflectionClass;
 
-    protected array $single;
-    protected array $collection;
+    protected array $single = [];
 
-    protected bool $hasOwner;
+    protected array $collection = [];
 
-    protected string $ownerForeignKey;
-    protected string $ownerLocalKey;
+    /**
+     * Whether model has a user belongs to relation or not.
+     *
+     * @var bool
+     */
+    protected bool $hasOwner = false;
+
+    protected string $ownerForeignKey = '';
+
+    protected string $ownerLocalKey = '';
 
     protected string $shortName;
 
@@ -57,7 +65,7 @@ class ModelRelationReader
             try {
                 if ($method->getNumberOfParameters() == 0 && $method->class == get_class($this->model)) {
                     $response = $method->invoke($this->model);
-                    if (!is_object($response)) {
+                    if (! is_object($response)) {
                         continue;
                     }
                     $responseClass = get_class($response);
@@ -125,6 +133,7 @@ class ModelRelationReader
             BelongsTo::class,
             MorphOne::class,
         ];
+
         return in_array($responseClass, $item);
     }
 
@@ -141,6 +150,7 @@ class ModelRelationReader
             HasManyThrough::class,
             MorphMany::class,
         ];
+
         return in_array($responseClass, $collection);
     }
 
@@ -155,9 +165,11 @@ class ModelRelationReader
                 $this->ownerForeignKey = $response->getForeignKeyName();
                 $this->ownerLocalKey = $response->getOwnerKeyName();
                 $this->hasOwner = true;
+
                 return true;
             }
         }
+
         return false;
     }
 
