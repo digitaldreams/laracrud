@@ -5,7 +5,7 @@
     public function a_guest_can_see_a_@@modelMethodName@@(): void
     {
         $user = $this->createUser();
-        @@parentVariable@@ @@modelVariable@@s = @@modelShortName@@::factory()->count(5)->for($user)->create();
+        @@parentVariable@@ @@modelVariable@@ = @@modelShortName@@::factory()->for($user)->create();
 
         $response = $this->getJson(@@route@@);
         $response->assertStatus(200)->assertJson([

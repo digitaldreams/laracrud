@@ -6,7 +6,6 @@
         @@fake@@$user = $this->createUser();
         @@parentVariable@@ @@modelVariable@@ = @@modelShortName@@::factory()->make();
 
-        @@apiActingAs@@
         $response = $this->@@webActingAs@@postJson(@@route@@, [
 @@data@@
         ]);
