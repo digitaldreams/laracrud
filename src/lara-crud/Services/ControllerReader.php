@@ -1,7 +1,7 @@
 <?php
 
 
-namespace LaraCrud\Builder\Test;
+namespace LaraCrud\Services;
 
 
 use Illuminate\Support\Facades\Route;

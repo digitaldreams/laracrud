@@ -2,22 +2,12 @@
 
 namespace LaraCrud\Builder\Test\Methods;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Str;
-use LaraCrud\Services\ModelRelationReader;
+use LaraCrud\Services\ControllerMethodReader;
 
-abstract class ControllerMethod
+abstract class ControllerMethod extends ControllerMethodReader
 {
     protected array $testMethods = [];
-
-    /**
-     * List of full namespaces that will be import on top of controller.
-     *
-     * @var array
-     */
-    protected array $namespaces = [];
 
     /**
      * Whether its an API method or not.
@@ -25,26 +15,6 @@ abstract class ControllerMethod
      * @var bool
      */
     protected bool $isApi = false;
-
-    /**
-     * @var \ReflectionMethod
-     */
-    protected $reflectionMethod;
-
-    /**
-     * @var \Illuminate\Routing\Route
-     */
-    protected $route;
-
-    /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $parentModel;
-
-    /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $model;
 
     /**
      * @var string
@@ -56,62 +26,14 @@ abstract class ControllerMethod
      */
     protected string $parentModelFactory;
 
-    public array $authMiddleware = ['auth', 'auth:sanctum', 'auth:api'];
-
-    /**
-     * @var bool
-     */
-    protected bool $isSanctumAuth = false;
-
-    /**
-     * @var bool
-     */
-    protected bool $isPassportAuth = false;
-
-    /**
-     * @var bool
-     */
-    protected bool $isWebAuth = false;
-
     /**
      * @var bool
      */
     public static bool $hasSuperAdminRole = false;
 
-
-    protected ModelRelationReader $modelRelationReader;
-
-    public static array $ignoreDataProviderRules = [
-        'nullable',
-        'string',
-        'numeric',
-    ];
-
     protected array $fake = [];
 
     protected array $endFake = [];
-
-    protected array $validationRules;
-
-    protected string $routeString;
-
-    protected bool $hasModelOnParameter = false;
-
-    protected string $parentVariable = '';
-
-    protected bool $hasModelParentOnParameter = false;
-
-    /**
-     * ControllerMethod constructor.
-     *
-     * @param \ReflectionMethod         $reflectionMethod
-     * @param \Illuminate\Routing\Route $route
-     */
-    public function __construct(\ReflectionMethod $reflectionMethod, Route $route)
-    {
-        $this->reflectionMethod = $reflectionMethod;
-        $this->route = $route;
-    }
 
     /**
      * @return static
@@ -128,48 +50,9 @@ abstract class ControllerMethod
     public function getCode(): string
     {
         $this->parseRoute();
-        $this->hasFile()->before();
+        $this->setFakeStorage()->before();
 
         return implode("\n", $this->testMethods);
-    }
-
-    /**
-     * Get list of importable Namespaces.
-     *
-     * @return array
-     */
-    public function getNamespaces(): array
-    {
-        return $this->namespaces;
-    }
-
-    /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     *
-     * @return $this
-     */
-    public function setModel(Model $model): self
-    {
-        $this->model = $model;
-        $this->modelRelationReader = (new ModelRelationReader($model))->read();
-        $this->namespaces[] = get_class($model);
-
-        return $this;
-    }
-
-    /**
-     * Set Parent Model when creating a child Resource Controller.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $parentModel
-     *
-     * @return \LaraCrud\Builder\Test\Methods\ControllerMethod
-     */
-    public function setParent(Model $parentModel): self
-    {
-        $this->parentModel = $parentModel;
-        $this->namespaces[] = get_class($parentModel);
-
-        return $this;
     }
 
     /**
@@ -219,7 +102,7 @@ abstract class ControllerMethod
      */
     protected function getSanctumActingAs($actionAs)
     {
-        if (! $this->isSanctumAuth) {
+        if (!$this->isSanctumAuth) {
             return false;
         }
         $this->namespaces[] = 'Laravel\Sanctum\Sanctum';
@@ -232,7 +115,7 @@ abstract class ControllerMethod
      */
     protected function getPassportActingAs($actionAs)
     {
-        if (! $this->isPassportAuth) {
+        if (!$this->isPassportAuth) {
             return false;
         }
 
@@ -243,7 +126,7 @@ abstract class ControllerMethod
 
     protected function getWebAuthActingAs($actionAs)
     {
-        if (! $this->isWebAuth) {
+        if (!$this->isWebAuth) {
             return false;
         }
 
@@ -260,56 +143,6 @@ abstract class ControllerMethod
         return static::$hasSuperAdminRole;
     }
 
-    protected function parseRoute(): string
-    {
-        $params = '';
-        $name = $this->route->getName();
-        if (empty($this->route->parameterNames())) {
-            return 'route("' . $name . '")';
-        }
-        foreach ($this->route->parameterNames() as $parameterName) {
-            if (strtolower($parameterName) == strtolower($this->modelRelationReader->getShortName())) {
-                $value = $this->getModelVariable() . '->' . $this->model->getRouteKeyName();
-                $this->hasModelOnParameter = true;
-            } else {
-                if ($this->parentModel) {
-                    $ref = new \ReflectionClass($this->parentModel);
-                    if (strtolower($parameterName) == strtolower($ref->getShortName())) {
-                        $this->hasModelParentOnParameter = true;
-                        $parentVariable = '$' . lcfirst($ref->getShortName());
-                        $value = $parentVariable . '->' . $this->parentModel->getRouteKeyName();
-                        $this->parentVariable = sprintf(
-                                '%s = %s::factory()->for($user)->create();',
-                                $parentVariable,
-                                $ref->getShortName()
-                            ) . "\n\t\t";
-                    }
-                } else {
-                    $value = '';
-                }
-            }
-            $params .= '"' . $parameterName . '" => ' . $value . ', ';
-        }
-
-        return $this->routeString = 'route("' . $name . '",[' . $params . '])';
-    }
-
-    /**
-     *
-     */
-    protected function getRoute(): string
-    {
-        if (! empty($this->routeString)) {
-            return $this->routeString;
-        }
-
-        return $this->parseRoute();
-    }
-
-    protected function getModelVariable(): string
-    {
-        return '$' . lcfirst($this->modelRelationReader->getShortName());
-    }
 
     protected function getApiActingAs(string $actionAs)
     {
@@ -339,30 +172,6 @@ abstract class ControllerMethod
             'parentVariable' => $this->parentVariable,
 
         ];
-    }
-
-
-    public function getCustomRequestClassRules(): array
-    {
-        if (! empty($this->validationRules)) {
-            return $this->validationRules;
-        }
-        $rules = [];
-        try {
-            foreach ($this->reflectionMethod->getParameters() as $parameter) {
-                if ($parameter->hasType()) {
-                    if (is_subclass_of($parameter->getType()->getName(), FormRequest::class)) {
-                        $className = $parameter->getType()->getName();
-                        $rfm = new \ReflectionMethod($parameter->getType()->getName(), 'rules');
-                        $rules = $rfm->invoke(new $className());
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            return $rules;
-        }
-
-        return $this->validationRules = $rules;
     }
 
     public function generatePostData($update = false): string
@@ -400,29 +209,17 @@ abstract class ControllerMethod
         return $data;
     }
 
-    protected function hasFile(): self
+    protected function setFakeStorage(): self
     {
-        $rules = $this->getCustomRequestClassRules();
-        foreach ($rules as $field => $rule) {
-            $listOfRules = is_array($rule) ? $rule : explode("|", $rule);
-            foreach ($listOfRules as $listOfRule) {
-                if (is_object($listOfRule)) {
-                    continue;
-                }
-                $mimeTypes = substr_compare($listOfRule, 'mimetypes', 0, 9);
-                $mimes = substr_compare($listOfRule, 'mimes', 0, 5);
-                $dimensions = substr_compare($listOfRule, 'dimensions', 0, 10);
-                if ('image' == $listOfRule || 'file' == $listOfRule || $mimes == 0 || $mimeTypes == 0 || $dimensions == 0) {
-                    $this->namespaces[] = 'Illuminate\Support\Facades\Storage';
-                    $this->namespaces[] = 'Illuminate\Http\UploadedFile';
-                    $this->fake[] = 'Storage::fake(\'file\');';
-                    $this->fake[] = '$file = UploadedFile::fake()->create(\'poster.jpg\');';
+        if ($this->hasFile()) {
+            $this->namespaces[] = 'Illuminate\Support\Facades\Storage';
+            $this->namespaces[] = 'Illuminate\Http\UploadedFile';
+            $this->fake[] = 'Storage::fake(\'file\');';
+            $this->fake[] = '$file = UploadedFile::fake()->create(\'poster.jpg\');';
 
-                    $this->endFake[] = 'Storage::disk(\'file\')->assertExists(\'photo1.jpg\');';
-                }
-            }
+            $this->endFake[] = 'Storage::disk(\'file\')->assertExists(\'photo1.jpg\');';
         }
-
         return $this;
     }
+
 }

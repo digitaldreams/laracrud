@@ -3,7 +3,7 @@
 namespace LaraCrud\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
-use LaraCrud\Builder\Test\ControllerReader;
+use LaraCrud\Services\ControllerReader;
 use LaraCrud\Builder\Test\Methods\ControllerMethod;
 use LaraCrud\Builder\Test\Methods\DefaultMethod;
 use LaraCrud\Configuration;
