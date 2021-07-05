@@ -59,15 +59,15 @@ class Request implements Crud
         $this->model = $model;
         $this->table = app()->make(TableContract::class, ['table' => $model->getTable()]);
 
-        $this->namespace = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
+        $this->namespace = ! empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
         $this->namespace = $this->getFullNS($this->namespace);
         $this->modelName = $this->getModelName((new \ReflectionClass($this->model))->getShortName());
-        if (!empty($name)) {
+        if (! empty($name)) {
             $this->parseName($name);
         } else {
             $this->modelName .= config('laracrud.request.classSuffix');
         }
-        $this->template = !empty($api) ? 'api' : 'web';
+        $this->template = ! empty($api) ? 'api' : 'web';
     }
 
     /**
@@ -110,7 +110,8 @@ class Request implements Crud
         $fillable = $this->model->getFillable();
         $guarded = $this->model->getGuarded();
         foreach ($columns as $column) {
-            if (!$column->isFillable() || !in_array($column->name(), $fillable) || in_array($column->name(), $guarded)) {
+            if (! $column->isFillable() || ! in_array($column->name(), $fillable) || in_array($column->name(),
+                    $guarded)) {
                 continue;
             }
             $rules[] = "\t\t\t'{$column->name()}' => " . $this->implode($column->validationRules());
@@ -133,10 +134,10 @@ class Request implements Crud
 
     private function implode(array $rules)
     {
-        $string = '[';
+        $string = '['."\n\t\t\t\t";
         foreach ($rules as $rule) {
             $string .= 0 !== substr_compare($rule, 'Rule::', 0, 6) ? "'" . $rule . "'" : $rule;
-            $string .= ',';
+            $string .= ',' . "\n\t\t\t\t";
         }
         $string .= '],';
 
