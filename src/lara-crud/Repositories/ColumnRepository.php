@@ -26,6 +26,7 @@ class ColumnRepository implements ColumnContract
      */
     protected array $phpDataTypes = [
         //MySql Type => PHP native data type
+        'char' => 'string',
         'varchar' => 'string',
         'text' => 'string',
         'longtext' => 'string',
@@ -33,11 +34,17 @@ class ColumnRepository implements ColumnContract
         'mediumtext' => 'string',
         'enum' => 'string',
         'tinyint' => 'int',
+        'tinyint unsigned' => 'int',
         'smallint' => 'int',
+        'smallint unsigned ' => 'int',
+        'int unsigned' => 'int',
         'float' => 'int',
+        'float unsigned' => 'int',
         'double' => 'int',
+        'double unsigned' => 'int',
         'decimal' => 'int',
         'bigint' => 'int',
+        'bigint unsigned' => 'int',
         'json' => 'array',
         'timestamp' => '\Carbon\Carbon',
         'datetime' => '\Carbon\Carbon',
@@ -103,7 +110,7 @@ class ColumnRepository implements ColumnContract
      */
     public function isFillable(): bool
     {
-        return !$this->column->isProtected();
+        return ! $this->column->isProtected();
     }
 
     /**
@@ -111,7 +118,7 @@ class ColumnRepository implements ColumnContract
      */
     public function isRequired(): bool
     {
-        return !$this->column->isNull();
+        return ! $this->column->isNull();
     }
 
     /**
@@ -244,7 +251,7 @@ class ColumnRepository implements ColumnContract
     public function validationRules(): array
     {
         $rules = [];
-        if (!$this->isNull()) {
+        if (! $this->isNull()) {
             $rules[] = 'required';
         } else {
             $rules[] = 'nullable';
@@ -253,7 +260,8 @@ class ColumnRepository implements ColumnContract
             $rules[] = sprintf("Rule::unique('%s','%s')", $this->table->name(), $this->name());
         }
         if ($this->isForeign()) {
-            $rules[] = sprintf("Rule::exists('%s','%s')", $this->column->foreignTable(), $this->column->foreignColumn());
+            $rules[] = sprintf("Rule::exists('%s','%s')", $this->column->foreignTable(),
+                $this->column->foreignColumn());
         }
         if ('enum' == $this->dataType()) {
             $rules[] = 'in:' . implode(',', $this->options());
@@ -263,7 +271,8 @@ class ColumnRepository implements ColumnContract
             $rules[] = 'max:' . $this->length();
         } elseif ('tinyint' == $this->dataType() && 1 == $this->length()) {
             $rules[] = 'boolean';
-        } elseif (in_array($this->dataType(), ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float', 'double'])) {
+        } elseif (in_array($this->dataType(),
+            ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float', 'double'])) {
             $rules[] = 'numeric';
         } elseif (in_array($this->dataType(), ['date', 'time', 'datetime', 'timestamp'])) {
             $rules[] = 'date';

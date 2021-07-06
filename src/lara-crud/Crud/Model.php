@@ -38,7 +38,7 @@ class Model implements Crud
     /**
      * @var array
      */
-    protected array $traits = ['HasFactory;'];
+    protected array $traits = ['HasFactory'];
 
     /**
      * @var array
