@@ -16,38 +16,32 @@ class ModelFactory implements Crud
     /**
      * @var Model
      */
-    protected $model;
+    protected Model $model;
 
     /**
      * @var Table
      */
     protected $table;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $namespace;
+
+    protected string $modelName;
+
+    protected $reflection;
 
     /**
      * ModelFactory constructor.
      *
-     * @param Model  $model
-     * @param string $name
+     * @param Model $model
      *
      * @throws \Exception
      */
-    public function __construct($model, $name = '')
+    public function __construct(Model $model)
     {
-        $this->name = $name;
-        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
-        if (!class_exists($model)) {
-            $model = $modelNamespace . '\\' . $model;
-        }
-        if (!class_exists($model)) {
-            throw new \Exception('Model ' . $model . ' is not exists');
-        }
-        $this->model = new $model();
+        $this->model = $model;
         $this->table = new Table($this->model->getTable());
+        $this->reflection = new \ReflectionClass($this->model);
+        $this->setNamespace();
     }
 
     public function save()
@@ -57,7 +51,7 @@ class ModelFactory implements Crud
         if (file_exists($path . '/' . $name)) {
             throw new \Exception($name . ' already exists');
         }
-        $factory = new \SplFileObject($path . '/' . $name . '.php', 'w+');
+        $factory = new \SplFileObject($this->checkPath(), 'w+');
         $factory->fwrite($this->template());
     }
 
@@ -67,8 +61,9 @@ class ModelFactory implements Crud
     public function template(): string
     {
         return (new TemplateManager('factory/template.txt', [
-            'modelClass' => get_class($this->model),
-            'modelShortName' => (new \ReflectionClass($this->model))->getShortName(),
+            'namespace' => $this->namespace,
+            'modelClass' => $this->reflection->getName(),
+            'modelShortName' => $this->reflection->getShortName(),
             'className' => $this->getName(),
             'columns' => $this->makeColumns(),
         ]))->get();
@@ -87,7 +82,7 @@ class ModelFactory implements Crud
             }
             $fakerColumn = new FakerColumn($column);
             $default = $fakerColumn->default();
-            $columnValue = !empty($default) ? $default . ',' : '\'\',';
+            $columnValue = ! empty($default) ? $default . ',' : '\'\',';
             $arr .= "\t\t\t" . '"' . $column->name() . '" => ' . $columnValue . PHP_EOL;
         }
 
@@ -102,9 +97,19 @@ class ModelFactory implements Crud
     protected function getName(): string
     {
         $suffix = config('laracrud.factory.suffix', 'Factory');
-        $class = new \ReflectionClass($this->model);
-        $shortModelName = $class->getShortName();
+        $shortModelName = $this->reflection->getShortName();
 
-        return !empty($this->name) ? $this->name : $shortModelName . $suffix;
+        return $this->modelName = $shortModelName . $suffix;
+    }
+
+    protected function setNamespace()
+    {
+        $this->namespace = config('laracrud.factory.namespace');
+        $classRootNs = trim(str_replace($this->reflection->getShortName(), "", $this->reflection->getName()), "\\");
+        $modelRootNs = $this->getFullNS(config('laracrud.model.namespace', 'Models'));
+        $sub = str_replace($modelRootNs, "", $classRootNs);
+        if (! empty($sub)) {
+            $this->namespace .= "\\" . trim($sub, "\\");
+        }
     }
 }

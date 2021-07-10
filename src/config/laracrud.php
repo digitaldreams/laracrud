@@ -96,7 +96,7 @@ return [
         ],
     ],
     'factory' => [
-        'path' => base_path('database/factories'),
+        'namespace' => 'Database\Factories',
         'suffix' => 'Factory',
     ],
     'view' => [
@@ -157,11 +157,6 @@ return [
          * Controller Parent Namespace for API
          */
         'apiNamespace' => 'Http\Controllers\Api',
-
-        /*
-         * API documentation
-         */
-        'documentation' => false,
 
         /*
          * After every request class name this world will be added. For example, User will be UserController

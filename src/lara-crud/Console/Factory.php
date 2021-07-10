@@ -4,17 +4,18 @@ namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\ModelFactory;
+use LaraCrud\Helpers\Helper;
 
 class Factory extends Command
 {
+    use Helper;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'laracrud:factory 
-    {model : Name of the Eloquent Model} 
-    {--name= : Custom Name of the Factory. e.g. --name=MyPostFactory}';
+    {model : Name of the Eloquent Model}';
 
     /**
      * The console command description.
@@ -32,13 +33,19 @@ class Factory extends Command
     {
         try {
             $model = $this->argument('model');
-            $name = $this->option('name');
+            $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
+            if (! class_exists($model)) {
+                $model = $modelNamespace . '\\' . $model;
+            }
+            if (! class_exists($model)) {
+                throw new \Exception('Model ' . $model . ' is not exists');
+            }
 
-            $factoryCrud = new ModelFactory($model, $name);
+            $factoryCrud = new ModelFactory(new $model());
             $factoryCrud->save();
             $this->info('Factory class created successfully');
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 }
