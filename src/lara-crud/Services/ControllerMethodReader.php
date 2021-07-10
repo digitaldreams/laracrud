@@ -1,8 +1,6 @@
 <?php
 
-
 namespace LaraCrud\Services;
-
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -10,7 +8,6 @@ use Illuminate\Routing\Route;
 
 class ControllerMethodReader
 {
-
     /**
      * List of full namespaces that will be import on top of controller.
      *
@@ -136,10 +133,10 @@ class ControllerMethodReader
                         $parentVariable = '$' . lcfirst($ref->getShortName());
                         $value = $parentVariable . '->' . $this->parentModel->getRouteKeyName();
                         $this->parentVariable = sprintf(
-                                '%s = %s::factory()->for($user)->create();',
-                                $parentVariable,
-                                $ref->getShortName()
-                            ) . "\n\t\t";
+                            '%s = %s::factory()->for($user)->create();',
+                            $parentVariable,
+                            $ref->getShortName()
+                        ) . "\n\t\t";
                     }
                 } else {
                     $value = '';
