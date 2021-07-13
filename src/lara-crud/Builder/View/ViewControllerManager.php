@@ -36,6 +36,17 @@ class ViewControllerManager
     protected ControllerMethodReader $destroy;
 
     /**
+     * Other Controller methods.
+     *
+     * @var ControllerMethodReader[]
+     */
+    protected array $methods;
+
+    protected array $viewFilePaths = [];
+
+    protected array $breadcrumbs = [];
+
+    /**
      * ViewControllerManager constructor.
      *
      * @param string                       $controller

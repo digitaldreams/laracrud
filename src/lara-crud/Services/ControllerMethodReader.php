@@ -28,32 +28,32 @@ class ControllerMethodReader
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
-    protected $parentModel;
+    public $parentModel;
 
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
-    protected $model;
+    public $model;
 
     public array $authMiddleware = ['auth', 'auth:sanctum', 'auth:api'];
 
     /**
      * @var bool
      */
-    protected bool $isSanctumAuth = false;
+    public bool $isSanctumAuth = false;
 
     /**
      * @var bool
      */
-    protected bool $isPassportAuth = false;
+    public bool $isPassportAuth = false;
 
     /**
      * @var bool
      */
-    protected bool $isWebAuth = false;
+    public bool $isWebAuth = false;
 
 
-    protected ModelRelationReader $modelRelationReader;
+    public ModelRelationReader $modelRelationReader;
 
     public static array $ignoreDataProviderRules = [
         'nullable',
@@ -61,17 +61,17 @@ class ControllerMethodReader
         'numeric',
     ];
 
-    protected array $validationRules;
+    public array $validationRules;
 
-    protected string $routeString;
+    public string $routeString;
 
-    protected bool $hasModelOnParameter = false;
+    public bool $hasModelOnParameter = false;
 
     protected string $parentVariable = '';
 
-    protected bool $hasModelParentOnParameter = false;
+    public bool $hasModelParentOnParameter = false;
 
-    protected array $fileFieldNames = [];
+    public array $fileFieldNames = [];
 
     /**
      * ControllerMethod constructor.
@@ -114,7 +114,7 @@ class ControllerMethodReader
         return $this;
     }
 
-    protected function parseRoute(): string
+    public function parseRoute(): string
     {
         $params = '';
         $name = $this->route->getName();
@@ -151,7 +151,7 @@ class ControllerMethodReader
     /**
      *
      */
-    protected function getRoute(): string
+    public function getRoute(): string
     {
         if (!empty($this->routeString)) {
             return $this->routeString;
@@ -170,12 +170,12 @@ class ControllerMethodReader
         return $this->namespaces;
     }
 
-    protected function getModelVariable(): string
+    public function getModelVariable(): string
     {
         return '$' . lcfirst($this->modelRelationReader->getShortName());
     }
 
-    protected function getParentVariable(): string
+    public function getParentVariable(): string
     {
         if ($this->parentModel) {
             $ref = new \ReflectionClass($this->parentModel);
@@ -211,7 +211,7 @@ class ControllerMethodReader
     /**
      * @return bool
      */
-    protected function hasFile(): bool
+    public function hasFile(): bool
     {
         $rules = $this->getCustomRequestClassRules();
         foreach ($rules as $field => $rule) {
