@@ -73,7 +73,7 @@ class Model extends Command
 
             $this->info('Model class successfully created');
         } catch (\Exception $ex) {
-            $this->error(sprintf('%s on line %s  in %. Please see log file more more details.', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
+            $this->error(sprintf('%s on line %s  in %s. Please see log file more more details.', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
             Log::error($ex->getTraceAsString());
         }
     }
