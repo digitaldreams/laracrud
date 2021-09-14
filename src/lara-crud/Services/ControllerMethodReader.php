@@ -52,7 +52,6 @@ class ControllerMethodReader
      */
     public bool $isWebAuth = false;
 
-
     public ModelRelationReader $modelRelationReader;
 
     public static array $ignoreDataProviderRules = [
@@ -148,9 +147,6 @@ class ControllerMethodReader
         return $this->routeString = 'route("' . $name . '",[' . $params . '])';
     }
 
-    /**
-     *
-     */
     public function getRoute(): string
     {
         if (!empty($this->routeString)) {
@@ -179,11 +175,12 @@ class ControllerMethodReader
     {
         if ($this->parentModel) {
             $ref = new \ReflectionClass($this->parentModel);
+
             return '$' . lcfirst($ref->getShortName());
         }
+
         return '';
     }
-
 
     public function getCustomRequestClassRules(): array
     {
@@ -215,7 +212,7 @@ class ControllerMethodReader
     {
         $rules = $this->getCustomRequestClassRules();
         foreach ($rules as $field => $rule) {
-            $listOfRules = is_array($rule) ? $rule : explode("|", $rule);
+            $listOfRules = is_array($rule) ? $rule : explode('|', $rule);
             foreach ($listOfRules as $listOfRule) {
                 if (is_object($listOfRule)) {
                     continue;
@@ -223,7 +220,7 @@ class ControllerMethodReader
                 $mimeTypes = substr_compare($listOfRule, 'mimetypes', 0, 9);
                 $mimes = substr_compare($listOfRule, 'mimes', 0, 5);
                 $dimensions = substr_compare($listOfRule, 'dimensions', 0, 10);
-                if ('image' == $listOfRule || 'file' == $listOfRule || $mimes == 0 || $mimeTypes == 0 || $dimensions == 0) {
+                if ('image' == $listOfRule || 'file' == $listOfRule || 0 == $mimes || 0 == $mimeTypes || 0 == $dimensions) {
                     return true;
                 }
             }
