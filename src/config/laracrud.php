@@ -281,4 +281,8 @@ return [
         \LaraCrud\Contracts\TableContract::class => \LaraCrud\Repositories\TableRepository::class,
         \LaraCrud\Contracts\ColumnContract::class => \LaraCrud\Repositories\ColumnRepository::class,
     ],
+    //
+    'reactjs' => [
+        'rootPath' => env('REACT_APP_ROOT_PATH'),
+    ],
 ];

@@ -11,6 +11,10 @@ use LaraCrud\Console\Model;
 use LaraCrud\Console\Mvc;
 use LaraCrud\Console\Package;
 use LaraCrud\Console\Policy;
+use LaraCrud\Console\ReactJs\EnumCommand;
+use LaraCrud\Console\ReactJs\FormCommand;
+use LaraCrud\Console\ReactJs\ModelCommand;
+use LaraCrud\Console\ReactJs\ServiceCommand;
 use LaraCrud\Console\Request;
 use LaraCrud\Console\Resource;
 use LaraCrud\Console\Route;
@@ -25,6 +29,7 @@ use LaraCrud\Console\View;
 class LaraCrudServiceProvider extends ServiceProvider
 {
     protected $defer = true;
+
     /**
      * List of command which will be registered.
      *
@@ -43,6 +48,10 @@ class LaraCrudServiceProvider extends ServiceProvider
         Test::class,
         Package::class,
         Resource::class,
+        EnumCommand::class,
+        ModelCommand::class,
+        ServiceCommand::class,
+        FormCommand::class,
     ];
 
     /**
@@ -97,6 +106,6 @@ class LaraCrudServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['laracrud'];
+        return ['laracrud', 'reactjs'];
     }
 }
