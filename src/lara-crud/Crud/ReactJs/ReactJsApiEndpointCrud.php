@@ -2,7 +2,6 @@
 
 namespace LaraCrud\Crud\ReactJs;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\TemplateManager;
@@ -51,7 +50,7 @@ class ReactJsApiEndpointCrud implements Crud
 
     public function save()
     {
-        $fullPath = config('laracrud.reactjs.rootPath') . '/urlGenerators/' . $this->shortName . 'ApiEndpoint.js';
+        $fullPath = config('laracrud.reactjs.rootPath') . '/apiEndpoints/' . $this->shortName . 'ApiEndpoint.js';
         $migrationFile = new \SplFileObject($fullPath, 'w+');
         $migrationFile->fwrite($this->template());
     }
@@ -59,13 +58,7 @@ class ReactJsApiEndpointCrud implements Crud
     protected function prepareMethod(\ReflectionMethod $method, Route $route)
     {
         $uri = str_replace('{', '${', $route->uri);
-        $params = '';
-        if ($route->parameterNames()) {
-            foreach ($route->parameterNames() as $param) {
-                $params .= $param . ',';
-            }
-        }
-        $params = rtrim($params, ',');
+        $params = $this->routeParam($route);
         $body = <<<END
     {$method->name}($params) {
         return `$uri`;
@@ -73,5 +66,23 @@ class ReactJsApiEndpointCrud implements Crud
 END;
 
         return $body;
+    }
+
+    /**
+     * @param $route
+     *
+     * @return string
+     */
+    protected function routeParam($route): string
+    {
+        $params = '';
+        if ($route->parameterNames()) {
+            foreach ($route->parameterNames() as $param) {
+                $params .= $param . ',';
+            }
+        }
+        $params = rtrim($params, ',');
+
+        return $params;
     }
 }
