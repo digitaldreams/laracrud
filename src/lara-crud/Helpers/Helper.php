@@ -27,17 +27,17 @@ trait Helper
      *
      * @param string $table
      *
+     * @return bool
      * @throws \Exception
      *
-     * @return bool
      */
     public static function checkMissingTable($table)
     {
-        $insertAbleTable = !is_array($table) ? [$table] : $table;
+        $insertAbleTable = ! is_array($table) ? [$table] : $table;
         $availableTables = (new Database())->tables();
         $missingTable = array_diff($insertAbleTable, $availableTables);
 
-        if (!empty($missingTable)) {
+        if (! empty($missingTable)) {
             $message = implode(',', $missingTable) . ' tables not found in ' . "\n" . implode("\n", $availableTables);
 
             throw new \Exception($message);
@@ -97,7 +97,8 @@ trait Helper
     }
 
     /**
-     * Convert NS to path and then check if it exists if not then create it. Then return full specified path of the class.
+     * Convert NS to path and then check if it exists if not then create it. Then return full specified path of the
+     * class.
      *
      * @param string $extension
      *
@@ -148,7 +149,7 @@ trait Helper
      */
     public function getFileName($name)
     {
-        if (!empty($this->fileName)) {
+        if (! empty($this->fileName)) {
             return str_replace('.php', '', $this->fileName);
         }
 
