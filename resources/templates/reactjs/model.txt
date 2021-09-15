@@ -1,7 +1,7 @@
 @@import@@
 export default class @@model@@ {
         constructor({@@destruction@@}){
-            @@propertyAssignment@@
+@@propertyAssignment@@
         }
-        @@propertySetters@@
+@@propertySetters@@
 }

@@ -83,7 +83,7 @@ class ReactJsModelCrud implements Crud
     {
         $str = '';
         foreach ($this->properties as $key => $value) {
-            $str .= 'this.' . $key . '=' . $key . ';' . PHP_EOL;
+            $str .= "\t\t" . 'this.' . $key . '=' . $key . ';' . PHP_EOL;
         }
 
         return $str;
