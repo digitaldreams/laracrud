@@ -3,10 +3,13 @@
 namespace LaraCrud\Console\ReactJs;
 
 use Illuminate\Console\Command;
+use LaraCrud\Crud\ReactJs\ReactJsApiEndpointCrud;
 use LaraCrud\Crud\ReactJs\ReactJsFormCrud;
+use LaraCrud\Crud\ReactJs\ReactJsModelCrud;
+use LaraCrud\Crud\ReactJs\ReactJsServiceCrud;
 use LaraCrud\Helpers\Helper;
 
-class FormCommand extends Command
+class CrudCommand extends Command
 {
     use Helper;
 
@@ -15,23 +18,40 @@ class FormCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'reactjs:form {model} {controller}';
+    protected $signature = 'reactjs:crud {model} {controller}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Enum Generator based on Folder or Class';
+    protected $description = 'ReactJs Full CRUD Generator based on Model and Controller';
 
     public function handle()
     {
         try {
             $model = $this->getModal($this->argument('model'));
             $controller = $this->getController($this->argument('controller'));
+
+            $this->warn('Creating Model....');
+            $modelCrud = new ReactJsModelCrud($model);
+            $modelCrud->save();
+            $this->info('Model Created successfully');
+
+            $this->warn('Creating Api Endpoint....');
+            $controllerCrud = new ReactJsApiEndpointCrud(get_class($controller));
+            $controllerCrud->save();
+            $this->info('Api endpoint successfully');
+
+            $this->warn('Creating API Service....');
+            $serviceCrud = new ReactJsServiceCrud(get_class($controller));
+            $serviceCrud->save();
+            $this->info('API Service created successfully');
+
+            $this->warn('Creating Form....');
             $formCrud = new ReactJsFormCrud($model, $controller);
             $formCrud->save();
-            $this->info('Form component generated successfully');
+            $this->info('Form created successfully');
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }

@@ -12,6 +12,7 @@ use LaraCrud\Console\Mvc;
 use LaraCrud\Console\Package;
 use LaraCrud\Console\Policy;
 use LaraCrud\Console\ReactJs\ApiEndpointCommand;
+use LaraCrud\Console\ReactJs\CrudCommand;
 use LaraCrud\Console\ReactJs\EnumCommand;
 use LaraCrud\Console\ReactJs\FormCommand;
 use LaraCrud\Console\ReactJs\ModelCommand;
@@ -54,6 +55,7 @@ class LaraCrudServiceProvider extends ServiceProvider
         ServiceCommand::class,
         FormCommand::class,
         ApiEndpointCommand::class,
+        CrudCommand::class,
     ];
 
     /**

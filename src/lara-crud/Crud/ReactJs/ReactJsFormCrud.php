@@ -31,7 +31,7 @@ class ReactJsFormCrud implements Crud
     {
         $this->model = $model;
         $this->controller = $controller;
-        $this->componentName = (new \ReflectionClass($this->model))->getShortName().'Component';
+        $this->componentName = (new \ReflectionClass($this->model))->getShortName() . 'Form';
 
     }
 
