@@ -220,7 +220,7 @@ class Form extends Page
      * @return array
      *               ]
      */
-    protected function processColumn(Column $column)
+    public function processColumn(Column $column)
     {
         $options = [];
         $options['properties'] = [];
@@ -256,7 +256,7 @@ class Form extends Page
      *
      * @return string
      */
-    protected function tempMan($fileName, $options, Column $column)
+    public function tempMan($fileName, $options, Column $column)
     {
         $common = [
             'hasErrorClass' => $this->hasErr($column),

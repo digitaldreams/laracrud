@@ -58,6 +58,17 @@ class ReactJsFormCrud implements Crud
 
     protected function generateFields(): string
     {
+        $validationRules = $this->getValidationRules();
+        if (! empty($validationRules)) {
+            foreach ($validationRules as $column => $rule) {
+                $rule = is_string($rule) ? explode('|', $rule) : $rule;
+                $inputBuilder = new ReactJsFormInputBuilder($rule);
+            }
+        }
+    }
+
+    public function fieldTemplate($column, $inputBuilder)
+    {
 
     }
 

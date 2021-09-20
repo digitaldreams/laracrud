@@ -1,0 +1,5 @@
+  @if($errors->has('@@column@@'))
+    <div class="invalid-feedback">
+        <strong>{{ $errors->first('@@column@@') }}</strong>
+    </div>
+  @endif
