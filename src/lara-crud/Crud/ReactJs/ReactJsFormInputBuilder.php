@@ -4,18 +4,13 @@ namespace LaraCrud\Crud\ReactJs;
 
 class ReactJsFormInputBuilder
 {
-    /**
-     * @var array
-     */
-    protected array $rules;
-
     public bool $required = false;
 
-    public string $type;
+    public string $type = 'text';
 
-    public int $min;
+    public int $min = 0;
 
-    public int $max;
+    public int $max = 0;
 
     public bool $isArray = false;
 
@@ -28,10 +23,10 @@ class ReactJsFormInputBuilder
      */
     public function __construct(array $rules = [])
     {
-        $this->rules = $rules;
+        $this->parse($rules);
     }
 
-    public function parse()
+    public function parse(array $rules)
     {
         $fileValidators = ['file', 'image', 'mimes', 'mimetypes', 'dimensions'];
         $dateValidators = [
@@ -49,42 +44,57 @@ class ReactJsFormInputBuilder
             'integer',
             'numeric',
         ];
-        foreach ($this->rules as $rule) {
-            $rule = (string) $rule;
-            $parts = explode(':', $rule);
-
-            if (in_array($parts[0], $fileValidators)) {
-                $this->type = 'file';
-            }
-
-            if (in_array($parts[0], $dateValidators)) {
-                $this->type = 'date';
-            }
-
-            if (in_array($parts[0], $numberValidators)) {
-                $this->type = 'number';
-            }
-            if ('in' === $parts[0]) {
-                $options = explode(',', $parts[1]);
-                if ($options >= 3) {
-                    $this->type = 'select';
-                } else {
-                    $this->type = 'radio';
+        foreach ($rules as $rule) {
+            try {
+                $rule = (string) $rule;
+                if ('array' === $rule) {
+                    $this->isArray = true;
+                    break;
                 }
-                $this->options = $options;
-            }
-            if ('boolean' === $rule) {
-                $this->type = 'checkbox';
-            }
+                $parts = explode(':', $rule);
 
-            if ('required' === $rule) {
-                $this->required = true;
-            }
-            if ('min' === $parts[0]) {
-                $this->min = $parts[1] ?? 0;
-            }
-            if ('max' === $parts[0]) {
-                $this->max = $parts[1] ?? 0;
+                if (in_array($parts[0], $fileValidators)) {
+                    $this->type = 'file';
+                }
+
+                if (in_array($parts[0], $dateValidators)) {
+                    $this->type = 'date';
+                }
+
+                if (in_array($parts[0], $numberValidators)) {
+                    $this->type = 'number';
+                }
+                if ('in' === $parts[0]) {
+                    $options = explode(',', $parts[1]);
+                    if ($options >= 3) {
+                        $this->type = 'select';
+                    } else {
+                        $this->type = 'radio';
+                    }
+                    $this->options = $options;
+                }
+                if (in_array($rule, ['accepted', 'boolean'])) {
+                    $this->type = 'checkbox';
+                }
+                //active_url
+                if (in_array($rule, ['url', 'email'])) {
+                    $this->type = $rule;
+                }
+                if (in_array($rule, ['alpha', 'alpha_num', 'alpha_dash', 'string'])) {
+                    $this->type = 'text';
+                }
+
+                if ('required' === $rule) {
+                    $this->required = true;
+                }
+                if ('min' === $parts[0]) {
+                    $this->min = $parts[1] ?? 0;
+                }
+                if ('max' === $parts[0]) {
+                    $this->max = $parts[1] ?? 0;
+                }
+            } catch (\Exception $e) {
+                continue;
             }
         }
     }

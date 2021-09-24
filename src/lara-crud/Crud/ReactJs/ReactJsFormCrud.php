@@ -24,6 +24,8 @@ class ReactJsFormCrud implements Crud
      */
     protected $controller;
 
+    protected array $formRules = [];
+
     /**
      * ReactJsFormCrud constructor.
      *
@@ -39,11 +41,11 @@ class ReactJsFormCrud implements Crud
 
     public function template()
     {
-        print_r($this->getValidationRules());
+        $this->generateFields();
 
         return (new TemplateManager('reactjs/form.txt', [
             'componentName' => $this->componentName,
-            'validationRules' => '',
+            'validationRules' => json_encode($this->formRules, JSON_PRETTY_PRINT),
             'initialData' => '',
             'fields' => '',
         ]))->get();
@@ -56,20 +58,59 @@ class ReactJsFormCrud implements Crud
         $migrationFile->fwrite($this->template());
     }
 
-    protected function generateFields(): string
+    protected function generateFields()
     {
         $validationRules = $this->getValidationRules();
         if (! empty($validationRules)) {
             foreach ($validationRules as $column => $rule) {
                 $rule = is_string($rule) ? explode('|', $rule) : $rule;
                 $inputBuilder = new ReactJsFormInputBuilder($rule);
+                if (true !== $inputBuilder->isArray) {
+                    $this->formRules[$column] = $this->formRules($inputBuilder);
+                }
             }
         }
     }
 
+    protected function formRules(ReactJsFormInputBuilder $inputBuilder)
+    {
+        $rules = [];
+        if ($inputBuilder->required) {
+            $rules['required'] = true;
+        }
+
+        if ($inputBuilder->min > 0) {
+            $key = 'text' == $inputBuilder->type ? 'minlength' : 'min';
+            $rules[$key] = $inputBuilder->min;
+        }
+
+        if ($inputBuilder->max > 0) {
+            $key = 'text' == $inputBuilder->type ? 'maxlength' : 'max';
+
+            $rules[$key] = $inputBuilder->max;
+        }
+
+        if (in_array($inputBuilder->type, ['radio', 'select'])) {
+            $rules['in'] = $inputBuilder->options;
+        }
+        if ('number' == $inputBuilder->type) {
+            $rules['numeric'] = true;
+        }
+        if ('url' == $inputBuilder->type) {
+            $rules['url'] = true;
+        }
+        if ('email' == $inputBuilder->type) {
+            $rules['email'] = true;
+        }
+        if ('file' == $inputBuilder->type) {
+            $rules['mimes'] = [];
+        }
+
+        return $rules;
+    }
+
     public function fieldTemplate($column, $inputBuilder)
     {
-
     }
 
     protected function getValidationRules(): array

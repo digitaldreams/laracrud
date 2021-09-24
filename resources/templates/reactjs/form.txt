@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import useForm from "../../hooks/useForm";
 import useTranslation from "../../hooks/useTranslation";
+
 export default function @@componentName@@(){
  const {trans} = useTranslation();
     const [registering, setRegistering] = useState();
-    const {errors, data, handleChange, validateAll} = useForm({
+    const {errors, data, handleChange, validateAll} = useForm(
        @@validationRules@@
-    }, {@@initialData@@});
+    , {@@initialData@@});
 
     const handleFinish = (event) => {
         event.preventDefault();
