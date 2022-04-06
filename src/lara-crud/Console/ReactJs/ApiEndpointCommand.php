@@ -24,7 +24,7 @@ class ApiEndpointCommand extends Command
      *
      * @var string
      */
-    protected $description = 'apiEndpoint generator based on Controller Class';
+    protected $description = 'ApiEndpoint generator based on controller Class';
 
     public function handle()
     {
@@ -33,7 +33,7 @@ class ApiEndpointCommand extends Command
 
             if ($apiEndpointCrud = $this->initReactJsApiEndpoint($controller)) {
                 $apiEndpointCrud->save();
-                $this->info(sprintf('%s ApiEndpoint file generated successfully', $controller));
+                $this->info(sprintf('%s apiEndpoint file generated successfully', $controller));
             } else {
                 $path = $this->toPath($controller);
                 $fullPath = base_path($path);
@@ -54,7 +54,7 @@ class ApiEndpointCommand extends Command
                         $this->warn($e->getMessage());
                     }
                 }
-                $this->info(sprintf('%d Api Endpoints class created out of %d', $s, count($files)));
+                $this->info(sprintf('%d api endpoints class created out of %d', $s, count($files)));
             }
         } catch (\Exception $e) {
             $this->error($e->getMessage());

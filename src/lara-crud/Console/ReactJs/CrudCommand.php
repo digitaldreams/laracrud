@@ -25,7 +25,7 @@ class CrudCommand extends Command
      *
      * @var string
      */
-    protected $description = 'ReactJs Full CRUD Generator based on Model and Controller';
+    protected $description = 'ReactJs full CRUD generator based on mModel and controller';
 
     public function handle()
     {
@@ -33,22 +33,22 @@ class CrudCommand extends Command
             $model = $this->getModal($this->argument('model'));
             $controller = $this->getController($this->argument('controller'));
 
-            $this->warn('Creating Model....');
+            $this->warn('Creating model....');
             $modelCrud = new ReactJsModelCrud($model);
             $modelCrud->save();
-            $this->info('Model Created successfully');
+            $this->info('Model created successfully');
 
-            $this->warn('Creating Api Endpoint....');
+            $this->warn('Creating api endpoint....');
             $controllerCrud = new ReactJsApiEndpointCrud(get_class($controller));
             $controllerCrud->save();
             $this->info('Api endpoint successfully');
 
-            $this->warn('Creating API Service....');
+            $this->warn('Creating api service....');
             $serviceCrud = new ReactJsServiceCrud(get_class($controller));
             $serviceCrud->save();
-            $this->info('API Service created successfully');
+            $this->info('API service created successfully');
 
-            $this->warn('Creating Form....');
+            $this->warn('Creating form....');
             $formCrud = new ReactJsFormCrud($model, $controller);
             $formCrud->save();
             $this->info('Form created successfully');

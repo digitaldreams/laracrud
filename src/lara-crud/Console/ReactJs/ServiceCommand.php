@@ -24,7 +24,7 @@ class ServiceCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Enum Generator based on Folder or Class';
+    protected $description = 'Enum generator based on folder or class';
 
     public function handle()
     {
@@ -33,7 +33,7 @@ class ServiceCommand extends Command
 
             if ($apiEndpointCrud = $this->initReactJsApiService($controller)) {
                 $apiEndpointCrud->save();
-                $this->info(sprintf('%s Api Service file generated successfully', $controller));
+                $this->info(sprintf('%s Api service file generated successfully', $controller));
             } else {
                 $path = $this->toPath($controller);
                 $fullPath = base_path($path);
@@ -55,7 +55,7 @@ class ServiceCommand extends Command
                         continue;
                     }
                 }
-                $this->info(sprintf('%d Api Service class created out of %d', $s, count($files)));
+                $this->info(sprintf('%d api service class created out of %d', $s, count($files)));
             }
         } catch (\Exception $e) {
             $this->error($e->getMessage());

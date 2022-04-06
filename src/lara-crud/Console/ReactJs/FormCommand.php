@@ -22,7 +22,7 @@ class FormCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Enum Generator based on Folder or Class';
+    protected $description = 'Enum generator based on folder or class';
 
     public function handle()
     {

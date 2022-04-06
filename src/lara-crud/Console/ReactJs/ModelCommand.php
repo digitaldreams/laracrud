@@ -24,7 +24,7 @@ class ModelCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Model Generator based on Folder or Class';
+    protected $description = 'Model generator based on folder or class';
 
     /**
      * @throws \ReflectionException
