@@ -59,6 +59,7 @@ class RequestController implements Crud
      * @var array
      */
     protected $methods = ['index', 'show', 'create', 'store', 'update', 'destroy'];
+    protected ?string $modelName;
 
     /**
      * @var bool

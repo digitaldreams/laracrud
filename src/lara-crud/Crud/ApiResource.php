@@ -55,19 +55,14 @@ class ApiResource implements Crud
         return $this->properties;
     }
 
-    /**
-     * @return $this
-     */
+
     public function createRelatedResourceClass(): self
     {
         return $this;
     }
 
 
-    /**
-     * @return string
-     */
-    private function checkName(?string $name = null)
+    private function checkName(?string $name = null): void
     {
         if (!empty($name)) {
             if (str_contains($name, ' / ')) {

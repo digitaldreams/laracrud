@@ -17,6 +17,8 @@ class WebController
      */
     protected $methods = [];
 
+    protected ControllerRepository $repository;
+
     /**
      * WebController constructor.
      */

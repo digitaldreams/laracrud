@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ModelRelationReader
 {
-    private readonly \ReflectionClass $reflectionClass;
+    private  \ReflectionClass $reflectionClass;
 
     protected array $single = [];
 

@@ -49,6 +49,7 @@ class RequestResource implements Crud
      * @var string
      */
     protected $policy;
+    protected ?string $modelName;
 
     /**
      * RequestControllerCrud constructor.

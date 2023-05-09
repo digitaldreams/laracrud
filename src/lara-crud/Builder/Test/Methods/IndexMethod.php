@@ -6,7 +6,7 @@ use LaraCrud\Helpers\TemplateManager;
 
 class IndexMethod extends ControllerMethod
 {
-    public function before()
+    public function before(): void
     {
         if ($this->isAuthRequired()) {
             $this->testMethods[] = (new TemplateManager('test/api/index/a_user_can_see_list_of_models_that_he_created.txt', $this->getGlobalVariables()));

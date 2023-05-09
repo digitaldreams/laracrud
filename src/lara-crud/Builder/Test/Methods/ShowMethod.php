@@ -6,7 +6,7 @@ use LaraCrud\Helpers\TemplateManager;
 
 class ShowMethod extends ControllerMethod
 {
-    public function before()
+    public function before(): void
     {
         if ($this->isAuthRequired()) {
             $this->testMethods[] = (new TemplateManager('test/api/show/a_user_can_see_a_model_that_he_created.txt', $this->getGlobalVariables()));

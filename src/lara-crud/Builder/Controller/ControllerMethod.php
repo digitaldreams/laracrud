@@ -144,6 +144,8 @@ abstract class ControllerMethod
         } elseif ($this instanceof ApiArrayResponseMethod) {
             return $this->beforeGenerate()->generateApiArrayCode();
         }
+
+        return '';
     }
 
     /**

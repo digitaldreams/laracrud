@@ -7,7 +7,7 @@ use LaraCrud\Helpers\TemplateManager;
 
 class DefaultMethod extends ControllerMethod
 {
-    public function before()
+    public function before(): void
     {
         $rules = $this->getCustomRequestClassRules();
         if (! empty($rules)) {

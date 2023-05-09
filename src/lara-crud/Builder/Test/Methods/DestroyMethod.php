@@ -6,7 +6,7 @@ use LaraCrud\Helpers\TemplateManager;
 
 class DestroyMethod extends ControllerMethod
 {
-    public function before()
+    public function before(): void
     {
         if ($this->isAuthRequired()) {
             if ($this->isAuthRequired()) {

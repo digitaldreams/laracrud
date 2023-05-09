@@ -35,10 +35,8 @@ abstract class ControllerMethod extends ControllerMethodReader
 
     protected array $endFake = [];
 
-    /**
-     * @return static
-     */
-    abstract public function before();
+
+    abstract public function before(): void;
 
     /**
      * Get Inside code of a Controller Method.

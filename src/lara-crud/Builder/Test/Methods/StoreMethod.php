@@ -6,7 +6,7 @@ use LaraCrud\Helpers\TemplateManager;
 
 class StoreMethod extends ControllerMethod
 {
-    public function before()
+    public function before(): void
     {
         if ($this->isAuthRequired()) {
             $this->testMethods[] = (new TemplateManager(
