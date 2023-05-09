@@ -7,5 +7,4 @@ use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
 class RestoreMethod extends ParentRestoreMethod implements RedirectAbleMethod
 {
-
 }

@@ -7,7 +7,6 @@ namespace LaraCrud\Builder\Controller\Web;
  */
 class EditMethod extends ShowMethod
 {
-
     public function phpDocComment(): string
     {
         return sprintf('Show the form for editing the specified %s.', $this->getModelShortName());

@@ -1,15 +1,12 @@
 <?php
 
-
 namespace LaraCrud\Repositories;
-
 
 use Illuminate\Support\Facades\Log;
 use LaraCrud\Builder\Controller\ControllerMethod;
 
 abstract class AbstractControllerRepository
 {
-
     /**
      * @var bool
      */

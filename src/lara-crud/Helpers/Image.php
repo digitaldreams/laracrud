@@ -27,7 +27,7 @@ trait Image
             if (!$document->isValid()) {
                 return false;
             }
-            $fileName = uniqid(rand(1000, 99999)).'.'.$document->getClientOriginalExtension();
+            $fileName = uniqid(rand(1000, 99999)) . '.' . $document->getClientOriginalExtension();
             $this->{$column} = $document->storeAs($this->getStoragePath(), $fileName, 'public');
             $this->resize($this->getMainWidth(), $this->getStoragePath(), $this->getMainHeight());
         }
@@ -50,7 +50,7 @@ trait Image
 
     public function getThumbnailPath()
     {
-        defined('static::THUMBNAIL_PATH') ? static::THUMBNAIL_PATH : $this->getTable().'/thumbs';
+        defined('static::THUMBNAIL_PATH') ? static::THUMBNAIL_PATH : $this->getTable() . '/thumbs';
     }
 
     /**
@@ -87,7 +87,7 @@ trait Image
      */
     public function getPath()
     {
-        return '/storage/'.$this->columnValue();
+        return '/storage/' . $this->columnValue();
     }
 
     /**
@@ -105,7 +105,7 @@ trait Image
      */
     public function getFullPath($thumbnail = false)
     {
-        return !empty($thumbnail) ? $this->getThumbPath() : storage_path('app/public/'.$this->columnValue());
+        return !empty($thumbnail) ? $this->getThumbPath() : storage_path('app/public/' . $this->columnValue());
     }
 
     /**
@@ -115,8 +115,8 @@ trait Image
      */
     public function getThumbPath()
     {
-        if (Storage::disk('public')->exists($this->getThumbnailPath().'/'.$this->getBaseName())) {
-            return config('filesystems.disks.public.root').'/'.$this->getThumbnailPath().'/'.$this->getBaseName();
+        if (Storage::disk('public')->exists($this->getThumbnailPath() . '/' . $this->getBaseName())) {
+            return config('filesystems.disks.public.root') . '/' . $this->getThumbnailPath() . '/' . $this->getBaseName();
         }
 
         return false;
@@ -129,7 +129,7 @@ trait Image
      */
     public function getThumbUrl()
     {
-        return asset('storage/'.$this->getThumbnailPath().'/'.$this->getBaseName());
+        return asset('storage/' . $this->getThumbnailPath() . '/' . $this->getBaseName());
     }
 
     /**
@@ -143,7 +143,7 @@ trait Image
     {
         $path = !empty($path) ? $path : $this->getStoragePath();
 
-        return !empty($this->getBaseName()) && Storage::disk('public')->exists($path.'/'.$this->getBaseName());
+        return !empty($this->getBaseName()) && Storage::disk('public')->exists($path . '/' . $this->getBaseName());
     }
 
     /**
@@ -165,7 +165,7 @@ trait Image
             $constraint->upsize();
         });
 
-        return $img->save($fullPath.'/'.$this->getBaseName());
+        return $img->save($fullPath . '/' . $this->getBaseName());
     }
 
     /**
@@ -229,7 +229,7 @@ trait Image
             Storage::disk('public')->makeDirectory(trim($path, '/'));
         }
 
-        return config('filesystems.disks.public.root').'/'.$path;
+        return config('filesystems.disks.public.root') . '/' . $path;
     }
 
     /**

@@ -89,16 +89,16 @@ class RequestController implements Crud
 
         if (!empty($controller)) {
             if (!class_exists($controller)) {
-                $this->controllerName = $this->controllerNs.'\\'.$controller;
+                $this->controllerName = $this->controllerNs . '\\' . $controller;
             }
 
             if (!class_exists($this->controllerName)) {
-                throw new \Exception('Controller '.$this->controllerName.' does not exists');
+                throw new \Exception('Controller ' . $this->controllerName . ' does not exists');
             }
 
             $this->classInspector = new ClassInspector($this->controllerName);
             $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-            $this->namespace = $this->getFullNS(trim($requestNs, '/')).'\\'.ucfirst(Str::camel($this->folderName));
+            $this->namespace = $this->getFullNS(trim($requestNs, '/')) . '\\' . ucfirst(Str::camel($this->folderName));
             $this->modelName = $this->getModelName($this->table);
         }
     }
@@ -112,7 +112,7 @@ class RequestController implements Crud
      */
     public function template($authorization = 'true')
     {
-        $tempMan = new TemplateManager('request/'.$this->template.'/template.txt', [
+        $tempMan = new TemplateManager('request/' . $this->template . '/template.txt', [
             'namespace'        => $this->namespace,
             'requestClassName' => $this->modelName,
             'authorization'    => $authorization,
@@ -138,18 +138,18 @@ class RequestController implements Crud
             foreach ($publicMethods as $method) {
                 $folderPath = base_path($this->toPath($this->namespace));
                 $this->modelName = $this->getModelName($method);
-                $filePath = $folderPath.'/'.$this->modelName.'.php';
+                $filePath = $folderPath . '/' . $this->modelName . '.php';
 
                 if (file_exists($filePath)) {
                     continue;
                 }
                 $isApi = 'api' == $this->template ? true : false;
                 if (in_array($method, ['create', 'store'])) {
-                    $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)).'/'.$this->modelName, $isApi);
+                    $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/' . $this->modelName, $isApi);
                     $requestStore->setAuthorization($this->getAuthCode('create'));
                     $requestStore->save();
                 } elseif (in_array($method, ['edit', 'update'])) {
-                    $requestUpdate = new Request($this->model, ucfirst(Str::camel($this->folderName)).'/'.$this->modelName, $isApi);
+                    $requestUpdate = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/' . $this->modelName, $isApi);
                     $requestUpdate->setAuthorization($this->getAuthCode('update'));
                     $requestUpdate->save();
                 } else {
@@ -173,12 +173,12 @@ class RequestController implements Crud
         $auth = 'true';
         if (class_exists($this->policy) && method_exists($this->policy, $methodName)) {
             if (in_array($methodName, ['index', 'create', 'store'])) {
-                $code = '\\'.get_class($this->model).'::class)';
+                $code = '\\' . get_class($this->model) . '::class)';
             } else {
                 $modelName = (new \ReflectionClass($this->model))->getShortName();
-                $code = '$this->route(\''.strtolower($modelName).'\'))';
+                $code = '$this->route(\'' . strtolower($modelName) . '\'))';
             }
-            $auth = 'auth()->user()->can(\''.$methodName.'\', '.$code;
+            $auth = 'auth()->user()->can(\'' . $methodName . '\', ' . $code;
         }
 
         return $auth;

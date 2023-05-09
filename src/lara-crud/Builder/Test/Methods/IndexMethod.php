@@ -1,14 +1,11 @@
 <?php
 
-
 namespace LaraCrud\Builder\Test\Methods;
-
 
 use LaraCrud\Helpers\TemplateManager;
 
 class IndexMethod extends ControllerMethod
 {
-
     public function before()
     {
         if ($this->isAuthRequired()) {
@@ -18,5 +15,4 @@ class IndexMethod extends ControllerMethod
             $this->testMethods[] = (new TemplateManager('test/api/index/a_guest_can_see_list_of_available_models.txt', $this->getGlobalVariables()));
         }
     }
-
 }

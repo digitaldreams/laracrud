@@ -19,8 +19,8 @@ class ApiController extends Controller
     {
         $transformerNs = $this->getFullNS(config('laracrud.transformer.namespace', 'Transformers'));
         $suffiex = config('laracrud.transformer.classSuffix', 'Transformer');
-        $transformerName = $this->shortModelName.$suffiex;
-        $fullTransformerNs = $transformerNs.'\\'.$transformerName;
+        $transformerName = $this->shortModelName . $suffiex;
+        $fullTransformerNs = $transformerNs . '\\' . $transformerName;
         $this->import[] = $fullTransformerNs;
 
         if (class_exists($fullTransformerNs)) {
@@ -43,7 +43,7 @@ class ApiController extends Controller
         $rules = [];
 
         if (!class_exists($requestClass)) {
-            $requestClass = $this->requestFolderNs.'\\'.$requestClass;
+            $requestClass = $this->requestFolderNs . '\\' . $requestClass;
         }
 
         if (is_subclass_of($requestClass, \Dingo\Api\Http\FormRequest::class)) {

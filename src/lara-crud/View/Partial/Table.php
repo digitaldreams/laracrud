@@ -56,13 +56,13 @@ class Table extends Page
             } elseif (in_array($column->type(), ['text', 'longtext', 'mediumtext', 'tinytext', 'json', 'blob'])) {
                 continue;
             }
-            $headerhtml .= "\t\t<th>{$column->label()} </th>".PHP_EOL;
-            $bodyhtml .= "\t \t<td> {{".'$record->'."{$column->name()} }} </td>".PHP_EOL;
+            $headerhtml .= "\t\t<th>{$column->label()} </th>" . PHP_EOL;
+            $bodyhtml .= "\t \t<td> {{" . '$record->' . "{$column->name()} }} </td>" . PHP_EOL;
         }
         $headerhtml .= "\t\t<th>&nbsp;</th>";
         $link = new Link($this->table->name());
         $routeKey = $this->model->getRouteKeyName();
-        $bodyhtml .= "\t<td>".$link->show($routeKey).$link->edit($routeKey).PHP_EOL.$link->destroy($routeKey).'</td></tr>'.PHP_EOL;
+        $bodyhtml .= "\t<td>" . $link->show($routeKey) . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . '</td></tr>' . PHP_EOL;
         $bodyhtml = str_replace('@@table@@', $this->table->name(), $bodyhtml);
 
         return [

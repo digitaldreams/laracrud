@@ -34,7 +34,7 @@ class Link
             $temMan = new TemplateManager("view/$version/link/policy/create.html", [
                 'table'       => $this->table,
                 'createRoute' => Page::getRouteName('create', $this->table),
-                'modelName'   => $model.'::class',
+                'modelName'   => $model . '::class',
             ]);
         } else {
             $temMan = new TemplateManager("view/$version/link/create.html", [
@@ -89,11 +89,11 @@ class Link
             if ($column->isIgnore() || $column->isProtected()) {
                 continue;
             }
-            $dataOption .= 'data-'.$column->name().'="{{$record->'.$column->name().'}}"'.PHP_EOL;
+            $dataOption .= 'data-' . $column->name() . '="{{$record->' . $column->name() . '}}"' . PHP_EOL;
 
             $version = config('laracrud.view.bootstrap');
             $temMan = new TemplateManager("view/$version/link/edit_modal.html", [
-                'modalName'   => $this->table.'Modal',
+                'modalName'   => $this->table . 'Modal',
                 'dataOptions' => $dataOption,
             ]);
 

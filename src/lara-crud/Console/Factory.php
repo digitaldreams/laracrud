@@ -9,6 +9,7 @@ use LaraCrud\Helpers\Helper;
 class Factory extends Command
 {
     use Helper;
+
     /**
      * The name and signature of the console command.
      *

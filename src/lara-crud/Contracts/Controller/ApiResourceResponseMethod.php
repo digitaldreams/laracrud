@@ -4,7 +4,6 @@ namespace LaraCrud\Contracts\Controller;
 
 interface ApiResourceResponseMethod
 {
-
     public function isCollection(): bool;
 
     /**

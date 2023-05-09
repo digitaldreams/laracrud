@@ -21,6 +21,7 @@ use LaraCrud\View\Show;
 class View extends Command
 {
     use Helper;
+
     /**
      * The name and signature of the console command.
      *
@@ -58,7 +59,7 @@ class View extends Command
             $modelFulNs = $this->getModelFullNs($model);
 
             if (!class_exists($modelFulNs)) {
-                $this->error($model.' does not exists');
+                $this->error($model . ' does not exists');
 
                 return false;
             }
@@ -71,7 +72,7 @@ class View extends Command
                 $pageMaker = $this->pageMaker($page, $modelObj, $name, $type);
                 if (!empty($pageMaker)) {
                     $pageMaker->save();
-                    $this->info($page.' page created successfully');
+                    $this->info($page . ' page created successfully');
                 }
             } elseif (!empty($controller)) {
                 $controllerFullNs = $this->getControllerNs($controller);
@@ -104,7 +105,7 @@ class View extends Command
                 $this->info('Edit page created successfully');
             }
         } catch (\Exception $ex) {
-            $this->error($ex->getMessage().' on line '.$ex->getLine().' in '.$ex->getFile());
+            $this->error($ex->getMessage() . ' on line ' . $ex->getLine() . ' in ' . $ex->getFile());
         }
     }
 
@@ -168,7 +169,7 @@ class View extends Command
         if (class_exists($class)) {
             return $class;
         }
-        $fullNs = $this->getFullNS(rtrim($namespace, '\\').'\\'.$class);
+        $fullNs = $this->getFullNS(rtrim($namespace, '\\') . '\\' . $class);
         if (class_exists($fullNs)) {
             return $fullNs;
         }
@@ -185,7 +186,7 @@ class View extends Command
         if (!class_exists($model)) {
             $modelNS = $this->getFullNS(config('laracrud.model.namespace'));
 
-            return $fullClass = $modelNS.'\\'.$model;
+            return $fullClass = $modelNS . '\\' . $model;
         }
 
         return $model;

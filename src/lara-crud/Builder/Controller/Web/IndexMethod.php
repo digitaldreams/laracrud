@@ -7,5 +7,4 @@ use LaraCrud\Builder\Controller\IndexMethod as ParentIndexMethod;
 
 class IndexMethod extends ParentIndexMethod implements ViewAbleMethod
 {
-
 }

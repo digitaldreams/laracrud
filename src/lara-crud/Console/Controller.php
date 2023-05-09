@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Tuhin
@@ -149,7 +150,6 @@ class Controller extends Command
                 exit();
             }
         }
-
     }
 
     /**
@@ -207,5 +207,4 @@ class Controller extends Command
     {
         return in_array(SoftDeletes::class, class_uses($this->model));
     }
-
 }

@@ -148,7 +148,7 @@ class Controller implements Crud
      *
      * @return \LaraCrud\Crud\Controller
      */
-    public function resolveControllerFileName(?string $name=null): self
+    public function resolveControllerFileName(?string $name = null): self
     {
         if (! empty($name)) {
             if (false !== strpos($name, '/')) {
@@ -181,5 +181,4 @@ class Controller implements Crud
 
         return $ns;
     }
-
 }

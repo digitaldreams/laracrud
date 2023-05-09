@@ -11,6 +11,7 @@ use LaraCrud\Helpers\Helper;
 class Request extends Command
 {
     use Helper;
+
     /**
      * The name and signature of the console command.
      *

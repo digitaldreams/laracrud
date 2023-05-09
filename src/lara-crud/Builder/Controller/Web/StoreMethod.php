@@ -9,5 +9,4 @@ use LaraCrud\Builder\Controller\StoreMethod as ParentStoreMethod;
 
 class StoreMethod extends ParentStoreMethod implements RedirectAbleMethod
 {
-
 }

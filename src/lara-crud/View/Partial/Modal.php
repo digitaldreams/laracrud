@@ -42,13 +42,13 @@ class Modal extends Page
             if ($this->isIgnoreAble($column)) {
                 continue;
             }
-            $modalShowOnError .= ' $errors->has("'.$column->name().'") ||';
-            $modalInputFill .= 'jq("#'.$column->name().'").val(btn.attr(\'data-'.$column->name().'\'));'.PHP_EOL;
-            $modalInputClean .= 'jq("#'.$column->name().'").val(\'\');'.PHP_EOL;
+            $modalShowOnError .= ' $errors->has("' . $column->name() . '") ||';
+            $modalInputFill .= 'jq("#' . $column->name() . '").val(btn.attr(\'data-' . $column->name() . '\'));' . PHP_EOL;
+            $modalInputClean .= 'jq("#' . $column->name() . '").val(\'\');' . PHP_EOL;
         }
         $modalShowOnError = rtrim($modalShowOnError, '||');
 
-        return (new TemplateManager('view/modal.html', ['modalName' => $this->table->name().'Modal',
+        return (new TemplateManager('view/modal.html', ['modalName' => $this->table->name() . 'Modal',
             'form'                                                  => implode("\n", (new Form($this->model))->make()),
             'table'                                                 => $this->table->name(),
             'showModalOnError'                                      => $modalShowOnError,

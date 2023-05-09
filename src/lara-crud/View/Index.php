@@ -33,13 +33,13 @@ class Index extends Page
     public function template()
     {
         $file = '';
-        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace').'::' : '';
+        $prefix = config('laracrud.view.namespace') ? config('laracrud.view.namespace') . '::' : '';
         $folder = 3 == $this->version ? 'panels' : 'cards';
         $link = new Link($this->table->name());
         $data = [
             'table'           => $this->table->name(),
             'layout'          => config('laracrud.view.layout'),
-            'folder'          => $prefix.$folder,
+            'folder'          => $prefix . $folder,
             'routeModelKey'   => $this->model->getRouteKeyName(),
             'searchBox'       => '',
             'partialFilename' => Str::singular($this->table->name()),

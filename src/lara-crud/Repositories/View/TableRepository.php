@@ -8,7 +8,6 @@ use LaraCrud\View\Partial\Link;
 
 class TableRepository extends PageRepository implements TableContract
 {
-
     /**
      * List of associative array each contains .
      * [
@@ -69,7 +68,6 @@ class TableRepository extends PageRepository implements TableContract
     {
         $data = [];
         foreach ($this->table->columns() as $columnRepository) {
-
             if ($columnRepository->isForeign()) {
                 $data[] = $this->generateBelongsToLink();
             }
@@ -77,8 +75,6 @@ class TableRepository extends PageRepository implements TableContract
             if (in_array($columnRepository->dataType(), ['enum'])) {
                 $data[] = $this->generateBadgeTag();
             }
-
-
         }
     }
 

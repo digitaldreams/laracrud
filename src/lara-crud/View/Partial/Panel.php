@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tuhin Bepari <digitaldreams40@gmail.com>.
  */
@@ -53,9 +54,9 @@ class Panel extends Page
             } elseif (in_array($column->type(), ['text', 'longtext', 'mediumtext', 'tinytext', 'json', 'blob'])) {
                 continue;
             }
-            $bodyHtml .= "\t\t".'<tr>'.PHP_EOL."\t\t\t".'<th>'.$column->label().'</th>'.PHP_EOL;
-            $bodyHtml .= "\t\t\t".'<td>{{$record->'.$column->name().'}}</td>'.PHP_EOL.
-                "\t\t".'</tr>'.PHP_EOL;
+            $bodyHtml .= "\t\t" . '<tr>' . PHP_EOL . "\t\t\t" . '<th>' . $column->label() . '</th>' . PHP_EOL;
+            $bodyHtml .= "\t\t\t" . '<td>{{$record->' . $column->name() . '}}</td>' . PHP_EOL .
+                "\t\t" . '</tr>' . PHP_EOL;
         }
         $link = new Link($this->table->name());
         $routeKey = $this->model->getRouteKeyName();

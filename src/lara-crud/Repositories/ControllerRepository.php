@@ -8,7 +8,6 @@ use LaraCrud\Configuration;
 
 class ControllerRepository extends AbstractControllerRepository
 {
-
     /**
      * @param \LaraCrud\Builder\Controller\ControllerMethod $method
      *
@@ -42,6 +41,4 @@ class ControllerRepository extends AbstractControllerRepository
         }
         return $this;
     }
-
-
 }

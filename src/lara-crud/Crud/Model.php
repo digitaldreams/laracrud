@@ -11,6 +11,7 @@ use LaraCrud\Helpers\TemplateManager;
 class Model implements Crud
 {
     use Helper;
+
     /**
      * Model Namespace. If not specified then default namespace will be used.
      *

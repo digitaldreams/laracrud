@@ -7,6 +7,7 @@ use LaraCrud\Contracts\Crud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Helpers\TemplateManager;
 use Illuminate\Support\Str;
+
 /**
  * Description of MigrationCrud.
  *
@@ -15,6 +16,7 @@ use Illuminate\Support\Str;
 class MigrationCrud implements Crud
 {
     use Helper;
+
     /**
      * @var Table
      */
@@ -69,14 +71,14 @@ class MigrationCrud implements Crud
         $retContent = '';
         $rules = $this->rules();
         foreach ($rules as $r) {
-            $retContent .= "\t"."\t"."\t".'$table->'.$r['methodName'];
-            $retContent .= !empty($r['mainParams']) ? '("'.$r['columnName'].'",'.$r['mainParams'].')' : '("'.$r['columnName'].'")';
+            $retContent .= "\t" . "\t" . "\t" . '$table->' . $r['methodName'];
+            $retContent .= !empty($r['mainParams']) ? '("' . $r['columnName'] . '",' . $r['mainParams'] . ')' : '("' . $r['columnName'] . '")';
             if (!empty($r['otherMethods'])) {
                 foreach ($r['otherMethods'] as $om) {
-                    $retContent .= '->'.$om['name'].'('.$om['params'].')';
+                    $retContent .= '->' . $om['name'] . '(' . $om['params'] . ')';
                 }
             }
-            $retContent .= ';'.PHP_EOL;
+            $retContent .= ';' . PHP_EOL;
         }
         if (!empty($this->fk)) {
             foreach ($this->fk as $column => $rel) {
@@ -86,7 +88,7 @@ class MigrationCrud implements Crud
                         'references' => $rel['references'],
                         'on'         => $rel['on'],
                     ]);
-                    $retContent .= $fkTemp->get().PHP_EOL;
+                    $retContent .= $fkTemp->get() . PHP_EOL;
                 }
             }
         }
@@ -107,7 +109,7 @@ class MigrationCrud implements Crud
      */
     public function save()
     {
-        $fullPath = config('laracrud.migrationPath', 'database/migrations/').$this->generateName($this->table->name()).'.php';
+        $fullPath = config('laracrud.migrationPath', 'database/migrations/') . $this->generateName($this->table->name()) . '.php';
         $migrationFile = new \SplFileObject($fullPath, 'w+');
         $migrationFile->fwrite($this->template());
     }
@@ -139,15 +141,17 @@ class MigrationCrud implements Crud
             //for enum data type we will use in validator.
             if ('enum' == $dataType) {
                 $retVals = implode("', '", $column->options());
-                $params = '[\''.$retVals.'\']';
+                $params = '[\'' . $retVals . '\']';
             } elseif ('varchar' == $dataType) {
                 $params = $column->length();
             } elseif ('tinyint' == $dataType) {
                 if (1 == $column->length()) {
                     $arr['methodName'] = 'boolean';
                 }
-            } elseif (in_array($dataType, ['smallint', 'int', 'mediumint', 'bigint', 'float',
-                'double', ])) {
+            } elseif (
+                in_array($dataType, ['smallint', 'int', 'mediumint', 'bigint', 'float',
+                'double', ])
+            ) {
                 if (!empty($column->length())) {
                     $params = false;
                 }
@@ -165,7 +169,7 @@ class MigrationCrud implements Crud
             if (!empty($defaultValue)) {
                 $otherMethods[] = [
                     'name'   => 'default',
-                    'params' => "'".$defaultValue."'",
+                    'params' => "'" . $defaultValue . "'",
                 ];
             }
             if ($column->isUnique()) {
@@ -210,7 +214,7 @@ class MigrationCrud implements Crud
      */
     public function generateName($table)
     {
-        return date('Y_m_d_His').'_create_'.$table.'_table';
+        return date('Y_m_d_His') . '_create_' . $table . '_table';
     }
 
     /**
@@ -224,10 +228,10 @@ class MigrationCrud implements Crud
      */
     public function generateClassName($table)
     {
-        $class = 'create'.Str::camel($table).'Table';
+        $class = 'create' . Str::camel($table) . 'Table';
 
         if (class_exists($class)) {
-            throw new \Exception('Migration for table '.$table.' already exists');
+            throw new \Exception('Migration for table ' . $table . ' already exists');
         }
 
         return $class;

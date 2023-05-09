@@ -9,6 +9,7 @@ use LaraCrud\Helpers\Helper;
 class Route extends Command
 {
     use Helper;
+
     /**
      * The name and signature of the console command.
      *
@@ -55,7 +56,7 @@ class Route extends Command
                 $rit = new \RecursiveIteratorIterator($dirIt);
                 while ($rit->valid()) {
                     if (!$rit->isDot()) {
-                        $controllers[] = rtrim($namespace, '\\').'\\'.str_replace('', str_replace('/', '\\', $rit->getSubPathName()));
+                        $controllers[] = rtrim($namespace, '\\') . '\\' . str_replace('', str_replace('/', '\\', $rit->getSubPathName()));
                     }
                     $rit->next();
                 }

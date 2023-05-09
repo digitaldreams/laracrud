@@ -1,6 +1,5 @@
 <?php
 
-
 namespace LaraCrud\Services;
 
 use Illuminate\Database\Eloquent\Model;
@@ -197,5 +196,4 @@ class ModelRelationReader
     {
         return in_array(SoftDeletes::class, class_uses($this->model));
     }
-
 }

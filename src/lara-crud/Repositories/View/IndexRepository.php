@@ -10,7 +10,6 @@ use LaraCrud\Helpers\TemplateManager;
 
 class IndexRepository extends PageRepository implements IndexContract
 {
-
     /**
      * @var \LaraCrud\Repositories\View\TableRepository
      */

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace LaraCrud\Console;
 
 use Illuminate\Console\Command;
@@ -41,7 +40,7 @@ class Resource extends Command
             $this->checkModelExists();
             $crud = new ApiResource($this->model);
             $crud->save();
-            $this->info(sprintf('%s created successfully on %s',$crud->modelName,$crud->getFullName()));
+            $this->info(sprintf('%s created successfully on %s', $crud->modelName, $crud->getFullName()));
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
@@ -60,7 +59,6 @@ class Resource extends Command
             $this->error(sprintf('%s model does not exists in %s.', $model, $modelFullName));
             exit();
         }
-
     }
 
     /**
@@ -77,5 +75,4 @@ class Resource extends Command
 
         return false;
     }
-
 }

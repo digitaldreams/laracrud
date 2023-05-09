@@ -1,14 +1,11 @@
 <?php
 
-
 namespace LaraCrud\Builder\Test\Methods;
-
 
 use LaraCrud\Helpers\TemplateManager;
 
 class DestroyMethod extends ControllerMethod
 {
-
     public function before()
     {
         if ($this->isAuthRequired()) {

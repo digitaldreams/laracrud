@@ -32,5 +32,4 @@ abstract class ForceDeleteMethod extends RestoreMethod
     {
         return sprintf('Remove the specified %s from the bin permanently.', $this->getModelShortName());
     }
-
 }

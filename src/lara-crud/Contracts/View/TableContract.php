@@ -8,5 +8,4 @@ interface TableContract
      * @return mixed
      */
     public function getColumns();
-
 }

@@ -8,7 +8,6 @@ namespace LaraCrud\Traits;
  */
 trait ModelShortNameAndVariablesTrait
 {
-
     /**
      * Eloquent Model that will be as main model.
      *

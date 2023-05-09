@@ -110,8 +110,12 @@ class Request implements Crud
         $fillable = $this->model->getFillable();
         $guarded = $this->model->getGuarded();
         foreach ($columns as $column) {
-            if (! $column->isFillable() || ! in_array($column->name(), $fillable) || in_array($column->name(),
-                    $guarded)) {
+            if (
+                ! $column->isFillable() || ! in_array($column->name(), $fillable) || in_array(
+                    $column->name(),
+                    $guarded
+                )
+            ) {
                 continue;
             }
             $rules[] = "\t\t\t'{$column->name()}' => " . $this->implode($column->validationRules());
@@ -134,7 +138,7 @@ class Request implements Crud
 
     private function implode(array $rules)
     {
-        $string = '['."\n\t\t\t\t";
+        $string = '[' . "\n\t\t\t\t";
         foreach ($rules as $rule) {
             $string .= 0 !== substr_compare($rule, 'Rule::', 0, 6) ? "'" . $rule . "'" : $rule;
             $string .= ',' . "\n\t\t\t\t";

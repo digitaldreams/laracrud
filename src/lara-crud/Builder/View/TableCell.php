@@ -1,8 +1,6 @@
 <?php
 
-
 namespace LaraCrud\Builder\View;
-
 
 use LaraCrud\Contracts\ColumnContract;
 

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace LaraCrud\Services;
-
 
 use Illuminate\Support\Facades\Route;
 
@@ -102,5 +100,4 @@ class ControllerReader
 
         return $retMethods;
     }
-
 }

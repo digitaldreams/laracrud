@@ -1,6 +1,5 @@
 <?php
 
-
 namespace LaraCrud\Builder\Controller\Api;
 
 use LaraCrud\Builder\Controller\IndexMethod as ParentIndexMethod;
@@ -12,5 +11,4 @@ class IndexMethod extends ParentIndexMethod implements ApiResourceResponseMethod
     {
         return true;
     }
-
 }

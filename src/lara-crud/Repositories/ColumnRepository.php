@@ -260,8 +260,11 @@ class ColumnRepository implements ColumnContract
             $rules[] = sprintf("Rule::unique('%s','%s')", $this->table->name(), $this->name());
         }
         if ($this->isForeign()) {
-            $rules[] = sprintf("Rule::exists('%s','%s')", $this->column->foreignTable(),
-                $this->column->foreignColumn());
+            $rules[] = sprintf(
+                "Rule::exists('%s','%s')",
+                $this->column->foreignTable(),
+                $this->column->foreignColumn()
+            );
         }
         if ('enum' == $this->dataType()) {
             $rules[] = 'in:' . implode(',', $this->options());
@@ -271,8 +274,12 @@ class ColumnRepository implements ColumnContract
             $rules[] = 'max:' . $this->length();
         } elseif ('tinyint' == $this->dataType() && 1 == $this->length()) {
             $rules[] = 'boolean';
-        } elseif (in_array($this->dataType(),
-            ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float', 'double'])) {
+        } elseif (
+            in_array(
+                $this->dataType(),
+                ['smallint', 'int', 'mediumint', 'bigint', 'decimal', 'float', 'double']
+            )
+        ) {
             $rules[] = 'numeric';
         } elseif (in_array($this->dataType(), ['date', 'time', 'datetime', 'timestamp'])) {
             $rules[] = 'date';

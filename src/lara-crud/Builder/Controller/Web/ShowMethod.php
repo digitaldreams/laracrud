@@ -7,5 +7,4 @@ use LaraCrud\Contracts\Controller\ViewAbleMethod;
 
 class ShowMethod extends ParentShowMethod implements ViewAbleMethod
 {
-
 }

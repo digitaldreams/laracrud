@@ -231,7 +231,8 @@ class Model
     public function dates()
     {
         //Check if it is a data time column. If so then add it to $protected $dates=[]
-        if (in_array($this->column->dataType(), ['time', 'date', 'datetime', 'timestamp'])
+        if (
+            in_array($this->column->dataType(), ['time', 'date', 'datetime', 'timestamp'])
             && !in_array($this->column->name(), config('laracrud.model.protectedColumns'))
         ) {
             $this->dates[] = "\t" . "'" . $this->column->name() . "'";
@@ -281,9 +282,7 @@ class Model
                 'column' => $this->column->name(),
             ]);
             $this->mutators[] = $tempMan->get();
-
         } elseif (in_array($this->column->dataType(), ['varchar', 'text', 'tinytext', 'bigtext'])) {
-
             $tempMan = new TemplateManager('model/setAttributeText.txt', [
                 'columnLabel' => $label,
                 'column' => $this->column->name(),

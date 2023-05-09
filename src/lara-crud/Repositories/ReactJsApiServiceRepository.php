@@ -34,6 +34,5 @@ class ReactJsApiServiceRepository extends AbstractControllerRepository
 
     public function addMethods()
     {
-
     }
 }

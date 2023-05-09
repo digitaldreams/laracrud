@@ -54,7 +54,7 @@ class ApiResource implements Crud
 
         foreach ($tableRepository->columns() as $columnRepository) {
             if (!$columnRepository->isForeign()) {
-                $this->properties[] = "\t\t\t".'"' . $columnRepository->name() . '" => $this->resource->' . $columnRepository->name() . ',';
+                $this->properties[] = "\t\t\t" . '"' . $columnRepository->name() . '" => $this->resource->' . $columnRepository->name() . ',';
             }
         }
 
@@ -92,5 +92,4 @@ class ApiResource implements Crud
             $this->fileName = (new \ReflectionClass($this->model))->getShortName() . 'Resource';
         }
     }
-
 }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace LaraCrud\Helpers;
-
 
 trait ApiMethodHelper
 {
@@ -52,4 +50,3 @@ trait ApiMethodHelper
         return $str;
     }
 }
-

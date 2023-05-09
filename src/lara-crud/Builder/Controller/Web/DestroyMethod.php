@@ -7,7 +7,6 @@ use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
 class DestroyMethod extends ParentDestroyMethod implements RedirectAbleMethod
 {
-
     /**
      * Name of the Route user will be redirected after successfully Delete.
      *
@@ -17,5 +16,4 @@ class DestroyMethod extends ParentDestroyMethod implements RedirectAbleMethod
     {
         return 'index';
     }
-
 }
