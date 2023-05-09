@@ -71,20 +71,17 @@ class RouteCrud implements Crud
 
     public $errors = [];
 
-    protected $api = false;
-
     protected $template = 'web';
 
     protected $namespace;
 
-    public function __construct($controller = '', $api = false)
+    public function __construct($controller = '', protected $api = false)
     {
         if (!is_array($controller)) {
             $this->controllers[] = $controller;
         } else {
             $this->controllers = $controller;
         }
-        $this->api = $api;
 
         $this->getRoute();
         $this->fetchControllerMethods();
@@ -103,8 +100,8 @@ class RouteCrud implements Crud
         $routes = Route::getRoutes();
 
         foreach ($routes as $route) {
-            $controllerName = strstr($route->getActionName(), '@', true);
-            $methodName = str_replace('@', '', strstr($route->getActionName(), '@'));
+            $controllerName = strstr((string) $route->getActionName(), '@', true);
+            $methodName = str_replace('@', '', strstr((string) $route->getActionName(), '@'));
             $this->routes[$route->getActionName()] = [
                 'name' => $route->getName(),
                 'path' => $route->uri(),
@@ -154,9 +151,9 @@ class RouteCrud implements Crud
     protected function filterMethod($controllerName, $reflectionMethods)
     {
         $retMethods = [];
-        foreach ($reflectionMethods as $method) {
-            if (0 != substr_compare($method->name, '__', 0, 2) && $method->class == $controllerName) {
-                $retMethods[] = $method->name;
+        foreach ($reflectionMethods as $reflectionMethod) {
+            if (0 != substr_compare((string) $reflectionMethod->name, '__', 0, 2) && $reflectionMethod->class == $controllerName) {
+                $retMethods[] = $reflectionMethod->name;
             }
         }
 
@@ -274,7 +271,7 @@ class RouteCrud implements Crud
         $resourceMethods = ['index', 'show', 'store', 'update', 'destroy'];
 
         if (empty($this->api)) {
-            $resourceMethods = array_merge($resourceMethods, ['create', 'edit']);
+            $resourceMethods = [...$resourceMethods, 'create', 'edit'];
         }
 
         foreach ($this->controllerMethods as $controllerName => $ctr) {
@@ -282,24 +279,24 @@ class RouteCrud implements Crud
             $subNameSpace = '';
             $resourceRTemp = '';
 
-            $path = str_replace([$this->namespace, $ctr['shortName']], '', $ctr['full_name']);
+            $path = str_replace([$this->namespace, $ctr['shortName']], '', (string) $ctr['full_name']);
             $path = trim($path, '\\');
-            $controllerShortName = strtolower(str_replace('Controller', '', $ctr['shortName']));
+            $controllerShortName = strtolower(str_replace('Controller', '', (string) $ctr['shortName']));
 
             if (!empty($path)) {
                 $subNameSpace = ',' . "'namespace'=>'" . $path . "'";
                 $controllerShortName = strtolower($path) . '/' . $controllerShortName;
             }
 
-            $routesMethods = isset($this->methodNames[$controllerName]) ? $this->methodNames[$controllerName] : [];
-            $controllerMethods = isset($ctr['methods']) ? $ctr['methods'] : [];
+            $routesMethods = $this->methodNames[$controllerName] ?? [];
+            $controllerMethods = $ctr['methods'] ?? [];
             $newRouteMethods = array_diff($controllerMethods, $routesMethods);
 
             $resources = array_intersect($resourceMethods, $newRouteMethods);
 
             if (count($resourceMethods) == count($resources)) {
                 $newRouteMethods = array_diff($newRouteMethods, $resources);
-                $tableName = Str::plural(strtolower(str_replace('Controller', '', $ctr['shortName'])));
+                $tableName = Str::plural(strtolower(str_replace('Controller', '', (string) $ctr['shortName'])));
                 $resourceRTempObj = new TemplateManager('route/' . $this->template . '/resource.txt', [
                     'table' => $tableName,
                     'controller' => $ctr['shortName'],
@@ -307,8 +304,8 @@ class RouteCrud implements Crud
                 $resourceRTemp = $resourceRTempObj->get();
             }
 
-            foreach ($newRouteMethods as $newMethod) {
-                $controllerRoutes .= $this->generateRoute($ctr['shortName'], $newMethod, $controllerName, $path);
+            foreach ($newRouteMethods as $newRouteMethod) {
+                $controllerRoutes .= $this->generateRoute($ctr['shortName'], $newRouteMethod, $controllerName, $path);
             }
 
             if (empty($controllerRoutes)) {

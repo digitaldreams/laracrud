@@ -43,7 +43,7 @@ class Index extends Page
             'routeModelKey'   => $this->model->getRouteKeyName(),
             'searchBox'       => '',
             'partialFilename' => Str::singular($this->table->name()),
-            'createLink'      => $link->create(get_class($this->model)),
+            'createLink'      => $link->create($this->model::class),
         ];
         switch ($this->type) {
             case 'panel':

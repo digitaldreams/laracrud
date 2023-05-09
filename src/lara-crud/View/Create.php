@@ -45,7 +45,7 @@ class Create extends Page
             'folder'          => $prefix . $this->form->getFolder(),
             'routeModelKey'   => $this->model->getRouteKeyName(),
             'partialFilename' => Str::singular($this->table->name()),
-            'indexRoute'      => $this->getRouteName('index', $this->table->name()),
+            'indexRoute'      => static::getRouteName('index', $this->table->name()),
         ]))->get();
     }
 

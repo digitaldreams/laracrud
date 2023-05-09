@@ -19,8 +19,6 @@ abstract class DestroyMethod extends ControllerMethod
 
     /**
      * What code will be inside the destroy method.
-     *
-     * @return string
      */
     public function getBody(): string
     {
@@ -29,8 +27,6 @@ abstract class DestroyMethod extends ControllerMethod
 
     /**
      * Redirect route Parameter.
-     *
-     * @return array
      */
     public function generateRouteParameter(): array
     {

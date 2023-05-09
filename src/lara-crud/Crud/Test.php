@@ -32,19 +32,15 @@ class Test implements Crud
      */
     protected string $fileName;
 
-    protected TestRepository $testRepository;
-
     /**
      * Test constructor.
      *
-     * @param \LaraCrud\Repositories\TestRepository $testRepository
      * @param                                       $fileName
      */
-    public function __construct(TestRepository $testRepository, $fileName)
+    public function __construct(protected TestRepository $testRepository, string $fileName)
     {
         $this->namespace = config('laracrud.test.feature.namespace', 'Tests\Feature');
         $this->fileName = $fileName;
-        $this->testRepository = $testRepository;
     }
 
     /**

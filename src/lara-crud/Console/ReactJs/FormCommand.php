@@ -39,10 +39,8 @@ class FormCommand extends Command
 
     /**
      *  Check if Model or Parent Model exists . If so then create object from them otherwise return warning and exit.
-     *
-     * @param mixed $model
      */
-    private function getModal($model)
+    private function getModal(mixed $model)
     {
         if (class_exists($model)) {
             return new $model();

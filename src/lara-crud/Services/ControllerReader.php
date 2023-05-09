@@ -7,13 +7,6 @@ use Illuminate\Support\Facades\Route;
 class ControllerReader
 {
     /**
-     * controller Full Namespace.
-     *
-     * @var string
-     */
-    protected string $controller;
-
-    /**
      * List of Public method's of this controller
      *
      * @var \ReflectionMethod[]
@@ -28,13 +21,11 @@ class ControllerReader
     /**
      * ControllerReader constructor.
      *
-     * @param string $controller
      *
      * @throws \ReflectionException
      */
-    public function __construct(string $controller)
+    public function __construct(protected string $controller)
     {
-        $this->controller = $controller;
         $reflectionClass = new \ReflectionClass($controller);
         $methods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
         $this->methods = $this->filterMethod($controller, $methods);
@@ -57,21 +48,18 @@ class ControllerReader
         return $this->routes;
     }
 
-    /**
-     * @return array
-     */
     protected function parseRoutes(): array
     {
         $returnRoutes = [];
 
         $routes = Route::getRoutes();
         foreach ($routes as $route) {
-            $controllerName = strstr($route->getActionName(), '@', true);
+            $controllerName = strstr((string) $route->getActionName(), '@', true);
             $cname = $controllerName ?: $route->getActionName();
             if ($this->controller != $cname) {
                 continue;
             }
-            $methodName = str_replace('@', '', strstr($route->getActionName(), '@'));
+            $methodName = str_replace('@', '', strstr((string) $route->getActionName(), '@'));
             $methodName = $methodName ?: '__invoke';
             $returnRoutes[$methodName] = $route;
         }
@@ -82,19 +70,17 @@ class ControllerReader
     /**
      * Child class all the method of its parent. But we will accept only child class method.
      *
-     * @param string              $controllerName
      * @param \ReflectionMethod[] $reflectionMethods
-     *
      * @return array
      */
     protected function filterMethod(string $controllerName, array $reflectionMethods)
     {
         $retMethods = [];
-        foreach ($reflectionMethods as $method) {
-            if (0 != substr_compare($method->name, '__', 0, 2) && $method->class == $controllerName) {
-                $retMethods[$method->name] = $method;
-            } elseif ($method->name == '__invoke' && $method->class == $controllerName) {
-                $retMethods[$method->name] = $method;
+        foreach ($reflectionMethods as $reflectionMethod) {
+            if (0 != substr_compare($reflectionMethod->name, '__', 0, 2) && $reflectionMethod->class == $controllerName) {
+                $retMethods[$reflectionMethod->name] = $reflectionMethod;
+            } elseif ($reflectionMethod->name == '__invoke' && $reflectionMethod->class == $controllerName) {
+                $retMethods[$reflectionMethod->name] = $reflectionMethod;
             }
         }
 

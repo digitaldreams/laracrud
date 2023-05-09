@@ -68,18 +68,16 @@ class RequestController implements Crud
     /**
      * RequestControllerCrud constructor.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
      * @param string                              $controller
      * @param bool                                $api
      * @param string                              $name
-     *
      * @throws \Exception
      */
     public function __construct(\Illuminate\Database\Eloquent\Model $model, $controller = '', $api = false, $name = '')
     {
         $this->model = $model;
         $policies = Gate::policies();
-        $this->policy = $policies[get_class($this->model)] ?? false;
+        $this->policy = $policies[$this->model::class] ?? false;
 
         $controllerNs = !empty($api) ? config('laracrud.controller.apiNamespace', 'App\Http\Controllers\Api') : config('laracrud.controller.namespace', 'App\Http\Controllers');
         $this->controllerNs = $this->getFullNS($controllerNs);
@@ -98,7 +96,7 @@ class RequestController implements Crud
 
             $this->classInspector = new ClassInspector($this->controllerName);
             $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-            $this->namespace = $this->getFullNS(trim($requestNs, '/')) . '\\' . ucfirst(Str::camel($this->folderName));
+            $this->namespace = $this->getFullNS(trim((string) $requestNs, '/')) . '\\' . ucfirst(Str::camel($this->folderName));
             $this->modelName = $this->getModelName($this->table);
         }
     }
@@ -135,31 +133,31 @@ class RequestController implements Crud
         $publicMethods = $this->classInspector->publicMethods;
 
         if (!empty($publicMethods)) {
-            foreach ($publicMethods as $method) {
+            foreach ($publicMethods as $publicMethod) {
                 $folderPath = base_path($this->toPath($this->namespace));
-                $this->modelName = $this->getModelName($method);
+                $this->modelName = $this->getModelName($publicMethod);
                 $filePath = $folderPath . '/' . $this->modelName . '.php';
 
                 if (file_exists($filePath)) {
                     continue;
                 }
                 $isApi = 'api' == $this->template ? true : false;
-                if (in_array($method, ['create', 'store'])) {
+                if (in_array($publicMethod, ['create', 'store'])) {
                     $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/' . $this->modelName, $isApi);
                     $requestStore->setAuthorization($this->getAuthCode('create'));
                     $requestStore->save();
-                } elseif (in_array($method, ['edit', 'update'])) {
+                } elseif (in_array($publicMethod, ['edit', 'update'])) {
                     $requestUpdate = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/' . $this->modelName, $isApi);
                     $requestUpdate->setAuthorization($this->getAuthCode('update'));
                     $requestUpdate->save();
                 } else {
                     $auth = 'true';
-                    if ('show' === $method) {
+                    if ('show' === $publicMethod) {
                         $auth = $this->getAuthCode('view');
-                    } elseif ('destroy' === $method) {
+                    } elseif ('destroy' === $publicMethod) {
                         $auth = $this->getAuthCode('delete');
                     } else {
-                        $auth = $this->getAuthCode($method);
+                        $auth = $this->getAuthCode($publicMethod);
                     }
                     $model = new \SplFileObject($filePath, 'w+');
                     $model->fwrite($this->template($auth));
@@ -173,7 +171,7 @@ class RequestController implements Crud
         $auth = 'true';
         if (class_exists($this->policy) && method_exists($this->policy, $methodName)) {
             if (in_array($methodName, ['index', 'create', 'store'])) {
-                $code = '\\' . get_class($this->model) . '::class)';
+                $code = '\\' . $this->model::class . '::class)';
             } else {
                 $modelName = (new \ReflectionClass($this->model))->getShortName();
                 $code = '$this->route(\'' . strtolower($modelName) . '\'))';

@@ -89,10 +89,8 @@ class Model
 
     /**
      * Database Type => PHP data types.
-     *
-     * @var array
      */
-    private $converTypes = [
+    private array $converTypes = [
         'varchar' => 'string',
         'boolean' => 'bool',
         'enum' => 'string',
@@ -112,12 +110,10 @@ class Model
 
     /**
      * ModelBuilder constructor.
-     *
-     * @param \LaraCrud\Contracts\ColumnContract $column
      */
-    public function __construct(ColumnContract $column)
+    public function __construct(ColumnContract $columnContract)
     {
-        $this->column = $column;
+        $this->column = $columnContract;
     }
 
     /**
@@ -184,7 +180,7 @@ class Model
 
         foreach ($this->column->options() as $value) {
             $name = strtoupper($this->column->name() . '_' . str_replace([' ',
-                '-', '"', '/', ], '_', $value));
+                '-', '"', '/', ], '_', (string) $value));
             $this->constants[] = "\t" . ' const ' . $name . '=' . "'$value'" . ';';
         }
 
@@ -274,7 +270,7 @@ class Model
         $label = str_replace(' ', '', ucwords(str_replace('_', ' ', $this->column->name())));
 
         if (in_array($this->column->dataType(), ['time', 'date', 'datetime', 'timestamp'])) {
-            $setDateFormat = isset($setTimeFormats[$this->column->dataType()]) ? $setTimeFormats[$this->column->dataType()] : 'Y-m-d';
+            $setDateFormat = $setTimeFormats[$this->column->dataType()] ?? 'Y-m-d';
 
             $tempMan = new TemplateManager('model/setAttributeDate.txt', [
                 'format' => $setDateFormat,
@@ -306,7 +302,7 @@ class Model
             $getTimeFormats = config('laracrud.model.getDateFormat', []);
 
             $tempMan = new TemplateManager('model/getAttributeDate.txt', [
-                'format' => isset($getTimeFormats[$this->column->dataType()]) ? $getTimeFormats[$this->column->dataType()] : 'd M Y',
+                'format' => $getTimeFormats[$this->column->dataType()] ?? 'd M Y',
                 'columnLabel' => str_replace(' ', '', ucwords(str_replace('_', ' ', $this->column->name()))),
                 'column' => $this->column->name(),
             ]);

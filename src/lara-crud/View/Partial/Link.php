@@ -8,16 +8,13 @@ use LaraCrud\View\Page;
 
 class Link
 {
-    protected $table;
-
     /**
      * Link constructor.
      *
      * @param $table
      */
-    public function __construct($table)
+    public function __construct(protected $table)
     {
-        $this->table = $table;
     }
 
     /**

@@ -12,11 +12,6 @@ abstract class Page
     /**
      * @var
      */
-    protected $data;
-
-    /**
-     * @var
-     */
     protected $page;
 
     /**
@@ -39,9 +34,13 @@ abstract class Page
      *
      * @param $data
      */
-    public function __construct($data)
+    public function __construct(
+        /**
+         * @var
+         */
+        protected $data
+    )
     {
-        $this->data = $data;
     }
 
     /**

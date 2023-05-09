@@ -46,8 +46,8 @@ class ColumnRepository implements ColumnContract
         'bigint' => 'int',
         'bigint unsigned' => 'int',
         'json' => 'array',
-        'timestamp' => '\Carbon\Carbon',
-        'datetime' => '\Carbon\Carbon',
+        'timestamp' => '\\' . \Carbon\Carbon::class,
+        'datetime' => '\\' . \Carbon\Carbon::class,
     ];
 
     /**
@@ -56,106 +56,71 @@ class ColumnRepository implements ColumnContract
     protected $table;
 
     /**
-     * @param mixed                                             $data
-     * @param TableRepository|\LaraCrud\Contracts\TableContract $tableRepository
+     * @param TableRepository|\LaraCrud\Contracts\TableContract $tableContract
      * @param array                                             $foreignColumn
-     *
      * @throws \Exception
      */
-    public function __construct($data, TableContract $tableRepository, $foreignColumn = [])
+    public function __construct(mixed $data, TableContract $tableContract, $foreignColumn = [])
     {
-        $this->table = $tableRepository;
-        $this->column = new Column($data, $foreignColumn, $tableRepository->getTable());
+        $this->table = $tableContract;
+        $this->column = new Column($data, $foreignColumn, $tableContract->getTable());
         $this->foreignData = $foreignColumn;
 
         $files = $this->table->fileColumns();
-        $file = isset($files[$this->column->name()]) ? $files[$this->column->name()] : '';
+        $file = $files[$this->column->name()] ?? '';
         $this->column->setFile($file);
     }
 
-    /**
-     * @return bool
-     */
     public function isPk(): bool
     {
         return $this->column->isPk();
     }
 
-    /**
-     * @return string
-     */
     public function name(): string
     {
         return $this->column->name();
     }
 
-    /**
-     * @return string
-     */
     public function label(): string
     {
         return $this->column->label();
     }
 
-    /**
-     * @return TableContract
-     */
     public function table(): TableContract
     {
         return $this->table;
     }
 
-    /**
-     * @return bool
-     */
     public function isFillable(): bool
     {
         return ! $this->column->isProtected();
     }
 
-    /**
-     * @return bool
-     */
     public function isRequired(): bool
     {
         return ! $this->column->isNull();
     }
 
-    /**
-     * @return bool
-     */
     public function isNull(): bool
     {
         return $this->column->isNull();
     }
 
-    /**
-     * @return bool
-     */
     public function isUnique(): bool
     {
         return $this->column->isUnique();
     }
 
-    /**
-     * @return string
-     */
     public function dataType(): string
     {
         return $this->column->type();
     }
 
-    /**
-     * @return string
-     */
     public function phpDataType(): string
     {
-        return isset($this->phpDataTypes[$this->dataType()]) ? $this->phpDataTypes[$this->dataType()] : $this->dataType();
+        return $this->phpDataTypes[$this->dataType()] ?? $this->dataType();
     }
 
-    /**
-     * @return string
-     */
     public function inputType(): string
     {
         // TODO: Implement inputType() method.
@@ -169,9 +134,6 @@ class ColumnRepository implements ColumnContract
         return $this->column->length();
     }
 
-    /**
-     * @return int|null
-     */
     public function order(): ?int
     {
         // TODO: Implement order() method.
@@ -197,8 +159,6 @@ class ColumnRepository implements ColumnContract
 
     /**
      * Whether current column is uploadable image or not.
-     *
-     * @return string
      */
     public function image(): string
     {
@@ -207,8 +167,6 @@ class ColumnRepository implements ColumnContract
 
     /**
      * Whether current column is uploadable file or not?
-     *
-     * @return string
      */
     public function file(): string
     {
@@ -217,26 +175,18 @@ class ColumnRepository implements ColumnContract
 
     /**
      * For Enum data type there are some predefined data set.
-     *
-     * @return array|null
      */
     public function options(): ?array
     {
         return $this->column->options();
     }
 
-    /**
-     * @return bool
-     */
     public function isForeign(): bool
     {
         return $this->column->isForeign();
     }
 
-    /**
-     * @return \LaraCrud\Helpers\ForeignKey|null
-     */
-    public function foreignKey()
+    public function foreignKey(): ?\LaraCrud\Helpers\ForeignKey
     {
         if ($this->column->isForeign()) {
             return new ForeignKey($this->foreignData);

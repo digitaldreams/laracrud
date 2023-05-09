@@ -8,9 +8,6 @@ use LaraCrud\Services\FullTextSearch;
 
 abstract class IndexMethod extends ControllerMethod
 {
-    /**
-     * @return bool
-     */
     public function isSearchAble(): bool
     {
         $traits = class_uses($this->model);
@@ -35,9 +32,6 @@ abstract class IndexMethod extends ControllerMethod
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getBody(): string
     {
         $body = '$builder = ' . $this->getModelShortName() . '::';

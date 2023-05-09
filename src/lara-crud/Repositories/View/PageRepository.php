@@ -47,8 +47,6 @@ abstract class PageRepository
 
     /**
      * PageRepository constructor.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $model
      */
     public function __construct(Model $model)
     {
@@ -61,8 +59,6 @@ abstract class PageRepository
 
     /**
      * Save generated code into a blade file.
-     *
-     * @return string
      */
     public function save(): string
     {
@@ -76,20 +72,13 @@ abstract class PageRepository
 
     /**
      * Relative path of the file. E.g. pages.posts.index .
-     *
-     * @return string
      */
     abstract public function path(): string;
 
-    /**
-     * @return string
-     */
     abstract public function template(): string;
 
     /**
      * Check whether view file is already exists or not.
-     *
-     * @return bool
      */
     public function isExists(): bool
     {
@@ -98,8 +87,6 @@ abstract class PageRepository
 
     /**
      * Where Model is a softDelete able modal. If so then we should implement Trash box and restore button.
-     *
-     * @return bool
      */
     public function isSoftDeleteAble(): bool
     {
@@ -108,8 +95,6 @@ abstract class PageRepository
 
     /**
      * If Model implement Scot search then we should show a search form on index page.
-     *
-     * @return bool
      */
     public function isSearchAble(): bool
     {
@@ -118,9 +103,6 @@ abstract class PageRepository
         return in_array('Laravel\Scout\Searchable', $traits) || in_array(FullTextSearch::class, $traits);
     }
 
-    /**
-     * @return \LaraCrud\Contracts\TableContract
-     */
     public function table(): TableContract
     {
         return $this->table;
@@ -128,8 +110,6 @@ abstract class PageRepository
 
     /**
      * Set Parent Model.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $parentModel
      */
     public function setParent(Model $parentModel)
     {

@@ -56,8 +56,8 @@ trait Helper
      */
     public function parseName($name)
     {
-        if (false !== strpos($name, '/', 1)) {
-            $narr = explode('/', trim($name, '/'));
+        if (str_contains(substr((string) $name, 1), '/')) {
+            $narr = explode('/', trim((string) $name, '/'));
             $this->modelName = $this->getModelName(array_pop($narr));
 
             foreach ($narr as $path) {
@@ -112,7 +112,7 @@ trait Helper
         if (!file_exists($fullPath)) {
             $relPath = $this->toPath($this->namespace);
             $nextPath = '';
-            $folders = explode('/', $relPath);
+            $folders = explode('/', (string) $relPath);
             foreach ($folders as $folder) {
                 $nextPath .= !empty($nextPath) ? '/' . $folder : $folder;
                 if (!file_exists(base_path($nextPath))) {
@@ -134,11 +134,11 @@ trait Helper
         $nsArr = explode('\\', trim($namespace, '\\'));
         $rootNs = array_shift($nsArr);
         $loadComposerJson = new \SplFileObject(base_path('composer.json'));
-        $composerArr = json_decode($loadComposerJson->fread($loadComposerJson->getSize()), true);
+        $composerArr = json_decode($loadComposerJson->fread($loadComposerJson->getSize()), true, 512, JSON_THROW_ON_ERROR);
         $psr4 = $composerArr['autoload']['psr-4'] ?? [];
         $rootPath = $psr4[$rootNs . '\\'] ?? lcfirst($rootNs);
 
-        return rtrim($rootPath, '/') . '/' . implode('/', $nsArr);
+        return rtrim((string) $rootPath, '/') . '/' . implode('/', $nsArr);
     }
 
     /**
@@ -170,8 +170,8 @@ trait Helper
         if (empty($namespace)) {
             return $rootNs;
         }
-        if (0 !== substr_compare($namespace, $rootNs, 0, strlen($rootNs))) {
-            return trim($rootNs, '\\') . '\\' . $namespace;
+        if (0 !== substr_compare((string) $namespace, (string) $rootNs, 0, strlen((string) $rootNs))) {
+            return trim((string) $rootNs, '\\') . '\\' . $namespace;
         }
 
         return $namespace;
@@ -184,8 +184,8 @@ trait Helper
     {
         $retStr = '';
         $ns = array_unique($this->import);
-        foreach ($ns as $namespace) {
-            $retStr .= 'use ' . $namespace . ';' . PHP_EOL;
+        foreach ($ns as $n) {
+            $retStr .= 'use ' . $n . ';' . PHP_EOL;
         }
 
         return $retStr;

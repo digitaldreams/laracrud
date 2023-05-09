@@ -15,9 +15,6 @@ class IndexRepository extends PageRepository implements IndexContract
      */
     protected object $displayType;
 
-    /**
-     * @return string|null
-     */
     public function searchForm(): ?string
     {
         if ($this->isSearchAble()) {
@@ -49,9 +46,6 @@ class IndexRepository extends PageRepository implements IndexContract
         throw new \Exception($displayType . ' display type not supported.');
     }
 
-    /**
-     * @return string|null
-     */
     public function recycleBin(): ?string
     {
         // TODO: Implement recycleBin() method.
@@ -68,8 +62,6 @@ class IndexRepository extends PageRepository implements IndexContract
     }
 
     /**
-     * @return string
-     *
      * @throws \ReflectionException
      */
     public function path(): string
@@ -90,8 +82,6 @@ class IndexRepository extends PageRepository implements IndexContract
     }
 
     /**
-     * @return string
-     *
      * @throws \ReflectionException
      */
     public function template(): string

@@ -14,7 +14,6 @@ trait Image
     /**
      * Upload multiple file from requests.
      *
-     * @param Request $request
      *
      * @return bool
      */
@@ -27,7 +26,7 @@ trait Image
             if (!$document->isValid()) {
                 return false;
             }
-            $fileName = uniqid(rand(1000, 99999)) . '.' . $document->getClientOriginalExtension();
+            $fileName = uniqid(random_int(1000, 99999)) . '.' . $document->getClientOriginalExtension();
             $this->{$column} = $document->storeAs($this->getStoragePath(), $fileName, 'public');
             $this->resize($this->getMainWidth(), $this->getStoragePath(), $this->getMainHeight());
         }
@@ -110,10 +109,8 @@ trait Image
 
     /**
      * Get thumbnail path.
-     *
-     * @return bool|string
      */
-    public function getThumbPath()
+    public function getThumbPath(): bool|string
     {
         if (Storage::disk('public')->exists($this->getThumbnailPath() . '/' . $this->getBaseName())) {
             return config('filesystems.disks.public.root') . '/' . $this->getThumbnailPath() . '/' . $this->getBaseName();
@@ -155,7 +152,7 @@ trait Image
      *
      * @return \Intervention\Image\Image
      */
-    public function resize($width, $path, $height = null)
+    public function resize($width, $path, ?int $height = null)
     {
         $fullPath = $this->makePath($path);
         $img = ImageLib::make($this->getFullPath());
@@ -225,8 +222,8 @@ trait Image
     {
         $path = !empty($path) ? $path : $this->getStoragePath();
 
-        if (!Storage::disk('public')->exists(trim($path, '/'))) {
-            Storage::disk('public')->makeDirectory(trim($path, '/'));
+        if (!Storage::disk('public')->exists(trim((string) $path, '/'))) {
+            Storage::disk('public')->makeDirectory(trim((string) $path, '/'));
         }
 
         return config('filesystems.disks.public.root') . '/' . $path;
@@ -247,7 +244,7 @@ trait Image
             }
 
             return false;
-        } catch (\Exception $ex) {
+        } catch (\Exception) {
             return false;
         }
     }

@@ -45,7 +45,7 @@ class ModelCommand extends Command
                 $s = 0;
                 foreach ($files as $file) {
                     try {
-                        $fullClass = $modelClass . '\\' . pathinfo($file, PATHINFO_FILENAME);
+                        $fullClass = $modelClass . '\\' . pathinfo((string) $file, PATHINFO_FILENAME);
 
                         if (class_exists($fullClass) && is_subclass_of($fullClass, Model::class)) {
                             $enumCrud = new ReactJsModelCrud(new $fullClass());
@@ -66,10 +66,8 @@ class ModelCommand extends Command
 
     /**
      *  Check if Model or Parent Model exists . If so then create object from them otherwise return warning and exit.
-     *
-     * @param mixed $model
      */
-    private function checkModelExists($model)
+    private function checkModelExists(mixed $model)
     {
         $modelFullName = $this->modelFullName($model);
         if (class_exists($modelFullName)) {
@@ -81,10 +79,8 @@ class ModelCommand extends Command
 
     /**
      * @param $model
-     *
-     * @return false|string
      */
-    private function modelFullName($model)
+    private function modelFullName($model): false|string
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         if (! class_exists($model)) {

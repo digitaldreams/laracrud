@@ -74,9 +74,6 @@ class ControllerMethodReader
 
     /**
      * ControllerMethod constructor.
-     *
-     * @param \ReflectionMethod         $reflectionMethod
-     * @param \Illuminate\Routing\Route $route
      */
     public function __construct(\ReflectionMethod $reflectionMethod, Route $route)
     {
@@ -85,15 +82,13 @@ class ControllerMethodReader
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     *
      * @return $this
      */
     public function setModel(Model $model): self
     {
         $this->model = $model;
         $this->modelRelationReader = (new ModelRelationReader($model))->read();
-        $this->namespaces[] = get_class($model);
+        $this->namespaces[] = $model::class;
 
         return $this;
     }
@@ -101,14 +96,13 @@ class ControllerMethodReader
     /**
      * Set Parent Model when creating a child Resource Controller.
      *
-     * @param \Illuminate\Database\Eloquent\Model $parentModel
      *
      * @return \LaraCrud\Builder\Test\Methods\ControllerMethod
      */
     public function setParent(Model $parentModel): self
     {
         $this->parentModel = $parentModel;
-        $this->namespaces[] = get_class($parentModel);
+        $this->namespaces[] = $parentModel::class;
 
         return $this;
     }
@@ -121,13 +115,13 @@ class ControllerMethodReader
             return 'route("' . $name . '")';
         }
         foreach ($this->route->parameterNames() as $parameterName) {
-            if (strtolower($parameterName) == strtolower($this->modelRelationReader->getShortName())) {
+            if (strtolower((string) $parameterName) == strtolower($this->modelRelationReader->getShortName())) {
                 $value = $this->getModelVariable() . '->' . $this->model->getRouteKeyName();
                 $this->hasModelOnParameter = true;
             } else {
                 if ($this->parentModel) {
                     $ref = new \ReflectionClass($this->parentModel);
-                    if (strtolower($parameterName) == strtolower($ref->getShortName())) {
+                    if (strtolower((string) $parameterName) == strtolower($ref->getShortName())) {
                         $this->hasModelParentOnParameter = true;
                         $parentVariable = '$' . lcfirst($ref->getShortName());
                         $value = $parentVariable . '->' . $this->parentModel->getRouteKeyName();
@@ -158,8 +152,6 @@ class ControllerMethodReader
 
     /**
      * Get list of importable Namespaces.
-     *
-     * @return array
      */
     public function getNamespaces(): array
     {
@@ -198,28 +190,25 @@ class ControllerMethodReader
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $rules;
         }
 
         return $this->validationRules = $rules;
     }
 
-    /**
-     * @return bool
-     */
     public function hasFile(): bool
     {
         $rules = $this->getCustomRequestClassRules();
         foreach ($rules as $field => $rule) {
-            $listOfRules = is_array($rule) ? $rule : explode('|', $rule);
+            $listOfRules = is_array($rule) ? $rule : explode('|', (string) $rule);
             foreach ($listOfRules as $listOfRule) {
                 if (is_object($listOfRule)) {
                     continue;
                 }
-                $mimeTypes = substr_compare($listOfRule, 'mimetypes', 0, 9);
-                $mimes = substr_compare($listOfRule, 'mimes', 0, 5);
-                $dimensions = substr_compare($listOfRule, 'dimensions', 0, 10);
+                $mimeTypes = substr_compare((string) $listOfRule, 'mimetypes', 0, 9);
+                $mimes = substr_compare((string) $listOfRule, 'mimes', 0, 5);
+                $dimensions = substr_compare((string) $listOfRule, 'dimensions', 0, 10);
                 if ('image' == $listOfRule || 'file' == $listOfRule || 0 == $mimes || 0 == $mimeTypes || 0 == $dimensions) {
                     return true;
                 }

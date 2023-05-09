@@ -42,7 +42,7 @@ class ServiceCommand extends Command
                 $s = 0;
                 foreach ($files as $file) {
                     try {
-                        $fullClass = $controller . '\\' . pathinfo($file, PATHINFO_FILENAME);
+                        $fullClass = $controller . '\\' . pathinfo((string) $file, PATHINFO_FILENAME);
 
                         if (class_exists($fullClass)) {
                             $enumCrud = new ReactJsServiceCrud($fullClass);

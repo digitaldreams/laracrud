@@ -49,8 +49,8 @@ class Package
      */
     public function __construct($name)
     {
-        $this->name = strtolower($name);
-        $this->rootPath = rtrim(config('laracrud.package.path'), '/');
+        $this->name = strtolower((string) $name);
+        $this->rootPath = rtrim((string) config('laracrud.package.path'), '/');
         $this->packagePath = $this->rootPath . '/' . $this->name;
         $this->namespace = $this->getModelName($name);
         $this->templatePath = $this->getFullPath('package');
@@ -86,9 +86,6 @@ class Package
         }
     }
 
-    /**
-     * @return array
-     */
     protected function globalVars(): array
     {
         $data = [
@@ -99,9 +96,6 @@ class Package
         return $data;
     }
 
-    /**
-     * @return array
-     */
     protected function fetchDirs(): array
     {
         $dirTree = [];
@@ -122,7 +116,7 @@ class Package
      */
     protected function getRelativeDirectoryName($it)
     {
-        $path = str_replace($this->templatePath, '', $it->getPathname());
+        $path = str_replace($this->templatePath, '', (string) $it->getPathname());
 
         return str_replace($it->getBaseName(), '', trim($path, '/'));
     }
@@ -130,10 +124,8 @@ class Package
     /**
      * @param string $filePath
      * @param string $content
-     *
-     * @return \SplFileObject|bool
      */
-    protected function saveFile($filePath, $content)
+    protected function saveFile($filePath, $content): \SplFileObject|bool
     {
         $filePath = $this->processFileName($filePath);
 
@@ -169,11 +161,6 @@ class Package
         return $retPath;
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return string
-     */
     protected function processFileName(string $filename): string
     {
         if (strripos($filename, '.php.txt')) {

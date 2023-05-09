@@ -14,11 +14,6 @@ class ModelFactory implements Crud
     use Helper;
 
     /**
-     * @var Model
-     */
-    protected Model $model;
-
-    /**
      * @var Table
      */
     protected $table;
@@ -36,9 +31,8 @@ class ModelFactory implements Crud
      *
      * @throws \Exception
      */
-    public function __construct(Model $model)
+    public function __construct(protected Model $model)
     {
-        $this->model = $model;
         $this->table = new Table($this->model->getTable());
         $this->reflection = new \ReflectionClass($this->model);
         $this->setNamespace();
@@ -69,9 +63,6 @@ class ModelFactory implements Crud
         ]))->get();
     }
 
-    /**
-     * @return string
-     */
     protected function makeColumns(): string
     {
         $arr = '';
@@ -90,7 +81,6 @@ class ModelFactory implements Crud
     }
 
     /**
-     * @return string
      * @throws \ReflectionException
      *
      */
@@ -105,7 +95,7 @@ class ModelFactory implements Crud
     protected function setNamespace()
     {
         $this->namespace = config('laracrud.factory.namespace');
-        $classRootNs = trim(str_replace($this->reflection->getShortName(), "", $this->reflection->getName()), "\\");
+        $classRootNs = trim(str_replace($this->reflection->getShortName(), "", (string) $this->reflection->getName()), "\\");
         $modelRootNs = $this->getFullNS(config('laracrud.model.namespace', 'Models'));
         $sub = str_replace($modelRootNs, "", $classRootNs);
         if (! empty($sub)) {

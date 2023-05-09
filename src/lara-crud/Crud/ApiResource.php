@@ -10,8 +10,6 @@ use LaraCrud\Helpers\TemplateManager;
 class ApiResource implements Crud
 {
     use Helper;
-
-    private \Illuminate\Database\Eloquent\Model $model;
     private string $namespace;
     protected string $fileName;
     private $subNameSpace;
@@ -19,14 +17,10 @@ class ApiResource implements Crud
 
     protected array $properties = [];
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     */
-    public function __construct(\Illuminate\Database\Eloquent\Model $model, ?string $name = null)
+    public function __construct(private readonly \Illuminate\Database\Eloquent\Model $model, ?string $name = null)
     {
-        $this->model = $model;
         $this->checkName($name);
-        $this->namespace = $this->getFullNS(trim(config('laracrud.resource.namespace', 'App\Http\Resources'), ' / ')) . $this->subNameSpace;
+        $this->namespace = $this->getFullNS(trim((string) config('laracrud.resource.namespace', 'App\Http\Resources'), ' / ')) . $this->subNameSpace;
     }
 
     public function template()
@@ -71,14 +65,12 @@ class ApiResource implements Crud
 
 
     /**
-     * @param string|null $name
-     *
      * @return string
      */
     private function checkName(?string $name = null)
     {
         if (!empty($name)) {
-            if (false !== strpos($name, ' / ')) {
+            if (str_contains($name, ' / ')) {
                 $narr = explode(' / ', $name);
                 $this->fileName = array_pop($narr);
 

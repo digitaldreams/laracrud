@@ -43,7 +43,6 @@ abstract class ControllerMethod extends ControllerMethodReader
     /**
      * Get Inside code of a Controller Method.
      *
-     * @return string
      *
      * @throws \ReflectionException
      */
@@ -55,17 +54,11 @@ abstract class ControllerMethod extends ControllerMethodReader
         return implode("\n", $this->testMethods);
     }
 
-    /**
-     * @return string
-     */
     protected function getModelFactory(): string
     {
         return $this->modelFactory;
     }
 
-    /**
-     * @return string
-     */
     protected function getParentModelFactory(): string
     {
         return $this->parentModelFactory;
@@ -73,8 +66,6 @@ abstract class ControllerMethod extends ControllerMethodReader
 
     /**
      * Whether Current route need Auth.
-     *
-     * @return bool
      */
     protected function isAuthRequired(): bool
     {
@@ -105,7 +96,7 @@ abstract class ControllerMethod extends ControllerMethodReader
         if (!$this->isSanctumAuth) {
             return false;
         }
-        $this->namespaces[] = 'Laravel\Sanctum\Sanctum';
+        $this->namespaces[] = \Laravel\Sanctum\Sanctum::class;
 
         return 'Sanctum::actingAs(' . $actionAs . ', [\'*\']);';
     }
@@ -135,8 +126,6 @@ abstract class ControllerMethod extends ControllerMethodReader
 
     /**
      * Whether current application has Super Admin Role.
-     *
-     * @return bool
      */
     protected function hasSuperAdminRole(): bool
     {
@@ -186,15 +175,12 @@ abstract class ControllerMethod extends ControllerMethodReader
         return $data;
     }
 
-    /**
-     * @return string
-     */
     public function generateDataProvider(): string
     {
         $data = '';
         $rules = $this->getCustomRequestClassRules();
         foreach ($rules as $field => $rule) {
-            $listOfRules = is_array($rule) ? $rule : explode("|", $rule);
+            $listOfRules = is_array($rule) ? $rule : explode("|", (string) $rule);
             foreach ($listOfRules as $listOfRule) {
                 if (is_object($listOfRule)) {
                     continue;
@@ -212,8 +198,8 @@ abstract class ControllerMethod extends ControllerMethodReader
     protected function setFakeStorage(): self
     {
         if ($this->hasFile()) {
-            $this->namespaces[] = 'Illuminate\Support\Facades\Storage';
-            $this->namespaces[] = 'Illuminate\Http\UploadedFile';
+            $this->namespaces[] = \Illuminate\Support\Facades\Storage::class;
+            $this->namespaces[] = \Illuminate\Http\UploadedFile::class;
             $this->fake[] = 'Storage::fake(\'file\');';
             $this->fake[] = '$file = UploadedFile::fake()->create(\'poster.jpg\');';
 

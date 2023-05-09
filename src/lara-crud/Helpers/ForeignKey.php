@@ -12,25 +12,15 @@ class ForeignKey
     use DatabaseHelper;
     use Helper;
 
-    const RELATION_BELONGS_TO = 'belongsTo';
-    const RELATION_HAS_MANY = 'hasMany';
-    const RELATION_HAS_ONE = 'hasOne';
-    const RELATION_BELONGS_TO_MANY = 'belongsToMany';
+    final public const RELATION_BELONGS_TO = 'belongsTo';
+    final public const RELATION_HAS_MANY = 'hasMany';
+    final public const RELATION_HAS_ONE = 'hasOne';
+    final public const RELATION_BELONGS_TO_MANY = 'belongsToMany';
 
     /**
      * @var \PDO
      */
     protected $db;
-
-    /**
-     * @var \stdClass [
-     *                TABLE_NAME=>
-     *                COLUMN_NAME=>
-     *                REFERENCED_TABLE_NAME=>
-     *                REFERENCED_COLUMN_NAME=>
-     *                ]
-     */
-    protected $data;
 
     /**
      * @var bool
@@ -43,10 +33,18 @@ class ForeignKey
      * @param $data
      *
      * @throws \Exception
+     * @param \stdClass $data
      */
-    public function __construct($data)
+    public function __construct(/**
+     * @var \stdClass [
+     *                TABLE_NAME=>
+     *                COLUMN_NAME=>
+     *                REFERENCED_TABLE_NAME=>
+     *                REFERENCED_COLUMN_NAME=>
+     *                ]
+     */
+    protected $data)
     {
-        $this->data = $data;
         $this->db = (new Connector())->pdo();
         $this->isPivot = $this->isPivot();
     }
@@ -58,7 +56,7 @@ class ForeignKey
      */
     public function table()
     {
-        return isset($this->data->TABLE_NAME) ? $this->data->TABLE_NAME : false;
+        return $this->data->TABLE_NAME ?? false;
     }
 
     /**
@@ -68,17 +66,15 @@ class ForeignKey
      */
     public function column()
     {
-        return isset($this->data->COLUMN_NAME) ? $this->data->COLUMN_NAME : false;
+        return $this->data->COLUMN_NAME ?? false;
     }
 
     /**
      * Name of the Foreign Table name.
-     *
-     * @return string|bool
      */
-    public function foreignTable()
+    public function foreignTable(): string|bool
     {
-        return isset($this->data->REFERENCED_TABLE_NAME) ? $this->data->REFERENCED_TABLE_NAME : false;
+        return $this->data->REFERENCED_TABLE_NAME ?? false;
     }
 
     /**
@@ -88,7 +84,7 @@ class ForeignKey
      */
     public function foreignColumn()
     {
-        return isset($this->data->REFERENCED_COLUMN_NAME) ? $this->data->REFERENCED_COLUMN_NAME : false;
+        return $this->data->REFERENCED_COLUMN_NAME ?? false;
     }
 
     /**

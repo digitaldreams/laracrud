@@ -6,7 +6,7 @@ namespace LaraCrud\Helpers;
  * Class TemplateManager
  * All the internal template used by this library will be read and write via this class.
  */
-class TemplateManager
+class TemplateManager implements \Stringable
 {
     protected $path;
 
@@ -27,17 +27,15 @@ class TemplateManager
     protected $endTag = '@@';
 
     /**
-     * Associative array of placeholders. Where index is placeholder without tag.
-     *
-     * @var array
+     * @param mixed[] $data
      */
-    protected $data = [];
-
-    public function __construct($filename, $data = [], $autoProcess = true)
+    public function __construct($filename, /**
+     * Associative array of placeholders. Where index is placeholder without tag.
+     */
+    protected $data = [], $autoProcess = true)
     {
         $this->file = new \SplFileObject($this->getFullPath($filename), 'r');
         $this->template = $this->file->fread($this->file->getSize());
-        $this->data = $data;
 
         if ($autoProcess) {
             $this->process();
@@ -88,9 +86,6 @@ class TemplateManager
         return $this->template = strtr($this->template, $this->placeholders());
     }
 
-    /**
-     * @return array
-     */
     protected function placeholders(): array
     {
         $retArr = [];
@@ -129,10 +124,8 @@ class TemplateManager
 
     /**
      * String representation of template class.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->template;
     }

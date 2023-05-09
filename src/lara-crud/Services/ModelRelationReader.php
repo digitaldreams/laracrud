@@ -15,12 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ModelRelationReader
 {
-    /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected Model $model;
-
-    private \ReflectionClass $reflectionClass;
+    private readonly \ReflectionClass $reflectionClass;
 
     protected array $single = [];
 
@@ -41,12 +36,9 @@ class ModelRelationReader
 
     /**
      * ModelRelationReader constructor.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $model
      */
-    public function __construct(Model $model)
+    public function __construct(protected Model $model)
     {
-        $this->model = $model;
     }
 
     /**
@@ -62,12 +54,12 @@ class ModelRelationReader
         $methods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
             try {
-                if ($method->getNumberOfParameters() == 0 && $method->class == get_class($this->model)) {
+                if ($method->getNumberOfParameters() == 0 && $method->class == $this->model::class) {
                     $response = $method->invoke($this->model);
                     if (! is_object($response)) {
                         continue;
                     }
-                    $responseClass = get_class($response);
+                    $responseClass = $response::class;
                     if ($this->isItem($responseClass)) {
                         $this->findOwner($response);
                         $this->single[] = [
@@ -81,7 +73,7 @@ class ModelRelationReader
                         ];
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 continue;
             }
         }
@@ -91,8 +83,6 @@ class ModelRelationReader
 
     /**
      * Get relation that return a single Model instance.
-     *
-     * @return array
      */
     public function getSingleRelations(): array
     {
@@ -101,8 +91,6 @@ class ModelRelationReader
 
     /**
      * Get relations that return a collection of Models
-     *
-     * @return array
      */
     public function getCollectionRelations(): array
     {
@@ -111,8 +99,6 @@ class ModelRelationReader
 
     /**
      * Get all Relationships methods and its response defined in Model.
-     *
-     * @return array
      */
     public function getAll(): array
     {
@@ -122,8 +108,6 @@ class ModelRelationReader
 
     /**
      * @param $responseClass
-     *
-     * @return bool
      */
     private function isItem($responseClass): bool
     {
@@ -138,8 +122,6 @@ class ModelRelationReader
 
     /**
      * @param $responseClass
-     *
-     * @return bool
      */
     private function isCollection($responseClass): bool
     {
@@ -154,15 +136,15 @@ class ModelRelationReader
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Relations\BelongsTo $response
+     * @param \Illuminate\Database\Eloquent\Relations\BelongsTo $relation
      */
-    protected function findOwner(Relation $response): bool
+    protected function findOwner(Relation $relation): bool
     {
-        if ($response instanceof BelongsTo) {
+        if ($relation instanceof BelongsTo) {
             $userModel = config('auth.providers.users.model');
-            if ($userModel == get_class($response->getQuery()->getModel())) {
-                $this->ownerForeignKey = $response->getForeignKeyName();
-                $this->ownerLocalKey = $response->getOwnerKeyName();
+            if ($userModel == $relation->getQuery()->getModel()::class) {
+                $this->ownerForeignKey = $relation->getForeignKeyName();
+                $this->ownerLocalKey = $relation->getOwnerKeyName();
                 $this->hasOwner = true;
 
                 return true;

@@ -8,22 +8,15 @@ use LaraCrud\Configuration;
 
 class ControllerRepository extends AbstractControllerRepository
 {
-    /**
-     * @param \LaraCrud\Builder\Controller\ControllerMethod $method
-     *
-     * @return \LaraCrud\Repositories\ControllerRepository
-     */
-    public function addMethod(ControllerMethod $method): self
+    public function addMethod(ControllerMethod $controllerMethod): self
     {
-        $this->methods[] = $method;
+        $this->methods[] = $controllerMethod;
 
         return $this;
     }
 
     /**
      * @param string[]                                 $methods
-     * @param \Illuminate\Database\Eloquent\Model      $model
-     * @param \Illuminate\Database\Eloquent\Model|null $parent
      *
      * @return $this
      */
@@ -32,8 +25,8 @@ class ControllerRepository extends AbstractControllerRepository
         $availableMethods = $this->isApi ? Configuration::$controllerApiMethods : Configuration::$controllerWebMethods;
 
         $insertAbleMethods = array_intersect_key($availableMethods, array_flip($methods));
-        foreach ($insertAbleMethods as $methodName) {
-            $method = new $methodName($model);
+        foreach ($insertAbleMethods as $insertAbleMethod) {
+            $method = new $insertAbleMethod($model);
             if (!empty($parent)) {
                 $method->setParent($parent);
             }

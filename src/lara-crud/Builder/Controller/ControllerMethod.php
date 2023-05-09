@@ -73,8 +73,6 @@ abstract class ControllerMethod
 
     /**
      * ControllerMethod constructor.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $model
      */
     public function __construct(Model $model)
     {
@@ -94,8 +92,6 @@ abstract class ControllerMethod
 
     /**
      * Name of of Controller Method.
-     *
-     * @return string
      */
     public function getMethodName(): string
     {
@@ -122,8 +118,6 @@ abstract class ControllerMethod
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
     public function setMethodName(string $name): self
@@ -136,7 +130,6 @@ abstract class ControllerMethod
     /**
      * Get Inside code of a Controller Method.
      *
-     * @return string
      *
      * @throws \ReflectionException
      */
@@ -155,8 +148,6 @@ abstract class ControllerMethod
 
     /**
      * Get list of importable Namespaces.
-     *
-     * @return array
      */
     public function getNamespaces(): array
     {
@@ -165,8 +156,6 @@ abstract class ControllerMethod
 
     /**
      * Which Request class will be used in method argument.
-     *
-     * @return string
      */
     protected function getRequestClass(): string
     {
@@ -186,21 +175,17 @@ abstract class ControllerMethod
     /**
      * Set Parent Model when creating a child Resource Controller.
      *
-     * @param \Illuminate\Database\Eloquent\Model $parentModel
      *
      * @return $this
      */
     public function setParent(Model $parentModel): self
     {
         $this->parentModel = $parentModel;
-        $this->namespaces[] = 'use ' . get_class($parentModel);
+        $this->namespaces[] = 'use ' . $parentModel::class;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getBody(): string
     {
         return '';
@@ -223,9 +208,6 @@ abstract class ControllerMethod
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function phpDocComment(): string
     {
         return '';
@@ -234,8 +216,8 @@ abstract class ControllerMethod
     public function getAuthorization(): string
     {
         $policies = Gate::policies();
-        $policy = $policies[get_class($this->model)] ?? false;
-        $policyMethod = isset($this->policyMethodmapper[$this->getMethodName()]) ? $this->policyMethodmapper[$this->getMethodName()] : $this->getMethodName();
+        $policy = $policies[$this->model::class] ?? false;
+        $policyMethod = $this->policyMethodmapper[$this->getMethodName()] ?? $this->getMethodName();
         if (class_exists($policy) && method_exists($policy, $policyMethod)) {
             return $this->getAuthCode($policyMethod);
         }
@@ -260,9 +242,6 @@ abstract class ControllerMethod
         return false;
     }
 
-    /**
-     * @return string
-     */
     public function resource(): string
     {
         $resourceNs = config('laracrud.resource.namespace', 'App\Http\Resources');

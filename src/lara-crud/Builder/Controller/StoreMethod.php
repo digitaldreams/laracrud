@@ -19,8 +19,6 @@ abstract class StoreMethod extends ControllerMethod
     }
 
     /**
-     * @return string
-     *
      * @throws \ReflectionException
      */
     public function getBody(): string

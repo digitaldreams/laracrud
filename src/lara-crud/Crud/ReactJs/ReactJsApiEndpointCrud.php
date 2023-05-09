@@ -12,7 +12,7 @@ class ReactJsApiEndpointCrud implements Crud
     /**
      * @var \LaraCrud\Services\ControllerReader
      */
-    private ControllerReader $controllerReader;
+    private readonly ControllerReader $controllerReader;
 
     protected string $shortName;
 
@@ -21,7 +21,6 @@ class ReactJsApiEndpointCrud implements Crud
     /**
      * ReactJsServiceCrud constructor.
      *
-     * @param string $controller
      *
      * @throws \ReflectionException
      */
@@ -55,12 +54,12 @@ class ReactJsApiEndpointCrud implements Crud
         $migrationFile->fwrite($this->template());
     }
 
-    protected function prepareMethod(\ReflectionMethod $method, Route $route)
+    protected function prepareMethod(\ReflectionMethod $reflectionMethod, Route $route)
     {
         $uri = str_replace('{', '${', $route->uri);
         $params = $this->routeParam($route);
         $body = <<<END
-    {$method->name}($params) {
+    {$reflectionMethod->name}($params) {
         return `$uri`;
     },
 END;
@@ -70,8 +69,6 @@ END;
 
     /**
      * @param $route
-     *
-     * @return string
      */
     protected function routeParam($route): string
     {

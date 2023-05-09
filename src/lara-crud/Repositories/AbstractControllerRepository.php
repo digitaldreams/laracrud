@@ -55,9 +55,6 @@ abstract class AbstractControllerRepository
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getImportableNamespaces(): array
     {
         return $this->importableNamespaces;

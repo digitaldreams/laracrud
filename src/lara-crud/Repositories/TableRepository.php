@@ -28,7 +28,6 @@ class TableRepository implements TableContract
     /**
      * @param $name
      *
-     * @return bool
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
@@ -39,33 +38,21 @@ class TableRepository implements TableContract
         return $dpRepo->tableExists($this->table->name());
     }
 
-    /**
-     * @return string
-     */
     public function name(): string
     {
         return $this->table->name();
     }
 
-    /**
-     * @return string
-     */
     public function label(): string
     {
         return ucwords(str_replace('_', ' ', $this->table->name()));
     }
 
-    /**
-     * @return string
-     */
     public function icon(): string
     {
         return 'fa fa-list';
     }
 
-    /**
-     * @return object|null
-     */
     public function model(): ?object
     {
         // TODO: Implement model() method.
@@ -82,7 +69,7 @@ class TableRepository implements TableContract
         $arr = [];
         $foreignColumns = $this->table->relations();
         foreach ($this->table->columns() as $name => $data) {
-            $foreignColumn = isset($foreignColumns[$name]) ? $foreignColumns[$name] : [];
+            $foreignColumn = $foreignColumns[$name] ?? [];
             $arr[$name] = new ColumnRepository($data, $this, $foreignColumn);
         }
 
@@ -92,7 +79,6 @@ class TableRepository implements TableContract
     /**
      * Create Relationships array.
      *
-     * @return array
      *
      * @throws \Exception
      */
@@ -101,25 +87,16 @@ class TableRepository implements TableContract
         return array_merge($this->belongsToRelations(), $this->hasManyAndBelongsToManyRelations());
     }
 
-    /**
-     * @return array
-     */
     public function fileColumns(): array
     {
         return $this->table->fileColumns();
     }
 
-    /**
-     * @return bool
-     */
     public function hasFile(): bool
     {
         return count($this->table->fileColumns());
     }
 
-    /**
-     * @return bool
-     */
     public function isSoftDeleteAble(): bool
     {
         return array_key_exists('deleted_at', $this->table->columns());
@@ -127,8 +104,6 @@ class TableRepository implements TableContract
 
     /**
      * FullText SearchAble Columns.
-     *
-     * @return array
      */
     public function searchableColumns(): array
     {
@@ -164,7 +139,7 @@ class TableRepository implements TableContract
                 'propertyDefiners' => '@property ' . $modelName . ' $' . $methodName . ' ' . ucfirst(ForeignKey::RELATION_BELONGS_TO),
             ];
             if (isset($relations[$methodName])) {
-                $relations[$methodName . rand(1, 5)] = $belongToRelation;
+                $relations[$methodName . random_int(1, 5)] = $belongToRelation;
             } else {
                 $relations[$methodName] = $belongToRelation;
             }
@@ -176,15 +151,14 @@ class TableRepository implements TableContract
     /**
      * Create HasMany and BelongsToMany Relationships.
      *
-     * @return array
      * @throws \Exception
      */
     protected function hasManyAndBelongsToManyRelations(): array
     {
         $otherKeys = $this->table->references();
         $relations = [];
-        foreach ($otherKeys as $column) {
-            $fk = new ForeignKey($column);
+        foreach ($otherKeys as $otherKey) {
+            $fk = new ForeignKey($otherKey);
             $methodName = Str::plural(lcfirst($fk->modelName()));
             $relation = [
                 'modelName' => $fk->modelName(),
@@ -204,7 +178,7 @@ class TableRepository implements TableContract
             $relation['propertyDefiners'] = '@property \Illuminate\Database\Eloquent\Collection' . ' $' . $relation['methodName'] . ' ' . $relation['relationShip'];
 
             if (isset($relations[$methodName])) {
-                $relations[$methodName . rand(1, 5)] = $relation;
+                $relations[$methodName . random_int(1, 5)] = $relation;
             } else {
                 $relations[$methodName] = $relation;
             }
@@ -215,8 +189,6 @@ class TableRepository implements TableContract
 
     /**
      * Get Database Table object.
-     *
-     * @return Table
      */
     public function getTable(): Table
     {

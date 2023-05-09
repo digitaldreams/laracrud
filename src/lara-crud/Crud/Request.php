@@ -48,8 +48,6 @@ class Request implements Crud
     /**
      * RequestCrud constructor.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param string|null                         $name
      * @param bool                                $api
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
@@ -140,7 +138,7 @@ class Request implements Crud
     {
         $string = '[' . "\n\t\t\t\t";
         foreach ($rules as $rule) {
-            $string .= 0 !== substr_compare($rule, 'Rule::', 0, 6) ? "'" . $rule . "'" : $rule;
+            $string .= 0 !== substr_compare((string) $rule, 'Rule::', 0, 6) ? "'" . $rule . "'" : $rule;
             $string .= ',' . "\n\t\t\t\t";
         }
         $string .= '],';

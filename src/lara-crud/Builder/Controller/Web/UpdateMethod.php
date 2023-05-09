@@ -20,9 +20,6 @@ class UpdateMethod extends ControllerMethod implements RedirectAbleMethod
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getBody(): string
     {
         $variable = '$' . $this->getModelVariableName();

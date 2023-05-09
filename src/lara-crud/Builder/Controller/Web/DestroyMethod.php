@@ -9,8 +9,6 @@ class DestroyMethod extends ParentDestroyMethod implements RedirectAbleMethod
 {
     /**
      * Name of the Route user will be redirected after successfully Delete.
-     *
-     * @return string
      */
     public function redirectToRouteMethodName(): string
     {

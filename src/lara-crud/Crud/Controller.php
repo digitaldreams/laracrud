@@ -64,11 +64,6 @@ class Controller implements Crud
     protected $parentModel;
 
     /**
-     * @var \LaraCrud\Repositories\ControllerRepository
-     */
-    protected ControllerRepository $controllerRepository;
-
-    /**
      * ControllerCrud constructor.
      *
      * @param \LaraCrud\Repositories\ControllerRepository $controllerRepository
@@ -79,7 +74,7 @@ class Controller implements Crud
      * @internal param array $except
      */
     public function __construct(
-        ControllerRepository $controllerRepository,
+        protected ControllerRepository $controllerRepository,
         Model $model,
         ?string $controllerFileName = '',
         bool $api = false
@@ -89,13 +84,10 @@ class Controller implements Crud
 
         $ns = ! empty($api) ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
         $this->namespace = trim($this->getFullNS($ns), '/') . $this->subNameSpace;
-        $this->controllerRepository = $controllerRepository;
     }
 
     /**
      * Generate full code and return as string.
-     *
-     * @return string
      */
     public function template(): string
     {
@@ -103,7 +95,7 @@ class Controller implements Crud
         $this->controllerRepository->build();
         $tempMan = new TemplateManager('controller/template.txt', [
             'namespace' => $this->namespace,
-            'fullmodelName' => get_class($this->model),
+            'fullmodelName' => $this->model::class,
             'controllerName' => $this->fileName,
             'methods' => implode("\n", $this->controllerRepository->getCode()),
             'importNameSpace' => $this->makeNamespaceImportString(),
@@ -145,13 +137,11 @@ class Controller implements Crud
 
     /**
      * @param string $name
-     *
-     * @return \LaraCrud\Crud\Controller
      */
     public function resolveControllerFileName(?string $name = null): self
     {
         if (! empty($name)) {
-            if (false !== strpos($name, '/')) {
+            if (str_contains($name, '/')) {
                 $narr = explode('/', $name);
                 $this->modelName = $this->fileName = array_pop($narr);
 

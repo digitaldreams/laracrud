@@ -13,7 +13,7 @@ trait DatabaseHelper
     {
         $result = $this->db->query('SELECT DATABASE() as db')->fetch();
 
-        return isset($result->db) ? $result->db : false;
+        return $result->db ?? false;
     }
 
     /**

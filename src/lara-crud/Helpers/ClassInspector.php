@@ -4,8 +4,6 @@ namespace LaraCrud\Helpers;
 
 class ClassInspector
 {
-    protected $name;
-
     protected $shortName;
     protected $description;
     protected $publicMethods;
@@ -19,9 +17,8 @@ class ClassInspector
      */
     public $reflection;
 
-    public function __construct($name)
+    public function __construct(protected $name)
     {
-        $this->name = $name;
         $this->reflection = new \ReflectionClass($this->name);
         $this->fetchMethods();
         $this->properties = $this->reflection->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
@@ -51,9 +48,9 @@ class ClassInspector
     protected function filterMethod($reflectionMethods)
     {
         $retMethods = [];
-        foreach ($reflectionMethods as $method) {
-            if (0 != substr_compare($method->name, '__', 0, 2) && $method->class == $this->name) {
-                $retMethods[] = $method->name;
+        foreach ($reflectionMethods as $reflectionMethod) {
+            if (0 != substr_compare((string) $reflectionMethod->name, '__', 0, 2) && $reflectionMethod->class == $this->name) {
+                $retMethods[] = $reflectionMethod->name;
             }
         }
 

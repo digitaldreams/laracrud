@@ -43,15 +43,15 @@ class Model extends Command
             //Overwrite existing Configuration file for this Model Instance
             if (!empty($on)) {
                 $ons = explode(',', $on);
-                foreach ($ons as $option) {
-                    config(["laracrud.model.$option" => true]);
+                foreach ($ons as $on) {
+                    config(["laracrud.model.{$on}" => true]);
                 }
             }
 
             if (!empty($off)) {
                 $offs = explode(',', $off);
-                foreach ($offs as $option) {
-                    config(["laracrud.model.$option" => false]);
+                foreach ($offs as $off) {
+                    config(["laracrud.model.{$off}" => false]);
                 }
             }
 

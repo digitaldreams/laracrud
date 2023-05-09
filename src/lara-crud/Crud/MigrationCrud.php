@@ -70,11 +70,11 @@ class MigrationCrud implements Crud
     {
         $retContent = '';
         $rules = $this->rules();
-        foreach ($rules as $r) {
-            $retContent .= "\t" . "\t" . "\t" . '$table->' . $r['methodName'];
-            $retContent .= !empty($r['mainParams']) ? '("' . $r['columnName'] . '",' . $r['mainParams'] . ')' : '("' . $r['columnName'] . '")';
-            if (!empty($r['otherMethods'])) {
-                foreach ($r['otherMethods'] as $om) {
+        foreach ($rules as $rule) {
+            $retContent .= "\t" . "\t" . "\t" . '$table->' . $rule['methodName'];
+            $retContent .= !empty($rule['mainParams']) ? '("' . $rule['columnName'] . '",' . $rule['mainParams'] . ')' : '("' . $rule['columnName'] . '")';
+            if (!empty($rule['otherMethods'])) {
+                foreach ($rule['otherMethods'] as $om) {
                     $retContent .= '->' . $om['name'] . '(' . $om['params'] . ')';
                 }
             }
@@ -136,7 +136,7 @@ class MigrationCrud implements Crud
                     $arr['methodName'] = 'bigIncrements';
                 }
             } else {
-                $arr['methodName'] = isset($this->columnMap[$dataType]) ? $this->columnMap[$dataType] : '';
+                $arr['methodName'] = $this->columnMap[$dataType] ?? '';
             }
             //for enum data type we will use in validator.
             if ('enum' == $dataType) {
@@ -156,9 +156,9 @@ class MigrationCrud implements Crud
                     $params = false;
                 }
             } elseif ('decimal' == $dataType) {
-                $startBrace = stripos($column->Type, '(');
-                $endBrace = stripos($column->Type, ')');
-                $pm = substr($column->Type, $startBrace, ($endBrace - $startBrace));
+                $startBrace = stripos((string) $column->Type, '(');
+                $endBrace = stripos((string) $column->Type, ')');
+                $pm = substr((string) $column->Type, $startBrace, ($endBrace - $startBrace));
 
                 if (!empty($pm)) {
                     $params = str_replace(['(', ')'], '', $pm);

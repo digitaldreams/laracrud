@@ -18,8 +18,6 @@ class ReactJsFormInputBuilder
 
     /**
      * ReactJsFormInputBuilder constructor.
-     *
-     * @param array $rules
      */
     public function __construct(array $rules = [])
     {
@@ -93,7 +91,7 @@ class ReactJsFormInputBuilder
                 if ('max' === $parts[0]) {
                     $this->max = $parts[1] ?? 0;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 continue;
             }
         }

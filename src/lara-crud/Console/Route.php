@@ -63,7 +63,7 @@ class Route extends Command
                 $routeCrud = new RouteCrud($controllers, $api);
             } else {
                 $controller = str_replace('/', '\\', $controller);
-                if (!stripos(rtrim($namespace, '\\') . '\\', $controller)) {
+                if (!stripos(rtrim($namespace, '\\') . '\\', (string) $controller)) {
                     $controller = rtrim($namespace, '\\') . '\\' . $controller;
                 }
 

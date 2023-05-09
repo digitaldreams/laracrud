@@ -53,10 +53,7 @@ class RequestResource implements Crud
     /**
      * RequestControllerCrud constructor.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param string|null                         $only
      * @param bool                                $api
-     * @param string|null                         $name
      *
      * @internal param string $controller
      */
@@ -65,14 +62,14 @@ class RequestResource implements Crud
         $this->table = $model->getTable();
         $this->model = $model;
         $policies = Gate::policies();
-        $this->policy = $policies[get_class($this->model)] ?? false;
+        $this->policy = $policies[$this->model::class] ?? false;
         $this->folderName = !empty($name) ? $name : $this->table;
 
         if (!empty($only) && is_array($only)) {
             $this->methods = $only;
         }
         $ns = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-        $this->namespace = $this->getFullNS(trim($ns, '/')) . '\\' . ucfirst(Str::camel($this->folderName));
+        $this->namespace = $this->getFullNS(trim((string) $ns, '/')) . '\\' . ucfirst(Str::camel($this->folderName));
         $this->modelName = $this->getModelName($this->table);
         $this->template = !empty($api) ? 'api' : 'web';
     }
@@ -109,9 +106,9 @@ class RequestResource implements Crud
         $publicMethods = $this->methods;
 
         if (!empty($publicMethods)) {
-            foreach ($publicMethods as $method) {
+            foreach ($publicMethods as $publicMethod) {
                 $folderPath = base_path($this->toPath($this->namespace));
-                $this->modelName = $this->getModelName($method);
+                $this->modelName = $this->getModelName($publicMethod);
                 $filePath = $folderPath . '/' . $this->modelName . '.php';
 
                 if (file_exists($filePath)) {
@@ -119,24 +116,24 @@ class RequestResource implements Crud
                 }
                 $isApi = 'api' == $this->template ? true : false;
 
-                if ('store' === $method) {
+                if ('store' === $publicMethod) {
                     $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/StoreRequest', $isApi);
                     $requestStore->setAuthorization($this->getAuthCode('create'));
                     $requestStore->save();
-                } elseif ('update' === $method) {
+                } elseif ('update' === $publicMethod) {
                     $requestUpdate = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/UpdateRequest', $isApi);
                     $requestUpdate->setAuthorization($this->getAuthCode('update'));
                     $requestUpdate->save();
                 } else {
                     $auth = 'true';
-                    if ('edit' === $method) {
+                    if ('edit' === $publicMethod) {
                         $auth = $this->getAuthCode('update');
-                    } elseif ('show' === $method) {
+                    } elseif ('show' === $publicMethod) {
                         $auth = $this->getAuthCode('view');
-                    } elseif ('destroy' === $method) {
+                    } elseif ('destroy' === $publicMethod) {
                         $auth = $this->getAuthCode('delete');
                     } else {
-                        $auth = $this->getAuthCode($method);
+                        $auth = $this->getAuthCode($publicMethod);
                     }
                     $model = new \SplFileObject($filePath, 'w+');
                     $model->fwrite($this->template($auth));
@@ -179,7 +176,7 @@ class RequestResource implements Crud
         $auth = 'true';
         if (class_exists($this->policy) && method_exists($this->policy, $methodName)) {
             if (in_array($methodName, ['index', 'create', 'store'])) {
-                $code = '\\' . get_class($this->model) . '::class)';
+                $code = '\\' . $this->model::class . '::class)';
             } else {
                 $modelName = (new \ReflectionClass($this->model))->getShortName();
                 $code = '$this->route(\'' . strtolower($modelName) . '\'))';

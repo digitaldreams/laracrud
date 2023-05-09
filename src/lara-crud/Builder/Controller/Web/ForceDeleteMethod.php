@@ -7,9 +7,6 @@ use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 
 class ForceDeleteMethod extends ParentForceDeleteMethod implements RedirectAbleMethod
 {
-    /**
-     * @return string
-     */
     public function redirectToRouteMethodName(): string
     {
         return 'index';

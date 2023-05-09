@@ -81,7 +81,7 @@ class View extends Command
                     $viewController = new ViewController($controllerFullNs, $tableReader);
                     $viewController->save();
 
-                    if (count($viewController->errors) > 0) {
+                    if ((is_countable($viewController->errors) ? count($viewController->errors) : 0) > 0) {
                         $this->error(implode("\n", $viewController->errors));
                     } else {
                         $this->info('Controller views saved successfully');
@@ -111,43 +111,23 @@ class View extends Command
 
     /**
      * @param $page
-     * @param EloquentModel $model
      * @param string        $name
      * @param string        $type
      *
-     * @return bool|Form|Modal|Panel|Table
      */
-    private function pageMaker($page, EloquentModel $model, $name = '', $type = '')
+    private function pageMaker($page, EloquentModel $eloquentModel, $name = '', $type = ''): bool|\LaraCrud\View\Partial\Form|\LaraCrud\View\Partial\Modal|\LaraCrud\View\Partial\Panel|\LaraCrud\View\Partial\Table
     {
-        switch ($page) {
-            case 'form':
-                $pageMaker = new Form($model, $name);
-                break;
-            case 'table':
-                $pageMaker = new Table($model, $name);
-                break;
-            case 'modal':
-                $pageMaker = new Modal($model, $name);
-                break;
-            case 'panel':
-                $pageMaker = new Panel($model, $name);
-                break;
-            case 'create':
-                $pageMaker = new Create($model, $name);
-                break;
-            case 'edit':
-                $pageMaker = new Edit($model, $name);
-                break;
-            case 'show':
-                $pageMaker = new Show($model, $name, $type);
-                break;
-            case 'index':
-                $pageMaker = new Index($model, $name, $type);
-                break;
-            default:
-                $pageMaker = false;
-                break;
-        }
+        $pageMaker = match ($page) {
+            'form' => new Form($eloquentModel, $name),
+            'table' => new Table($eloquentModel, $name),
+            'modal' => new Modal($eloquentModel, $name),
+            'panel' => new Panel($eloquentModel, $name),
+            'create' => new Create($eloquentModel, $name),
+            'edit' => new Edit($eloquentModel, $name),
+            'show' => new Show($eloquentModel, $name, $type),
+            'index' => new Index($eloquentModel, $name, $type),
+            default => false,
+        };
 
         return $pageMaker;
     }
@@ -169,7 +149,7 @@ class View extends Command
         if (class_exists($class)) {
             return $class;
         }
-        $fullNs = $this->getFullNS(rtrim($namespace, '\\') . '\\' . $class);
+        $fullNs = $this->getFullNS(rtrim((string) $namespace, '\\') . '\\' . $class);
         if (class_exists($fullNs)) {
             return $fullNs;
         }

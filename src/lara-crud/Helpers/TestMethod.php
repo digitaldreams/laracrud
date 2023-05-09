@@ -34,11 +34,11 @@ class TestMethod
      */
     public function __construct($arr = [], $api = false)
     {
-        $this->controller = isset($arr['controller']) ? $arr['controller'] : false;
-        $this->method = isset($arr['method']) ? $arr['method'] : false;
-        $this->path = isset($arr['path']) ? $arr['path'] : false;
-        $this->parameters = isset($arr['parameters']) ? $arr['parameters'] : [];
-        $http_verb = isset($arr['http_verbs']) ? $arr['http_verbs'] : false;
+        $this->controller = $arr['controller'] ?? false;
+        $this->method = $arr['method'] ?? false;
+        $this->path = $arr['path'] ?? false;
+        $this->parameters = $arr['parameters'] ?? [];
+        $http_verb = $arr['http_verbs'] ?? false;
         $this->setHttpVerb($http_verb);
 
         if (!class_exists($this->controller)) {
@@ -80,7 +80,7 @@ class TestMethod
     public function template()
     {
         return (new TemplateManager('test/' . $this->template . '/' . $this->http_verb . '.txt', [
-            'name' => ucfirst($this->method),
+            'name' => ucfirst((string) $this->method),
             'path' => $this->path,
             'data' => $this->data,
         ]))->get();
@@ -98,9 +98,9 @@ class TestMethod
                 $key = array_search('HEAD', $http_verb);
                 unset($http_verb[$key]);
             }
-            $this->http_verb = strtolower(array_shift($http_verb));
+            $this->http_verb = strtolower((string) array_shift($http_verb));
         } else {
-            $this->http_verb = strtolower($http_verb);
+            $this->http_verb = strtolower((string) $http_verb);
         }
 
         return $this;

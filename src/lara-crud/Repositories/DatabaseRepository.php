@@ -9,8 +9,6 @@ class DatabaseRepository implements DatabaseContract
 {
     /**
      * List of all Available Tables.
-     *
-     * @return array
      */
     public function tables(): array
     {
@@ -22,7 +20,6 @@ class DatabaseRepository implements DatabaseContract
      *
      * @param string|array $table
      *
-     * @return bool
      *
      * @throws \Exception
      */

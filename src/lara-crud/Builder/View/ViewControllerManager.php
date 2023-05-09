@@ -9,18 +9,6 @@ use LaraCrud\Services\ControllerReader;
 
 class ViewControllerManager
 {
-    private string $controller;
-
-    /**
-     * @var \LaraCrud\Builder\Model
-     */
-    private Model $model;
-
-    /**
-     * @var \LaraCrud\Builder\Model|null
-     */
-    private ?Model $parent;
-
     protected ControllerMethodReader $index;
 
     protected ControllerMethodReader $show;
@@ -48,16 +36,9 @@ class ViewControllerManager
 
     /**
      * ViewControllerManager constructor.
-     *
-     * @param string                       $controller
-     * @param \LaraCrud\Builder\Model      $model
-     * @param \LaraCrud\Builder\Model|null $parent
      */
-    public function __construct(string $controller, Model $model, ?Model $parent)
+    public function __construct(private readonly string $controller, private readonly Model $model, private readonly ?\LaraCrud\Builder\Model $parent)
     {
-        $this->controller = $controller;
-        $this->model = $model;
-        $this->parent = $parent;
     }
 
     protected function initMethods($controller)

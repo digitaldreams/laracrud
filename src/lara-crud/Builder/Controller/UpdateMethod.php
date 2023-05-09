@@ -19,9 +19,6 @@ abstract class UpdateMethod extends ControllerMethod
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getBody(): string
     {
         $variable = '$' . $this->getModelVariableName();

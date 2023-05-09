@@ -28,9 +28,6 @@ class ReactJsFormCrud implements Crud
 
     /**
      * ReactJsFormCrud constructor.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param \App\Http\Controllers\Controller    $controller
      */
     public function __construct(Model $model, Controller $controller)
     {
@@ -72,37 +69,37 @@ class ReactJsFormCrud implements Crud
         }
     }
 
-    protected function formRules(ReactJsFormInputBuilder $inputBuilder)
+    protected function formRules(ReactJsFormInputBuilder $reactJsFormInputBuilder)
     {
         $rules = [];
-        if ($inputBuilder->required) {
+        if ($reactJsFormInputBuilder->required) {
             $rules['required'] = true;
         }
 
-        if ($inputBuilder->min > 0) {
-            $key = 'text' == $inputBuilder->type ? 'minlength' : 'min';
-            $rules[$key] = $inputBuilder->min;
+        if ($reactJsFormInputBuilder->min > 0) {
+            $key = 'text' == $reactJsFormInputBuilder->type ? 'minlength' : 'min';
+            $rules[$key] = $reactJsFormInputBuilder->min;
         }
 
-        if ($inputBuilder->max > 0) {
-            $key = 'text' == $inputBuilder->type ? 'maxlength' : 'max';
+        if ($reactJsFormInputBuilder->max > 0) {
+            $key = 'text' == $reactJsFormInputBuilder->type ? 'maxlength' : 'max';
 
-            $rules[$key] = $inputBuilder->max;
+            $rules[$key] = $reactJsFormInputBuilder->max;
         }
 
-        if (in_array($inputBuilder->type, ['radio', 'select'])) {
-            $rules['in'] = $inputBuilder->options;
+        if (in_array($reactJsFormInputBuilder->type, ['radio', 'select'])) {
+            $rules['in'] = $reactJsFormInputBuilder->options;
         }
-        if ('number' == $inputBuilder->type) {
+        if ('number' == $reactJsFormInputBuilder->type) {
             $rules['numeric'] = true;
         }
-        if ('url' == $inputBuilder->type) {
+        if ('url' == $reactJsFormInputBuilder->type) {
             $rules['url'] = true;
         }
-        if ('email' == $inputBuilder->type) {
+        if ('email' == $reactJsFormInputBuilder->type) {
             $rules['email'] = true;
         }
-        if ('file' == $inputBuilder->type) {
+        if ('file' == $reactJsFormInputBuilder->type) {
             $rules['mimes'] = [];
         }
 
@@ -115,7 +112,7 @@ class ReactJsFormCrud implements Crud
 
     protected function getValidationRules(): array
     {
-        $controllerReader = new ControllerReader(get_class($this->controller));
+        $controllerReader = new ControllerReader($this->controller::class);
         $methods = $controllerReader->getMethods();
         $routes = $controllerReader->getRoutes();
 

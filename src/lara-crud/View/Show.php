@@ -54,8 +54,8 @@ class Show extends Page
             'folder'          => $prefix . $this->panel->getFolder(),
             'routeModelKey'   => $this->model->getRouteKeyName(),
             'partialFilename' => Str::singular($this->table->name()),
-            'indexRoute'      => $this->getRouteName('index', $this->table->name()),
-            'buttons'         => PHP_EOL . $link->create(get_class($this->model)) . PHP_EOL . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . PHP_EOL,
+            'indexRoute'      => static::getRouteName('index', $this->table->name()),
+            'buttons'         => PHP_EOL . $link->create($this->model::class) . PHP_EOL . $link->edit($routeKey) . PHP_EOL . $link->destroy($routeKey) . PHP_EOL,
         ]))->get();
     }
 

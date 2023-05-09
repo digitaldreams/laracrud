@@ -39,7 +39,7 @@ class EnumCommand extends Command
             $s = 0;
             foreach ($files as $file) {
                 try {
-                    $fullClass = $class . '\\' . pathinfo($file, PATHINFO_FILENAME);
+                    $fullClass = $class . '\\' . pathinfo((string) $file, PATHINFO_FILENAME);
 
                     if (class_exists($fullClass)) {
                         $enumCrud = new ReactJsEnumCrud($fullClass);

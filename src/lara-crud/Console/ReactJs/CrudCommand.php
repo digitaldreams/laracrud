@@ -39,12 +39,12 @@ class CrudCommand extends Command
             $this->info('Model created successfully');
 
             $this->warn('Creating api endpoint....');
-            $controllerCrud = new ReactJsApiEndpointCrud(get_class($controller));
+            $controllerCrud = new ReactJsApiEndpointCrud($controller::class);
             $controllerCrud->save();
             $this->info('Api endpoint successfully');
 
             $this->warn('Creating api service....');
-            $serviceCrud = new ReactJsServiceCrud(get_class($controller));
+            $serviceCrud = new ReactJsServiceCrud($controller::class);
             $serviceCrud->save();
             $this->info('API service created successfully');
 
@@ -59,10 +59,8 @@ class CrudCommand extends Command
 
     /**
      *  Check if Model or Parent Model exists . If so then create object from them otherwise return warning and exit.
-     *
-     * @param mixed $model
      */
-    private function getModal($model)
+    private function getModal(mixed $model)
     {
         if (class_exists($model)) {
             return new $model();

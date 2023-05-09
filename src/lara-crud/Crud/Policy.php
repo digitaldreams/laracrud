@@ -95,7 +95,7 @@ class Policy implements Crud
 
 
         $this->checkName($name);
-        $this->namespace = $this->getFullNS(trim(config('laracrud.policy.namespace'), ' / ')) . $this->subNameSpace;
+        $this->namespace = $this->getFullNS(trim((string) config('laracrud.policy.namespace'), ' / ')) . $this->subNameSpace;
     }
 
     /**
@@ -148,8 +148,8 @@ class Policy implements Crud
     private function checkName($name)
     {
         if (! empty($name)) {
-            if (false !== strpos($name, ' / ')) {
-                $narr = explode(' / ', $name);
+            if (str_contains((string) $name, ' / ')) {
+                $narr = explode(' / ', (string) $name);
                 $this->name = array_pop($narr);
 
                 foreach ($narr as $p) {

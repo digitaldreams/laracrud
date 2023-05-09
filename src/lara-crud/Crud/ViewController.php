@@ -49,17 +49,17 @@ class ViewController extends RouteCrud
         //Illuminate\View\View
         foreach ($this->controllerMethods as $controllerName => $ctr) {
             $controllerFullName = $ctr['full_name'];
-            $routesMethods = isset($this->methodNames[$controllerName]) ? $this->methodNames[$controllerName] : [];
-            foreach ($routesMethods as $method) {
-                $actionName = $controllerFullName . '@' . $method;
-                $routeInfo = isset($this->routes[$actionName]) ? $this->routes[$actionName] : [];
+            $routesMethods = $this->methodNames[$controllerName] ?? [];
+            foreach ($routesMethods as $routeMethod) {
+                $actionName = $controllerFullName . '@' . $routeMethod;
+                $routeInfo = $this->routes[$actionName] ?? [];
 
                 if (isset($routeInfo['http_verbs'])) {
                     if ((is_array($routeInfo['http_verbs']) && in_array('GET', $routeInfo['http_verbs']) || 'GET' == $routeInfo['http_verbs'])) {
                         try {
                             $classIns = new ClassInspector($controllerFullName);
-                            $args = $classIns->prepareMethodArgs($method);
-                            $reflectionMethod = new \ReflectionMethod($controllerFullName, $method);
+                            $args = $classIns->prepareMethodArgs($routeMethod);
+                            $reflectionMethod = new \ReflectionMethod($controllerFullName, $routeMethod);
                             $response = $reflectionMethod->invokeArgs(new $controllerFullName(), $args);
                             if (is_object($response) && $response instanceof \Illuminate\View\View) {
                                 $this->foundViews[$response->getPath()] = $response->getName();
@@ -71,7 +71,7 @@ class ViewController extends RouteCrud
                                     $this->notFoundViews[] = $matches[1];
                                 }
                             }
-                        } catch (\Exception $e) {
+                        } catch (\Exception) {
                             continue;
                         }
                     }
@@ -89,7 +89,7 @@ class ViewController extends RouteCrud
         $viewPath = config('laracrud.view.path');
         foreach ($pathArr as $path) {
             $currentPath = $currentPath . '/' . $path;
-            $folder = rtrim($viewPath) . '/' . $currentPath;
+            $folder = rtrim((string) $viewPath) . '/' . $currentPath;
             if (!file_exists($folder)) {
                 mkdir($folder);
             }
@@ -101,11 +101,11 @@ class ViewController extends RouteCrud
      */
     public function save()
     {
-        foreach ($this->notFoundViews as $view) {
+        foreach ($this->notFoundViews as $notFoundView) {
             try {
-                $view = trim($view, '[]');
+                $notFoundView = trim((string) $notFoundView, '[]');
 
-                $pathArr = explode('.', $view);
+                $pathArr = explode('.', $notFoundView);
                 $viewFileName = array_pop($pathArr);
                 $this->makeFolder($pathArr);
                 $folder = $this->getFullPath(implode('/', $pathArr));
@@ -125,8 +125,8 @@ class ViewController extends RouteCrud
      */
     protected function getFullPath($view)
     {
-        $path = str_replace('.', '/', $view);
-        $folder = rtrim(config('laracrud.view.path'), '/') . '/' . $path;
+        $path = str_replace('.', '/', (string) $view);
+        $folder = rtrim((string) config('laracrud.view.path'), '/') . '/' . $path;
 
         return $folder;
     }
@@ -134,28 +134,16 @@ class ViewController extends RouteCrud
     /**
      * @param $viewFileName
      * @param string $type
-     *
-     * @return Blank|Create|Edit|Index|Show
      */
-    protected function pageMaker($viewFileName, $type = '')
+    protected function pageMaker($viewFileName, $type = ''): \LaraCrud\View\Blank|\LaraCrud\View\Create|\LaraCrud\View\Edit|\LaraCrud\View\Index|\LaraCrud\View\Show
     {
-        switch ($viewFileName) {
-            case 'create':
-                $pageMaker = new Create($this->tableReader, $viewFileName);
-                break;
-            case 'edit':
-                $pageMaker = new Edit($this->tableReader, $viewFileName);
-                break;
-            case 'show':
-                $pageMaker = new Show($this->tableReader, $viewFileName, $type);
-                break;
-            case 'index':
-                $pageMaker = new Index($this->tableReader, $viewFileName, $type);
-                break;
-            default:
-                $pageMaker = new Blank($this->tableReader);
-                break;
-        }
+        $pageMaker = match ($viewFileName) {
+            'create' => new Create($this->tableReader, $viewFileName),
+            'edit' => new Edit($this->tableReader, $viewFileName),
+            'show' => new Show($this->tableReader, $viewFileName, $type),
+            'index' => new Index($this->tableReader, $viewFileName, $type),
+            default => new Blank($this->tableReader),
+        };
 
         return $pageMaker;
     }

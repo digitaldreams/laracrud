@@ -6,11 +6,8 @@ use League\Fractal\TransformerAbstract as RootTransformer;
 
 class TransformerAbstract extends RootTransformer
 {
-    protected $fields;
-
-    public function __construct($fields = [])
+    public function __construct(protected $fields = [])
     {
-        $this->fields = $fields;
     }
 
     /**

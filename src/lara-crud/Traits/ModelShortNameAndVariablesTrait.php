@@ -36,8 +36,6 @@ trait ModelShortNameAndVariablesTrait
 
     /**
      * Get Model class name without namespace.
-     *
-     * @return string
      */
     protected function getModelShortName(): string
     {
@@ -48,17 +46,12 @@ trait ModelShortNameAndVariablesTrait
         return $this->modelShortName = $this->modelReflectionClass->getShortName();
     }
 
-    /**
-     * @return string
-     */
     public function getModelVariableName(): string
     {
         return lcfirst($this->getModelShortName());
     }
 
     /**
-     * @return string
-     *
      * @throws \ReflectionException
      */
     public function getParentVariableName(): string
@@ -69,7 +62,6 @@ trait ModelShortNameAndVariablesTrait
     /**
      * Get Model class Name without namespace.
      *
-     * @return string
      *
      * @throws \ReflectionException
      */

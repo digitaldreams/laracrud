@@ -34,25 +34,16 @@ trait RedirectAbleMethodHelper
      */
     protected string $flashMessage = '';
 
-    /**
-     * @return string
-     */
     public function getFlashMessage(): string
     {
         return $this->getModelShortName() . ' successfully ' . $this->getMethodName();
     }
 
-    /**
-     * @return string
-     */
     public function getFlashMessageKey(): string
     {
         return $this->flashKeyName;
     }
 
-    /**
-     * @return string
-     */
     protected function generateRedirectAbleCode(): string
     {
         return (new TemplateManager('controller/web/save.txt', [
@@ -71,9 +62,6 @@ trait RedirectAbleMethodHelper
         ]))->get();
     }
 
-    /**
-     * @return string
-     */
     public function route(): string
     {
         $routeName = $this->generateRouteName();
@@ -99,7 +87,7 @@ trait RedirectAbleMethodHelper
      */
     protected function generateRouteName()
     {
-        $name = config('laracrud.route.prefix') ? rtrim(config('laracrud.route.prefix'), '::') . '::' : '';
+        $name = config('laracrud.route.prefix') ? rtrim((string) config('laracrud.route.prefix'), '::') . '::' : '';
         if ($this->parentModel) {
             $name .= $this->toRouteString($this->getParentVariableName()) . '.';
         }
@@ -120,8 +108,6 @@ trait RedirectAbleMethodHelper
 
     /**
      * @param $name
-     *
-     * @return string
      */
     protected function toRouteString($name): string
     {

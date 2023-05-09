@@ -34,13 +34,13 @@ class ReactJsServiceCrud extends ReactJsApiEndpointCrud implements Crud
         $migrationFile->fwrite($this->template());
     }
 
-    protected function prepareMethod(\ReflectionMethod $method, Route $route)
+    protected function prepareMethod(\ReflectionMethod $reflectionMethod, Route $route)
     {
         $apiEndpoint = $this->shortName . 'ApiEndpoint';
-        $methodReader = new ControllerMethodReader($method, $route);
+        $methodReader = new ControllerMethodReader($reflectionMethod, $route);
         $rules = $methodReader->getCustomRequestClassRules();
 
-        $axiosMethod = strtolower(array_shift($route->methods));
+        $axiosMethod = strtolower((string) array_shift($route->methods));
         $methodParams = $params = $this->routeParam($route);
         $extraParams = '';
         if (! empty($rules)) {
@@ -48,8 +48,8 @@ class ReactJsServiceCrud extends ReactJsApiEndpointCrud implements Crud
             $extraParams .= ',data';
         }
         $str = <<<EOD
-        $method->name($methodParams){
-        return  Axios.$axiosMethod($apiEndpoint.$method->name($params)$extraParams)
+        $reflectionMethod->name($methodParams){
+        return  Axios.$axiosMethod($apiEndpoint.$reflectionMethod->name($params)$extraParams)
         },
 
 EOD;

@@ -26,7 +26,6 @@ class TableRepository extends PageRepository implements TableContract
     /**
      * Relative path of the file. E.g. pages.posts.index .
      *
-     * @return string
      *
      * @throws \ReflectionException
      */
@@ -35,9 +34,6 @@ class TableRepository extends PageRepository implements TableContract
         return 'tables.' . $this->getModelShortName();
     }
 
-    /**
-     * @return string
-     */
     public function template(): string
     {
         return new TemplateManager('views/4/table.html', [
@@ -45,9 +41,6 @@ class TableRepository extends PageRepository implements TableContract
         ]);
     }
 
-    /**
-     * @param array $columns
-     */
     public function setColumns(array $columns)
     {
         $this->columns = $columns;
@@ -61,9 +54,6 @@ class TableRepository extends PageRepository implements TableContract
         return $this->columns;
     }
 
-    /**
-     * @return array
-     */
     public function makeColumns(): array
     {
         $data = [];
@@ -111,17 +101,11 @@ class TableRepository extends PageRepository implements TableContract
         ];
     }
 
-    /**
-     * @return array
-     */
     private function generateBelongsToLink(): array
     {
         return [];
     }
 
-    /**
-     * @return array
-     */
     private function generateBadgeTag(): array
     {
         return [];

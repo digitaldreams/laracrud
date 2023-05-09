@@ -71,7 +71,7 @@ class Form extends Page
             'routeModelKey' => $this->model->getRouteKeyName(),
             'table' => $this->table->name(),
             'options' => $this->makeOptions(),
-            'routeName' => $this->getRouteName('store', $this->table->name()),
+            'routeName' => static::getRouteName('store', $this->table->name()),
         ]))->get();
     }
 
@@ -167,7 +167,6 @@ class Form extends Page
      * Generate select field.
      *
      * @param array  $column
-     * @param Column $columnObj
      *
      * @return string
      */
@@ -184,7 +183,7 @@ class Form extends Page
             if (isset($column['options']) && is_array($column['options'])) {
                 foreach ($column['options'] as $opt) {
                     $selectedText = '{{old(\'' . $column['name'] . '\',$model->' . $column['name'] . ')==\'' . $opt . '\'?"selected":""}}';
-                    $label = ucwords(str_replace('_', ' ', $opt));
+                    $label = ucwords(str_replace('_', ' ', (string) $opt));
                     $options .= '<option value="' . $opt . '" ' . $selectedText . ' >' . $label . '</option>' . "\n";
                 }
             }
@@ -208,9 +207,7 @@ class Form extends Page
         ], $column);
     }
 
-    /**
-     * @param Column $column
-     *                       [
+    /**                      [
      *                       type=> any valid input type e.g text,email,number,url,date,time,datetime,textarea,select
      *                       properties => if any property found e.g maxlength, max, min, required,placeholder
      *                       label=> Label of the input field
@@ -240,7 +237,7 @@ class Form extends Page
         } elseif ($column->isFile()) {
             $options['type'] = 'file';
         } else {
-            $options['type'] = isset($this->inputType[$column->type()]) ? $this->inputType[$column->type()] : 'text';
+            $options['type'] = $this->inputType[$column->type()] ?? 'text';
         }
         $options['name'] = $column->name();
 
@@ -252,7 +249,6 @@ class Form extends Page
      *
      * @param $fileName
      * @param array  $options
-     * @param Column $column
      *
      * @return string
      */
@@ -263,7 +259,7 @@ class Form extends Page
             'showErrorText' => $this->showErr($column),
             'name' => $column->name(),
             'label' => $column->label(),
-            'type' => isset($this->inputType[$column->type()]) ? $this->inputType[$column->type()] : 'text',
+            'type' => $this->inputType[$column->type()] ?? 'text',
         ];
 
         return (new TemplateManager("view/{$this->version}/forms/$fileName", array_merge($options, $common)))->get();

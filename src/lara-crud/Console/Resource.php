@@ -63,10 +63,8 @@ class Resource extends Command
 
     /**
      * @param $model
-     *
-     * @return false|string
      */
-    private function modelFullName($model)
+    private function modelFullName($model): false|string
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         if (!class_exists($model)) {

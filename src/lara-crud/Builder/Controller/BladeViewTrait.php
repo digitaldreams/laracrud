@@ -15,9 +15,6 @@ trait BladeViewTrait
     protected $fileName = null;
 
     /**
-     * @param string   $link
-     * @param string   $text
-     * @param int|null $position
      *
      * @return mixed
      */
@@ -32,58 +29,34 @@ trait BladeViewTrait
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
-     */
     public function setPath(): ViewAbleMethod
     {
     }
 
-    /**
-     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
-     */
     public function setFileName(): ViewAbleMethod
     {
     }
 
-    /**
-     * @return string
-     */
     public function getFileName(): string
     {
     }
 
-    /**
-     * @param string      $link
-     * @param string      $text
-     * @param string|null $icon
-     *
-     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
-     */
     public function addToolMenuItem(string $link, string $text, ?string $icon = null): ViewAbleMethod
     {
     }
 
-    /**
-     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
-     */
     public function setTitle(): ViewAbleMethod
     {
     }
 
     /**
      * @param          $parent
-     * @param int|null $postion
      *
-     * @return \LaraCrud\Contracts\Controller\ViewAbleMethod
      */
     public function AddToSideBarMenu($parent, ?int $postion = null): ViewAbleMethod
     {

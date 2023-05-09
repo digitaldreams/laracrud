@@ -82,17 +82,11 @@ class Configuration
      */
     public static string $viewPath;
 
-    /**
-     * @return string
-     */
     public static function getViewNamespace(): string
     {
         return !empty(static::$viewNamespace) ? static::$viewNamespace : config('laracrud.view.namespace');
     }
 
-    /**
-     * @return string
-     */
     public static function getRoutePrefix(): string
     {
         return !empty(static::$routePrefix) ? static::$routePrefix : config('laracrud.view.prefix');
@@ -106,9 +100,6 @@ class Configuration
     {
     }
 
-    /**
-     * @return string
-     */
     public static function getViewPath(): string
     {
         return !empty(static::$viewPath) ? static::$viewPath : config('laracrud.view.path');

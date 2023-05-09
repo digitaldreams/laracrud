@@ -4,9 +4,6 @@ namespace LaraCrud\Builder\Controller;
 
 abstract class ForceDeleteMethod extends RestoreMethod
 {
-    /**
-     * @return string
-     */
     public function getBody(): string
     {
         $variable = '$' . $this->getModelVariableName();
@@ -17,9 +14,6 @@ abstract class ForceDeleteMethod extends RestoreMethod
         return $body;
     }
 
-    /**
-     * @return array
-     */
     public function generateRouteParameter(): array
     {
         $parameters = parent::generateRouteParameter();

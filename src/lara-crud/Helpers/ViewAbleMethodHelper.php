@@ -53,7 +53,7 @@ trait ViewAbleMethodHelper
         }
 
         if ($this instanceof ViewAbleMethod) {
-            $viewNs = config('laracrud.view.namespace') ? rtrim(config('laracrud.view.namespace'), '::') . '::' : '';
+            $viewNs = config('laracrud.view.namespace') ? rtrim((string) config('laracrud.view.namespace'), '::') . '::' : '';
 
             return $this->viewFilePath = $viewNs . 'pages.' . Str::plural(lcfirst($this->getModelShortName())) . '.' . $this->getMethodName();
         }
@@ -61,9 +61,6 @@ trait ViewAbleMethodHelper
         return $this->viewFilePath;
     }
 
-    /**
-     * @return array
-     */
     public function getVariables(): array
     {
         $data = [];
@@ -79,8 +76,6 @@ trait ViewAbleMethodHelper
     }
 
     /**
-     * @return string
-     *
      * @throws \ReflectionException
      */
     protected function generateViewCode(): string
@@ -100,11 +95,6 @@ trait ViewAbleMethodHelper
         ]))->get();
     }
 
-    /**
-     * @param array $variables
-     *
-     * @return string
-     */
     protected function buildVariables(array $variables = []): string
     {
         $variables = !empty($variables) ? $variables : $this->variables;
@@ -117,11 +107,6 @@ trait ViewAbleMethodHelper
         return $dataString;
     }
 
-    /**
-     * @param array $parameters
-     *
-     * @return string
-     */
     public function buildParameters(array $parameters = []): string
     {
         $parameterString = '';
@@ -135,8 +120,6 @@ trait ViewAbleMethodHelper
     }
 
     /**
-     * @param string $key
-     * @param string $variable
      *
      * @return $this
      */
@@ -148,8 +131,6 @@ trait ViewAbleMethodHelper
     }
 
     /**
-     * @param string $class
-     * @param string $variable
      *
      * @return $this
      */

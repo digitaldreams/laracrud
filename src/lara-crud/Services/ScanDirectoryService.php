@@ -7,16 +7,13 @@ use RecursiveIteratorIterator;
 
 class ScanDirectoryService
 {
-    private $filepath;
-
     /**
      * ScanDirectoryJob constructor.
      *
-     * @param string $filePath
+     * @param string $filepath
      */
-    public function __construct($filePath)
+    public function __construct(private $filepath)
     {
-        $this->filepath = $filePath;
     }
 
     /**

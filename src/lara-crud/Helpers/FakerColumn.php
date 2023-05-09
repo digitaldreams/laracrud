@@ -106,10 +106,8 @@ class FakerColumn
                 }
 
                 return '$this->faker->words(5,true)';
-                break;
             case 'enum':
                 return 'array_rand([\'' . implode("','", $this->column->options()) . '\'], 1)';
-                break;
             case 'longtext':
             case 'mediumtext':
             case 'text':
@@ -119,35 +117,28 @@ class FakerColumn
                 } else {
                     return '$this->faker->text';
                 }
-                break;
             // Numeric data Type
             case 'bigint':
             case 'mediumint':
             case 'int':
                 return '$this->faker->randomNumber()';
-                break;
             case 'smallint':
             case 'tinyint':
                 return '$this->faker->numberBetween(1,99)';
-                break;
             case 'decimal':
             case 'float':
             case 'double':
                 return '$this->faker->randomNumber()';
-                break;
             // Date Time
             case 'date':
                 return '$this->faker->date()';
-                break;
             case 'datetime':
             case 'timestamp':
                 return '$this->faker->dateTime()';
-                break;
             case 'time':
                 return '$this->faker->time()';
             case 'year':
                 return '$this->faker->year';
-                break;
         }
     }
 }

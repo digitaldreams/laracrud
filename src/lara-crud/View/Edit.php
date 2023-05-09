@@ -52,10 +52,10 @@ class Edit extends Page
             'folder'          => $prefix . $this->form->getFolder(),
             'routeModelKey'   => $this->dataStore['routeModelKey'] ?? 'id',
             'partialFilename' => Str::singular($this->table->name()),
-            'indexRoute'      => $this->getRouteName('index', $this->table->name()),
-            'createLink'      => $link->create(get_class($this->model)),
-            'showRoute'       => $this->getRouteName('show', $this->table->name()),
-            'updateRoute'     => $this->getRouteName('update', $this->table->name()),
+            'indexRoute'      => static::getRouteName('index', $this->table->name()),
+            'createLink'      => $link->create($this->model::class),
+            'showRoute'       => static::getRouteName('show', $this->table->name()),
+            'updateRoute'     => static::getRouteName('update', $this->table->name()),
         ]))->get();
     }
 

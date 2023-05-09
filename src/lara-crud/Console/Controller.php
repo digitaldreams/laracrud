@@ -112,10 +112,8 @@ class Controller extends Command
 
     /**
      * @param $model
-     *
-     * @return false|string
      */
-    private function modelFullName($model)
+    private function modelFullName($model): false|string
     {
         $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
         if (!class_exists($model)) {
@@ -170,9 +168,6 @@ class Controller extends Command
     {
     }
 
-    /**
-     * @return \LaraCrud\Repositories\ControllerRepository
-     */
     protected function initControllerCrud($api): ControllerRepository
     {
         $only = $this->option('only');
@@ -200,8 +195,6 @@ class Controller extends Command
     /**
      * Whether given model implement SoftDeletes trait.
      * If so then we have to add restore and forceDelete methods as well.
-     *
-     * @return bool
      */
     private function isSoftDeleteAble(): bool
     {
