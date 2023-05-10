@@ -21,6 +21,7 @@ interface ColumnContract
     public function isUnique(): bool;
 
     public function dataType(): string;
+    public function phpDataType(): string;
 
     public function inputType(): string;
 

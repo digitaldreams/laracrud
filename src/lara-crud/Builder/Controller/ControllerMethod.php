@@ -33,15 +33,12 @@ abstract class ControllerMethod
      */
     protected array $namespaces = [];
 
-    /**
-     * @var \ReflectionClass
-     */
+
     protected ReflectionClass $modelReflectionClass;
 
     /**
      * Whether its an API method or not.
      *
-     * @var bool
      */
     protected bool $isApi = false;
 
@@ -55,9 +52,8 @@ abstract class ControllerMethod
     /**
      * Name of the controller method.
      *
-     * @var string
      */
-    protected string $methodName;
+    protected ?string $methodName;
 
     /**
      * @var string[]
@@ -91,7 +87,7 @@ abstract class ControllerMethod
     }
 
     /**
-     * Name of of Controller Method.
+     * Name of Controller Method.
      */
     public function getMethodName(): string
     {
@@ -227,7 +223,7 @@ abstract class ControllerMethod
     }
 
 
-    private function getAuthCode($methodName): string
+    private function getAuthCode(string $methodName): string
     {
         $auth = '';
         if (in_array($methodName, ['viewAny', 'create', 'store'])) {

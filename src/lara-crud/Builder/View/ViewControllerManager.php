@@ -37,11 +37,14 @@ class ViewControllerManager
     /**
      * ViewControllerManager constructor.
      */
-    public function __construct(private readonly string $controller, private readonly Model $model, private readonly ?\LaraCrud\Builder\Model $parent)
-    {
+    public function __construct(
+        private readonly string $controller,
+        private readonly Model $model,
+        private readonly ?\LaraCrud\Builder\Model $parent
+    ) {
     }
 
-    protected function initMethods($controller)
+    protected function initMethods(string $controller): void
     {
         $cr = new ControllerReader($controller);
         $methods = $cr->getMethods();

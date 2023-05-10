@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Console\ReactJs;
+namespace LaraCrud\Command\ReactJs;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\ReactJs\ReactJsFormCrud;
@@ -52,11 +52,6 @@ class FormCommand extends Command
         return new $model();
     }
 
-    /**
-     * @param mixed $controller
-     *
-     * @throws \ReflectionException
-     */
     protected function getController(string $controller)
     {
         if (! class_exists($controller)) {

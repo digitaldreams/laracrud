@@ -4,54 +4,52 @@ namespace LaraCrud;
 
 use DbReader\Database;
 use Illuminate\Support\ServiceProvider;
-use LaraCrud\Console\Controller;
-use LaraCrud\Console\Factory;
-use LaraCrud\Console\Migration;
-use LaraCrud\Console\Model;
-use LaraCrud\Console\Mvc;
-use LaraCrud\Console\Package;
-use LaraCrud\Console\Policy;
-use LaraCrud\Console\ReactJs\ApiEndpointCommand;
-use LaraCrud\Console\ReactJs\CrudCommand;
-use LaraCrud\Console\ReactJs\EnumCommand;
-use LaraCrud\Console\ReactJs\FormCommand;
-use LaraCrud\Console\ReactJs\ModelCommand;
-use LaraCrud\Console\ReactJs\ServiceCommand;
-use LaraCrud\Console\Request;
-use LaraCrud\Console\Resource;
-use LaraCrud\Console\Route;
-use LaraCrud\Console\Test;
-use LaraCrud\Console\View;
-
+use LaraCrud\Command\ControllerCommand;
+use LaraCrud\Command\FactoryCommand;
+use LaraCrud\Command\MigrationCommand;
+use LaraCrud\Command\ModelCommand;
+use LaraCrud\Command\MvcCommand;
+use LaraCrud\Command\PackageCommand;
+use LaraCrud\Command\PolicyCommand;
+use LaraCrud\Command\ReactJs\ApiEndpointCommand;
+use LaraCrud\Command\ReactJs\CrudCommand;
+use LaraCrud\Command\ReactJs\EnumCommand;
+use LaraCrud\Command\ReactJs\FormCommand;
+use LaraCrud\Command\ReactJs\ModelCommand as ReactJsModelCommand;
+use LaraCrud\Command\ReactJs\ServiceCommand;
+use LaraCrud\Command\RequestCommand;
+use LaraCrud\Command\ResourceCommand;
+use LaraCrud\Command\RouteCommand;
+use LaraCrud\Command\TestCommand;
+use LaraCrud\Command\ViewCommand;
+use Illuminate\Contracts\Support\DeferrableProvider;
 /**
  * Description of LaraCrudServiceProvider.
  *
  * @author Tuhin
  */
-class LaraCrudServiceProvider extends ServiceProvider
+class LaraCrudServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
 
     /**
      * List of command which will be registered.
      *
-     * @var array
      */
-    protected $commands = [
-        Model::class,
-        Factory::class,
-        Request::class,
-        Controller::class,
-        Route::class,
-        Migration::class,
-        View::class,
-        Mvc::class,
-        Policy::class,
-        Test::class,
-        Package::class,
-        Resource::class,
-        EnumCommand::class,
+    protected array $commands = [
         ModelCommand::class,
+        FactoryCommand::class,
+        RequestCommand::class,
+        ControllerCommand::class,
+        RouteCommand::class,
+        MigrationCommand::class,
+        ViewCommand::class,
+        MvcCommand::class,
+        PolicyCommand::class,
+        TestCommand::class,
+        PackageCommand::class,
+        ResourceCommand::class,
+        EnumCommand::class,
+        ReactJsModelCommand::class,
         ServiceCommand::class,
         FormCommand::class,
         ApiEndpointCommand::class,
@@ -61,7 +59,7 @@ class LaraCrudServiceProvider extends ServiceProvider
     /**
      * Run on application loading.
      */
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__ . '/../config/laracrud.php' => config_path('laracrud.php'),
@@ -81,7 +79,7 @@ class LaraCrudServiceProvider extends ServiceProvider
     /**
      * Run after all boot method completed.
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(
             __DIR__ . '/../config/laracrud.php',
@@ -108,7 +106,7 @@ class LaraCrudServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['laracrud', 'reactjs'];
     }

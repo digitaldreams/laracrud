@@ -1,12 +1,12 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\ModelFactory;
 use LaraCrud\Helpers\Helper;
 
-class Factory extends Command
+class FactoryCommand extends Command
 {
     use Helper;
 
@@ -15,7 +15,7 @@ class Factory extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:factory 
+    protected $signature = 'laracrud:factory
     {model : Name of the Eloquent Model}';
 
     /**

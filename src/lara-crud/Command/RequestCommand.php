@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Request as RequestCrud;
@@ -8,7 +8,7 @@ use LaraCrud\Crud\RequestController as RequestControllerCrud;
 use LaraCrud\Crud\RequestResource as RequestResourceCrud;
 use LaraCrud\Helpers\Helper;
 
-class Request extends Command
+class RequestCommand extends Command
 {
     use Helper;
 

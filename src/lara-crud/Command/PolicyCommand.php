@@ -1,11 +1,11 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use LaraCrud\Helpers\Helper;
 
-class Policy extends Command
+class PolicyCommand extends Command
 {
     use Helper;
 

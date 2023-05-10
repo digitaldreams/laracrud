@@ -46,7 +46,7 @@ class DefaultMethod extends ControllerMethod
         return $this;
     }
 
-    private function initMethod($method): ControllerMethod
+    private function initMethod(string $method): ControllerMethod
     {
         $update = new $method($this->reflectionMethod, $this->route);
         $update->setModel($this->model);
@@ -58,7 +58,7 @@ class DefaultMethod extends ControllerMethod
         return $update;
     }
 
-    private function addToTemplate($name)
+    private function addToTemplate(string $name): void
     {
         $this->testMethods[] = (new TemplateManager(
             $name,

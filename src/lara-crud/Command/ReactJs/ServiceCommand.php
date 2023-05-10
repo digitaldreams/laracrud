@@ -1,14 +1,14 @@
 <?php
 
-namespace LaraCrud\Console\ReactJs;
+namespace LaraCrud\Command\ReactJs;
 
 use Illuminate\Console\Command;
-use LaraCrud\Crud\ReactJs\ReactJsApiEndpointCrud;
-use LaraCrud\Crud\ReactJs\ReactJsEnumCrud;
+use Illuminate\Support\Facades\Log;
+use LaraCrud\Crud\ReactJs\ReactJsServiceCrud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Services\ScanDirectoryService;
 
-class ApiEndpointCommand extends Command
+class ServiceCommand extends Command
 {
     use Helper;
 
@@ -17,23 +17,23 @@ class ApiEndpointCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'reactjs:apiEndpoint {controller}';
+    protected $signature = 'reactjs:service {controller}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'ApiEndpoint generator based on controller Class';
+    protected $description = 'Enum generator based on folder or class';
 
     public function handle()
     {
         try {
             $controller = $this->argument('controller');
 
-            if ($apiEndpointCrud = $this->initReactJsApiEndpoint($controller)) {
+            if ($apiEndpointCrud = $this->initReactJsApiService($controller)) {
                 $apiEndpointCrud->save();
-                $this->info(sprintf('%s apiEndpoint file generated successfully', $controller));
+                $this->info(sprintf('%s Api service file generated successfully', $controller));
             } else {
                 $path = $this->toPath($controller);
                 $fullPath = base_path($path);
@@ -45,28 +45,26 @@ class ApiEndpointCommand extends Command
                         $fullClass = $controller . '\\' . pathinfo((string) $file, PATHINFO_FILENAME);
 
                         if (class_exists($fullClass)) {
-                            $enumCrud = new ReactJsApiEndpointCrud($fullClass);
+                            $enumCrud = new ReactJsServiceCrud($fullClass);
                             $enumCrud->save();
                             $this->info(sprintf('%s file created successfully', $fullClass));
                             ++$s;
                         }
                     } catch (\Exception $e) {
                         $this->warn($e->getMessage());
+                        continue;
                     }
                 }
-                $this->info(sprintf('%d api endpoints class created out of %d', $s, count($files)));
+                $this->info(sprintf('%d api service class created out of %d', $s, count($files)));
             }
         } catch (\Exception $e) {
             $this->error($e->getMessage());
+            Log::error($e->getTraceAsString());
         }
     }
 
-    /**
-     * @param mixed $controller
-     *
-     * @throws \ReflectionException
-     */
-    protected function initReactJsApiEndpoint(string $controller): ReactJsApiEndpointCrud|bool
+
+    protected function initReactJsApiService(string $controller): ReactJsServiceCrud|bool
     {
         if (! class_exists($controller)) {
             $namespace = config('laracrud.controller.apiNamespace');
@@ -78,6 +76,6 @@ class ApiEndpointCommand extends Command
             return false;
         }
 
-        return new ReactJsApiEndpointCrud($controller);
+        return new ReactJsServiceCrud($controller);
     }
 }

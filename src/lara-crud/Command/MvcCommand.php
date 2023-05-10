@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Controller;
@@ -12,7 +12,7 @@ use LaraCrud\View\Edit;
 use LaraCrud\View\Index;
 use LaraCrud\View\Show;
 
-class Mvc extends Command
+class MvcCommand extends Command
 {
     /**
      * The name and signature of the console command.

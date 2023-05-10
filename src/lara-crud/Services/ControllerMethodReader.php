@@ -11,29 +11,17 @@ class ControllerMethodReader
     /**
      * List of full namespaces that will be import on top of controller.
      *
-     * @var array
+     * @var array<string>
      */
     protected array $namespaces = [];
 
-    /**
-     * @var \ReflectionMethod
-     */
-    protected $reflectionMethod;
+    protected \ReflectionMethod $reflectionMethod;
 
-    /**
-     * @var \Illuminate\Routing\Route
-     */
-    protected $route;
+    protected ?Route $route;
 
-    /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    public $parentModel;
+    public ?Model $parentModel;
 
-    /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    public $model;
+    public ?Model $model;
 
     public array $authMiddleware = ['auth', 'auth:sanctum', 'auth:api'];
 

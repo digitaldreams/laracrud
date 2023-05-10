@@ -7,12 +7,12 @@
  * Time: 5:37 PM.
  */
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Package as PackageCrud;
 
-class Package extends Command
+class PackageCommand extends Command
 {
     /**
      * The name and signature of the console command.

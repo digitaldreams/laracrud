@@ -7,6 +7,12 @@ use LaraCrud\Contracts\Controller\ApiArrayResponseMethod;
 
 class DestroyMethod extends ParentDestroyMethod implements ApiArrayResponseMethod
 {
+    /**
+     * @return array{
+     *      success:bool,
+     *      message:string
+     * }
+     */
     public function array(): array
     {
         return [

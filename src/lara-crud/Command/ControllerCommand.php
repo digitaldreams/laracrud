@@ -7,7 +7,7 @@
  * Time: 5:37 PM.
  */
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,20 +17,14 @@ use LaraCrud\Crud\Policy;
 use LaraCrud\Crud\RequestResource as RequestResourceCrud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Repositories\ControllerRepository;
-
-class Controller extends Command
+use Illuminate\Database\Eloquent\Model;
+class ControllerCommand extends Command
 {
     use Helper;
 
-    /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $model;
+    protected Model $model;
 
-    /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $parent;
+    protected Model $parent;
 
     /**
      * @var string[][]
@@ -70,22 +64,19 @@ class Controller extends Command
     /**
      * The console command description.
      *
-     * @var string
      */
     protected $description = 'Create a Controller based on Model';
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): int
     {
         try {
             $this->checkModelExists();
 
             $name = $this->argument('name');
-            $api = $this->option('api');
+            $api = (bool)$this->option('api');
             $with = $this->option('with');
 
             $withArr = !empty($with) ? explode(',', $with) : [];
@@ -107,7 +98,11 @@ class Controller extends Command
         } catch (\Exception $ex) {
             Log::error($ex->getTraceAsString());
             $this->error(sprintf('%s on line %s  in %s', $ex->getMessage(), $ex->getLine(), $ex->getFile()));
+
+            return Command::FAILURE;
         }
+
+        return Command::SUCCESS;
     }
 
     /**
@@ -162,10 +157,6 @@ class Controller extends Command
         $requestResource->save();
 
         $this->info('Request controller classes created successfully');
-    }
-
-    private function createPolicy()
-    {
     }
 
     protected function initControllerCrud($api): ControllerRepository

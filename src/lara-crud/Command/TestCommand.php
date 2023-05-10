@@ -1,13 +1,13 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\Test as TestCrud;
 use LaraCrud\Helpers\Helper;
 use LaraCrud\Repositories\TestRepository;
 
-class Test extends Command
+class TestCommand extends Command
 {
     use Helper;
 

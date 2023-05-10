@@ -14,12 +14,12 @@ class Model
     /**
      * @var Model
      */
-    protected $modelBuilder;
+    protected Model $modelBuilder;
 
     /**
      * @var ColumnContract
      */
-    protected $column;
+    protected ColumnContract $column;
 
     /**
      * It will be added as comments before the class.
@@ -27,7 +27,7 @@ class Model
      *
      * @var array
      */
-    public $propertyDefiners = [];
+    public array $propertyDefiners = [];
 
     /**
      * It will be added as comments before the class.
@@ -35,57 +35,55 @@ class Model
      *
      * @var array
      */
-    public $methodDefiners = [];
+    public array $methodDefiners = [];
 
     /**
      * Will contains all scopeable columns.
      *
-     * @var array
      */
-    public $scopes = [];
+    public array $scopes = [];
 
     /**
      * Contains all the possible relations.
      *
-     * @var array
      */
-    public $relations = [];
+    public array $relations = [];
 
     /**
      * All the casting columns.
      *
      * @var array
      */
-    public $casts = [];
+    public array $casts = [];
 
     /**
      * ALl the contstants.
      *
      * @var array
      */
-    public $constants = [];
+    public array $constants = [];
 
     /**
      * Date time columns.
      *
      * @var array
      */
-    public $dates = [];
+    public array $dates = [];
 
     /**
      * @var array
      */
-    public $fillable = [];
+    public array $fillable = [];
 
     /**
      * @var array
      */
-    public $mutators = [];
+    public array $mutators = [];
 
     /**
      * @var array
      */
-    public $accessors = [];
+    public array $accessors = [];
 
     /**
      * Database Type => PHP data types.
@@ -106,11 +104,8 @@ class Model
      *
      * @var array
      */
-    public $searchScope = [];
+    public array $searchScope = [];
 
-    /**
-     * ModelBuilder constructor.
-     */
     public function __construct(ColumnContract $columnContract)
     {
         $this->column = $columnContract;
@@ -119,11 +114,8 @@ class Model
     /**
      * It will process all the necessary work.
      *
-     * @param Model|static $modelBuilder
-     *
-     * @return \LaraCrud\Builder\Model
      */
-    public function merge(self $modelBuilder)
+    public function merge(self $modelBuilder): static
     {
         $this->propertyDefiners = array_merge($this->propertyDefiner(), $modelBuilder->propertyDefiners);
         $this->methodDefiners = array_merge($this->methodDefiner(), $modelBuilder->methodDefiners);
@@ -145,7 +137,7 @@ class Model
     /**
      * Check if current column is scopeable if so then make a scope.
      */
-    public function scopes()
+    public function scopes(): array
     {
         if (!in_array($this->column->name(), config('laracrud.model.protectedColumns')) && !in_array($this->column->dataType(), ['text', 'tinytext', 'bigtext'])) {
             $this->scopes[] = (new TemplateManager('model/scope.txt', [
@@ -160,7 +152,7 @@ class Model
     /**
      * return a entry to the casts array.
      */
-    public function casts()
+    public function casts(): array
     {
         if (isset($this->converTypes[$this->column->dataType()])) {
             $this->casts[] = "'" . $this->column->name() . "'=>'" . $this->converTypes[$this->column->dataType()] . "'";
@@ -169,10 +161,7 @@ class Model
         return $this->casts;
     }
 
-    /**
-     * @return array|void
-     */
-    public function constant()
+    public function constant(): array
     {
         if ('enum' !== $this->column->dataType()) {
             return $this->constants;
@@ -190,7 +179,7 @@ class Model
     /**
      *  return a line to property definer array.
      */
-    public function propertyDefiner()
+    public function propertyDefiner(): array
     {
         $this->propertyDefiners[] = '@property ' . $this->column->phpDataType() . ' $' . $this->column->name() . ' ' . $this->column->label();
 
@@ -200,7 +189,7 @@ class Model
     /**
      *  return a line to method definer array.
      */
-    public function methodDefiner()
+    public function methodDefiner(): array
     {
         $this->methodDefiners[] = '@method \Illuminate\Database\Eloquent\Builder ' . lcfirst($this->getModelName($this->column->name())) . '(' . $this->column->dataType() . ' $' . $this->column->name() . ')' . str_replace('_', ' ', $this->column->name());
 
@@ -210,7 +199,7 @@ class Model
     /**
      *  If its applicable to fill then return it otherwise return empty.
      */
-    public function fillable()
+    public function fillable(): array
     {
         if ($this->column->isFillable()) {
             $this->fillable[] = "\t\t" . "'" . $this->column->name() . "'";
@@ -224,7 +213,7 @@ class Model
      *
      * @return array
      */
-    public function dates()
+    public function dates(): array
     {
         //Check if it is a data time column. If so then add it to $protected $dates=[]
         if (
@@ -240,9 +229,8 @@ class Model
     /**
      * Make a line to Table wise search.
      *
-     * @return array|void
      */
-    public function makeSearch()
+    public function makeSearch(): array
     {
         //protected column and foreign key will be excepted from making seach scope
         if (in_array($this->column->name(), config('laracrud.model.protectedColumns')) || $this->column->foreignKey()) {
@@ -261,7 +249,7 @@ class Model
     /**
      * making of mutator code.
      */
-    public function mutators()
+    public function mutators(): array
     {
         $setTimeFormats = config('laracrud.model.setDateFormat', []);
         if (in_array($this->column->name(), config('laracrud.model.protectedColumns'))) {
@@ -292,7 +280,7 @@ class Model
     /**
      * Making of accessors code.
      */
-    public function accessors()
+    public function accessors(): array
     {
         if (in_array($this->column->name(), config('laracrud.model.protectedColumns'))) {
             return $this->accessors;

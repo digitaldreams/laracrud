@@ -1,13 +1,13 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use LaraCrud\Contracts\DatabaseContract;
 use LaraCrud\Crud\Model as ModelCrud;
 
-class Model extends Command
+class ModelCommand extends Command
 {
     /**
      * The name and signature of the console command.

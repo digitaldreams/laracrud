@@ -1,12 +1,12 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\ApiResource;
 use LaraCrud\Helpers\Helper;
 
-class Resource extends Command
+class ResourceCommand extends Command
 {
     use Helper;
 

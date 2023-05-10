@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Console\ReactJs;
+namespace LaraCrud\Command\ReactJs;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\ReactJs\ReactJsEnumCrud;

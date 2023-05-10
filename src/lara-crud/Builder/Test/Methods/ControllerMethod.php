@@ -12,23 +12,13 @@ abstract class ControllerMethod extends ControllerMethodReader
     /**
      * Whether its an API method or not.
      *
-     * @var bool
      */
     protected bool $isApi = false;
 
-    /**
-     * @var string
-     */
     protected string $modelFactory;
 
-    /**
-     * @var string
-     */
     protected string $parentModelFactory;
 
-    /**
-     * @var bool
-     */
     public static bool $hasSuperAdminRole = false;
 
     protected array $fake = [];
@@ -40,7 +30,6 @@ abstract class ControllerMethod extends ControllerMethodReader
 
     /**
      * Get Inside code of a Controller Method.
-     *
      *
      * @throws \ReflectionException
      */
@@ -89,7 +78,7 @@ abstract class ControllerMethod extends ControllerMethodReader
     /**
      * @return false|string
      */
-    protected function getSanctumActingAs($actionAs)
+    protected function getSanctumActingAs(string $actionAs)
     {
         if (!$this->isSanctumAuth) {
             return false;
@@ -102,7 +91,7 @@ abstract class ControllerMethod extends ControllerMethodReader
     /**
      * @return false|string
      */
-    protected function getPassportActingAs($actionAs)
+    protected function getPassportActingAs(string $actionAs)
     {
         if (!$this->isPassportAuth) {
             return false;
@@ -113,7 +102,7 @@ abstract class ControllerMethod extends ControllerMethodReader
         return 'Passport::actingAs(' . $actionAs . ', [\'*\']);';
     }
 
-    protected function getWebAuthActingAs($actionAs)
+    protected function getWebAuthActingAs(string $actionAs): false|string
     {
         if (!$this->isWebAuth) {
             return false;
@@ -131,7 +120,7 @@ abstract class ControllerMethod extends ControllerMethodReader
     }
 
 
-    protected function getApiActingAs(string $actionAs)
+    protected function getApiActingAs(string $actionAs): false|string
     {
         if ($this->isSanctumAuth) {
             return $this->getSanctumActingAs($actionAs);
@@ -143,7 +132,7 @@ abstract class ControllerMethod extends ControllerMethodReader
         return '';
     }
 
-    protected function getGlobalVariables($actionAs = '$user'): array
+    protected function getGlobalVariables(string $actionAs = '$user'): array
     {
         return [
             'modelVariable' => $this->getModelVariable(),
@@ -161,10 +150,10 @@ abstract class ControllerMethod extends ControllerMethodReader
         ];
     }
 
-    public function generatePostData($update = false): string
+    public function generatePostData(bool $update = false): string
     {
         $data = '';
-        $modelVariable = $update == true ? '$new' . $this->modelRelationReader->getShortName() : $this->getModelVariable();
+        $modelVariable = $update === true ? '$new' . $this->modelRelationReader->getShortName() : $this->getModelVariable();
         $rules = $this->getCustomRequestClassRules();
         foreach ($rules as $field => $rule) {
             $data .= "\t\t\t" . '"' . $field . '" => ' . $modelVariable . '->' . $field . ',' . PHP_EOL;
@@ -178,7 +167,7 @@ abstract class ControllerMethod extends ControllerMethodReader
         $data = '';
         $rules = $this->getCustomRequestClassRules();
         foreach ($rules as $field => $rule) {
-            $listOfRules = is_array($rule) ? $rule : explode("|", (string) $rule);
+            $listOfRules = is_array($rule) ? $rule : explode("|", (string)$rule);
             foreach ($listOfRules as $listOfRule) {
                 if (is_object($listOfRule)) {
                     continue;

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use DbReader\Table as TableReader;
 use Illuminate\Console\Command;
@@ -18,7 +18,7 @@ use LaraCrud\View\Partial\Panel;
 use LaraCrud\View\Partial\Table;
 use LaraCrud\View\Show;
 
-class View extends Command
+class ViewCommand extends Command
 {
     use Helper;
 
@@ -27,10 +27,10 @@ class View extends Command
      *
      * @var string
      */
-    protected $signature = 'laracrud:view 
-        {model : Eloquent Model Name. E.g. Post} 
-        {--p|page= : Any of this (index|create|edit|show|form|table|panel|modal). Ignore this option will create a complete CRUD views.} 
-        {--name= : Name of the view file.} 
+    protected $signature = 'laracrud:view
+        {model : Eloquent Model Name. E.g. Post}
+        {--p|page= : Any of this (index|create|edit|show|form|table|panel|modal). Ignore this option will create a complete CRUD views.}
+        {--name= : Name of the view file.}
         {--c|controller= : Create view files by reading Public GET method response}';
 
     /**

@@ -1,11 +1,11 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\MigrationCrud;
 
-class Migration extends Command
+class MigrationCommand extends Command
 {
     /**
      * The name and signature of the console command.

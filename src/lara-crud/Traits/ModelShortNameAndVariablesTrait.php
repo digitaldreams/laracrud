@@ -2,6 +2,8 @@
 
 namespace LaraCrud\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * ControllerMethods and View class are using these methods and property frequently.
  * So put them here is the best option for re-usability.
@@ -20,9 +22,8 @@ trait ModelShortNameAndVariablesTrait
      *
      * If controller has a parent. For example Comment Model may have Post parent.
      *
-     * @var \Illuminate\Database\Eloquent\Model
      */
-    protected $parentModel;
+    protected ?Model $parentModel;
 
     /**
      * @var string

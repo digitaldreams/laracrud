@@ -1,12 +1,12 @@
 <?php
 
-namespace LaraCrud\Console;
+namespace LaraCrud\Command;
 
 use Illuminate\Console\Command;
 use LaraCrud\Crud\RouteCrud;
 use LaraCrud\Helpers\Helper;
 
-class Route extends Command
+class RouteCommand extends Command
 {
     use Helper;
 
