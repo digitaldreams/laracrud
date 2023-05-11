@@ -6,7 +6,9 @@ use LaraCrud\Builder\Model as ModelBuilder;
 use LaraCrud\Contracts\Crud;
 use LaraCrud\Contracts\TableContract;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Helpers\TemplateManager;
+use LaraCrud\Services\Mapper;
 
 class Model implements Crud
 {
@@ -63,7 +65,8 @@ class Model implements Crud
     {
         $this->table = app()->make(TableContract::class, ['table' => $table]);
         $this->modelBuilder = $this->makeModelBuilders();
-        $this->namespace = $this->getFullNS(config('laracrud.model.namespace'));
+
+        $this->namespace = NamespaceResolver::getFullNS(config('laracrud.model.namespace'));
         $this->modelName = $this->getModelName($table);
 
         if (!empty($name)) {
@@ -75,9 +78,9 @@ class Model implements Crud
     /**
      * Done all processing work and make the final code that is ready to save as php file.
      *
+     * @return string
      * @throws \Exception
      *
-     * @return string
      */
     public function template()
     {
@@ -85,8 +88,14 @@ class Model implements Crud
         $data = [
             'namespace' => $this->namespace,
             'modelName' => $this->modelName,
-            'propertyDefiner' => config('laracrud.model.propertyDefiner') ? implode("\n", array_reverse($this->modelBuilder->propertyDefiners)) : '',
-            'methodDefiner' => config('laracrud.model.methodDefiner') ? implode("\n", array_reverse($this->modelBuilder->methodDefiners)) : '',
+            'propertyDefiner' => config('laracrud.model.propertyDefiner') ? implode(
+                "\n",
+                array_reverse($this->modelBuilder->propertyDefiners)
+            ) : '',
+            'methodDefiner' => config('laracrud.model.methodDefiner') ? implode(
+                "\n",
+                array_reverse($this->modelBuilder->methodDefiners)
+            ) : '',
 
             'tableName' => $this->table->name(),
             'constants' => $this->constants(),
@@ -112,9 +121,9 @@ class Model implements Crud
     /**
      * Save code as php file.
      *
+     * @return mixed
      * @throws \Exception
      *
-     * @return mixed
      */
     public function save()
     {
@@ -124,6 +133,11 @@ class Model implements Crud
         }
         $model = new \SplFileObject($filePath, 'w+');
         $model->fwrite($this->template());
+
+        Mapper::loadByTable($this->table->name(), [
+            'model' => $this->modelName,
+            'modelNamespace'=>$this->namespace . '\\' . $this->modelName
+        ])->save();
     }
 
     /**
@@ -200,9 +214,9 @@ class Model implements Crud
     /**
      * Making relationship code.
      *
+     * @return string
      * @throws \Exception
      *
-     * @return string
      */
     protected function relations()
     {

@@ -108,38 +108,23 @@ trait Helper
     public function checkPath($extension = '.php')
     {
         //If model path does not exists then create model path.
-        $fullPath = base_path($this->toPath($this->namespace));
+
+        $fullPath = base_path(NamespaceResolver::toPath($this->namespace));
         if (!file_exists($fullPath)) {
-            $relPath = $this->toPath($this->namespace);
+            $relPath = NamespaceResolver::toPath($this->namespace);
             $nextPath = '';
             $folders = explode('/', (string) $relPath);
             foreach ($folders as $folder) {
                 $nextPath .= !empty($nextPath) ? '/' . $folder : $folder;
                 if (!file_exists(base_path($nextPath))) {
-                    mkdir(base_path($nextPath));
+                    mkdir(base_path($nextPath),0755);
                 }
             }
         }
 
-        return base_path($this->toPath($this->namespace) . '/' . $this->modelName . $extension);
+        return base_path(NamespaceResolver::toPath($this->namespace) . '/' . $this->modelName . $extension);
     }
 
-    /**
-     * @param string $namespace Full Qualified namespace e.g. App\Http\Controllers
-     *
-     * @return string will be return like app/Http/Controllers
-     */
-    public function toPath($namespace)
-    {
-        $nsArr = explode('\\', trim($namespace, '\\'));
-        $rootNs = array_shift($nsArr);
-        $loadComposerJson = new \SplFileObject(base_path('composer.json'));
-        $composerArr = json_decode($loadComposerJson->fread($loadComposerJson->getSize()), true, 512, JSON_THROW_ON_ERROR);
-        $psr4 = $composerArr['autoload']['psr-4'] ?? [];
-        $rootPath = $psr4[$rootNs . '\\'] ?? lcfirst($rootNs);
-
-        return rtrim((string) $rootPath, '/') . '/' . implode('/', $nsArr);
-    }
 
     /**
      * Get Controller File and Class Name.
@@ -164,18 +149,7 @@ trait Helper
      *
      * @return string
      */
-    public function getFullNS($namespace)
-    {
-        $rootNs = config('laracrud.rootNamespace', 'App');
-        if (empty($namespace)) {
-            return $rootNs;
-        }
-        if (0 !== substr_compare((string) $namespace, (string) $rootNs, 0, strlen((string) $rootNs))) {
-            return trim((string) $rootNs, '\\') . '\\' . $namespace;
-        }
 
-        return $namespace;
-    }
 
     /**
      * @return string

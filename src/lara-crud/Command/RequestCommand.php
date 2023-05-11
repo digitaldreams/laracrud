@@ -7,6 +7,7 @@ use LaraCrud\Crud\Request as RequestCrud;
 use LaraCrud\Crud\RequestController as RequestControllerCrud;
 use LaraCrud\Crud\RequestResource as RequestResourceCrud;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 
 class RequestCommand extends Command
 {
@@ -40,7 +41,7 @@ class RequestCommand extends Command
     {
         try {
             $modelName = $this->argument('model');
-            $modelFullName = $this->modelFullName($modelName);
+            $modelFullName = NamespaceResolver::modelFullName($modelName);
             $modelObj = new $modelFullName();
             $name = $this->argument('name');
             $controller = $this->option('controller');
@@ -66,13 +67,4 @@ class RequestCommand extends Command
         }
     }
 
-    private function modelFullName($model)
-    {
-        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
-        if (!class_exists($model)) {
-            return $modelNamespace . '\\' . $model;
-        }
-
-        return false;
-    }
 }

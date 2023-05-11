@@ -5,6 +5,7 @@ namespace LaraCrud\Command;
 use Illuminate\Console\Command;
 use LaraCrud\Crud\ApiResource;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 
 class ResourceCommand extends Command
 {
@@ -52,7 +53,7 @@ class ResourceCommand extends Command
     private function checkModelExists()
     {
         $model = $this->argument('model');
-        $modelFullName = $this->modelFullName($model);
+        $modelFullName = NamespaceResolver::modelFullName($model);
         if (class_exists($modelFullName)) {
             $this->model = new $modelFullName();
         } else {
@@ -61,16 +62,4 @@ class ResourceCommand extends Command
         }
     }
 
-    /**
-     * @param $model
-     */
-    private function modelFullName($model): false|string
-    {
-        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
-        if (!class_exists($model)) {
-            return $modelNamespace . '\\' . $model;
-        }
-
-        return false;
-    }
 }

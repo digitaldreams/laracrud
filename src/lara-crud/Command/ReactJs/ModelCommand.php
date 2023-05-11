@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Crud\ReactJs\ReactJsModelCrud;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Services\ScanDirectoryService;
 
 class ModelCommand extends Command
@@ -38,7 +39,7 @@ class ModelCommand extends Command
                 $reactModelCrud->save();
                 $this->info(sprintf('%s model created successfully', $modelClass));
             } else {
-                $path = $this->toPath($modelClass);
+                $path = NamespaceResolver::toPath($modelClass);
                 $fullPath = base_path($path);
                 $scan = new ScanDirectoryService($fullPath);
                 $files = $scan->scan();
@@ -69,7 +70,7 @@ class ModelCommand extends Command
      */
     private function checkModelExists(mixed $model)
     {
-        $modelFullName = $this->modelFullName($model);
+        $modelFullName = NamespaceResolver::modelFullName($model);
         if (class_exists($modelFullName)) {
             return new $modelFullName();
         } else {
@@ -77,16 +78,4 @@ class ModelCommand extends Command
         }
     }
 
-    /**
-     * @param $model
-     */
-    private function modelFullName($model): false|string
-    {
-        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
-        if (! class_exists($model)) {
-            return $modelNamespace . '\\' . $model;
-        }
-
-        return false;
-    }
 }

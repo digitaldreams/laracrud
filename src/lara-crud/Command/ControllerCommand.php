@@ -16,8 +16,10 @@ use LaraCrud\Crud\Controller as ControllerCrud;
 use LaraCrud\Crud\Policy;
 use LaraCrud\Crud\RequestResource as RequestResourceCrud;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Repositories\ControllerRepository;
 use Illuminate\Database\Eloquent\Model;
+
 class ControllerCommand extends Command
 {
     use Helper;
@@ -29,7 +31,7 @@ class ControllerCommand extends Command
     /**
      * @var string[][]
      */
-    protected $methods = [
+    protected array $methods = [
         'web' => [
             'index',
             'show',
@@ -105,18 +107,6 @@ class ControllerCommand extends Command
         return Command::SUCCESS;
     }
 
-    /**
-     * @param $model
-     */
-    private function modelFullName($model): false|string
-    {
-        $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
-        if (!class_exists($model)) {
-            return $modelNamespace . '\\' . $model;
-        }
-
-        return false;
-    }
 
     /**
      *  Check if Model or Parent Model exists . If so then create object from them otherwise return warning and exit.
@@ -124,7 +114,7 @@ class ControllerCommand extends Command
     private function checkModelExists()
     {
         $model = $this->argument('model');
-        $modelFullName = $this->modelFullName($model);
+        $modelFullName = NamespaceResolver::modelFullName($model);
         if (class_exists($modelFullName)) {
             $this->model = new $modelFullName();
         } else {
@@ -134,7 +124,7 @@ class ControllerCommand extends Command
         $parent = $this->option('parent');
 
         if (!empty($parent)) {
-            $parentModelFullName = $this->modelFullName($parent);
+            $parentModelFullName = NamespaceResolver::modelFullName($parent);
 
             if (class_exists($parentModelFullName)) {
                 $this->parent = new $parentModelFullName();
@@ -145,12 +135,7 @@ class ControllerCommand extends Command
         }
     }
 
-    /**
-     * @param false $api
-     *
-     * @throws \Exception
-     */
-    private function createRequestResource($api = false)
+    private function createRequestResource(bool $api = false)
     {
         $requestResource = new RequestResourceCrud($this->model, false, $api);
 
