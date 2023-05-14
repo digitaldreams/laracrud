@@ -16,7 +16,7 @@ class Mapper
     protected array $data = [];
 
     protected Model $model;
-    protected $defaultArray = [
+    protected array $defaultArray = [
         'table' => '',
         'model' => '',
         'modelNamespace' => '',
@@ -24,8 +24,8 @@ class Mapper
         'controllerNamespace' => '',
         'policy' => '',
         'policyNamespace' => '',
-        'transformer' => '',
-        'transformerNamespace' => '',
+        'apiResource' => '',
+        'apiResourceNamespace' => '',
         'storeRequest' => '',
         'updateRequest' => '',
         'createdAt' => '',
@@ -56,14 +56,28 @@ class Mapper
     public static function loadByTable(string $tableName, array $data = []): static
     {
         $fileName = $tableName . '.json';
+        $path = static::$folder . '/' . $fileName;
         $data['table'] = $tableName;
-        if (Storage::has($fileName)) {
-            $savedData = json_decode(Storage::get($fileName), true);
 
-            return new static(array_merge($savedData, $data), $fileName);
+        if (Storage::has($path)) {
+            $savedData = json_decode(Storage::get($path), true);
+            $data['updatedAt']=date('c');
+            return new static(static::mergeData($savedData, $data), $fileName);
         }
+        $data['createdAt']= date('c');
 
         return new static($data, $fileName);
+    }
+
+    private static function mergeData(array $savedData, array $newData): array
+    {
+        foreach ($savedData as $key => $value) {
+            if (!empty($value) && (!isset($newData[$key]) || (array_key_exists($key, $newData) && empty($newData[$key])))) {
+                $newData[$key] = $value;
+            }
+        }
+
+        return $newData;
     }
 
     public function has(string $key): bool

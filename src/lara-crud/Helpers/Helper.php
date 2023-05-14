@@ -14,14 +14,13 @@ trait Helper
     /**
      * Import Namespace for Usages.
      *
-     * @var array
      */
-    public $import = [];
+    public array $import = [];
 
     /**
      * @var array
      */
-    public $errors = [];
+    public  $errors = [];
 
     /**
      * If table name mistyped and then tell user that table not found and show him a list of table.
@@ -95,34 +94,6 @@ trait Helper
     public function getSingular($words)
     {
         return Str::singular($words);
-    }
-
-    /**
-     * Convert NS to path and then check if it exists if not then create it. Then return full specified path of the
-     * class.
-     *
-     * @param string $extension
-     *
-     * @return mixed
-     */
-    public function checkPath($extension = '.php')
-    {
-        //If model path does not exists then create model path.
-
-        $fullPath = base_path(NamespaceResolver::toPath($this->namespace));
-        if (!file_exists($fullPath)) {
-            $relPath = NamespaceResolver::toPath($this->namespace);
-            $nextPath = '';
-            $folders = explode('/', (string) $relPath);
-            foreach ($folders as $folder) {
-                $nextPath .= !empty($nextPath) ? '/' . $folder : $folder;
-                if (!file_exists(base_path($nextPath))) {
-                    mkdir(base_path($nextPath),0755);
-                }
-            }
-        }
-
-        return base_path(NamespaceResolver::toPath($this->namespace) . '/' . $this->modelName . $extension);
     }
 
 

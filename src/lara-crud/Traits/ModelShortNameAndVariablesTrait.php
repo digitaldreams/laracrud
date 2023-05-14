@@ -10,30 +10,19 @@ use Illuminate\Database\Eloquent\Model;
  */
 trait ModelShortNameAndVariablesTrait
 {
-    /**
-     * Eloquent Model that will be as main model.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $model;
+
+    protected ?Model $model;
 
     /**
      * Parent Model.
-     *
      * If controller has a parent. For example Comment Model may have Post parent.
      *
      */
-    protected ?Model $parentModel;
+    protected ?Model $parentModel=null;
 
-    /**
-     * @var string
-     */
-    protected string $parentModelShortName;
+    protected ?string $parentModelShortName;
 
-    /**
-     * @var string
-     */
-    protected string $modelShortName;
+    protected ?string $modelShortName;
 
     /**
      * Get Model class name without namespace.

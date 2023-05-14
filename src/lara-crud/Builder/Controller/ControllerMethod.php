@@ -9,9 +9,10 @@ use LaraCrud\Contracts\Controller\ApiArrayResponseMethod;
 use LaraCrud\Contracts\Controller\ApiResourceResponseMethod;
 use LaraCrud\Contracts\Controller\RedirectAbleMethod;
 use LaraCrud\Contracts\Controller\ViewAbleMethod;
-use LaraCrud\Crud\ApiResource;
+use LaraCrud\Generators\ApiResource;
 use LaraCrud\Helpers\ApiMethodHelper;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Helpers\RedirectAbleMethodHelper;
 use LaraCrud\Helpers\ViewAbleMethodHelper;
 use LaraCrud\Traits\ModelShortNameAndVariablesTrait;
@@ -83,7 +84,7 @@ abstract class ControllerMethod
             $requestNs = config('laracrud.request.namespace');
         }
 
-        $this->requestFolderNs = $this->getFullNS($requestNs) . '\\' . ucfirst(Str::camel($this->model->getTable()));
+        $this->requestFolderNs = NamespaceResolver::getFullNS($requestNs) . '\\' . ucfirst(Str::camel($this->model->getTable()));
     }
 
     /**
