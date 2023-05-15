@@ -61,6 +61,14 @@ class NamespaceResolver
         return static::getFullNS($ns);
     }
 
+    public static function getControllerRoot(bool $isApi = false): string
+    {
+        return $isApi === true ? config('laracrud.controller.apiNamespace', 'App\Http\Controllers\Api') : config(
+            'laracrud.controller.namespace',
+            'App\Http\Controllers'
+        );
+    }
+
     /**
      * Convert NS to path and then check if it exists if not then create it. Then return full specified path of the
      * class.

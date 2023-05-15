@@ -4,84 +4,52 @@ namespace LaraCrud\Generators;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
-use LaraCrud\Contracts\Crud;
+use LaraCrud\Contracts\ClassGeneratorContract;
+use LaraCrud\Contracts\FileGeneratorContract;
 use LaraCrud\Helpers\ClassInspector;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Helpers\TemplateManager;
+use \Illuminate\Database\Eloquent\Model as EloquentModel;
 
-class RequestController implements Crud
+class RequestController implements FileGeneratorContract
 {
     use Helper;
 
-    /**
-     * @var
-     */
+
     protected $table;
 
-    /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $model;
-    /**
-     * @var string
-     */
-    protected $controllerNs = '';
+    protected EloquentModel $model;
 
-    /**
-     * @var string
-     */
-    protected $controllerName;
+    protected string $controllerNs = '';
 
-    /**
-     * @var ClassInspector
-     */
-    protected $classInspector;
+    protected string $controllerName;
 
-    /**
-     * Request Class parent Namespace.
-     *
-     * @var string
-     */
-    protected $namespace;
+    protected ClassInspector $classInspector;
+
+    protected string $namespace;
     /**
      * Name of the folder where Request Classes will be saved.
      *
-     * @var string
      */
-    protected $folderName = '';
+    protected string $folderName = '';
 
-    /**
-     * @var string
-     */
-    protected $template;
+    protected string $template;
 
     /**
      * @var array
      */
-    protected $methods = ['index', 'show', 'create', 'store', 'update', 'destroy'];
+    protected array $methods = ['index', 'show', 'create', 'store', 'update', 'destroy'];
     protected ?string $modelName;
+    private bool $policy;
 
-    /**
-     * @var bool
-     */
-    private $policy;
-
-    /**
-     * RequestControllerCrud constructor.
-     *
-     * @param string                              $controller
-     * @param bool                                $api
-     * @param string                              $name
-     * @throws \Exception
-     */
-    public function __construct(\Illuminate\Database\Eloquent\Model $model, $controller = '', $api = false, $name = '')
+    public function __construct(EloquentModel $model, ?string $controller = null, bool $api = false, ?string $name = null)
     {
         $this->model = $model;
         $policies = Gate::policies();
         $this->policy = $policies[$this->model::class] ?? false;
 
-        $controllerNs = !empty($api) ? config('laracrud.controller.apiNamespace', 'App\Http\Controllers\Api') : config('laracrud.controller.namespace', 'App\Http\Controllers');
-        $this->controllerNs = $this->getFullNS($controllerNs);
+        $this->controllerNs = NamespaceResolver::getControllerRoot($api);
         $this->table = $model->getTable();
         $this->folderName = !empty($name) ? $name : $this->table;
         $this->template = !empty($api) ? 'api' : 'web';
@@ -96,8 +64,10 @@ class RequestController implements Crud
             }
 
             $this->classInspector = new ClassInspector($this->controllerName);
-            $requestNs = !empty($api) ? config('laracrud.request.apiNamespace') : config('laracrud.request.namespace');
-            $this->namespace = $this->getFullNS(trim((string) $requestNs, '/')) . '\\' . ucfirst(Str::camel($this->folderName));
+            $requestNs = NamespaceResolver::getRequestRoot($api);
+            $this->namespace = (trim((string)$requestNs, '/')) . '\\' . ucfirst(
+                    Str::camel($this->folderName)
+                );
             $this->modelName = $this->getModelName($this->table);
         }
     }
@@ -109,13 +79,13 @@ class RequestController implements Crud
      *
      * @return mixed
      */
-    public function template($authorization = 'true')
+    public function template(string $authorization = 'true')
     {
         $tempMan = new TemplateManager('request/' . $this->template . '/template.txt', [
-            'namespace'        => $this->namespace,
+            'namespace' => $this->namespace,
             'requestClassName' => $this->modelName,
-            'authorization'    => $authorization,
-            'rules'            => implode("\n", []),
+            'authorization' => $authorization,
+            'rules' => implode("\n", []),
         ]);
 
         return $tempMan->get();
@@ -124,18 +94,18 @@ class RequestController implements Crud
     /**
      * Get code and save to disk.
      *
+     * @return mixed
      * @throws \Exception
      *
-     * @return mixed
      */
     public function save()
     {
-        $this->checkPath('');
+        NamespaceResolver::checkPath($this->namespace.'\\'.$this->folderName, '');
         $publicMethods = $this->classInspector->publicMethods;
 
         if (!empty($publicMethods)) {
             foreach ($publicMethods as $publicMethod) {
-                $folderPath = base_path($this->toPath($this->namespace));
+                $folderPath = base_path(NamespaceResolver::toPath($this->namespace));
                 $this->modelName = $this->getModelName($publicMethod);
                 $filePath = $folderPath . '/' . $this->modelName . '.php';
 
@@ -144,11 +114,19 @@ class RequestController implements Crud
                 }
                 $isApi = 'api' === $this->template ? true : false;
                 if (in_array($publicMethod, ['create', 'store'])) {
-                    $requestStore = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/' . $this->modelName, $isApi);
+                    $requestStore = new Request(
+                        $this->model,
+                        ucfirst(Str::camel($this->folderName)) . '/' . $this->modelName,
+                        $isApi
+                    );
                     $requestStore->setAuthorization($this->getAuthCode('create'));
                     $requestStore->save();
                 } elseif (in_array($publicMethod, ['edit', 'update'])) {
-                    $requestUpdate = new Request($this->model, ucfirst(Str::camel($this->folderName)) . '/' . $this->modelName, $isApi);
+                    $requestUpdate = new Request(
+                        $this->model,
+                        ucfirst(Str::camel($this->folderName)) . '/' . $this->modelName,
+                        $isApi
+                    );
                     $requestUpdate->setAuthorization($this->getAuthCode('update'));
                     $requestUpdate->save();
                 } else {
@@ -182,4 +160,5 @@ class RequestController implements Crud
 
         return $auth;
     }
+
 }

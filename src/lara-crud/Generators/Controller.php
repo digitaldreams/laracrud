@@ -5,6 +5,7 @@ namespace LaraCrud\Generators;
 use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Contracts\ClassGeneratorContract;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\FileSave;
 use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\Repositories\ControllerRepository;

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaraCrud\Generators;
+namespace LaraCrud\Helpers;
 
 use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Services\Mapper;

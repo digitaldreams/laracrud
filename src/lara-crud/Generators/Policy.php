@@ -5,6 +5,7 @@ namespace LaraCrud\Generators;
 use LaraCrud\Contracts\ClassGeneratorContract;
 use LaraCrud\Helpers\ClassInspector;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\FileSave;
 use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Helpers\TemplateManager;
 use LaraCrud\Services\ModelRelationReader;

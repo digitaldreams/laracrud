@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Contracts\ClassGeneratorContract;
 use LaraCrud\Contracts\TableContract;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\FileSave;
 use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Helpers\TemplateManager;
 
