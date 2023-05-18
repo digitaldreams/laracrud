@@ -5,6 +5,7 @@ namespace LaraCrud\Commands;
 use Illuminate\Console\Command;
 use LaraCrud\Generators\RouteCrud;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 
 class RouteCommand extends Command
 {
@@ -47,11 +48,11 @@ class RouteCommand extends Command
             $controllers = [];
             $controller = $this->argument('controller');
             $api = $this->option('api');
-            $namespace = true == $api ? config('laracrud.controller.apiNamespace') : config('laracrud.controller.namespace');
-            $namespace = $this->getFullNS($namespace);
+            $namespace = NamespaceResolver::getControllerRoot((bool)$api);
+            $namespace = NamespaceResolver::getFullNS($namespace);
 
             if ('all' == $controller) {
-                $path = $this->toPath($namespace);
+                $path = NamespaceResolver::toPath($namespace);
                 $dirIt = new \RecursiveDirectoryIterator(base_path($path));
                 $rit = new \RecursiveIteratorIterator($dirIt);
                 while ($rit->valid()) {
