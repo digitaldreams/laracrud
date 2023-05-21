@@ -45,31 +45,20 @@ class RouteCommand extends Command
     public function handle()
     {
         try {
-            $controllers = [];
             $controller = $this->argument('controller');
-            $api = $this->option('api');
-            $namespace = NamespaceResolver::getControllerRoot((bool)$api);
+            $api = (bool)$this->option('api');
+            $namespace = NamespaceResolver::getControllerRoot($api);
             $namespace = NamespaceResolver::getFullNS($namespace);
 
-            if ('all' == $controller) {
-                $path = NamespaceResolver::toPath($namespace);
-                $dirIt = new \RecursiveDirectoryIterator(base_path($path));
-                $rit = new \RecursiveIteratorIterator($dirIt);
-                while ($rit->valid()) {
-                    if (!$rit->isDot()) {
-                        $controllers[] = rtrim($namespace, '\\') . '\\' . str_replace('', str_replace('/', '\\', $rit->getSubPathName()));
-                    }
-                    $rit->next();
-                }
-                $routeCrud = new RouteCrud($controllers, $api);
-            } else {
-                $controller = str_replace('/', '\\', $controller);
-                if (!stripos(rtrim($namespace, '\\') . '\\', (string) $controller)) {
-                    $controller = rtrim($namespace, '\\') . '\\' . $controller;
-                }
-
-                $routeCrud = new RouteCrud($controller, $api);
+            $controller = str_replace('/', '\\', $controller);
+            if (!stripos(rtrim($namespace, '\\') . '\\', (string)$controller)) {
+                $controller = rtrim($namespace, '\\') . '\\' . $controller;
             }
+            if(!class_exists($controller)){
+                throw new \Exception(sprintf('Controller %s not found in %s',$controller,$namespace));
+            }
+
+            $routeCrud = new RouteCrud($controller, $api);
 
             $routeCrud->save();
             if (!empty($routeCrud->errors)) {

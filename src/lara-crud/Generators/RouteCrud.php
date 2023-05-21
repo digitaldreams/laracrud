@@ -50,14 +50,14 @@ class RouteCrud implements FileGeneratorContract
      * List of available controllers.
      *
      */
-    public array $controllers = [];
+    public string $controller;
 
     /**
      * Save all methods name group by controller name
      * To check which method have no route defined yet by comparing to $methodNames.
      *
      */
-    public array $controllerMethods = [];
+    public array $methods = [];
 
     /**
      * It is possible to have Controller under Admin folder with the namespae of Admin.
@@ -70,118 +70,24 @@ class RouteCrud implements FileGeneratorContract
     protected string $template = 'web';
 
     protected string $namespace;
+    protected string $controllerShortName;
 
-    public function __construct(string|array $controller = '', protected bool $api = false)
+    protected \ReflectionClass $reflectionClass;
+
+    public function __construct(string $controller, protected bool $api = false)
     {
-        if (!is_array($controller)) {
-            $this->controllers[] = $controller;
-        } else {
-            $this->controllers = $controller;
-        }
-
+        $this->controller = $controller;
+        $this->reflectionClass = new \ReflectionClass($this->controller);
+        $methods = $this->reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $this->controllerShortName = strtolower(
+            str_replace('Controller', '', (string)$this->reflectionClass->getShortName())
+        );
+        $this->methods = $this->filterMethod($this->controller, $methods);
         $this->getRoute();
-        $this->fetchControllerMethods();
-
+        $this->namespace = NamespaceResolver::getControllerRoot();
         $this->template = !empty($api) ? 'api' : 'web';
-        $this->namespace = NamespaceResolver::getControllerRoot($this->api);
-        $this->namespace = rtrim(NamespaceResolver::getFullNS($this->namespace), '\\') . '\\';
     }
 
-    /**
-     * This will get all defined routes.
-     */
-    public function getRoute(): void
-    {
-        $routes = Route::getRoutes();
-
-        foreach ($routes as $route) {
-            $controllerName = strstr((string)$route->getActionName(), '@', true);
-            $methodName = str_replace('@', '', strstr((string)$route->getActionName(), '@'));
-            $this->routes[$route->getActionName()] = [
-                'name' => $route->getName(),
-                'path' => $route->uri(),
-                'controller' => $controllerName,
-                'method' => $methodName,
-                'http_verbs' => $route->methods(),
-                'action' => $route->getActionName(),
-                'parameters' => $route->parameterNames(),
-            ];
-
-            if (!empty($controllerName)) {
-                $this->methodNames[$controllerName][] = $methodName;
-            }
-
-            if (!empty($route->getName())) {
-                $this->routesName[] = $route->getName();
-            }
-        }
-    }
-
-    /**
-     * Get all controller methods which is public.
-     */
-    public function fetchControllerMethods(): void
-    {
-        foreach ($this->controllers as $controller) {
-            $reflectionClass = new \ReflectionClass($controller);
-            $methods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
-
-            $this->controllerMethods[$controller] = [
-                'full_name' => $controller,
-                'shortName' => $reflectionClass->getShortName(),
-                'description' => $reflectionClass->getDocComment(),
-                'methods' => $this->filterMethod($controller, $methods),
-            ];
-        }
-    }
-
-    /**
-     * Child class all the method of its parent. But we will accept only child class method.
-     *
-     * @param \ReflectionMethod[] $reflectionMethods
-     *
-     */
-    protected function filterMethod(string $controllerName, $reflectionMethods): array
-    {
-        $retMethods = [];
-        foreach ($reflectionMethods as $reflectionMethod) {
-            if (0 != substr_compare(
-                    (string)$reflectionMethod->name,
-                    '__',
-                    0,
-                    2
-                ) && $reflectionMethod->class == $controllerName) {
-                $retMethods[] = $reflectionMethod->name;
-            }
-        }
-
-        return $retMethods;
-    }
-
-    /**
-     * Append route to routes.php file.
-     *
-     * @param string $routesCode
-     */
-    public function appendRoutes(string $routesCode)
-    {
-        $file = $this->getRouteFileName();
-        $routePath = file_exists($file) ? $file : base_path($file);
-        if (file_exists($routePath)) {
-            $splFile = new \SplFileObject($routePath, 'a');
-            $splFile->fwrite($routesCode);
-        }
-    }
-
-    /**
-     * Get route file name based on web or api.
-     *
-     * @return string
-     */
-    protected function getRouteFileName(): string
-    {
-        return true === $this->api ? config('laracrud.route.api') : config('laracrud.route.web');
-    }
 
     /**
      * Generate an idividual routes.
@@ -221,17 +127,183 @@ class RouteCrud implements FileGeneratorContract
 
         $controllerShortName = str_replace('Controller', '', $controllerName);
 
-        $actionName = $controllerName . '@' . $method;
         $routeName .= Str::plural(strtolower($controllerShortName)) . '.' . strtolower($method);
 
-        $tempObj = new TemplateManager('route/' . $this->template . '/template.txt', [
-            'method' => $routeMethodName,
-            'path' => $path,
-            'routeName' => $routeName,
-            'action' => $actionName,
-        ]);
+        return sprintf(
+            "Route::patch('%s', [%s::class, '%s'])->name('%s');".PHP_EOL,
+            $path,
+            $this->controller,
+            $routeMethodName,
+            $routeName
+        );
+    }
 
-        return $tempObj->get();
+    /**
+     * Process template and return complete code.
+     *
+     */
+    public function template(): string
+    {
+        $retRoutes = '';
+
+        $remainingMethods = $this->generateResourceRoutes($retRoutes);
+
+        $this->generateSingleRoute($remainingMethods,$retRoutes);
+
+        return $retRoutes;
+    }
+
+    private function generateResourceRoutes(&$retRoutes)
+    {
+        $resourceMethods = ['index', 'show', 'store', 'update', 'destroy'];
+
+        if ($this->api === false) {
+            $resourceMethods = [...$resourceMethods, 'create', 'edit'];
+        }
+
+        $routesMethods = array_column($this->routes[$this->controller] ?? [], 'method');
+        $newRouteMethods = array_diff($this->methods, $routesMethods);
+
+        $resources = array_intersect($resourceMethods, $newRouteMethods);
+        if (count($resources) > 2) {
+            if (count($resourceMethods) === count($resources)) {
+                $retRoutes = sprintf(
+                    "Route::resource('%s',%s::class);".PHP_EOL,
+                    Str::plural($this->controllerShortName),
+                    $this->controller
+                );
+
+                return true;
+            } elseif (count($resources) > 3) {
+                $methodStr = '';
+                $notIncludedMethods = array_diff($this->methods, $resources);
+                foreach ($notIncludedMethods as $method) {
+                    $methodStr .= "'" . $method . "',";
+                }
+                $retRoutes = sprintf(
+                    "Route::resource('%s',%s::class)->except([%s]);".PHP_EOL,
+                    Str::plural($this->controllerShortName),
+                    $this->controller,
+                    $methodStr
+                );
+            } else {
+                $methodStr = '';
+                foreach ($resources as $method) {
+                    $methodStr .= "'" . $method . "',";
+                }
+                $retRoutes = sprintf(
+                    "Route::resource('%s',%s::class)->only([%s]);".PHP_EOL,
+                    Str::plural($this->controllerShortName),
+                    $this->controller,
+                    $methodStr
+                );
+                $notIncludedMethods = array_diff($this->methods, $resources);
+            }
+
+            return $notIncludedMethods;
+        }
+
+        return $newRouteMethods;
+    }
+
+    private function generateSingleRoute($remainingMethods, &$retRoutes)
+    {
+        foreach ($remainingMethods as $method) {
+            if (isset($this->routes[$this->controller]) && array_key_exists($method, $this->routes[$this->controller])) {
+                continue;
+            }
+
+            $retRoutes.=$this->generateRoute($this->controllerShortName, $method, $this->controller, '');
+        }
+
+    }
+
+    /**
+     * Get code and save to disk.
+     *
+     * @return mixed
+     */
+    public function save()
+    {
+        $routesCode = $this->template();
+        $this->appendRoutes($routesCode);
+    }
+
+    /**
+     * Append route to routes.php file.
+     *
+     * @param string $routesCode
+     */
+    public function appendRoutes(string $routesCode)
+    {
+        $file = $this->getRouteFileName();
+        $routePath = file_exists($file) ? $file : base_path($file);
+        if (file_exists($routePath)) {
+            $splFile = new \SplFileObject($routePath, 'a');
+            $splFile->fwrite($routesCode);
+        }
+    }
+
+    /**
+     * This will get all defined routes.
+     */
+    public function getRoute(): void
+    {
+        $routes = Route::getRoutes();
+
+        foreach ($routes as $route) {
+            try {
+                if (empty($route->getControllerClass())) {
+                    continue;
+                }
+                $this->routes[$route->getControllerClass()][] = [
+                    'name' => $route->getName(),
+                    'path' => $route->uri(),
+                    'controller' => $route->getControllerClass(),
+                    'method' => $route->getActionMethod(),
+                    'http_verbs' => $route->methods(),
+                    'action' => $route->getActionName(),
+                    'parameters' => $route->parameterNames(),
+                ];
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+    }
+
+
+    /**
+     * Child class all the method of its parent. But we will accept only child class method.
+     *
+     * @param \ReflectionMethod[] $reflectionMethods
+     *
+     */
+    protected function filterMethod(string $controllerName, $reflectionMethods): array
+    {
+        $retMethods = [];
+        foreach ($reflectionMethods as $reflectionMethod) {
+            if (0 != substr_compare(
+                    (string)$reflectionMethod->name,
+                    '__',
+                    0,
+                    2
+                ) && $reflectionMethod->class == $controllerName) {
+                $retMethods[] = $reflectionMethod->name;
+            }
+        }
+
+        return $retMethods;
+    }
+
+    /**
+     * Get route file name based on web or api.
+     *
+     * @return string
+     */
+    protected
+    function getRouteFileName(): string
+    {
+        return true === $this->api ? config('laracrud.route.api') : config('laracrud.route.web');
     }
 
     /**
@@ -245,8 +317,11 @@ class RouteCrud implements FileGeneratorContract
      * @throws \ReflectionException
      *
      */
-    public function addParams(string $controller, string $method)
-    {
+    public
+    function addParams(
+        string $controller,
+        string $method
+    ) {
         $params = '';
         $reflectionMethod = new \ReflectionMethod($controller, $method);
 
@@ -260,81 +335,5 @@ class RouteCrud implements FileGeneratorContract
         }
 
         return $params;
-    }
-
-    /**
-     * Process template and return complete code.
-     *
-     */
-    public function template(): string
-    {
-        $retRoutes = '';
-        $resourceMethods = ['index', 'show', 'store', 'update', 'destroy'];
-
-        if (empty($this->api)) {
-            $resourceMethods = [...$resourceMethods, 'create', 'edit'];
-        }
-
-        foreach ($this->controllerMethods as $controllerName => $ctr) {
-            $controllerRoutes = '';
-            $subNameSpace = '';
-            $resourceRTemp = '';
-
-            $path = str_replace([$this->namespace, $ctr['shortName']], '', (string)$ctr['full_name']);
-            $path = trim($path, '\\');
-            $controllerShortName = strtolower(str_replace('Controller', '', (string)$ctr['shortName']));
-
-            if (!empty($path)) {
-                $subNameSpace = ',' . "'namespace'=>'" . $path . "'";
-                $controllerShortName = strtolower($path) . '/' . $controllerShortName;
-            }
-
-            $routesMethods = $this->methodNames[$controllerName] ?? [];
-            $controllerMethods = $ctr['methods'] ?? [];
-            $newRouteMethods = array_diff($controllerMethods, $routesMethods);
-
-            $resources = array_intersect($resourceMethods, $newRouteMethods);
-
-            if (count($resourceMethods) == count($resources)) {
-                $newRouteMethods = array_diff($newRouteMethods, $resources);
-                $tableName = Str::plural(strtolower(str_replace('Controller', '', (string)$ctr['shortName'])));
-                $resourceRTempObj = new TemplateManager('route/' . $this->template . '/resource.txt', [
-                    'table' => $tableName,
-                    'controller' => $ctr['shortName'],
-                ]);
-                $resourceRTemp = $resourceRTempObj->get();
-            }
-
-            foreach ($newRouteMethods as $newRouteMethod) {
-                $controllerRoutes .= $this->generateRoute($ctr['shortName'], $newRouteMethod, $controllerName, $path);
-            }
-
-            if (empty($controllerRoutes)) {
-                $retRoutes .= $resourceRTemp;
-                continue;
-            }
-
-            $routeGroupTempObj = new TemplateManager('route/' . $this->template . '/group.txt', [
-                'namespace' => $subNameSpace,
-                'routes' => $controllerRoutes,
-                'prefix' => Str::plural($controllerShortName),
-            ]);
-            $routeGroupTemp = $routeGroupTempObj->get();
-            $retRoutes .= $routeGroupTemp;
-            $retRoutes .= $resourceRTemp;
-        }
-
-        return $retRoutes;
-    }
-
-    /**
-     * Get code and save to disk.
-     *
-     * @return mixed
-     */
-    public function save()
-    {
-        $routesCode = $this->template();
-        $this->appendRoutes($routesCode);
     }
 }
