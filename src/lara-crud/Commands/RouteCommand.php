@@ -60,17 +60,6 @@ class RouteCommand extends Command
             if(!class_exists($controller)){
                 throw new \Exception(sprintf('Controller %s not found in %s',$controller,$namespace));
             }
-            $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-            try {
-                $code= file_get_contents(base_path(NamespaceResolver::toPath($controller).".php"));
-                $stmts = $parser->parse($code);
-                $nodeDumper = new NodeDumper;
-                echo $nodeDumper->dump($stmts), "\n";
-                // $stmts is an array of statement nodes
-            } catch (Error $e) {
-                echo 'Parse Error: ', $e->getMessage();
-            }
-            exit();
 
             $routeCrud = new RouteCrud($controller, $api);
 

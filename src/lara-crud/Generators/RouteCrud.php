@@ -93,7 +93,7 @@ class RouteCrud implements FileGeneratorContract
      * Generate an idividual routes.
      *
      * @param string $controllerName e.g. UserController
-     * @param string $method         e.g. GET,PUT,POST,DELETE based on the prefix of method name.
+     * @param string $method e.g. GET,PUT,POST,DELETE based on the prefix of method name.
      *                               If a controller method name is postSave then its method will be post
      * @param string $fullClassName
      * @param string $subNameSpace
@@ -130,10 +130,11 @@ class RouteCrud implements FileGeneratorContract
         $routeName .= Str::plural(strtolower($controllerShortName)) . '.' . strtolower($method);
 
         return sprintf(
-            "Route::patch('%s', [%s::class, '%s'])->name('%s');".PHP_EOL,
+            "Route::%s('%s', [%s::class, '%s'])->name('%s');" . PHP_EOL,
+            $routeMethodName,
             $path,
             $this->controller,
-            $routeMethodName,
+            $method,
             $routeName
         );
     }
@@ -148,7 +149,7 @@ class RouteCrud implements FileGeneratorContract
 
         $remainingMethods = $this->generateResourceRoutes($retRoutes);
 
-        $this->generateSingleRoute($remainingMethods,$retRoutes);
+        $this->generateSingleRoute($remainingMethods, $retRoutes);
 
         return $retRoutes;
     }
@@ -168,7 +169,7 @@ class RouteCrud implements FileGeneratorContract
         if (count($resources) > 2) {
             if (count($resourceMethods) === count($resources)) {
                 $retRoutes = sprintf(
-                    "Route::resource('%s',%s::class);".PHP_EOL,
+                    "Route::resource('%s',%s::class);" . PHP_EOL,
                     Str::plural($this->controllerShortName),
                     $this->controller
                 );
@@ -181,7 +182,7 @@ class RouteCrud implements FileGeneratorContract
                     $methodStr .= "'" . $method . "',";
                 }
                 $retRoutes = sprintf(
-                    "Route::resource('%s',%s::class)->except([%s]);".PHP_EOL,
+                    "Route::resource('%s',%s::class)->except([%s]);" . PHP_EOL,
                     Str::plural($this->controllerShortName),
                     $this->controller,
                     $methodStr
@@ -192,7 +193,7 @@ class RouteCrud implements FileGeneratorContract
                     $methodStr .= "'" . $method . "',";
                 }
                 $retRoutes = sprintf(
-                    "Route::resource('%s',%s::class)->only([%s]);".PHP_EOL,
+                    "Route::resource('%s',%s::class)->only([%s]);" . PHP_EOL,
                     Str::plural($this->controllerShortName),
                     $this->controller,
                     $methodStr
@@ -209,13 +210,15 @@ class RouteCrud implements FileGeneratorContract
     private function generateSingleRoute($remainingMethods, &$retRoutes)
     {
         foreach ($remainingMethods as $method) {
-            if (isset($this->routes[$this->controller]) && array_key_exists($method, $this->routes[$this->controller])) {
+            if (isset($this->routes[$this->controller]) && array_key_exists(
+                    $method,
+                    $this->routes[$this->controller]
+                )) {
                 continue;
             }
 
-            $retRoutes.=$this->generateRoute($this->controllerShortName, $method, $this->controller, '');
+            $retRoutes .= $this->generateRoute($this->controllerShortName, $method, $this->controller, '');
         }
-
     }
 
     /**
@@ -300,8 +303,7 @@ class RouteCrud implements FileGeneratorContract
      *
      * @return string
      */
-    protected
-    function getRouteFileName(): string
+    protected function getRouteFileName(): string
     {
         return true === $this->api ? config('laracrud.route.api') : config('laracrud.route.web');
     }
@@ -317,11 +319,7 @@ class RouteCrud implements FileGeneratorContract
      * @throws \ReflectionException
      *
      */
-    public
-    function addParams(
-        string $controller,
-        string $method
-    ) {
+    public function addParams(string $controller, string $method) {
         $params = '';
         $reflectionMethod = new \ReflectionMethod($controller, $method);
 
