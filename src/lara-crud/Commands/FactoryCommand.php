@@ -5,6 +5,7 @@ namespace LaraCrud\Commands;
 use Illuminate\Console\Command;
 use LaraCrud\Generators\ModelFactory;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 
 class FactoryCommand extends Command
 {
@@ -34,7 +35,7 @@ class FactoryCommand extends Command
     {
         try {
             $model = $this->argument('model');
-            $modelNamespace = $this->getFullNS(config('laracrud.model.namespace', 'App'));
+            $modelNamespace = NamespaceResolver::getFullNS(config('laracrud.model.namespace', 'App'));
             if (! class_exists($model)) {
                 $model = $modelNamespace . '\\' . $model;
             }

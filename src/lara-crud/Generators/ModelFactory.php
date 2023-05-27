@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use LaraCrud\Contracts\ClassGeneratorContract;
 use LaraCrud\Helpers\FakerColumn;
 use LaraCrud\Helpers\Helper;
+use LaraCrud\Helpers\NamespaceResolver;
 use LaraCrud\Helpers\TemplateManager;
 
 class ModelFactory implements ClassGeneratorContract
@@ -45,7 +46,7 @@ class ModelFactory implements ClassGeneratorContract
         if (file_exists($path . '/' . $name)) {
             throw new \Exception($name . ' already exists');
         }
-        $factory = new \SplFileObject($this->checkPath(), 'w+');
+        $factory = new \SplFileObject(NamespaceResolver::checkPath($this->namespace, $name), 'w+');
         $factory->fwrite($this->template());
     }
 
@@ -96,7 +97,7 @@ class ModelFactory implements ClassGeneratorContract
     {
         $this->namespace = config('laracrud.factory.namespace');
         $classRootNs = trim(str_replace($this->reflection->getShortName(), "", (string) $this->reflection->getName()), "\\");
-        $modelRootNs = $this->getFullNS(config('laracrud.model.namespace', 'Models'));
+        $modelRootNs = NamespaceResolver::getFullNS(config('laracrud.model.namespace', 'Models'));
         $sub = str_replace($modelRootNs, "", $classRootNs);
         if (! empty($sub)) {
             $this->namespace .= "\\" . trim($sub, "\\");
